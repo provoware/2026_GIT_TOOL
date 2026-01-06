@@ -1,6 +1,6 @@
 {
   "autoFix": true,
   "stopOnFailure": true,
-  "stepsEnabled": ["lint", "format", "test"],
+  "stepsEnabled": ["lint", "format", "test", "a11y"],
   "printSummary": true
 }

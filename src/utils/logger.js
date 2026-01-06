@@ -3,8 +3,9 @@ import {
   ensureInList,
   ensureNonEmptyString,
   ensurePlainObject,
-  ensurePositiveInteger
-} from "./validation.js";
+  ensurePositiveInteger,
+  ensureFunction
+} from "./validate.js";
 import { createFileLogWriter } from "./logging/file-log-writer.js";
 
 const allowedLevels = ["DEBUG", "INFO", "WARN", "ERROR"];
@@ -97,10 +98,18 @@ export const createLogger = (options = {}) => {
     return log("DEBUG", message);
   };
 
-  return {
+  const logger = {
     info: (message) => log("INFO", message),
     warn: (message) => log("WARN", message),
     error: (message) => log("ERROR", message),
     debug
   };
+
+  ensurePlainObject(logger, "logger");
+  ensureFunction(logger.info, "logger.info");
+  ensureFunction(logger.warn, "logger.warn");
+  ensureFunction(logger.error, "logger.error");
+  ensureFunction(logger.debug, "logger.debug");
+
+  return logger;
 };
