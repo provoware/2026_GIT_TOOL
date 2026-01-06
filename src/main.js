@@ -3,16 +3,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createLogger } from "./utils/logger.js";
 import { loadConfig } from "./utils/config.js";
-import {
-  computeTemplatesStats,
-  exportArchiveZip,
-  exportCategoryZip,
-  exportTemplateToFile,
-  importTemplatesFromFile,
-  initializeTemplatesStorage,
-  loadTemplatesData,
-  saveTemplatesData
-} from "./utils/templates.js";
+import { initializeTemplatesStorage } from "./utils/templates.js";
+import { registerTemplatesIpcHandlers } from "./ipc/templatesIpc.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,46 +36,11 @@ app.whenReady().then(() => {
   initializeTemplatesStorage({ dataDir, logger });
   createWindow(logger);
 
-  ipcMain.handle("templates:load", () => {
-    const payload = loadTemplatesData({ dataDir, logger });
-    const stats = computeTemplatesStats(payload.templates);
-    return { payload, stats };
-  });
-
-  ipcMain.handle("templates:save", (_event, payload) => {
-    const saved = saveTemplatesData({ dataDir, payload, logger });
-    const stats = computeTemplatesStats(saved.templates);
-    return { payload: saved, stats };
-  });
-
-  ipcMain.handle("templates:export", (_event, { template, format }) =>
-    exportTemplateToFile({ dataDir, template, format, logger })
-  );
-
-  ipcMain.handle("templates:exportCategory", (_event, { category }) =>
-    exportCategoryZip({ dataDir, category, logger })
-  );
-
-  ipcMain.handle("templates:exportArchive", () => exportArchiveZip({ dataDir, logger }));
-
-  ipcMain.handle("templates:import", async () => {
-    const result = await dialog.showOpenDialog({
-      title: "Template-Import",
-      properties: ["openFile"],
-      filters: [{ name: "JSON", extensions: ["json"] }]
-    });
-
-    if (result.canceled || result.filePaths.length === 0) {
-      return null;
-    }
-
-    const merged = importTemplatesFromFile({
-      dataDir,
-      filePath: result.filePaths[0],
-      logger
-    });
-    const stats = computeTemplatesStats(merged.templates);
-    return { payload: merged, stats };
+  registerTemplatesIpcHandlers({
+    dataDir,
+    logger,
+    ipcMain,
+    dialog
   });
 
   app.on("activate", () => {
