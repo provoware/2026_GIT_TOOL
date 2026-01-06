@@ -13,7 +13,8 @@
     "format:write": "prettier --write .",
     "test": "node --test",
     "quality": "npm run lint && npm run format && npm test",
-    "quality:fix": "npm run lint:fix && npm run format:write && npm test"
+    "quality:fix": "npm run lint:fix && npm run format:write && npm test",
+    "quality:auto": "node scripts/quality.mjs"
   },
   "dependencies": {
     "archiver": "^6.0.2"

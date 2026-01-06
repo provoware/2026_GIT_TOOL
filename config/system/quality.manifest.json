@@ -1,0 +1,29 @@
+{
+  "version": "1.0",
+  "description": "Automatische Code-Qualitätsprüfung und Auto-Formatierung.",
+  "steps": [
+    {
+      "id": "lint",
+      "label": "Linting (Stilprüfung)",
+      "description": "Prüft Regeln für sauberen, einheitlichen Code.",
+      "command": "npm run lint",
+      "fixCommand": "npm run lint:fix",
+      "required": true
+    },
+    {
+      "id": "format",
+      "label": "Formatierung (Code-Format)",
+      "description": "Prüft und formatiert Code mit Prettier.",
+      "command": "npm run format",
+      "fixCommand": "npm run format:write",
+      "required": true
+    },
+    {
+      "id": "test",
+      "label": "Tests (Automatische Prüfungen)",
+      "description": "Führt automatische Tests aus, um Fehler zu finden.",
+      "command": "npm test",
+      "required": true
+    }
+  ]
+}

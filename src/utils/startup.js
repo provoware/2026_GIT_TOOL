@@ -9,6 +9,10 @@ import {
   ensureNonEmptyString,
   ensurePlainObject
 } from "./validation.js";
+import {
+  buildDefaultQualityConfig,
+  buildDefaultQualityManifest
+} from "./quality.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -379,12 +383,30 @@ export const runStartupRoutine = (options = {}) => {
   });
 
   ensureFileWithDefaults({
+    filePath: path.join(systemDir, "quality.manifest.json"),
+    buildDefault: buildDefaultQualityManifest,
+    description: "Qualitäts-Manifest (Quality Manifest)",
+    logger,
+    reporter,
+    step: "quality-manifest"
+  });
+
+  ensureFileWithDefaults({
     filePath: configPath,
     buildDefault: buildDefaultConfig,
     description: "Konfiguration (Config)",
     logger,
     reporter,
     step: "config"
+  });
+
+  ensureFileWithDefaults({
+    filePath: path.join(configDir, "quality.config.json"),
+    buildDefault: buildDefaultQualityConfig,
+    description: "Qualitäts-Konfiguration (Quality Config)",
+    logger,
+    reporter,
+    step: "quality-config"
   });
 
   const seedPath = path.join(resolvedDataDir, "templates_seed.json");

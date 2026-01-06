@@ -45,6 +45,8 @@ test("startup routine creates required structure and reports status", () => {
   assert.ok(fileExists(path.join(dataDir, "templates_stats.json")));
   assert.ok(fileExists(path.join(dataDir, "templates_stats_schema.json")));
   assert.ok(fileExists(path.join(appRoot, "config", "system", "standards.manifest.json")));
+  assert.ok(fileExists(path.join(appRoot, "config", "system", "quality.manifest.json")));
+  assert.ok(fileExists(path.join(appRoot, "config", "user", "quality.config.json")));
 
   const config = JSON.parse(fs.readFileSync(configPath, "utf-8"));
   assert.ok(config.availableThemes.includes("theme-high-contrast-forest"));
