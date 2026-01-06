@@ -62,6 +62,34 @@ const ensureDirectoryExists = (directoryPath) => {
   };
 };
 
+const formatTimestampForFilename = (value = new Date().toISOString()) =>
+  ensureNonEmptyString(value, "timestamp").replace(/[:.]/g, "-");
+
+const buildBackupPath = ({ filePath, backupDir }) => {
+  const safePath = ensureNonEmptyString(filePath, "filePath");
+  const safeBackupDir = ensureNonEmptyString(backupDir, "backupDir");
+  const filename = path.basename(safePath);
+  const timestamp = formatTimestampForFilename();
+  return path.join(safeBackupDir, `${filename}.backup-${timestamp}`);
+};
+
+const backupFile = ({ filePath, backupDir, logger, label }) => {
+  const safeLogger = ensureLogger(logger);
+  const safeLabel = ensureNonEmptyString(label, "label");
+  const safePath = ensureNonEmptyString(filePath, "filePath");
+  const { path: resolvedBackupDir } = ensureDirectoryExists(backupDir);
+
+  if (!fs.existsSync(safePath)) {
+    safeLogger.warn(`${safeLabel} konnte nicht gesichert werden: Datei fehlt.`);
+    return null;
+  }
+
+  const backupPath = buildBackupPath({ filePath: safePath, backupDir: resolvedBackupDir });
+  fs.copyFileSync(safePath, backupPath);
+  safeLogger.warn(`${safeLabel} gesichert: ${backupPath}`);
+  return ensureOptionalString(backupPath, "backupPath");
+};
+
 const writeJsonFile = (filePath, payload) => {
   const resolvedPath = ensureNonEmptyString(filePath, "filePath");
   if (payload === null || typeof payload !== "object") {
@@ -103,6 +131,77 @@ const reportStatus = (reporter, payload) => {
   const safePayload = buildStatusPayload(payload);
   safeReporter(safePayload);
   return safePayload;
+};
+
+const buildRepairResult = ({ ok, backupPath }) => {
+  const safeOk = ensureBoolean(ok, "ok");
+  const safeBackupPath = ensureOptionalString(backupPath, "backupPath");
+  return {
+    ok: safeOk,
+    backupPath: safeBackupPath
+  };
+};
+
+const repairConfigFile = ({ configPath, backupDir, logger, reporter }) => {
+  const safeLogger = ensureLogger(logger);
+  const safeReporter = ensureReporter(reporter);
+  const safeConfigPath = ensureNonEmptyString(configPath, "configPath");
+  const safeBackupDir = ensureNonEmptyString(backupDir, "backupDir");
+
+  const backupPath = backupFile({
+    filePath: safeConfigPath,
+    backupDir: safeBackupDir,
+    logger: safeLogger,
+    label: "Konfiguration"
+  });
+
+  const written = writeJsonFile(safeConfigPath, buildDefaultConfig());
+  if (!written) {
+    throw new Error("Konfiguration konnte nicht repariert werden.");
+  }
+
+  reportStatus(safeReporter, {
+    level: "warning",
+    message: "Konfiguration wurde automatisch repariert.",
+    suggestion: "Bitte Einstellungen prüfen (Config) und speichern.",
+    step: "config-repair"
+  });
+
+  return buildRepairResult({ ok: true, backupPath });
+};
+
+const repairTemplatesStorage = ({ dataDir, seedPath, logger, reporter }) => {
+  const safeLogger = ensureLogger(logger);
+  const safeReporter = ensureReporter(reporter);
+  const safeSeedPath = ensureNonEmptyString(seedPath, "seedPath");
+  const resolvedDir = ensureDirectoryExists(dataDir).path;
+  const templatesPath = path.join(resolvedDir, "templates.json");
+
+  const backupPath = backupFile({
+    filePath: templatesPath,
+    backupDir: path.join(resolvedDir, "backups"),
+    logger: safeLogger,
+    label: "Templates-Daten"
+  });
+
+  if (fs.existsSync(templatesPath)) {
+    fs.rmSync(templatesPath, { force: true });
+  }
+
+  const { templatesCount } = initializeTemplatesStorage({
+    dataDir: resolvedDir,
+    seedPath: safeSeedPath,
+    logger: safeLogger
+  });
+
+  reportStatus(safeReporter, {
+    level: "warning",
+    message: "Templates wurden automatisch repariert.",
+    suggestion: "Bitte prüfen, ob alle Vorlagen vorhanden sind.",
+    step: "templates-repair"
+  });
+
+  return buildRepairResult({ ok: templatesCount >= 0, backupPath });
 };
 
 const buildDefaultConfig = () => ({
@@ -327,8 +426,20 @@ export const runStartupRoutine = (options = {}) => {
       step: "config-validate"
     });
 
-    const fallbackOk = writeJsonFile(configPath, buildDefaultConfig());
-    if (!fallbackOk) {
+    try {
+      const repairResult = repairConfigFile({
+        configPath,
+        backupDir: path.join(configDir, "backups"),
+        logger,
+        reporter
+      });
+      if (!repairResult.ok) {
+        throw new Error("Konfiguration konnte nicht repariert werden.");
+      }
+      config = loadConfig({ configPath });
+    } catch (repairError) {
+      void repairError;
+      logger.error("Konfiguration konnte nicht repariert werden.");
       pushStep({
         level: "error",
         message: "Konfiguration konnte nicht repariert werden.",
@@ -343,8 +454,6 @@ export const runStartupRoutine = (options = {}) => {
         steps
       });
     }
-
-    config = loadConfig({ configPath });
   }
 
   logger.debug(`Start-Config geladen: ${config.appName}`);
@@ -361,20 +470,46 @@ export const runStartupRoutine = (options = {}) => {
     });
   } catch (error) {
     const hint = mapErrorToHint(error, "Templates konnten nicht vorbereitet werden.");
-    logger.error(hint.message);
+    logger.warn(hint.message);
     pushStep({
-      level: "error",
+      level: "warning",
       message: hint.message,
       suggestion: hint.suggestion,
       step: "templates"
     });
-    return buildStartupResult({
-      ok: false,
-      configPath,
-      dataDir: resolvedDataDir,
-      pluginsDir: resolvedPluginsDir,
-      steps
-    });
+
+    try {
+      const repairResult = repairTemplatesStorage({
+        dataDir: resolvedDataDir,
+        seedPath,
+        logger,
+        reporter
+      });
+      if (!repairResult.ok) {
+        throw new Error("Templates konnten nicht repariert werden.");
+      }
+      pushStep({
+        level: "success",
+        message: "Templates nach Reparatur bereit.",
+        step: "templates"
+      });
+    } catch (repairError) {
+      void repairError;
+      logger.error("Templates konnten nicht repariert werden.");
+      pushStep({
+        level: "error",
+        message: "Templates konnten nicht repariert werden.",
+        suggestion: "Bitte Backups prüfen oder neu importieren.",
+        step: "templates"
+      });
+      return buildStartupResult({
+        ok: false,
+        configPath,
+        dataDir: resolvedDataDir,
+        pluginsDir: resolvedPluginsDir,
+        steps
+      });
+    }
   }
 
   pushStep({

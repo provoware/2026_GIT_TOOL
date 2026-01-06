@@ -56,3 +56,38 @@ test("startup routine creates required structure and reports status", () => {
     assert.equal(typeof status.level, "string");
   });
 });
+
+test("startup routine repairs invalid config and templates with backups", () => {
+  const appRoot = createTempRoot();
+  const logger = createLogger({ debugEnabled: false, loggingEnabled: false });
+  const statuses = [];
+
+  const configDir = path.join(appRoot, "config", "user");
+  fs.mkdirSync(configDir, { recursive: true });
+  fs.writeFileSync(path.join(configDir, "app.config.json"), "{invalid-json");
+
+  const dataDir = path.join(appRoot, "data");
+  fs.mkdirSync(dataDir, { recursive: true });
+  fs.writeFileSync(path.join(dataDir, "templates.json"), "{invalid-json");
+
+  const result = runStartupRoutine({
+    appRoot,
+    logger,
+    reportStatus: (payload) => statuses.push(payload)
+  });
+
+  assert.equal(result.ok, true);
+
+  const configBackupDir = path.join(configDir, "backups");
+  const dataBackupDir = path.join(dataDir, "backups");
+
+  assert.ok(directoryExists(configBackupDir));
+  assert.ok(directoryExists(dataBackupDir));
+  assert.ok(fs.readdirSync(configBackupDir).length > 0);
+  assert.ok(fs.readdirSync(dataBackupDir).length > 0);
+
+  const repairSteps = statuses.filter((status) =>
+    ["config-repair", "templates-repair"].includes(status.step)
+  );
+  assert.ok(repairSteps.length > 0);
+});

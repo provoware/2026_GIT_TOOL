@@ -50,6 +50,20 @@ const DEFAULT_CATEGORIES = [
 const isNonEmptyString = (value) => typeof value === "string" && value.trim().length > 0;
 const isFiniteNumber = (value) => Number.isFinite(value);
 const isValidStatLabel = (value) => isNonEmptyString(value) || isFiniteNumber(value);
+const formatStatusTimestamp = (value) => {
+  if (!isNonEmptyString(value)) {
+    return "";
+  }
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return "";
+  }
+  return parsed.toLocaleTimeString("de-DE", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+};
 
 const ZOOM_SETTINGS = {
   min: 80,
@@ -128,11 +142,14 @@ const normalizeStartupStatus = (payload) => {
   const allowedLevels = Object.keys(STARTUP_LEVEL_LABELS);
   const level = allowedLevels.includes(rawLevel) ? rawLevel : "info";
   const suggestion = isNonEmptyString(payload.suggestion) ? payload.suggestion.trim() : "";
+  const timestamp = isNonEmptyString(payload.timestamp) ? payload.timestamp.trim() : "";
+  const formattedTime = formatStatusTimestamp(timestamp);
 
   return {
     level,
     message: rawMessage.trim(),
-    suggestion
+    suggestion,
+    timestamp: formattedTime
   };
 };
 
@@ -160,6 +177,13 @@ const appendStartupStatus = (payload) => {
     suggestion.className = "startup-status-suggestion";
     suggestion.textContent = `Vorschlag (Tipp): ${normalized.suggestion}`;
     item.appendChild(suggestion);
+  }
+
+  if (normalized.timestamp) {
+    const time = document.createElement("span");
+    time.className = "startup-status-time";
+    time.textContent = `Zeit: ${normalized.timestamp}`;
+    item.appendChild(time);
   }
 
   startupStatusList.appendChild(item);
