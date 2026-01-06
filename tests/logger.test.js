@@ -27,7 +27,11 @@ test("createLogger respects loggingEnabled", async () => {
 
 test("createLogger emits debug only when enabled", async () => {
   await withConsoleSpy((calls) => {
-    const logger = createLogger({ debugEnabled: true, loggingEnabled: true });
+    const logger = createLogger({
+      debugEnabled: true,
+      loggingEnabled: true,
+      logLevel: "DEBUG"
+    });
     const entry = logger.debug("debug message");
     assert.equal(calls.length, 1);
     assert.match(calls[0][0], /\[DEBUG\]/);
