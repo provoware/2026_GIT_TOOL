@@ -6,7 +6,10 @@ import os from "node:os";
 import { fileURLToPath } from "node:url";
 import {
   computeTemplatesStats,
+  exportArchiveZip,
+  exportCategoryZip,
   exportTemplateToFile,
+  importTemplatesFromFile,
   initializeTemplatesStorage
 } from "../src/utils/templates.js";
 import { createLogger } from "../src/utils/logger.js";
@@ -91,5 +94,85 @@ test("exportTemplateToFile rejects invalid filenames", () => {
 
   assert.throws(() =>
     exportTemplateToFile({ dataDir: tempDir, template, format: "txt", logger })
+  );
+});
+
+test("exportCategoryZip creates zip in export folder", async () => {
+  const tempDir = createTempDir();
+  const seedPath = path.join(__dirname, "fixtures", "templates_seed.json");
+  const logger = buildLogger();
+
+  initializeTemplatesStorage({ dataDir: tempDir, seedPath, logger });
+
+  const zipPath = await exportCategoryZip({ dataDir: tempDir, category: "Test", logger });
+
+  assert.ok(zipPath.includes(`${path.sep}exports${path.sep}`));
+  assert.ok(fs.existsSync(zipPath));
+  assert.ok(fs.statSync(zipPath).isFile());
+});
+
+test("exportArchiveZip creates zip in export folder", async () => {
+  const tempDir = createTempDir();
+  const seedPath = path.join(__dirname, "fixtures", "templates_seed.json");
+  const logger = buildLogger();
+
+  initializeTemplatesStorage({ dataDir: tempDir, seedPath, logger });
+
+  const zipPath = await exportArchiveZip({ dataDir: tempDir, logger });
+
+  assert.ok(zipPath.includes(`${path.sep}exports${path.sep}`));
+  assert.ok(fs.existsSync(zipPath));
+  assert.ok(fs.statSync(zipPath).isFile());
+});
+
+test("importTemplatesFromFile skips duplicates and resolves title collisions", () => {
+  const tempDir = createTempDir();
+  const seedPath = path.join(__dirname, "fixtures", "templates_seed.json");
+  const logger = buildLogger();
+
+  initializeTemplatesStorage({ dataDir: tempDir, seedPath, logger });
+
+  const importPath = path.join(tempDir, "incoming.json");
+  const incoming = {
+    templates: [
+      {
+        id: "dup",
+        title: "Test Template",
+        category: "Test",
+        description: "Beschreibung",
+        content: "Inhalt",
+        favorite: false,
+        usageCount: 0,
+        lastUsed: null,
+        editable: true
+      },
+      {
+        id: "collision",
+        title: "Test Template",
+        category: "Test",
+        description: "Andere Beschreibung",
+        content: "Neuer Inhalt",
+        favorite: false,
+        usageCount: 0,
+        lastUsed: null,
+        editable: true
+      }
+    ]
+  };
+  fs.writeFileSync(importPath, JSON.stringify(incoming, null, 2));
+
+  const merged = importTemplatesFromFile({ dataDir: tempDir, filePath: importPath, logger });
+
+  assert.equal(merged.templates.length, 2);
+  assert.ok(merged.templates.some((template) => template.title === "Test Template"));
+  assert.ok(merged.templates.some((template) => template.title === "Test Template (2)"));
+});
+
+test("importTemplatesFromFile throws when file is missing", () => {
+  const tempDir = createTempDir();
+  const logger = buildLogger();
+
+  assert.throws(() =>
+    importTemplatesFromFile({ dataDir: tempDir, filePath: "missing.json", logger })
   );
 });
