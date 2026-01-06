@@ -46,11 +46,14 @@ export const registerTemplatesIpcHandlers = (options) => {
   const logger = ensureLogger(resolvedOptions.logger);
   const ipcMain = ensureIpcMain(resolvedOptions.ipcMain);
   const dialog = ensureDialog(resolvedOptions.dialog);
+  const manifest = resolvedOptions.manifest
+    ? ensurePlainObject(resolvedOptions.manifest, "manifest")
+    : undefined;
 
   logger.debug("Templates-IPC-Handler werden registriert.");
 
   ipcMain.handle("templates:load", () => {
-    const payload = loadTemplatesData({ dataDir, logger });
+    const payload = loadTemplatesData({ dataDir, logger, manifest });
     const stats = computeTemplatesStats(payload.templates);
     return ensurePayloadWithStats(payload, stats);
   });
@@ -59,7 +62,8 @@ export const registerTemplatesIpcHandlers = (options) => {
     const saved = saveTemplatesData({
       dataDir,
       payload: ensurePlainObject(payload, "payload"),
-      logger
+      logger,
+      manifest
     });
     const stats = computeTemplatesStats(saved.templates);
     return ensurePayloadWithStats(saved, stats);
@@ -71,19 +75,25 @@ export const registerTemplatesIpcHandlers = (options) => {
       dataDir,
       template: params.template,
       format: params.format,
-      logger
+      logger,
+      manifest
     });
     return ensureNonEmptyString(filePath, "filePath");
   });
 
   ipcMain.handle("templates:exportCategory", async (_event, args) => {
     const params = ensurePlainObject(args, "args");
-    const zipPath = await exportCategoryZip({ dataDir, category: params.category, logger });
+    const zipPath = await exportCategoryZip({
+      dataDir,
+      category: params.category,
+      logger,
+      manifest
+    });
     return ensureNonEmptyString(zipPath, "zipPath");
   });
 
   ipcMain.handle("templates:exportArchive", async () => {
-    const zipPath = await exportArchiveZip({ dataDir, logger });
+    const zipPath = await exportArchiveZip({ dataDir, logger, manifest });
     return ensureNonEmptyString(zipPath, "zipPath");
   });
 
@@ -101,7 +111,8 @@ export const registerTemplatesIpcHandlers = (options) => {
     const merged = importTemplatesFromFile({
       dataDir,
       filePath: result.filePaths[0],
-      logger
+      logger,
+      manifest
     });
     const stats = computeTemplatesStats(merged.templates);
     return ensurePayloadWithStats(merged, stats);

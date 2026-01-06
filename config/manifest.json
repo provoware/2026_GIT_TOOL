@@ -1,0 +1,56 @@
+{
+  "version": "1.0",
+  "app": {
+    "name": "2026 Git Tool",
+    "description": "Zentrale Defaults für App, Export, Themes, Logging und Pfade."
+  },
+  "logging": {
+    "levels": ["DEBUG", "INFO", "WARN", "ERROR"],
+    "defaultLevel": "INFO",
+    "defaultLogFilePath": "data/logs/app.log",
+    "defaultRotateDaily": true,
+    "defaultMaxSizeBytes": 5242880,
+    "defaultLoggingEnabled": true,
+    "defaultDebugEnabled": true,
+    "defaultLogToFile": true
+  },
+  "themes": {
+    "available": [
+      "theme-high-contrast-dark",
+      "theme-high-contrast-light",
+      "theme-high-contrast-ocean",
+      "theme-high-contrast-sand",
+      "theme-high-contrast-forest",
+      "theme-high-contrast-violet"
+    ],
+    "default": "theme-high-contrast-dark"
+  },
+  "exportRules": {
+    "allowedFormats": ["txt", "json"],
+    "exportsSubdir": "exports"
+  },
+  "paths": {
+    "dataDir": "data",
+    "logsDir": "data/logs",
+    "templatesSeed": "data/templates_seed.json",
+    "templatesStatsSchema": "data/templates_stats_schema.json",
+    "pluginsDir": "plugins",
+    "userConfig": "config/user/app.config.json",
+    "qualityConfig": "config/user/quality.config.json",
+    "qualityManifest": "config/system/quality.manifest.json",
+    "standardsManifest": "config/system/standards.manifest.json"
+  },
+  "templates": {
+    "defaultCategories": [
+      "ChatGPT – Universal",
+      "Agenten-Prompting",
+      "Linux / Bash",
+      "Entwickler / Code",
+      "Electron / Desktop-Apps",
+      "KI-Bild-Generierung",
+      "Analyse / Struktur",
+      "Automatisierung / Workflows",
+      "Persönlich / Eigene"
+    ]
+  }
+}

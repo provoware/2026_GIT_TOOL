@@ -1,3 +1,6 @@
+import { spawnSync } from "node:child_process";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { createLogger } from "../src/utils/logger.js";
 import { loadConfig } from "../src/utils/config.js";
 import {
@@ -5,6 +8,106 @@ import {
   loadQualityConfig,
   loadQualityManifest
 } from "../src/utils/quality.js";
+import { ensureBoolean, ensureNonEmptyString, ensurePlainObject } from "../src/utils/validation.js";
+import { loadManifest } from "../src/utils/manifestLoader.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const appRoot = path.resolve(__dirname, "..");
+
+const buildRunMessage = (step) => {
+  const normalizedStep = ensurePlainObject(step, "step");
+  const label = ensureNonEmptyString(normalizedStep.label, "label");
+  const description = ensureNonEmptyString(
+    normalizedStep.description,
+    "description"
+  );
+  return `${label}: ${description}`;
+};
+
+const runCommand = (command, label, logger) => {
+  const safeCommand = ensureNonEmptyString(command, "command");
+  const safeLabel = ensureNonEmptyString(label, "label");
+  const safeLogger = ensurePlainObject(logger, "logger");
+
+  safeLogger.info(`[Schritt] ${safeLabel} startet.`);
+  const result = spawnSync(safeCommand, { shell: true, stdio: "inherit" });
+  const exitCode = typeof result.status === "number" ? result.status : 1;
+  const ok = exitCode === 0;
+  const status = ok ? "ok" : "failed";
+
+  safeLogger.info(
+    `[Status] ${safeLabel} beendet: ${status.toUpperCase()} (Exit-Code ${exitCode}).`
+  );
+
+  return {
+    ok,
+    exitCode,
+    status
+  };
+};
+
+const runQualityPlan = ({ plan, logger }) => {
+  const normalizedPlan = ensurePlainObject(plan, "plan");
+  const safeLogger = ensurePlainObject(logger, "logger");
+  const steps = Array.isArray(normalizedPlan.steps) ? normalizedPlan.steps : [];
+  const stopOnFailure = ensureBoolean(normalizedPlan.stopOnFailure, "stopOnFailure");
+  const results = [];
+
+  let overallOk = true;
+
+  steps.forEach((step) => {
+    if (!overallOk && stopOnFailure) {
+      return;
+    }
+
+    const message = buildRunMessage(step);
+    safeLogger.info(`[Info] ${message}`);
+
+    const firstRun = runCommand(step.command, step.label, safeLogger);
+    if (firstRun.ok) {
+      results.push({
+        id: step.id,
+        label: step.label,
+        status: "ok",
+        message: "Prüfung erfolgreich abgeschlossen."
+      });
+      return;
+    }
+
+    if (step.shouldFix && step.fixCommand) {
+      safeLogger.warn(
+        `[Hinweis] Fehler erkannt. Ich starte Auto-Reparatur (Auto-Fix).`
+      );
+      const fixRun = runCommand(step.fixCommand, `${step.label} Auto-Fix`, safeLogger);
+      if (fixRun.ok) {
+        safeLogger.info(
+          `[Info] Auto-Fix abgeschlossen. Ich prüfe erneut (Re-Check).`
+        );
+        const retryRun = runCommand(step.command, step.label, safeLogger);
+        if (retryRun.ok) {
+          results.push({
+            id: step.id,
+            label: step.label,
+            status: "ok",
+            message: "Auto-Fix erfolgreich, Prüfung besteht."
+          });
+          return;
+        }
+      }
+    }
+
+    results.push({
+      id: step.id,
+      label: step.label,
+      status: "failed",
+      message: "Prüfung fehlgeschlagen. Bitte Ausgabe prüfen."
+    });
+    overallOk = false;
+  });
+
+  return buildQualityRunResult({ ok: overallOk, steps: results });
+};
 import {
   createShellCommandRunner,
   ensureDependencies,
@@ -17,8 +120,14 @@ const run = () => {
     "[Info] Wir prüfen Linting (Regelcheck), Formatierung, Tests und A11y (Barrierefreiheit)."
   );
 
-  const appConfig = loadConfig();
+  const manifest = loadManifest({ appRoot });
+  const appConfig = loadConfig({ manifest, configPath: manifest.paths.userConfig });
   const logger = createLogger(appConfig);
+  const qualityManifest = loadQualityManifest({
+    manifestPath: manifest.paths.qualityManifest
+  });
+  const config = loadQualityConfig({ configPath: manifest.paths.qualityConfig });
+  const plan = buildQualityPlan({ manifest: qualityManifest, config });
   const manifest = loadQualityManifest();
   const config = loadQualityConfig();
   const plan = buildQualityPlan({ manifest, config });
