@@ -1,6 +1,7 @@
 const themeButtons = document.querySelectorAll(".theme-button");
 const clockElement = document.querySelector(".clock");
 const statusElement = document.querySelector(".status-message");
+const startupStatusList = document.querySelector("#startup-status-list");
 const templateList = document.querySelector("#template-list");
 const favoritesList = document.querySelector("#favorites-list");
 const categoryList = document.querySelector("#category-list");
@@ -50,6 +51,64 @@ const setStatus = (message) => {
     return true;
   }
   return false;
+};
+
+const STARTUP_LEVEL_LABELS = {
+  info: "Info",
+  success: "OK",
+  warning: "Warnung",
+  error: "Fehler"
+};
+
+const normalizeStartupStatus = (payload) => {
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+  const rawMessage = payload.message;
+  if (!isNonEmptyString(rawMessage)) {
+    return null;
+  }
+  const rawLevel = isNonEmptyString(payload.level) ? payload.level.trim() : "info";
+  const allowedLevels = Object.keys(STARTUP_LEVEL_LABELS);
+  const level = allowedLevels.includes(rawLevel) ? rawLevel : "info";
+  const suggestion = isNonEmptyString(payload.suggestion) ? payload.suggestion.trim() : "";
+
+  return {
+    level,
+    message: rawMessage.trim(),
+    suggestion
+  };
+};
+
+const appendStartupStatus = (payload) => {
+  if (!startupStatusList) {
+    return false;
+  }
+  const normalized = normalizeStartupStatus(payload);
+  if (!normalized) {
+    return false;
+  }
+
+  const item = document.createElement("li");
+  item.className = "startup-status-item";
+  item.dataset.level = normalized.level;
+
+  const label = document.createElement("span");
+  label.className = "startup-status-label";
+  const labelPrefix = STARTUP_LEVEL_LABELS[normalized.level] ?? "Info";
+  label.textContent = `${labelPrefix}: ${normalized.message}`;
+  item.appendChild(label);
+
+  if (normalized.suggestion) {
+    const suggestion = document.createElement("span");
+    suggestion.className = "startup-status-suggestion";
+    suggestion.textContent = `Vorschlag (Tipp): ${normalized.suggestion}`;
+    item.appendChild(suggestion);
+  }
+
+  startupStatusList.appendChild(item);
+  setStatus(normalized.message);
+  return true;
 };
 
 const ensureList = (value) => (Array.isArray(value) ? value : []);
@@ -443,6 +502,7 @@ const handleCopy = async () => {
     setStatus("Inhalt kopiert. Du kannst ihn jetzt einfügen.");
     updateTemplateUsage(current.id);
   } catch (error) {
+    void error;
     setStatus("Kopieren fehlgeschlagen. Bitte erneut versuchen.");
   }
 };
@@ -491,6 +551,7 @@ const handleExportTemplate = async (format) => {
     }
     setStatus(`Export erstellt: ${filePath}`);
   } catch (error) {
+    void error;
     setStatus("Export fehlgeschlagen. Bitte Dateinamen prüfen.");
   }
 };
@@ -515,6 +576,7 @@ const handleExportCategory = async () => {
     }
     setStatus(`Kategorie exportiert: ${filePath}`);
   } catch (error) {
+    void error;
     setStatus("Kategorie-Export fehlgeschlagen. Bitte prüfen.");
   }
 };
@@ -532,6 +594,7 @@ const handleExportArchive = async () => {
     }
     setStatus(`Archiv exportiert: ${filePath}`);
   } catch (error) {
+    void error;
     setStatus("Archiv-Export fehlgeschlagen. Bitte erneut versuchen.");
   }
 };
@@ -560,6 +623,7 @@ const handleImport = async () => {
     renderAll();
     setStatus("Import abgeschlossen.");
   } catch (error) {
+    void error;
     setStatus("Import fehlgeschlagen. Bitte JSON prüfen.");
   }
 };
@@ -713,3 +777,9 @@ updateClock();
 setInterval(updateClock, 1000);
 
 init();
+
+if (window.startupApi?.onStatus) {
+  window.startupApi.onStatus((payload) => {
+    appendStartupStatus(payload);
+  });
+}
