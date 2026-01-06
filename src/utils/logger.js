@@ -1,24 +1,46 @@
-import { ensureBoolean } from "./validation.js";
+import {
+  ensureBoolean,
+  ensureInList,
+  ensureNonEmptyString
+} from "./validation.js";
 
 export const createLogger = ({ debugEnabled, loggingEnabled }) => {
   ensureBoolean(debugEnabled, "debugEnabled");
   ensureBoolean(loggingEnabled, "loggingEnabled");
 
+  const allowedLevels = ["INFO", "WARN", "ERROR", "DEBUG"];
+
+  const buildEntry = (level, message, delivered) => {
+    const normalizedLevel = ensureInList(level, allowedLevels, "level");
+    const normalizedMessage = ensureNonEmptyString(message, "message");
+    const timestamp = ensureNonEmptyString(new Date().toISOString(), "timestamp");
+    const deliveredFlag = ensureBoolean(delivered, "delivered");
+
+    return {
+      level: normalizedLevel,
+      message: normalizedMessage,
+      timestamp,
+      delivered: deliveredFlag
+    };
+  };
+
   const log = (level, message) => {
+    const entry = buildEntry(level, message, loggingEnabled);
+
     if (!loggingEnabled) {
-      return;
+      return entry;
     }
 
-    const timestamp = new Date().toISOString();
-    console.log(`[${timestamp}] [${level}] ${message}`);
+    console.log(`[${entry.timestamp}] [${entry.level}] ${entry.message}`);
+    return entry;
   };
 
   const debug = (message) => {
     if (!debugEnabled) {
-      return;
+      return buildEntry("DEBUG", message, false);
     }
 
-    log("DEBUG", message);
+    return log("DEBUG", message);
   };
 
   return {

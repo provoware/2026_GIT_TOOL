@@ -17,17 +17,20 @@ const withConsoleSpy = async (fn) => {
 test("createLogger respects loggingEnabled", async () => {
   await withConsoleSpy((calls) => {
     const logger = createLogger({ debugEnabled: false, loggingEnabled: false });
-    logger.info("test");
-    logger.error("fail");
+    const infoEntry = logger.info("test");
+    const errorEntry = logger.error("fail");
     assert.equal(calls.length, 0);
+    assert.equal(infoEntry.delivered, false);
+    assert.equal(errorEntry.delivered, false);
   });
 });
 
 test("createLogger emits debug only when enabled", async () => {
   await withConsoleSpy((calls) => {
     const logger = createLogger({ debugEnabled: true, loggingEnabled: true });
-    logger.debug("debug message");
+    const entry = logger.debug("debug message");
     assert.equal(calls.length, 1);
     assert.match(calls[0][0], /\[DEBUG\]/);
+    assert.equal(entry.level, "DEBUG");
   });
 });

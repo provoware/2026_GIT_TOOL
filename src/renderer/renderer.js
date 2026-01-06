@@ -17,8 +17,12 @@ const updateClock = () => {
   });
 
   if (clockElement) {
-    clockElement.textContent = `Uhrzeit: ${timeString}`;
+    const label = `Uhrzeit: ${timeString}`;
+    clockElement.textContent = label;
+    return clockElement.textContent === label;
   }
+
+  return false;
 };
 
 const applyTheme = (themeClass, allowedThemes) => {
@@ -26,12 +30,16 @@ const applyTheme = (themeClass, allowedThemes) => {
     return false;
   }
 
-  if (Array.isArray(allowedThemes) && !allowedThemes.includes(themeClass)) {
+  if (!Array.isArray(allowedThemes) || allowedThemes.length === 0) {
+    return false;
+  }
+
+  if (!allowedThemes.includes(themeClass)) {
     return false;
   }
 
   document.body.className = themeClass;
-  return true;
+  return document.body.className === themeClass;
 };
 
 if (themeButtons.length > 0) {

@@ -2,11 +2,11 @@
   "appName": "2026 Git Tool",
   "debugEnabled": true,
   "loggingEnabled": true,
-  "theme": "high-contrast-dark",
+  "theme": "theme-high-contrast-dark",
   "availableThemes": [
-    "high-contrast-dark",
-    "high-contrast-light",
-    "high-contrast-ocean",
-    "high-contrast-sand"
+    "theme-high-contrast-dark",
+    "theme-high-contrast-light",
+    "theme-high-contrast-ocean",
+    "theme-high-contrast-sand"
   ]
 }
