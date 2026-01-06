@@ -114,7 +114,9 @@ const buildDefaultConfig = () => ({
     "theme-high-contrast-dark",
     "theme-high-contrast-light",
     "theme-high-contrast-ocean",
-    "theme-high-contrast-sand"
+    "theme-high-contrast-sand",
+    "theme-high-contrast-forest",
+    "theme-high-contrast-violet"
   ]
 });
 

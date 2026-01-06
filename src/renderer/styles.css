@@ -1,18 +1,29 @@
 :root {
   color-scheme: light dark;
   font-family: "Segoe UI", system-ui, sans-serif;
+  --app-zoom: 100%;
   --color-bg: #0b0d11;
   --color-text: #f2f6ff;
+  --color-heading: #ffffff;
   --color-border: #f2f6ff;
   --color-panel: rgba(255, 255, 255, 0.05);
+  --color-surface: rgba(255, 255, 255, 0.08);
+  --color-surface-strong: rgba(255, 255, 255, 0.16);
+  --color-input-bg: rgba(255, 255, 255, 0.06);
   --color-primary: #1e40af;
   --color-on-primary: #ffffff;
   --color-focus: #ffcc00;
   --color-muted: rgba(255, 255, 255, 0.65);
+  --color-link: #93c5fd;
+  --color-link-hover: #bfdbfe;
   --color-danger: #dc2626;
   --color-success: #22c55e;
   --color-warning: #facc15;
   --color-info: #38bdf8;
+}
+
+html {
+  font-size: var(--app-zoom);
 }
 
 body {
@@ -20,18 +31,25 @@ body {
   padding: 0;
   background: var(--color-bg);
   color: var(--color-text);
+  line-height: 1.5;
 }
 
 body.theme-high-contrast-dark {
   color-scheme: dark;
   --color-bg: #0b0d11;
   --color-text: #f2f6ff;
+  --color-heading: #ffffff;
   --color-border: #f2f6ff;
   --color-panel: rgba(255, 255, 255, 0.08);
+  --color-surface: rgba(255, 255, 255, 0.06);
+  --color-surface-strong: rgba(255, 255, 255, 0.16);
+  --color-input-bg: rgba(255, 255, 255, 0.08);
   --color-primary: #1e40af;
   --color-on-primary: #ffffff;
   --color-focus: #ffcc00;
   --color-muted: rgba(255, 255, 255, 0.65);
+  --color-link: #93c5fd;
+  --color-link-hover: #bfdbfe;
   --color-danger: #f87171;
   --color-success: #4ade80;
   --color-warning: #fde047;
@@ -42,12 +60,18 @@ body.theme-high-contrast-light {
   color-scheme: light;
   --color-bg: #fdfdfd;
   --color-text: #111827;
+  --color-heading: #0f172a;
   --color-border: #111827;
   --color-panel: rgba(0, 0, 0, 0.05);
+  --color-surface: rgba(15, 23, 42, 0.04);
+  --color-surface-strong: rgba(15, 23, 42, 0.08);
+  --color-input-bg: rgba(15, 23, 42, 0.06);
   --color-primary: #1d4ed8;
   --color-on-primary: #ffffff;
   --color-focus: #7c2d12;
   --color-muted: rgba(17, 24, 39, 0.7);
+  --color-link: #1d4ed8;
+  --color-link-hover: #1e40af;
   --color-danger: #b91c1c;
   --color-success: #166534;
   --color-warning: #b45309;
@@ -58,12 +82,18 @@ body.theme-high-contrast-ocean {
   color-scheme: dark;
   --color-bg: #031927;
   --color-text: #e6f9ff;
+  --color-heading: #ffffff;
   --color-border: #e6f9ff;
   --color-panel: rgba(230, 249, 255, 0.1);
+  --color-surface: rgba(230, 249, 255, 0.08);
+  --color-surface-strong: rgba(230, 249, 255, 0.18);
+  --color-input-bg: rgba(230, 249, 255, 0.12);
   --color-primary: #0b7285;
   --color-on-primary: #ffffff;
   --color-focus: #ffe066;
   --color-muted: rgba(230, 249, 255, 0.7);
+  --color-link: #a5f3fc;
+  --color-link-hover: #cffafe;
   --color-danger: #ff8787;
   --color-success: #2dd4bf;
   --color-warning: #ffd43b;
@@ -74,16 +104,88 @@ body.theme-high-contrast-sand {
   color-scheme: light;
   --color-bg: #fff4e6;
   --color-text: #2f1b0c;
+  --color-heading: #2a1406;
   --color-border: #2f1b0c;
   --color-panel: rgba(47, 27, 12, 0.08);
+  --color-surface: rgba(47, 27, 12, 0.06);
+  --color-surface-strong: rgba(47, 27, 12, 0.12);
+  --color-input-bg: rgba(47, 27, 12, 0.08);
   --color-primary: #8a4b1c;
   --color-on-primary: #fffaf2;
   --color-focus: #1d4ed8;
   --color-muted: rgba(47, 27, 12, 0.7);
+  --color-link: #7c2d12;
+  --color-link-hover: #9a3412;
   --color-danger: #b91c1c;
   --color-success: #166534;
   --color-warning: #b45309;
   --color-info: #1d4ed8;
+}
+
+body.theme-high-contrast-forest {
+  color-scheme: dark;
+  --color-bg: #071a12;
+  --color-text: #f0fff7;
+  --color-heading: #ffffff;
+  --color-border: #f0fff7;
+  --color-panel: rgba(240, 255, 247, 0.1);
+  --color-surface: rgba(240, 255, 247, 0.08);
+  --color-surface-strong: rgba(240, 255, 247, 0.18);
+  --color-input-bg: rgba(240, 255, 247, 0.12);
+  --color-primary: #065f46;
+  --color-on-primary: #ffffff;
+  --color-focus: #facc15;
+  --color-muted: rgba(240, 255, 247, 0.72);
+  --color-link: #6ee7b7;
+  --color-link-hover: #a7f3d0;
+  --color-danger: #fca5a5;
+  --color-success: #4ade80;
+  --color-warning: #fde047;
+  --color-info: #5eead4;
+}
+
+body.theme-high-contrast-violet {
+  color-scheme: dark;
+  --color-bg: #1b0b2e;
+  --color-text: #f8f1ff;
+  --color-heading: #ffffff;
+  --color-border: #f8f1ff;
+  --color-panel: rgba(248, 241, 255, 0.12);
+  --color-surface: rgba(248, 241, 255, 0.1);
+  --color-surface-strong: rgba(248, 241, 255, 0.2);
+  --color-input-bg: rgba(248, 241, 255, 0.14);
+  --color-primary: #6d28d9;
+  --color-on-primary: #ffffff;
+  --color-focus: #fde047;
+  --color-muted: rgba(248, 241, 255, 0.72);
+  --color-link: #c4b5fd;
+  --color-link-hover: #ddd6fe;
+  --color-danger: #fca5a5;
+  --color-success: #4ade80;
+  --color-warning: #fde047;
+  --color-info: #93c5fd;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--color-heading);
+}
+
+a {
+  color: var(--color-link);
+}
+
+a:hover,
+a:focus-visible {
+  color: var(--color-link-hover);
+}
+
+code {
+  background: var(--color-surface-strong);
+  padding: 0.1rem 0.35rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
 }
 
 .app-header {
@@ -120,6 +222,13 @@ textarea {
   padding: 0.6rem 1rem;
   font-weight: 600;
   cursor: pointer;
+  border-radius: 8px;
+}
+
+.theme-button[aria-pressed="true"] {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border-color: var(--color-primary);
 }
 
 .theme-button:focus-visible,
@@ -175,7 +284,7 @@ textarea:focus-visible {
 .inline-field select {
   padding: 0.6rem;
   border: 2px solid var(--color-border);
-  background: transparent;
+  background: var(--color-input-bg);
   color: inherit;
   border-radius: 8px;
 }
@@ -208,7 +317,7 @@ textarea:focus-visible {
   border: 2px solid var(--color-border);
   border-radius: 10px;
   padding: 1rem;
-  background: transparent;
+  background: var(--color-surface);
   display: grid;
   gap: 0.4rem;
   cursor: pointer;
@@ -306,7 +415,7 @@ textarea:focus-visible {
 
 button {
   border: 2px solid var(--color-border);
-  background: transparent;
+  background: var(--color-surface);
   color: inherit;
   padding: 0.6rem 1rem;
   font-weight: 600;

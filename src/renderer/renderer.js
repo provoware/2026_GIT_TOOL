@@ -44,6 +44,15 @@ const DEFAULT_CATEGORIES = [
 ];
 
 const isNonEmptyString = (value) => typeof value === "string" && value.trim().length > 0;
+const isFiniteNumber = (value) => Number.isFinite(value);
+
+const ZOOM_SETTINGS = {
+  min: 80,
+  max: 160,
+  step: 10,
+  default: 100,
+  storageKey: "appZoomPercent"
+};
 
 const setStatus = (message) => {
   if (statusElement && isNonEmptyString(message)) {
@@ -51,6 +60,48 @@ const setStatus = (message) => {
     return true;
   }
   return false;
+};
+
+const clampZoom = (value) => {
+  const fallback = ZOOM_SETTINGS.default;
+  if (!isFiniteNumber(value)) {
+    return fallback;
+  }
+  const bounded = Math.min(ZOOM_SETTINGS.max, Math.max(ZOOM_SETTINGS.min, value));
+  return Math.round(bounded);
+};
+
+const readStoredZoom = () => {
+  try {
+    const raw = window.localStorage?.getItem(ZOOM_SETTINGS.storageKey);
+    if (!isNonEmptyString(raw)) {
+      return ZOOM_SETTINGS.default;
+    }
+    const parsed = Number(raw);
+    return clampZoom(parsed);
+  } catch (error) {
+    void error;
+    return ZOOM_SETTINGS.default;
+  }
+};
+
+const persistZoom = (value) => {
+  try {
+    if (!window.localStorage) {
+      return false;
+    }
+    window.localStorage.setItem(ZOOM_SETTINGS.storageKey, String(value));
+    return true;
+  } catch (error) {
+    void error;
+    return false;
+  }
+};
+
+const applyZoom = (value) => {
+  const safeValue = clampZoom(value);
+  document.documentElement.style.setProperty("--app-zoom", `${safeValue}%`);
+  return safeValue;
 };
 
 const STARTUP_LEVEL_LABELS = {
@@ -196,6 +247,33 @@ const state = {
   search: "",
   sort: "usage",
   lastDeleted: null
+};
+
+let currentZoom = applyZoom(readStoredZoom());
+
+const updateZoom = (delta) => {
+  const next = clampZoom(currentZoom + delta);
+  if (next === currentZoom) {
+    return currentZoom;
+  }
+  currentZoom = applyZoom(next);
+  persistZoom(currentZoom);
+  setStatus(`Zoom aktualisiert: ${currentZoom}%`);
+  return currentZoom;
+};
+
+const handleZoomWheel = (event) => {
+  if (!event.ctrlKey) {
+    return false;
+  }
+  event.preventDefault();
+  const direction = Math.sign(event.deltaY);
+  if (!direction) {
+    return false;
+  }
+  const delta = direction > 0 ? -ZOOM_SETTINGS.step : ZOOM_SETTINGS.step;
+  updateZoom(delta);
+  return true;
 };
 
 const updateState = (next) => {
@@ -775,6 +853,8 @@ const init = async () => {
 
 updateClock();
 setInterval(updateClock, 1000);
+
+window.addEventListener("wheel", handleZoomWheel, { passive: false });
 
 init();
 
