@@ -1,0 +1,28 @@
+{
+  "manifestVersion": "1.0",
+  "project": "2026-git-tool",
+  "standards": {
+    "language": "JavaScript (ESM)",
+    "formatting": {
+      "tool": "Prettier",
+      "scriptCheck": "npm run format",
+      "scriptFix": "npm run format:write"
+    },
+    "linting": {
+      "tool": "ESLint",
+      "scriptCheck": "npm run lint",
+      "scriptFix": "npm run lint:fix"
+    },
+    "testing": {
+      "tool": "node:test",
+      "script": "npm test"
+    }
+  },
+  "directories": {
+    "configSystem": "config/system",
+    "configUser": "config/user",
+    "docs": "docs",
+    "scripts": "scripts",
+    "tests": "tests"
+  }
+}

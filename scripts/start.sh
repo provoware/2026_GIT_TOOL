@@ -19,14 +19,10 @@ fi
 printf "[Info] Abhängigkeiten (Dependencies) werden installiert...\n"
 npm install
 
-printf "[Info] Code-Qualität (Linting) wird geprüft...\n"
-npm run lint
+printf "[Info] Automatische Qualitätsprüfung (Quality Check) startet...\n"
+npm run quality
 
-printf "[Info] Code-Formatierung (Formatting) wird geprüft...\n"
-npm run format
-
-printf "[Info] Tests laufen...\n"
-npm test
+printf "[Info] Hinweis: Mit 'npm run quality:fix' können Formatierung und Linting automatisch repariert werden.\n"
 
 printf "[Erfolg] Alle Prüfungen sind erfolgreich.\n"
 printf "[Start] Starte Electron-Anwendung...\n"

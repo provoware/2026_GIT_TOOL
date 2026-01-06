@@ -1,6 +1,13 @@
 const themeButtons = document.querySelectorAll(".theme-button");
 const clockElement = document.querySelector(".clock");
 
+const isNonEmptyString = (value) => typeof value === "string" && value.trim().length > 0;
+
+const getAllowedThemes = (buttons) =>
+  Array.from(buttons)
+    .map((button) => button.dataset.theme)
+    .filter((theme) => isNonEmptyString(theme));
+
 const updateClock = () => {
   const now = new Date();
   const timeString = now.toLocaleTimeString("de-DE", {
@@ -14,19 +21,38 @@ const updateClock = () => {
   }
 };
 
-const applyTheme = (themeClass) => {
-  if (typeof themeClass !== "string" || themeClass.length === 0) {
-    return;
+const applyTheme = (themeClass, allowedThemes) => {
+  if (!isNonEmptyString(themeClass)) {
+    return false;
+  }
+
+  if (Array.isArray(allowedThemes) && !allowedThemes.includes(themeClass)) {
+    return false;
   }
 
   document.body.className = themeClass;
+  return true;
 };
 
 if (themeButtons.length > 0) {
+  const allowedThemes = getAllowedThemes(themeButtons);
+  const initialTheme = document.body.className;
+
+  themeButtons.forEach((button) => {
+    const isActive = button.dataset.theme === initialTheme;
+    button.setAttribute("aria-pressed", isActive ? "true" : "false");
+  });
+
   themeButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const themeClass = button.dataset.theme;
-      applyTheme(themeClass);
+      const applied = applyTheme(themeClass, allowedThemes);
+
+      if (applied) {
+        themeButtons.forEach((entry) => {
+          entry.setAttribute("aria-pressed", entry === button ? "true" : "false");
+        });
+      }
     });
   });
 }

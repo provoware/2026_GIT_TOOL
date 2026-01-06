@@ -15,6 +15,16 @@ body.theme-high-contrast-light {
   color: #111827;
 }
 
+body.theme-high-contrast-ocean {
+  background: #031927;
+  color: #e6f9ff;
+}
+
+body.theme-high-contrast-sand {
+  background: #fff4e6;
+  color: #2f1b0c;
+}
+
 .app-header {
   display: flex;
   flex-wrap: wrap;
@@ -68,6 +78,10 @@ body.theme-high-contrast-light .panel {
   background: rgba(0, 0, 0, 0.04);
 }
 
+body.theme-high-contrast-sand .panel {
+  background: rgba(47, 27, 12, 0.08);
+}
+
 .primary {
   background: #1e40af;
   color: #ffffff;
@@ -76,6 +90,16 @@ body.theme-high-contrast-light .panel {
   font-weight: 700;
   cursor: pointer;
   margin-bottom: 0.5rem;
+}
+
+body.theme-high-contrast-ocean .primary {
+  background: #0b7285;
+  border-color: #0b7285;
+}
+
+body.theme-high-contrast-sand .primary {
+  background: #8a4b1c;
+  border-color: #8a4b1c;
 }
 
 .clock {
