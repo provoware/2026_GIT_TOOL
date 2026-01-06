@@ -7,36 +7,37 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="theme-high-contrast-dark">
-    <header class="app-header">
-      <div>
-        <h1>2026 Git Tool</h1>
-        <p class="subtitle">
-          Templates-Modul v2: Favoriten, Kategorien, Statistik und Smart-Sortierung in
-          barrierefreiem Layout.
-        </p>
-      </div>
-      <div class="theme-switcher" role="group" aria-label="Theme Auswahl">
-        <button class="theme-button" data-theme="theme-high-contrast-dark" aria-pressed="true">
-          Dunkel (High Contrast)
-        </button>
-        <button class="theme-button" data-theme="theme-high-contrast-light" aria-pressed="false">
-          Hell (High Contrast)
-        </button>
-        <button class="theme-button" data-theme="theme-high-contrast-ocean" aria-pressed="false">
-          Ozean (High Contrast)
-        </button>
-        <button class="theme-button" data-theme="theme-high-contrast-sand" aria-pressed="false">
-          Sand (High Contrast)
-        </button>
-        <button class="theme-button" data-theme="theme-high-contrast-forest" aria-pressed="false">
-          Wald (High Contrast)
-        </button>
-        <button class="theme-button" data-theme="theme-high-contrast-violet" aria-pressed="false">
-          Violett (High Contrast)
-        </button>
-      </div>
-    </header>
-    <main class="templates-layout" role="main">
+    <div class="app-shell">
+      <header class="app-header">
+        <div class="app-header__brand">
+          <h1>2026 Git Tool</h1>
+          <p class="subtitle">
+            Templates-Modul v2: Favoriten, Kategorien, Statistik und Smart-Sortierung in
+            barrierefreiem Layout.
+          </p>
+        </div>
+        <div class="theme-switcher" role="group" aria-label="Theme Auswahl">
+          <button class="theme-button" data-theme="theme-high-contrast-dark" aria-pressed="true">
+            Dunkel (High Contrast)
+          </button>
+          <button class="theme-button" data-theme="theme-high-contrast-light" aria-pressed="false">
+            Hell (High Contrast)
+          </button>
+          <button class="theme-button" data-theme="theme-high-contrast-ocean" aria-pressed="false">
+            Ozean (High Contrast)
+          </button>
+          <button class="theme-button" data-theme="theme-high-contrast-sand" aria-pressed="false">
+            Sand (High Contrast)
+          </button>
+          <button class="theme-button" data-theme="theme-high-contrast-forest" aria-pressed="false">
+            Wald (High Contrast)
+          </button>
+          <button class="theme-button" data-theme="theme-high-contrast-violet" aria-pressed="false">
+            Violett (High Contrast)
+          </button>
+        </div>
+      </header>
+      <main class="templates-layout" role="main">
       <aside class="panel panel-sidebar" aria-labelledby="panel-navigation">
         <h2 id="panel-navigation">Navigation</h2>
         <p class="status-message" role="status" aria-live="polite"></p>
@@ -87,8 +88,31 @@
 
       <section class="panel panel-list" aria-labelledby="panel-templates">
         <div class="panel-heading">
-          <h2 id="panel-templates">Templates</h2>
+          <div>
+            <h2 id="panel-templates">Templates</h2>
+            <p class="panel-subtitle">
+              Schnellzugriff, Sortierung und Live-Status wie im Dashboard-Standard.
+            </p>
+          </div>
           <div class="clock" aria-live="polite" aria-label="Aktuelle Uhrzeit"></div>
+        </div>
+        <div class="stats-grid" aria-label="Statuskarten">
+          <div class="stat-card">
+            <span class="stat-label">Templates gesamt</span>
+            <strong class="stat-value" id="stat-total">0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Favoriten</span>
+            <strong class="stat-value" id="stat-favorites">0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Nutzung gesamt</span>
+            <strong class="stat-value" id="stat-usage">0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Top-Kategorie</span>
+            <strong class="stat-value" id="stat-top-category">–</strong>
+          </div>
         </div>
         <div class="inline-field">
           <label for="search-input">Suche</label>
@@ -163,6 +187,11 @@
             auswählen.
           </p>
           <p>
+            Steuerung (Orchestrierung): Das Hauptmodul gibt Design-Vorgaben als
+            CSS-Variablen (zentrale Farb- und Abstands-Werte) weiter. So sehen alle Module
+            gleich aus und bleiben wartbar.
+          </p>
+          <p>
             Zoom (Vergrößerung): Halte Strg und nutze das Mausrad, um die Schriftgröße zu
             ändern.
           </p>
@@ -174,6 +203,7 @@
         </div>
       </section>
     </main>
+  </div>
     <script src="renderer.js"></script>
   </body>
 </html>

@@ -6,6 +6,10 @@ const templateList = document.querySelector("#template-list");
 const favoritesList = document.querySelector("#favorites-list");
 const categoryList = document.querySelector("#category-list");
 const statsList = document.querySelector("#stats-list");
+const statTotal = document.querySelector("#stat-total");
+const statFavorites = document.querySelector("#stat-favorites");
+const statUsage = document.querySelector("#stat-usage");
+const statTopCategory = document.querySelector("#stat-top-category");
 const searchInput = document.querySelector("#search-input");
 const sortSelect = document.querySelector("#sort-select");
 const templateForm = document.querySelector("#template-form");
@@ -45,6 +49,7 @@ const DEFAULT_CATEGORIES = [
 
 const isNonEmptyString = (value) => typeof value === "string" && value.trim().length > 0;
 const isFiniteNumber = (value) => Number.isFinite(value);
+const isValidStatLabel = (value) => isNonEmptyString(value) || isFiniteNumber(value);
 
 const ZOOM_SETTINGS = {
   min: 80,
@@ -348,6 +353,24 @@ const renderStats = () => {
     item.textContent = entry;
     statsList.appendChild(item);
   });
+
+  const setStatValue = (element, value, fallback = "–") => {
+    if (!element) {
+      return false;
+    }
+    if (!isValidStatLabel(value)) {
+      element.textContent = fallback;
+      return false;
+    }
+    element.textContent = String(value);
+    return true;
+  };
+
+  setStatValue(statTotal, totals.templatesCount);
+  setStatValue(statFavorites, totals.favoritesCount);
+  setStatValue(statUsage, totals.usageTotal);
+  setStatValue(statTopCategory, topCategory?.[0] ?? "–");
+
   return true;
 };
 

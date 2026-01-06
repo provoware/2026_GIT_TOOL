@@ -1,0 +1,28 @@
+{
+  "manifestVersion": "1.0",
+  "name": "ui-layout-standard",
+  "description": "Standardisierte Layout- und Design-Vorgaben für das Renderer-Dashboard.",
+  "inheritance": {
+    "provider": "app-shell",
+    "tokens": [
+      "borderRadius",
+      "panelGap",
+      "panelBorder",
+      "panelShadow",
+      "accentBackground"
+    ],
+    "strategy": "CSS Custom Properties"
+  },
+  "layoutTokens": {
+    "borderRadius": 26,
+    "panelGap": 28,
+    "panelBorder": "1px solid rgba(242, 246, 255, 0.35)",
+    "panelShadow": "0 16px 30px rgba(5, 8, 14, 0.35)",
+    "accentBackground": "#f08a2b"
+  },
+  "accessibility": {
+    "contrast": "WCAG AA",
+    "focus": "visible outline with 3px width",
+    "themes": "high contrast variants"
+  }
+}
