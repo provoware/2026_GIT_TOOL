@@ -35,3 +35,4 @@ Vollautomatische perfekte Laien optimierte und fehlerfrei selbständig arbeitend
 [x] 2026-01-07 | Tests für Templates-Export/Import und IPC erweitert | Neue Tests für ZIP-Export, Import-Kollisionen und IPC-Handler mit Mock-IPC | prüfen: node --test läuft | fertig wenn: Tests grün und Handler validiert.
 
 [x] 2026-01-10 | Nutzerfeedback/Hilfe + Self-Repair Backups | Hilfe-Elemente vereinfacht, Self-Repair mit Backups ergänzt, Startup-Feedback erweitert | prüfen: UI-Texte verständlich, Backups erstellt, Starttest grün | fertig wenn: Feedback und Reparatur sichtbar sind.
+[x] 2026-01-11 | Zentraler Quality-Runner + A11y-Schritt | Quality-Runner modularisiert, A11y-Schritt + Auto-Installationscheck ergänzt, Tests für Runner-Mock hinzugefügt | prüfen: npm run quality:auto, node --test | fertig wenn: Lint/Format/Test/A11y laufen und Hinweise klar sind.

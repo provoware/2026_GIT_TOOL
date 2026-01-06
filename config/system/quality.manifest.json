@@ -8,6 +8,7 @@
       "description": "Prüft Regeln für sauberen, einheitlichen Code.",
       "command": "npm run lint",
       "fixCommand": "npm run lint:fix",
+      "help": "Lints prüfen Regeln. Auto-Fix repariert viele Punkte automatisch.",
       "required": true
     },
     {
@@ -16,6 +17,7 @@
       "description": "Prüft und formatiert Code mit Prettier.",
       "command": "npm run format",
       "fixCommand": "npm run format:write",
+      "help": "Formatierung richtet Code automatisch einheitlich aus.",
       "required": true
     },
     {
@@ -23,6 +25,15 @@
       "label": "Tests (Automatische Prüfungen)",
       "description": "Führt automatische Tests aus, um Fehler zu finden.",
       "command": "npm test",
+      "help": "Tests prüfen Funktionen automatisch und melden Fehler.",
+      "required": true
+    },
+    {
+      "id": "a11y",
+      "label": "A11y (Barrierefreiheit)",
+      "description": "Prüft Barrierefreiheit (A11y) mit automatischen Checks.",
+      "command": "npm run test:a11y",
+      "help": "A11y-Tests prüfen Bedienbarkeit, Kontrast und Tastatur-Fokus.",
       "required": true
     }
   ]
