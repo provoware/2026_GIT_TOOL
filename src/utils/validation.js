@@ -36,6 +36,16 @@ export const ensureArrayOfNonEmptyStrings = (values, label) => {
   );
 };
 
+export const ensureArrayOfStrings = (values, label) => {
+  if (!Array.isArray(values)) {
+    throw new Error(`${label} muss eine Liste sein.`);
+  }
+
+  return values.map((value, index) =>
+    ensureNonEmptyString(value, `${label}[${index}]`)
+  );
+};
+
 export const ensureInList = (value, list, label) => {
   if (!list.includes(value)) {
     throw new Error(`${label} ist ungültig.`);

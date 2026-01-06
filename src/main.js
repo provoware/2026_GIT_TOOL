@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createLogger } from "./utils/logger.js";
 import { loadConfig } from "./utils/config.js";
+import { loadModules } from "./utils/moduleLoader.js";
 import { initializeTemplatesStorage } from "./utils/templates.js";
 import { registerTemplatesIpcHandlers } from "./ipc/templatesIpc.js";
 import { createSafeHandle } from "./utils/ipcSafe.js";
@@ -74,6 +75,8 @@ const createWindow = ({ logger, loadRenderer = true, startupStatusBuffer = [] } 
   return mainWindow;
 };
 
+app.whenReady().then(async () => {
+  const config = loadConfig();
 app.whenReady().then(() => {
   const startupStatusBuffer = [];
   let mainWindow = null;
@@ -100,6 +103,19 @@ app.whenReady().then(() => {
   logger.info(`${config.appName} startet.`);
   logger.debug(`Aktives Theme: ${config.theme}`);
 
+  await loadModules({
+    logger,
+    context: {
+      app,
+      appName: config.appName,
+      config,
+      dataDir,
+      logger
+    }
+  });
+
+  initializeTemplatesStorage({ dataDir, logger });
+  createWindow(logger);
   mainWindow = createWindow({
     logger,
     loadRenderer: false,

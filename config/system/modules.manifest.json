@@ -1,0 +1,12 @@
+{
+  "manifestVersion": "1.0",
+  "modules": [
+    {
+      "id": "example-module",
+      "name": "Beispiel-Modul",
+      "version": "1.0.0",
+      "entry": "src/modules/exampleModule.js",
+      "dependencies": []
+    }
+  ]
+}
