@@ -7,3 +7,14 @@ Vollautomatische perfekte Laien optimierte und fehlerfrei selbständig arbeitend
 [x] 2026-01-06 | UI Dashboard dreispaltig implementieren mit Standardtoolfunktionen | Implementiere ein modernes dreispaltiges Dashboard mit allen notwendigen standard toolfunktionen und auch datum und uhrzeit, sowie andere hilfreiche informationen | prüfen: ist alles vorhanden und konsistent? | fertig wenn: alles fehlerfrei und code kommentiert ist.
 [x] 2026-01-06 | Grundstruktur Electron | Ordnerstruktur (src/config/tests/scripts) anlegen, Startroutine mit Feedback, Tests und Code-Qualität integrieren | prüfen: Struktur vorhanden, lint/test/format laufen, Startskript vorhanden | fertig wenn: alle Dateien angelegt und dokumentiert sind.
 [ ] 2026-01-06 | Erweiterte Start-Routine | Nutzerfeedback erweitern (Fortschritt, Fehlerdetails), automatische Theme-Auswahl aus Config übernehmen | prüfen: Startroutine zeigt klare Meldungen | fertig wenn: Startprozess stabil und benutzerfreundlich ist.
+[ ] 2026-01-06 | [MODULE] Songtextmodul v2 + Launcher Dashboard (Projektordner, Autosave, Generator, Export) | Vollständige Umsetzung gemäß Zielbild: Launcher/Dashboard, Core-Services, Songtextmodul v2, Exportcenter, Suche/Analytics, Fehlerheilung, Abnahmebedingungen | prüfen: Anforderungen und Nichtverhandelbares erfüllt, UI/Core getrennt, Projektordnerbindung aktiv | fertig wenn: Abnahmebedingungen vollständig erfüllt und dokumentiert.
+    - [ ] Launcher/Dashboard als Übermodulebene (Projektwahl, Modulstatus, Logs, Quickactions)
+    - [ ] ProjectContext + JSON Storage + Repair + Logging Services
+    - [ ] Songtextmodul UI (Editor + Metadaten + Bibliothek + Vorschau)
+    - [ ] songtexts.json + drafts.json Datenmodell inkl. CRUD & Favoriten
+    - [ ] Undo/Redo + Autosave (Drafts) + Snapshot-Versionen
+    - [ ] Generator-Core Integration (Genres/Moods/Styles/Profile/Replay) + history logging
+    - [ ] Templates + Struktur-Helper (Suno) + GSS Einfüge-Regel
+    - [ ] Exportcenter (TXT/JSON/ZIP-Backup) mit Linux-Dateinamenstandard
+    - [ ] Suche/Filter/Analytics + Favoriten-Auswertung
+    - [ ] Abnahme: manuelle Maus-Tests (3 Szenarien) + Fehlerfixes + Doku
