@@ -6,6 +6,9 @@ import AxeBuilder from "@axe-core/playwright";
 import { chromium } from "playwright";
 
 const themeClasses = [
+  "theme-dark",
+  "theme-light",
+  "theme-high-contrast",
   "theme-high-contrast-dark",
   "theme-high-contrast-light",
   "theme-high-contrast-ocean",
@@ -119,7 +122,9 @@ const getActiveOutlineState = async () =>
     const style = window.getComputedStyle(document.activeElement);
     return {
       outlineStyle: style.outlineStyle,
-      outlineWidth: style.outlineWidth
+      outlineWidth: style.outlineWidth,
+      boxShadow: style.boxShadow,
+      textDecorationLine: style.textDecorationLine
     };
   });
 
@@ -141,6 +146,23 @@ test("A11y-Scan (axe) für Renderer-Startseite", async () => {
     0,
     `A11y-Verstöße gefunden: ${results.violations.map((item) => item.id).join(", ")}`
   );
+});
+
+test("A11y-Scan (axe) für alle Theme-Varianten", async () => {
+  for (const theme of themeClasses) {
+    await page.evaluate((themeClass) => {
+      document.body.className = themeClass;
+    }, theme);
+
+    const results = await new AxeBuilder({ page }).analyze();
+    assert.equal(
+      results.violations.length,
+      0,
+      `Theme ${theme}: A11y-Verstöße gefunden: ${results.violations
+        .map((item) => item.id)
+        .join(", ")}`
+    );
+  }
 });
 
 test("Kontrastwerte (WCAG AA ≥ 4.5:1) für alle Themes", async () => {
@@ -200,10 +222,15 @@ test("Fokus ist sichtbar für alle fokussierbaren Elemente", async () => {
 
   for (let index = 0; index < focusables.length; index += 1) {
     await page.keyboard.press("Tab");
-    const { outlineStyle, outlineWidth } = await getActiveOutlineState();
+    const { outlineStyle, outlineWidth, boxShadow, textDecorationLine } =
+      await getActiveOutlineState();
     assert.ok(
       outlineStyle !== "none" && outlineWidth !== "0px",
       `Kein sichtbarer Fokus für: ${await getActiveElementDescription()}`
+    );
+    assert.ok(
+      boxShadow !== "none" || textDecorationLine !== "none",
+      `Kein zusätzlicher Fokusindikator für: ${await getActiveElementDescription()}`
     );
   }
 });
