@@ -73,3 +73,35 @@ test("quality run result validates output", () => {
   assert.equal(result.steps.length, 1);
   assert.equal(result.steps[0].status, "ok");
 });
+
+test("required quality steps are always included", () => {
+  const plan = buildQualityPlan({
+    manifest: {
+      steps: [
+        {
+          id: "lint",
+          label: "Linting (Stilprüfung)",
+          description: "Pflichtschritt.",
+          command: "npm run lint",
+          required: true
+        },
+        {
+          id: "optional",
+          label: "Optional",
+          description: "Optionaler Schritt.",
+          command: "echo optional",
+          required: false
+        }
+      ]
+    },
+    config: {
+      autoFix: false,
+      stopOnFailure: true,
+      stepsEnabled: ["optional"],
+      printSummary: true
+    }
+  });
+
+  const stepIds = plan.steps.map((step) => step.id);
+  assert.deepEqual(stepIds, ["lint", "optional"]);
+});

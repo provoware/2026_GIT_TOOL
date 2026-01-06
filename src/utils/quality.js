@@ -68,6 +68,10 @@ const normalizeQualityStep = (step, index) => {
     normalizedStep.fixCommand,
     `step[${index}].fixCommand`
   );
+  const help = ensureOptionalString(
+    normalizedStep.help,
+    `step[${index}].help`
+  );
   const required = ensureBoolean(
     normalizedStep.required ?? true,
     `step[${index}].required`
@@ -79,6 +83,7 @@ const normalizeQualityStep = (step, index) => {
     description,
     command,
     fixCommand,
+    help,
     required
   };
 };
@@ -93,6 +98,7 @@ export const buildDefaultQualityManifest = () => ({
       description: "Prüft Regeln für sauberen, einheitlichen Code.",
       command: "npm run lint",
       fixCommand: "npm run lint:fix",
+      help: "Lints prüfen Regeln. Auto-Fix repariert viele Punkte automatisch.",
       required: true
     },
     {
@@ -101,6 +107,7 @@ export const buildDefaultQualityManifest = () => ({
       description: "Prüft und formatiert Code mit Prettier.",
       command: "npm run format",
       fixCommand: "npm run format:write",
+      help: "Formatierung richtet Code automatisch einheitlich aus.",
       required: true
     },
     {
@@ -108,6 +115,15 @@ export const buildDefaultQualityManifest = () => ({
       label: "Tests (Automatische Prüfungen)",
       description: "Führt automatische Tests aus, um Fehler zu finden.",
       command: "npm test",
+      help: "Tests prüfen Funktionen automatisch und melden Fehler.",
+      required: true
+    },
+    {
+      id: "a11y",
+      label: "A11y (Barrierefreiheit)",
+      description: "Prüft Barrierefreiheit (A11y) mit automatischen Checks.",
+      command: "npm run test:a11y",
+      help: "A11y-Tests prüfen Bedienbarkeit, Kontrast und Tastatur-Fokus.",
       required: true
     }
   ]
@@ -116,7 +132,7 @@ export const buildDefaultQualityManifest = () => ({
 export const buildDefaultQualityConfig = () => ({
   autoFix: true,
   stopOnFailure: true,
-  stepsEnabled: ["lint", "format", "test"],
+  stepsEnabled: ["lint", "format", "test", "a11y"],
   printSummary: true
 });
 
@@ -196,7 +212,9 @@ export const buildQualityPlan = ({ manifest, config }) => {
   const printSummary = ensureBoolean(normalizedConfig.printSummary, "printSummary");
 
   const enabledSteps = stepsEnabled.length
-    ? steps.filter((step) => stepsEnabled.includes(step.id))
+    ? steps.filter(
+        (step) => step.required || stepsEnabled.includes(step.id)
+      )
     : steps;
 
   const plan = enabledSteps.map((step) => ({
