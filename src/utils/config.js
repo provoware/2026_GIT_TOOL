@@ -8,7 +8,7 @@ import {
   ensureNonEmptyString,
   ensurePlainObject,
   ensurePositiveInteger
-} from "./validation.js";
+} from "./validate.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,11 +29,19 @@ export const loadConfig = (configOptions = {}) => {
   const resolvedConfigPath = ensureNonEmptyString(configPath, "configPath");
 
   if (!fs.existsSync(resolvedConfigPath)) {
+    console.error("[config] Konfigurationsdatei fehlt.");
     throw new Error("Konfigurationsdatei fehlt.");
   }
 
   const raw = fs.readFileSync(resolvedConfigPath, "utf-8");
-  const parsed = JSON.parse(raw);
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (error) {
+    void error;
+    console.error("[config] Konfigurationsdatei enthält ungültiges JSON.");
+    throw new Error("Konfigurationsdatei enthält ungültiges JSON.");
+  }
 
   const allowedLogLevels = ["DEBUG", "INFO", "WARN", "ERROR"];
   const appName = ensureNonEmptyString(parsed.appName, "appName");
@@ -67,7 +75,7 @@ export const loadConfig = (configOptions = {}) => {
     "theme"
   );
 
-  return {
+  const result = {
     appName,
     debugEnabled,
     loggingEnabled,
@@ -79,4 +87,6 @@ export const loadConfig = (configOptions = {}) => {
     availableThemes,
     theme
   };
+
+  return ensurePlainObject(result, "config");
 };
