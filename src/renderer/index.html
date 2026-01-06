@@ -10,14 +10,13 @@
     <header class="app-header">
       <div>
         <h1>2026 Git Tool</h1>
-        <p class="subtitle">Barrierefreies Dashboard (Accessibility) mit hohem Kontrast.</p>
+        <p class="subtitle">
+          Templates-Modul v2: Favoriten, Kategorien, Statistik und Smart-Sortierung in
+          barrierefreiem Layout.
+        </p>
       </div>
       <div class="theme-switcher" role="group" aria-label="Theme Auswahl">
-        <button
-          class="theme-button"
-          data-theme="theme-high-contrast-dark"
-          aria-pressed="true"
-        >
+        <button class="theme-button" data-theme="theme-high-contrast-dark" aria-pressed="true">
           Dunkel (High Contrast)
         </button>
         <button class="theme-button" data-theme="theme-high-contrast-light" aria-pressed="false">
@@ -31,28 +30,116 @@
         </button>
       </div>
     </header>
-    <main class="dashboard" role="main">
-      <section class="panel" aria-labelledby="panel-status">
-        <h2 id="panel-status">Status</h2>
-        <ul>
-          <li>Debugging (Fehlersuche): <strong>aktiv</strong></li>
-          <li>Logging (Protokollierung): <strong>aktiv</strong></li>
-          <li>Letzter Check: <strong>bereit</strong> (Start möglich)</li>
-        </ul>
+    <main class="templates-layout" role="main">
+      <aside class="panel panel-sidebar" aria-labelledby="panel-navigation">
+        <h2 id="panel-navigation">Navigation</h2>
+        <p class="status-message" role="status" aria-live="polite"></p>
+
+        <section class="section-block" aria-labelledby="favorites-title">
+          <div class="section-header">
+            <h3 id="favorites-title">Favoriten (⭐)</h3>
+            <button class="ghost-button" id="filter-favorites">Nur Favoriten</button>
+          </div>
+          <ul class="simple-list" id="favorites-list" aria-label="Favoritenliste"></ul>
+        </section>
+
+        <section class="section-block" aria-labelledby="categories-title">
+          <div class="section-header">
+            <h3 id="categories-title">Kategorien</h3>
+            <button class="ghost-button" id="reset-category">Alle</button>
+          </div>
+          <div class="inline-field">
+            <label for="new-category">Neue Kategorie</label>
+            <input id="new-category" type="text" placeholder="Kategorie hinzufügen" />
+            <button id="add-category">Hinzufügen</button>
+          </div>
+          <ul class="simple-list" id="category-list" aria-label="Kategorienliste"></ul>
+        </section>
+
+        <section class="section-block" aria-labelledby="stats-title">
+          <h3 id="stats-title">Statistik-Übersicht</h3>
+          <ul class="simple-list" id="stats-list" aria-label="Statistiken"></ul>
+          <div class="action-stack">
+            <button id="export-archive" class="primary">Gesamtes Archiv exportieren</button>
+            <button id="import-templates">JSON importieren</button>
+          </div>
+        </section>
+      </aside>
+
+      <section class="panel panel-list" aria-labelledby="panel-templates">
+        <div class="panel-heading">
+          <h2 id="panel-templates">Templates</h2>
+          <div class="clock" aria-live="polite" aria-label="Aktuelle Uhrzeit"></div>
+        </div>
+        <div class="inline-field">
+          <label for="search-input">Suche</label>
+          <input id="search-input" type="search" placeholder="Titel, Tag oder Kategorie" />
+        </div>
+        <div class="inline-field">
+          <label for="sort-select">Sortierung</label>
+          <select id="sort-select">
+            <option value="usage">Häufig benutzt</option>
+            <option value="recent">Zuletzt benutzt</option>
+            <option value="alpha">Alphabetisch</option>
+          </select>
+        </div>
+        <ul class="template-cards" id="template-list" aria-label="Template-Liste"></ul>
       </section>
-      <section class="panel" aria-labelledby="panel-tools">
-        <h2 id="panel-tools">Tools</h2>
-        <button class="primary">Startroutine starten</button>
-        <button>Tests ausführen</button>
-        <button>Format prüfen</button>
-      </section>
-      <section class="panel" aria-labelledby="panel-help">
-        <h2 id="panel-help">Hilfe</h2>
-        <p>
-          Nutze die Startroutine, um Abhängigkeiten (Dependencies) automatisch zu
-          installieren, Prüfungen (Checks) zu starten und klare Rückmeldungen zu erhalten.
-        </p>
-        <div class="clock" aria-live="polite" aria-label="Aktuelle Uhrzeit"></div>
+
+      <section class="panel panel-editor" aria-labelledby="panel-editor">
+        <h2 id="panel-editor">Detail-Editor</h2>
+        <form id="template-form">
+          <div class="inline-field">
+            <label for="template-title">Titel (Pflicht)</label>
+            <input id="template-title" type="text" required />
+          </div>
+          <div class="inline-field">
+            <label for="template-category">Kategorie (Pflicht)</label>
+            <input id="template-category" type="text" required />
+          </div>
+          <div class="inline-field">
+            <label for="template-description">Beschreibung</label>
+            <textarea id="template-description" rows="3"></textarea>
+          </div>
+          <div class="inline-field">
+            <label for="template-content">Inhalt (Pflicht)</label>
+            <textarea id="template-content" rows="10" required></textarea>
+          </div>
+          <div class="inline-field">
+            <label for="template-tags">Tags (Komma-getrennt)</label>
+            <input id="template-tags" type="text" placeholder="z.B. bash, cleanup" />
+          </div>
+
+          <div class="action-stack">
+            <button id="save-template" class="primary" type="submit">Speichern</button>
+            <button id="new-template" type="button">Neues Template</button>
+            <button id="duplicate-template" type="button">Duplizieren</button>
+            <button id="toggle-favorite" type="button">⭐ Favorit umschalten</button>
+            <button id="copy-template" type="button">Kopieren</button>
+            <button id="mark-used" type="button">Als genutzt markieren</button>
+            <div class="inline-actions">
+              <button id="export-template-txt" type="button">Export TXT</button>
+              <button id="export-template-json" type="button">Export JSON</button>
+            </div>
+            <button id="export-category" type="button">Kategorie exportieren</button>
+            <button id="delete-template" type="button" class="danger">Löschen (Undo)</button>
+            <button id="undo-delete" type="button" class="ghost-button" hidden>
+              Löschen rückgängig
+            </button>
+          </div>
+        </form>
+
+        <div class="helper-box" aria-label="Laienhilfe">
+          <h3>Laienhilfe (einfache Sprache)</h3>
+          <p>
+            Tipp: Nutze zuerst „Kopieren“, dann füge den Prompt in ChatGPT ein. Favoriten
+            helfen dir, wichtige Vorlagen schnell zu finden.
+          </p>
+          <p>
+            Export (Ausgabe-Datei): Verwende TXT für schnelle Nutzung oder JSON für
+            Backups und Import.
+          </p>
+        </div>
       </section>
     </main>
     <script src="renderer.js"></script>

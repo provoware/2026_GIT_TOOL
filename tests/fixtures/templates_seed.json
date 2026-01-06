@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "version": "1.0",
+    "generated": "2026-01-06",
+    "description": "Test seed",
+    "defaults": {
+      "favorite": false,
+      "usageCount": 0,
+      "lastUsed": null,
+      "editable": true
+    }
+  },
+  "templates": [
+    {
+      "id": "tpl_test_seed",
+      "title": "Test Template",
+      "category": "Test",
+      "description": "Beschreibung",
+      "content": "Inhalt",
+      "favorite": false,
+      "usageCount": 0,
+      "lastUsed": null,
+      "editable": true
+    }
+  ]
+}

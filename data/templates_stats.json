@@ -1,0 +1,160 @@
+{
+  "meta": {
+    "version": "1.0",
+    "generated": "2026-01-06T03:19:33.694Z"
+  },
+  "totals": {
+    "templatesCount": 107,
+    "favoritesCount": 0,
+    "usageTotal": 0,
+    "usedAtLeastOnce": 0
+  },
+  "topTemplates": {
+    "topByUsage": [
+      {
+        "id": "tpl_ai_image_3d_render",
+        "title": "3D-Render (Studio-Look)",
+        "category": "KI-Bild-Generierung",
+        "usageCount": 0,
+        "lastUsed": null,
+        "favorite": false
+      },
+      {
+        "id": "tpl_chatgpt_analyse_hochschule",
+        "title": "Analysiere Text hochschulisch",
+        "category": "ChatGPT – Universal",
+        "usageCount": 0,
+        "lastUsed": null,
+        "favorite": false
+      },
+      {
+        "id": "tpl_agent_analyzer_luecken",
+        "title": "ANALYZER – Lücken & Risiken finden",
+        "category": "Agenten-Prompting",
+        "usageCount": 0,
+        "lastUsed": null,
+        "favorite": false
+      },
+      {
+        "id": "tpl_thinking_angst_vs_realitaet",
+        "title": "Angst vs. Realität",
+        "category": "Denken & Klarheit",
+        "usageCount": 0,
+        "lastUsed": null,
+        "favorite": false
+      },
+      {
+        "id": "tpl_analysis_argumente_pruefen",
+        "title": "Argumente logisch prüfen",
+        "category": "Analyse & Kritik",
+        "usageCount": 0,
+        "lastUsed": null,
+        "favorite": false
+      },
+      {
+        "id": "tpl_thinking_aufschieberitis_stop",
+        "title": "Aufschieberitis stoppen (1 Schritt)",
+        "category": "Denken & Klarheit",
+        "usageCount": 0,
+        "lastUsed": null,
+        "favorite": false
+      },
+      {
+        "id": "tpl_linux_backup_restore_einzeiler",
+        "title": "Backup + Restore (Einzeiler)",
+        "category": "Linux / Bash",
+        "usageCount": 0,
+        "lastUsed": null,
+        "favorite": false
+      },
+      {
+        "id": "tpl_linux_backup_plan",
+        "title": "Backup-Plan (einfach und robust)",
+        "category": "Linux & System",
+        "usageCount": 0,
+        "lastUsed": null,
+        "favorite": false
+      },
+      {
+        "id": "tpl_analysis_begriff_klaeren",
+        "title": "Begriff klären (Definition + Beispiele)",
+        "category": "Analyse & Kritik",
+        "usageCount": 0,
+        "lastUsed": null,
+        "favorite": false
+      },
+      {
+        "id": "tpl_analysis_bias_erkennen",
+        "title": "Bias erkennen (Schieflage finden)",
+        "category": "Analyse & Kritik",
+        "usageCount": 0,
+        "lastUsed": null,
+        "favorite": false
+      }
+    ],
+    "topFavorites": [],
+    "recentlyUsed": []
+  },
+  "categoryStats": {
+    "Denken & Klarheit": {
+      "count": 11,
+      "favorites": 0,
+      "usageTotal": 0
+    },
+    "Analyse & Kritik": {
+      "count": 11,
+      "favorites": 0,
+      "usageTotal": 0
+    },
+    "Agenten-Prompting": {
+      "count": 13,
+      "favorites": 0,
+      "usageTotal": 0
+    },
+    "Projekt & Planung": {
+      "count": 9,
+      "favorites": 0,
+      "usageTotal": 0
+    },
+    "Linux & System": {
+      "count": 13,
+      "favorites": 0,
+      "usageTotal": 0
+    },
+    "Entwicklung & Debugging": {
+      "count": 13,
+      "favorites": 0,
+      "usageTotal": 0
+    },
+    "KI-Bild-Generierung": {
+      "count": 14,
+      "favorites": 0,
+      "usageTotal": 0
+    },
+    "Kreativ – Song & Text": {
+      "count": 9,
+      "favorites": 0,
+      "usageTotal": 0
+    },
+    "Kreativ – Story & Hörspiel": {
+      "count": 4,
+      "favorites": 0,
+      "usageTotal": 0
+    },
+    "ChatGPT – Universal": {
+      "count": 3,
+      "favorites": 0,
+      "usageTotal": 0
+    },
+    "Linux / Bash": {
+      "count": 4,
+      "favorites": 0,
+      "usageTotal": 0
+    },
+    "Entwickler / Code": {
+      "count": 3,
+      "favorites": 0,
+      "usageTotal": 0
+    }
+  }
+}
