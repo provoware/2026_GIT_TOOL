@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "version": "1.0",
+    "generatedBy": "Templates-Modul",
+    "recomputePolicy": "onStartup+onChange"
+  },
+  "outputFile": "data/templates_stats.json",
+  "computedFields": {
+    "totals": {
+      "templatesCount": "len(templates)",
+      "favoritesCount": "count(where favorite==true)",
+      "usageTotal": "sum(usageCount)",
+      "usedAtLeastOnce": "count(where usageCount>0)"
+    },
+    "topTemplates": {
+      "topByUsage": {
+        "k": 10,
+        "sort": "usageCount desc, lastUsed desc, title asc",
+        "fields": ["id", "title", "category", "usageCount", "lastUsed", "favorite"]
+      },
+      "topFavorites": {
+        "k": 10,
+        "sort": "usageCount desc, lastUsed desc, title asc",
+        "filter": "favorite==true",
+        "fields": ["id", "title", "category", "usageCount", "lastUsed"]
+      },
+      "recentlyUsed": {
+        "k": 10,
+        "sort": "lastUsed desc",
+        "filter": "lastUsed!=null",
+        "fields": ["id", "title", "category", "lastUsed", "usageCount"]
+      }
+    },
+    "categoryStats": {
+      "byCategory": {
+        "groupBy": "category",
+        "fields": {
+          "count": "len(group)",
+          "favorites": "count(where favorite==true)",
+          "usageTotal": "sum(usageCount)",
+          "topInCategory": "top 3 by usageCount desc"
+        }
+      }
+    }
+  }
+}

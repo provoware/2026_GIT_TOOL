@@ -8,6 +8,8 @@
   --color-primary: #1e40af;
   --color-on-primary: #ffffff;
   --color-focus: #ffcc00;
+  --color-muted: rgba(255, 255, 255, 0.65);
+  --color-danger: #dc2626;
 }
 
 body {
@@ -26,6 +28,8 @@ body.theme-high-contrast-dark {
   --color-primary: #1e40af;
   --color-on-primary: #ffffff;
   --color-focus: #ffcc00;
+  --color-muted: rgba(255, 255, 255, 0.65);
+  --color-danger: #f87171;
 }
 
 body.theme-high-contrast-light {
@@ -37,6 +41,8 @@ body.theme-high-contrast-light {
   --color-primary: #1d4ed8;
   --color-on-primary: #ffffff;
   --color-focus: #7c2d12;
+  --color-muted: rgba(17, 24, 39, 0.7);
+  --color-danger: #b91c1c;
 }
 
 body.theme-high-contrast-ocean {
@@ -48,6 +54,8 @@ body.theme-high-contrast-ocean {
   --color-primary: #0b7285;
   --color-on-primary: #ffffff;
   --color-focus: #ffe066;
+  --color-muted: rgba(230, 249, 255, 0.7);
+  --color-danger: #ff8787;
 }
 
 body.theme-high-contrast-sand {
@@ -59,6 +67,8 @@ body.theme-high-contrast-sand {
   --color-primary: #8a4b1c;
   --color-on-primary: #fffaf2;
   --color-focus: #1d4ed8;
+  --color-muted: rgba(47, 27, 12, 0.7);
+  --color-danger: #b91c1c;
 }
 
 .app-header {
@@ -71,13 +81,21 @@ body.theme-high-contrast-sand {
 }
 
 .subtitle {
-  max-width: 32rem;
+  max-width: 40rem;
 }
 
 .theme-switcher {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
+}
+
+.theme-button,
+button,
+select,
+input,
+textarea {
+  font: inherit;
 }
 
 .theme-button {
@@ -91,14 +109,17 @@ body.theme-high-contrast-sand {
 
 .theme-button:focus-visible,
 .primary:focus-visible,
-button:focus-visible {
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
   outline: 3px solid var(--color-focus);
   outline-offset: 3px;
 }
 
-.dashboard {
+.templates-layout {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: minmax(260px, 1fr) minmax(340px, 1.5fr) minmax(340px, 1.5fr);
   gap: 1.5rem;
   padding: 2rem;
 }
@@ -110,6 +131,112 @@ button:focus-visible {
   background: var(--color-panel);
 }
 
+.panel-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.section-block {
+  margin-top: 1.5rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.inline-field {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.inline-field input,
+.inline-field textarea,
+.inline-field select {
+  padding: 0.6rem;
+  border: 2px solid var(--color-border);
+  background: transparent;
+  color: inherit;
+  border-radius: 8px;
+}
+
+.simple-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.simple-list li {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.template-cards {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  display: grid;
+  gap: 0.75rem;
+  max-height: 65vh;
+  overflow: auto;
+}
+
+.template-card {
+  border: 2px solid var(--color-border);
+  border-radius: 10px;
+  padding: 1rem;
+  background: transparent;
+  display: grid;
+  gap: 0.4rem;
+  cursor: pointer;
+}
+
+.template-card.is-active {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.35);
+}
+
+.template-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+  color: var(--color-muted);
+}
+
+.badge {
+  border: 1px solid var(--color-border);
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+.status-message {
+  min-height: 1.5rem;
+  color: var(--color-muted);
+}
+
+.action-stack {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.inline-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
 .primary {
   background: var(--color-primary);
   color: var(--color-on-primary);
@@ -117,21 +244,41 @@ button:focus-visible {
   padding: 0.6rem 1rem;
   font-weight: 700;
   cursor: pointer;
-  margin-bottom: 0.5rem;
-}
-
-.clock {
-  margin-top: 1rem;
-  font-weight: 700;
 }
 
 button {
-  display: block;
-  margin-bottom: 0.5rem;
   border: 2px solid var(--color-border);
   background: transparent;
   color: inherit;
   padding: 0.6rem 1rem;
   font-weight: 600;
   cursor: pointer;
+  border-radius: 8px;
+}
+
+button.danger {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.ghost-button {
+  border-style: dashed;
+}
+
+.clock {
+  font-weight: 700;
+}
+
+.helper-box {
+  margin-top: 2rem;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 2px dashed var(--color-border);
+  color: var(--color-muted);
+}
+
+@media (max-width: 1100px) {
+  .templates-layout {
+    grid-template-columns: 1fr;
+  }
 }
