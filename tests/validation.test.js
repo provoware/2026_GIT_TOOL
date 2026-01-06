@@ -1,9 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
+  ensureArrayOfNonEmptyStrings,
   ensureBoolean,
   ensureInList,
-  ensureNonEmptyString
+  ensureNonEmptyString,
+  ensurePlainObject
 } from "../src/utils/validation.js";
 
 test("ensureNonEmptyString trims input", () => {
@@ -17,4 +19,13 @@ test("ensureBoolean rejects non boolean", () => {
 
 test("ensureInList validates values", () => {
   assert.equal(ensureInList("a", ["a", "b"], "field"), "a");
+});
+
+test("ensurePlainObject rejects arrays", () => {
+  assert.throws(() => ensurePlainObject([], "config"), /config muss ein Objekt sein/);
+});
+
+test("ensureArrayOfNonEmptyStrings trims items", () => {
+  const result = ensureArrayOfNonEmptyStrings([" a ", "b"], "themes");
+  assert.deepEqual(result, ["a", "b"]);
 });

@@ -6,24 +6,37 @@ cd "$project_root"
 
 printf "\n[Start] Startroutine (Bootstrap) läuft...\n"
 
-if ! command -v node >/dev/null 2>&1; then
-  printf "[Fehler] Node.js fehlt. Bitte Node.js installieren.\n"
+fail_step() {
+  printf "[Fehler] %s\n" "$1"
   exit 1
-fi
+}
 
-if ! command -v npm >/dev/null 2>&1; then
-  printf "[Fehler] npm fehlt. Bitte npm installieren.\n"
-  exit 1
-fi
+run_step() {
+  local label="$1"
+  shift
+  printf "\n[Schritt] %s\n" "$label"
+  if "$@"; then
+    printf "[OK] %s abgeschlossen.\n" "$label"
+  else
+    fail_step "$label fehlgeschlagen. Bitte Hinweise prüfen."
+  fi
+}
 
-printf "[Info] Abhängigkeiten (Dependencies) werden installiert...\n"
-npm install
+check_command() {
+  local cmd="$1"
+  local hint="$2"
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    fail_step "$hint"
+  fi
+}
 
-printf "[Info] Automatische Qualitätsprüfung (Quality Check) startet...\n"
-npm run quality
+check_command "node" "Node.js fehlt. Bitte Node.js installieren."
+check_command "npm" "npm fehlt. Bitte npm installieren."
 
-printf "[Info] Hinweis: Mit 'npm run quality:fix' können Formatierung und Linting automatisch repariert werden.\n"
+run_step "Abhängigkeiten (Dependencies) installieren" npm install
+run_step "Qualitätsprüfung (Quality Check) starten" npm run quality
 
+printf "\n[Info] Hinweis: Mit 'npm run quality:fix' können Formatierung (Formatting) und Linting automatisch repariert werden.\n"
 printf "[Erfolg] Alle Prüfungen sind erfolgreich.\n"
-printf "[Start] Starte Electron-Anwendung...\n"
-npm run start
+
+run_step "Electron-Anwendung starten" npm run start

@@ -2,9 +2,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  ensureArrayOfNonEmptyStrings,
   ensureBoolean,
   ensureInList,
-  ensureNonEmptyString
+  ensureNonEmptyString,
+  ensurePlainObject
 } from "./validation.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -21,7 +23,7 @@ const defaultConfigPath = path.resolve(
 
 export const loadConfig = (configOptions = {}) => {
   const options =
-    configOptions && typeof configOptions === "object" ? configOptions : {};
+    configOptions === undefined ? {} : ensurePlainObject(configOptions, "configOptions");
   const { configPath = defaultConfigPath } = options;
   const resolvedConfigPath = ensureNonEmptyString(configPath, "configPath");
 
@@ -35,10 +37,15 @@ export const loadConfig = (configOptions = {}) => {
   const appName = ensureNonEmptyString(parsed.appName, "appName");
   const debugEnabled = ensureBoolean(parsed.debugEnabled, "debugEnabled");
   const loggingEnabled = ensureBoolean(parsed.loggingEnabled, "loggingEnabled");
-  const availableThemes = Array.isArray(parsed.availableThemes)
-    ? parsed.availableThemes
-    : [];
-  const theme = ensureInList(parsed.theme, availableThemes, "theme");
+  const availableThemes = ensureArrayOfNonEmptyStrings(
+    parsed.availableThemes,
+    "availableThemes"
+  );
+  const theme = ensureInList(
+    ensureNonEmptyString(parsed.theme, "theme"),
+    availableThemes,
+    "theme"
+  );
 
   return {
     appName,

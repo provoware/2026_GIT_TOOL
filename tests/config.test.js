@@ -17,8 +17,8 @@ test("loadConfig loads and validates configuration", () => {
     appName: "Test Tool",
     debugEnabled: false,
     loggingEnabled: true,
-    theme: "high-contrast-dark",
-    availableThemes: ["high-contrast-dark", "high-contrast-light"]
+    theme: "theme-high-contrast-dark",
+    availableThemes: ["theme-high-contrast-dark", "theme-high-contrast-light"]
   });
 
   const config = loadConfig({ configPath });
@@ -26,7 +26,7 @@ test("loadConfig loads and validates configuration", () => {
   assert.equal(config.appName, "Test Tool");
   assert.equal(config.debugEnabled, false);
   assert.equal(config.loggingEnabled, true);
-  assert.equal(config.theme, "high-contrast-dark");
+  assert.equal(config.theme, "theme-high-contrast-dark");
 });
 
 test("loadConfig rejects invalid theme", () => {
@@ -35,7 +35,7 @@ test("loadConfig rejects invalid theme", () => {
     debugEnabled: true,
     loggingEnabled: true,
     theme: "invalid",
-    availableThemes: ["high-contrast-dark"]
+    availableThemes: ["theme-high-contrast-dark"]
   });
 
   assert.throws(() => loadConfig({ configPath }), /theme ist ungültig/);

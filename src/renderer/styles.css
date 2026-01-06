@@ -1,28 +1,64 @@
 :root {
   color-scheme: light dark;
   font-family: "Segoe UI", system-ui, sans-serif;
+  --color-bg: #0b0d11;
+  --color-text: #f2f6ff;
+  --color-border: #f2f6ff;
+  --color-panel: rgba(255, 255, 255, 0.05);
+  --color-primary: #1e40af;
+  --color-on-primary: #ffffff;
+  --color-focus: #ffcc00;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background: #0b0d11;
-  color: #f2f6ff;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+body.theme-high-contrast-dark {
+  color-scheme: dark;
+  --color-bg: #0b0d11;
+  --color-text: #f2f6ff;
+  --color-border: #f2f6ff;
+  --color-panel: rgba(255, 255, 255, 0.08);
+  --color-primary: #1e40af;
+  --color-on-primary: #ffffff;
+  --color-focus: #ffcc00;
 }
 
 body.theme-high-contrast-light {
-  background: #fdfdfd;
-  color: #111827;
+  color-scheme: light;
+  --color-bg: #fdfdfd;
+  --color-text: #111827;
+  --color-border: #111827;
+  --color-panel: rgba(0, 0, 0, 0.05);
+  --color-primary: #1d4ed8;
+  --color-on-primary: #ffffff;
+  --color-focus: #7c2d12;
 }
 
 body.theme-high-contrast-ocean {
-  background: #031927;
-  color: #e6f9ff;
+  color-scheme: dark;
+  --color-bg: #031927;
+  --color-text: #e6f9ff;
+  --color-border: #e6f9ff;
+  --color-panel: rgba(230, 249, 255, 0.1);
+  --color-primary: #0b7285;
+  --color-on-primary: #ffffff;
+  --color-focus: #ffe066;
 }
 
 body.theme-high-contrast-sand {
-  background: #fff4e6;
-  color: #2f1b0c;
+  color-scheme: light;
+  --color-bg: #fff4e6;
+  --color-text: #2f1b0c;
+  --color-border: #2f1b0c;
+  --color-panel: rgba(47, 27, 12, 0.08);
+  --color-primary: #8a4b1c;
+  --color-on-primary: #fffaf2;
+  --color-focus: #1d4ed8;
 }
 
 .app-header {
@@ -31,7 +67,7 @@ body.theme-high-contrast-sand {
   justify-content: space-between;
   gap: 1rem;
   padding: 2rem;
-  border-bottom: 2px solid currentcolor;
+  border-bottom: 2px solid var(--color-border);
 }
 
 .subtitle {
@@ -45,7 +81,7 @@ body.theme-high-contrast-sand {
 }
 
 .theme-button {
-  border: 2px solid currentcolor;
+  border: 2px solid var(--color-border);
   background: transparent;
   color: inherit;
   padding: 0.6rem 1rem;
@@ -56,7 +92,7 @@ body.theme-high-contrast-sand {
 .theme-button:focus-visible,
 .primary:focus-visible,
 button:focus-visible {
-  outline: 3px solid #ffcc00;
+  outline: 3px solid var(--color-focus);
   outline-offset: 3px;
 }
 
@@ -68,38 +104,20 @@ button:focus-visible {
 }
 
 .panel {
-  border: 2px solid currentcolor;
+  border: 2px solid var(--color-border);
   padding: 1.5rem;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-body.theme-high-contrast-light .panel {
-  background: rgba(0, 0, 0, 0.04);
-}
-
-body.theme-high-contrast-sand .panel {
-  background: rgba(47, 27, 12, 0.08);
+  background: var(--color-panel);
 }
 
 .primary {
-  background: #1e40af;
-  color: #ffffff;
-  border: 2px solid #1e40af;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border: 2px solid var(--color-primary);
   padding: 0.6rem 1rem;
   font-weight: 700;
   cursor: pointer;
   margin-bottom: 0.5rem;
-}
-
-body.theme-high-contrast-ocean .primary {
-  background: #0b7285;
-  border-color: #0b7285;
-}
-
-body.theme-high-contrast-sand .primary {
-  background: #8a4b1c;
-  border-color: #8a4b1c;
 }
 
 .clock {
@@ -110,7 +128,7 @@ body.theme-high-contrast-sand .primary {
 button {
   display: block;
   margin-bottom: 0.5rem;
-  border: 2px solid currentcolor;
+  border: 2px solid var(--color-border);
   background: transparent;
   color: inherit;
   padding: 0.6rem 1rem;
