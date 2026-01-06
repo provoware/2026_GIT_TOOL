@@ -172,33 +172,52 @@
           </div>
         </form>
 
-        <div class="helper-box" aria-label="Laienhilfe">
-          <h3>Laienhilfe (einfache Sprache)</h3>
+        <div class="helper-box" aria-labelledby="help-title">
+          <h3 id="help-title">Hilfe & Nutzerfeedback (einfache Sprache)</h3>
           <p>
-            Tipp: Nutze zuerst „Kopieren“, dann füge den Prompt in ChatGPT ein. Favoriten
-            helfen dir, wichtige Vorlagen schnell zu finden.
+            Diese Hilfe erklärt dir die wichtigsten Schritte. Fachbegriffe stehen in
+            Klammern.
           </p>
-          <p>
-            Export (Ausgabe-Datei): Verwende TXT für schnelle Nutzung oder JSON für
-            Backups und Import.
-          </p>
-          <p>
-            Farben (Themes): Oben kannst du mehrere Farbthemes mit transparenter Optik
-            auswählen.
-          </p>
-          <p>
-            Steuerung (Orchestrierung): Das Hauptmodul gibt Design-Vorgaben als
-            CSS-Variablen (zentrale Farb- und Abstands-Werte) weiter. So sehen alle Module
-            gleich aus und bleiben wartbar.
-          </p>
-          <p>
-            Zoom (Vergrößerung): Halte Strg und nutze das Mausrad, um die Schriftgröße zu
-            ändern.
-          </p>
-          <p>
-            Qualitätsprüfung (Quality-Check): Öffne die Kommandozeile (Terminal) und
-            starte <code>npm run quality</code>, um Tests, Formatierung und Linting automatisch
-            zu prüfen.
+          <ul class="helper-list">
+            <li>
+              <strong>Start-Status (System-Check):</strong> Links siehst du Meldungen zu
+              Ordnern, Dateien und Selbstreparatur (Self-Repair). Warnungen bedeuten:
+              Ich habe automatisch repariert – bitte kurz prüfen.
+            </li>
+            <li>
+              <strong>Feedback (Statuszeile):</strong> Oben unter „Navigation“ steht,
+              was zuletzt passiert ist. So erkennst du Erfolg (OK) oder Fehler.
+            </li>
+            <li>
+              <strong>Kopieren & Nutzen:</strong> Nutze zuerst „Kopieren“, dann füge
+              den Text in ChatGPT ein. Mit „⭐ Favorit“ findest du wichtige Vorlagen
+              schnell.
+            </li>
+            <li>
+              <strong>Export (Ausgabe-Datei):</strong> TXT ist schnell nutzbar, JSON
+              ist ideal für Backup (Sicherung) und Import.
+            </li>
+            <li>
+              <strong>Farben (Themes):</strong> Oben kannst du kontrastreiche Farbthemes
+              wählen. Fokus-Rahmen bleiben sichtbar.
+            </li>
+            <li>
+              <strong>Zoom (Vergrößerung):</strong> Halte Strg und nutze das Mausrad,
+              um die Schriftgröße zu ändern.
+            </li>
+            <li>
+              <strong>Debugging (Fehlersuche) & Logging (Protokoll):</strong> Fehler
+              werden im Log gespeichert. Bei Problemen bitte die Log-Datei prüfen.
+            </li>
+            <li>
+              <strong>Qualitätstest (Quality-Check):</strong> Öffne die
+              Kommandozeile (Terminal) und starte <code>npm run quality</code>, um Tests,
+              Formatierung und Linting automatisch zu prüfen.
+            </li>
+          </ul>
+          <p class="helper-note">
+            Weiterführender Tipp: Lege regelmäßige Backups in einem separaten Ordner ab
+            und nutze Kategorien, damit du später schneller findest, was du brauchst.
           </p>
         </div>
       </section>

@@ -470,6 +470,11 @@ textarea:focus-visible {
   font-size: 0.9rem;
 }
 
+.startup-status-time {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
 .action-stack {
   display: grid;
   gap: 0.6rem;
@@ -519,6 +524,27 @@ button.danger {
   padding: 1rem;
   border-radius: 16px;
   border: 2px dashed var(--color-border-soft);
+  background: var(--color-panel);
+  color: var(--color-text);
+}
+
+.helper-box h3 {
+  margin-top: 0;
+}
+
+.helper-list {
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.65rem;
+  margin: 0.75rem 0 0;
+}
+
+.helper-list strong {
+  color: var(--color-heading);
+}
+
+.helper-note {
+  margin-top: 0.9rem;
   color: var(--color-muted);
 }
 
