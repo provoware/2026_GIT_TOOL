@@ -1,0 +1,6 @@
+{
+  "autoFix": true,
+  "stopOnFailure": true,
+  "stepsEnabled": ["lint", "format", "test"],
+  "printSummary": true
+}
