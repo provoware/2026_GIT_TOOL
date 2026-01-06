@@ -1,4 +1,5 @@
 [x] 2026-01-07 | Standards-Manifest + Qualitäts-Skripte + Doku-Start | Manifest für Standards, Quality-Skripte, Doku/Changelog/Anleitungen ergänzen | prüfen: Manifest vorhanden, Scripts laufen, Doku verfügbar | fertig wenn: dokumentiert und in Repository abgelegt.
+[x] 2026-01-07 | Zusätzliche AGENTS für Design/Layout und Mini-Optimierungen | AGENTS für UI-Designanalyse und kleine Optimierungen ergänzt | prüfen: AGENTS-Dateien vorhanden | fertig wenn: Dateien im Repo gespeichert.
 offene punkte ins projekt übertragen
 HauptModul-Interface erstellen
 debugging modus detailiert und professionell 
