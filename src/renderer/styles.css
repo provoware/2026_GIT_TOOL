@@ -10,6 +10,9 @@
   --color-focus: #ffcc00;
   --color-muted: rgba(255, 255, 255, 0.65);
   --color-danger: #dc2626;
+  --color-success: #22c55e;
+  --color-warning: #facc15;
+  --color-info: #38bdf8;
 }
 
 body {
@@ -30,6 +33,9 @@ body.theme-high-contrast-dark {
   --color-focus: #ffcc00;
   --color-muted: rgba(255, 255, 255, 0.65);
   --color-danger: #f87171;
+  --color-success: #4ade80;
+  --color-warning: #fde047;
+  --color-info: #38bdf8;
 }
 
 body.theme-high-contrast-light {
@@ -43,6 +49,9 @@ body.theme-high-contrast-light {
   --color-focus: #7c2d12;
   --color-muted: rgba(17, 24, 39, 0.7);
   --color-danger: #b91c1c;
+  --color-success: #166534;
+  --color-warning: #b45309;
+  --color-info: #1d4ed8;
 }
 
 body.theme-high-contrast-ocean {
@@ -56,6 +65,9 @@ body.theme-high-contrast-ocean {
   --color-focus: #ffe066;
   --color-muted: rgba(230, 249, 255, 0.7);
   --color-danger: #ff8787;
+  --color-success: #2dd4bf;
+  --color-warning: #ffd43b;
+  --color-info: #4dabf7;
 }
 
 body.theme-high-contrast-sand {
@@ -69,6 +81,9 @@ body.theme-high-contrast-sand {
   --color-focus: #1d4ed8;
   --color-muted: rgba(47, 27, 12, 0.7);
   --color-danger: #b91c1c;
+  --color-success: #166534;
+  --color-warning: #b45309;
+  --color-info: #1d4ed8;
 }
 
 .app-header {
@@ -223,6 +238,49 @@ textarea:focus-visible {
 .status-message {
   min-height: 1.5rem;
   color: var(--color-muted);
+}
+
+.startup-status {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.startup-status-item {
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  border: 2px solid var(--color-border);
+  border-left-width: 6px;
+  background: var(--color-panel);
+  display: grid;
+  gap: 0.35rem;
+}
+
+.startup-status-item[data-level="info"] {
+  border-left-color: var(--color-info);
+}
+
+.startup-status-item[data-level="success"] {
+  border-left-color: var(--color-success);
+}
+
+.startup-status-item[data-level="warning"] {
+  border-left-color: var(--color-warning);
+}
+
+.startup-status-item[data-level="error"] {
+  border-left-color: var(--color-danger);
+}
+
+.startup-status-label {
+  font-weight: 700;
+}
+
+.startup-status-suggestion {
+  color: var(--color-muted);
+  font-size: 0.9rem;
 }
 
 .action-stack {
