@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark light">
+  <title>AGENTEN-DASHBOARD • One-File (Standard)</title>
+  <style>
+    /* =========================================================
+       PROVOWARE / MODULTOOL – One-File Standard (offline)
+       - Laienfreundlich, barrierearm, kontraststark
+       - Panels: Links (Liste), Mitte (Editor), Rechts (Templates/Tools), Unten (Logs/Debug)
+       - Persistenz: localStorage (optional Ordner-Export via File System Access)
+       - Undo/Redo, Papierkorb, Import/Export, Selfcheck, Data-Repair
+       ========================================================= */
+
+    :root{
+      /* Theme tokens */
+      --bg:#0b0f15;
+      --panel:#121a26;
+      --panel2:#0f1621;
+      --line:#243348;
+      --line2:#2d405a;
+      --text:#eaf1ff;
+      --muted:#a7b5cc;
+      --muted2:#90a1ba;
+      --accent:#00e1c6;
+      --accent2:#58a6ff;
+      --ok:#40f99b;
+      --warn:#ffb020;
+      --bad:#ff5571;
+
+      --shadow:0 12px 36px rgba(0,0,0,.45);
+      --radius:16px;
+      --radius2:12px;
+
+      --font:18px;
+      --gap:10px;
+
+      /* Panel sizes (grid mode) */
+      --leftw: 360px;
+      --rightw: 400px;
+      --bottomh: 240px;
+      --split: 10px;
+
+      /* Focus */
+      --focus: 0 0 0 3px rgba(0,225,198,.25), 0 0 0 1px rgba(0,225,198,.55) inset;
+    }
+
+    [data-theme="light"]{
+      --bg:#f6f7fb;
+      --panel:#ffffff;
+      --panel2:#f3f6ff;
+      --line:#d6deef;
+      --line2:#c7d2ea;
+      --text:#0b1020;
+      --muted:#3b4a65;
+      --muted2:#50627e;
+      --shadow:0 12px 36px rgba(16,24,40,.14);
+      --focus: 0 0 0 3px rgba(0,118,108,.22), 0 0 0 1px rgba(0,118,108,.45) inset;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
+      font-size:var(--font);
+      background:radial-gradient(1200px 700px at 15% -10%, rgba(0,225,198,.14), transparent 55%),
+                 radial-gradient(900px 600px at 90% 10%, rgba(88,166,255,.12), transparent 55%),
+                 var(--bg);
+      color:var(--text);
+      overflow:hidden;
+    }
+
+    /* Top header */
+    header{
+      position:sticky; top:0; z-index:50;
+      background:linear-gradient(180deg, rgba(10,14,20,.92), rgba(10,14,20,.62));
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid rgba(36,51,72,.55);
+    }
+    [data-theme="light"] header{
+      background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.72));
+      border-bottom:1px solid rgba(199,210,234,.9);
+    }
+    .wrap{max-width:1400px;margin:0 auto;padding:12px 14px}
+    .topbar{
+      display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+    }
+    .brand{display:flex; gap:10px; align-items:center}
+    .badge{
+      width:38px;height:38px;border-radius:12px;
+      background:linear-gradient(135deg, rgba(0,225,198,.95), rgba(64,249,155,.8));
+      box-shadow:0 0 0 2px rgba(0,225,198,.14) inset, 0 10px 26px rgba(0,0,0,.35);
+      flex:0 0 auto;
+    }
+    .brand h1{margin:0;font-size:15px;letter-spacing:.2px}
+    .sub{font-size:12px;color:var(--muted);margin-top:2px}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:7px 10px;border-radius:999px;
+      background:rgba(18,26,38,.55);
+      border:1px solid rgba(36,51,72,.62);
+      color:var(--text); font-size:12px;
+    }
+    [data-theme="light"] .pill{background:rgba(243,246,255,.75)}
+    .pill b{font-weight:700}
+    .pill .dot{width:10px;height:10px;border-radius:50%}
+    .dot.ok{background:var(--ok)}
+    .dot.warn{background:var(--warn)}
+    .dot.bad{background:var(--bad)}
+
+    /* Buttons / inputs */
+    button, input, select, textarea{
+      font:inherit;
+      color:inherit;
+    }
+    input, select, textarea{
+      width:100%;
+      background:rgba(15,22,33,.66);
+      border:1px solid rgba(36,51,72,.75);
+      border-radius:12px;
+      padding:10px 12px;
+      outline:none;
+    }
+    [data-theme="light"] input, [data-theme="light"] select, [data-theme="light"] textarea{
+      background:rgba(243,246,255,.92);
+      border:1px solid rgba(199,210,234,.95);
+    }
+    textarea{min-height:110px;resize:vertical}
+    input:focus, select:focus, textarea:focus{box-shadow:var(--focus)}
+
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      border-radius:12px;
+      padding:10px 12px;
+      border:1px solid rgba(36,51,72,.85);
+      background:rgba(18,26,38,.62);
+      cursor:pointer;
+      user-select:none;
+      transition:transform .06s ease, background .15s ease, border-color .15s ease;
+      font-weight:650;
+      font-size:14px;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-1px);background:rgba(18,26,38,.82)}
+    .btn:active{transform:translateY(0)}
+    .btn:focus{outline:none;box-shadow:var(--focus)}
+    .btn.primary{
+      border-color:rgba(0,225,198,.55);
+      background:linear-gradient(180deg, rgba(0,225,198,.22), rgba(18,26,38,.62));
+    }
+    .btn.danger{
+      border-color:rgba(255,85,113,.55);
+      background:linear-gradient(180deg, rgba(255,85,113,.18), rgba(18,26,38,.62));
+    }
+    .btn.ghost{
+      background:transparent;
+      border:1px solid rgba(36,51,72,.65);
+    }
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .btnRow .btn{flex:0 0 auto}
+
+    .small{font-size:12px;color:var(--muted)}
+    .help{
+      font-size:13px;
+      color:var(--muted);
+      background:rgba(18,26,38,.35);
+      border:1px dashed rgba(36,51,72,.55);
+      border-radius:12px;
+      padding:10px 12px;
+      line-height:1.45;
+    }
+    [data-theme="light"] .help{background:rgba(243,246,255,.75)}
+    .kbr{display:inline-flex;gap:6px;align-items:center}
+    kbd{
+      font-family:ui-monospace,monospace;
+      font-size:12px;
+      padding:2px 8px;
+      border-radius:10px;
+      background:rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.1);
+    }
+    [data-theme="light"] kbd{background:rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.12);color:#0b1020}
+
+    /* Main layout grid */
+    .app{
+      height:calc(100vh - 76px);
+      padding:12px 14px 14px;
+    }
+    .main{
+      height:100%;
+      display:grid;
+      grid-template-columns: var(--leftw) var(--split) 1fr var(--split) var(--rightw);
+      grid-template-rows: 1fr var(--split) var(--bottomh);
+      grid-template-areas:
+        "left v1 center v2 right"
+        "left v1 center v2 right"
+        "bottom bottom bottom bottom bottom";
+      gap:0;
+    }
+    @media (max-width: 1100px){
+      body{overflow:auto}
+      .app{height:auto}
+      .main{
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        grid-template-areas:
+          "left"
+          "center"
+          "right"
+          "bottom";
+        gap:12px;
+      }
+      .splitter{display:none}
+    }
+
+    .panel{
+      background:linear-gradient(180deg, rgba(18,26,38,.92), rgba(15,22,33,.92));
+      border:1px solid rgba(36,51,72,.7);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      min-height:120px;
+    }
+    [data-theme="light"] .panel{
+      background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(243,246,255,.95));
+      border:1px solid rgba(199,210,234,.95);
+    }
+
+    .panelHeader{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:12px 12px 10px;
+      border-bottom:1px solid rgba(36,51,72,.55);
+    }
+    [data-theme="light"] .panelHeader{border-bottom:1px solid rgba(199,210,234,.95)}
+    .panelHeader h2{
+      margin:0; font-size:14px; letter-spacing:.2px;
+      display:flex; align-items:center; gap:10px;
+    }
+    .panelHeader .meta{font-size:12px;color:var(--muted)}
+    .panelHeader .tools{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+
+    .panelBody{padding:12px}
+    .panelBody.scroller{overflow:auto;max-height:100%}
+    .hidden{display:none !important}
+
+    /* Splitters (desktop only) */
+    .splitter{
+      background:transparent;
+      position:relative;
+      outline:none;
+    }
+    .splitter::before{
+      content:"";
+      position:absolute;inset:0;
+      background:linear-gradient(180deg, rgba(36,51,72,.12), rgba(36,51,72,.35), rgba(36,51,72,.12));
+      border-radius:999px;
+      margin:3px;
+    }
+    .splitter:hover::before{background:linear-gradient(180deg, rgba(0,225,198,.18), rgba(36,51,72,.42), rgba(88,166,255,.16))}
+    .splitter:focus{box-shadow:var(--focus);border-radius:999px}
+
+    #splitV1{grid-area:v1; cursor:col-resize}
+    #splitV2{grid-area:v2; cursor:col-resize}
+    #splitHReal{grid-area:bottom; cursor:row-resize; height:var(--split); align-self:start; margin-top:calc(-1 * var(--split));}
+
+    /* Lists */
+    .list{display:flex;flex-direction:column;gap:10px}
+    .item{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+      padding:10px 10px;
+      border-radius:14px;
+      border:1px solid rgba(36,51,72,.62);
+      background:rgba(15,22,33,.35);
+    }
+    [data-theme="light"] .item{background:rgba(243,246,255,.7)}
+    .item:hover{border-color:rgba(0,225,198,.32)}
+    .item .left{min-width:0}
+    .item .title{font-weight:750;font-size:14px;line-height:1.2}
+    .item .subline{font-size:12px;color:var(--muted);margin-top:4px;display:flex;gap:10px;flex-wrap:wrap}
+    .tag{
+      display:inline-flex;align-items:center;gap:6px;
+      border-radius:999px;
+      padding:3px 8px;
+      border:1px solid rgba(36,51,72,.62);
+      background:rgba(18,26,38,.45);
+      font-size:12px;color:var(--muted2);
+    }
+    .status{
+      display:inline-flex;align-items:center;gap:8px;
+      font-size:12px;
+      padding:5px 10px;
+      border-radius:999px;
+      border:1px solid rgba(36,51,72,.62);
+      background:rgba(18,26,38,.45);
+    }
+    .status .dot{width:10px;height:10px;border-radius:50%}
+    .s-open .dot{background:var(--warn)}
+    .s-progress .dot{background:var(--accent2)}
+    .s-done .dot{background:var(--ok)}
+    .s-deleted .dot{background:var(--bad)}
+
+    .item .right{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;justify-content:flex-end}
+    .item .right .btn{padding:8px 10px;border-radius:12px;font-size:13px}
+
+    /* Editor blocks */
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width:1100px){.grid2{grid-template-columns:1fr}}
+    .grid4{display:grid;grid-template-columns:1.2fr 1fr 1fr .9fr;gap:10px}
+    @media (max-width:1100px){.grid4{grid-template-columns:1fr}}
+
+    .labelRow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0 6px}
+    .labelRow label{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.2px}
+    .labelRow .hint{font-size:12px;color:var(--muted)}
+    .hr{height:1px;background:rgba(36,51,72,.55);margin:12px 0}
+    [data-theme="light"] .hr{background:rgba(199,210,234,.95)}
+
+    pre{
+      margin:0;
+      white-space:pre-wrap;
+      word-break:break-word;
+      background:rgba(15,22,33,.45);
+      border:1px solid rgba(36,51,72,.62);
+      border-radius:12px;
+      padding:10px 12px;
+      color:var(--text);
+      overflow:auto;
+      max-height: 340px;
+    }
+    [data-theme="light"] pre{background:rgba(243,246,255,.92)}
+
+    /* Toast */
+    .toast{
+      position:fixed;right:16px;bottom:16px;z-index:90;
+      max-width:min(560px,calc(100vw - 32px));
+      display:none;
+      border-radius:16px;
+      padding:12px 12px;
+      border:1px solid rgba(36,51,72,.75);
+      background:rgba(18,26,38,.92);
+      box-shadow:var(--shadow);
+    }
+    [data-theme="light"] .toast{background:rgba(255,255,255,.96)}
+    .toast .tTop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .toast .tTitle{font-weight:800;font-size:14px}
+    .toast .tMsg{margin-top:6px;font-size:13px;color:var(--muted);line-height:1.35}
+
+    /* Help overlay */
+    .overlay{
+      position:fixed;inset:0;z-index:80;
+      background:rgba(0,0,0,.62);
+      display:none;align-items:center;justify-content:center;
+      padding:14px;
+    }
+    .overlayCard{
+      width:min(980px,100%);
+      max-height:min(86vh,780px);
+      overflow:auto;
+      background:rgba(18,26,38,.98);
+      border:1px solid rgba(36,51,72,.85);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      padding:14px;
+    }
+    [data-theme="light"] .overlayCard{background:rgba(255,255,255,.98)}
+    .overlayCard h3{margin:0 0 8px;font-size:16px}
+    .overlayCard ul{margin:8px 0 0; padding-left:18px}
+    .overlayCard li{margin:6px 0; color:var(--muted)}
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="wrap">
+      <div class="topbar">
+        <div class="brand" aria-label="App Titel">
+          <div class="badge" aria-hidden="true"></div>
+          <div>
+            <h1>AGENTEN-DASHBOARD</h1>
+            <div class="sub">One-File, offline • Profile, Templates, Export, Logs • Standard-Layout (Links/Mitte/Rechts/Unten)</div>
+          </div>
+        </div>
+
+        <div class="btnRow" aria-label="Top Aktionen">
+          <span class="pill" title="Aktives Profil">
+            <span class="dot ok" id="pillDot"></span>
+            Profil: <b id="pillProfile">—</b>
+          </span>
+          <button class="btn" id="btnHelp" type="button" title="Hilfe (F1)">Hilfe</button>
+          <button class="btn" id="btnSelfcheck" type="button" title="Selfcheck ausführen">Selfcheck</button>
+          <button class="btn" id="btnRepair" type="button" title="Daten prüfen und reparieren">Daten reparieren</button>
+          <button class="btn primary" id="btnSaveAll" type="button" title="Speichern (Autosave läuft zusätzlich)">Speichern</button>
+          <button class="btn" id="btnMenu" type="button" aria-haspopup="true" aria-expanded="false" title="Bereiche / Einstellungen">Menü</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="app">
+    <div class="main" id="mainGrid" aria-label="Hauptlayout">
+
+      <!-- LEFT -->
+      <section class="panel" id="panelLeft" style="grid-area:left" aria-label="Linkes Panel: Agentenliste">
+        <div class="panelHeader">
+          <h2>Agentenliste <span class="meta" id="leftMeta">0</span></h2>
+          <div class="tools">
+            <button class="btn" id="btnLeftMin" type="button" title="Panel einklappen">Einklappen</button>
+            <button class="btn" id="btnLeftMax" type="button" title="Panel maximieren">Max</button>
+          </div>
+        </div>
+        <div class="panelBody scroller" id="leftBody">
+
+          <div class="grid2" aria-label="Profil und Filter">
+            <div>
+              <div class="labelRow">
+                <label for="profileSel">Profil</label>
+                <span class="hint">projektbezogen</span>
+              </div>
+              <div class="grid2" style="grid-template-columns:1fr auto;gap:10px">
+                <select id="profileSel" aria-label="Profil auswählen"></select>
+                <button class="btn" id="btnProfileNew" type="button" title="Neues Profil">+</button>
+              </div>
+              <div class="help" style="margin-top:10px">Tipp: Pro Projekt ein Profil. So bleibt alles sauber getrennt.</div>
+            </div>
+
+            <div>
+              <div class="labelRow">
+                <label for="q">Suche</label>
+                <span class="hint">ID, Titel, Ziel</span>
+              </div>
+              <input id="q" placeholder="z.B. backup, undo, sidebar..." autocomplete="off" />
+              <div class="grid2" style="margin-top:10px">
+                <select id="fStatus" aria-label="Status Filter">
+                  <option value="">Status: alle</option>
+                  <option value="open">offen</option>
+                  <option value="in progress">in arbeit</option>
+                  <option value="done">fertig</option>
+                  <option value="deleted">papierkorb</option>
+                </select>
+                <select id="fSort" aria-label="Sortierung">
+                  <option value="updated_desc">zuletzt geändert</option>
+                  <option value="created_desc">neu zuerst</option>
+                  <option value="created_asc">alt zuerst</option>
+                  <option value="id_asc">ID A→Z</option>
+                  <option value="id_desc">ID Z→A</option>
+                  <option value="status">Status</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="btnRow" aria-label="Agenten Aktionen">
+            <button class="btn primary" id="btnNewAgent" type="button">+ Neuer AGENT</button>
+            <button class="btn" id="btnUndo" type="button" title="Undo (Alt+Z)">Undo</button>
+            <button class="btn" id="btnRedo" type="button" title="Redo (Alt+Y)">Redo</button>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="labelRow">
+            <label>Liste</label>
+            <span class="hint">Klick: öffnen • Enter: öffnen • Alt+D: fertig</span>
+          </div>
+
+          <div class="list" id="agentList" role="list" aria-label="Agentenliste"></div>
+
+          <div class="hr"></div>
+
+          <div class="help">
+            Shortcuts:
+            <span class="kbr"><kbd>Alt</kbd><kbd>N</kbd></span> neu,
+            <span class="kbr"><kbd>Alt</kbd><kbd>S</kbd></span> speichern,
+            <span class="kbr"><kbd>Alt</kbd><kbd>Z</kbd></span> undo,
+            <span class="kbr"><kbd>Alt</kbd><kbd>Y</kbd></span> redo,
+            <span class="kbr"><kbd>F1</kbd></span> Hilfe.
+          </div>
+        </div>
+      </section>
+
+      <div class="splitter" id="splitV1" tabindex="0" aria-label="Splitter: links/mittig"></div>
+      <div class="splitter" id="splitV2" tabindex="0" aria-label="Splitter: mittig/rechts"></div>
+
+      <!-- CENTER -->
+      <section class="panel" id="panelCenter" style="grid-area:center" aria-label="Mittleres Panel: Editor">
+        <div class="panelHeader">
+          <h2>Editor <span class="meta" id="centerMeta">kein Agent geöffnet</span></h2>
+          <div class="tools">
+            <button class="btn" id="btnCenterMin" type="button" title="Panel einklappen">Einklappen</button>
+            <button class="btn" id="btnCenterMax" type="button" title="Panel maximieren">Max</button>
+          </div>
+        </div>
+
+        <div class="panelBody scroller" id="centerBody">
+          <div class="help" id="editorHint">
+            Öffne links einen Agenten oder erstelle einen neuen. Rechts kannst du Templates wählen und direkt übernehmen.
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="grid4" aria-label="Kopfdaten">
+            <div>
+              <div class="labelRow"><label for="a_id">ID (Pflicht)</label><span class="hint">z.B. T031</span></div>
+              <input id="a_id" placeholder="T031" autocomplete="off" />
+            </div>
+            <div>
+              <div class="labelRow"><label for="a_cat">Kategorie (Pflicht)</label><span class="hint">z.B. Modulverwaltung</span></div>
+              <input id="a_cat" placeholder="Kategorie" list="catList" autocomplete="off" />
+              <datalist id="catList"></datalist>
+            </div>
+            <div>
+              <div class="labelRow"><label for="a_sub">Unterkategorie</label><span class="hint">optional</span></div>
+              <input id="a_sub" placeholder="Unterkategorie" autocomplete="off" />
+            </div>
+            <div>
+              <div class="labelRow"><label for="a_status">Status</label><span class="hint">Workflow</span></div>
+              <select id="a_status">
+                <option value="open">offen</option>
+                <option value="in progress">in arbeit</option>
+                <option value="done">fertig</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="labelRow"><label for="a_title">Titel</label><span class="hint">kurz, klar, eindeutig</span></div>
+          <input id="a_title" placeholder="z.B. Undo/Redo pro Modul robust integrieren" autocomplete="off" />
+
+          <div class="grid2">
+            <div>
+              <div class="labelRow"><label for="a_goal">Ziel</label><span class="hint">was wird danach besser?</span></div>
+              <textarea id="a_goal" placeholder="Beispiel: Beim Start werden fehlende Ordner automatisch erstellt."></textarea>
+            </div>
+            <div>
+              <div class="labelRow"><label for="a_test">Test</label><span class="hint">wie beweist du es?</span></div>
+              <textarea id="a_test" placeholder="Beispiel: Ordner löschen, Tool starten, Ordner ist wieder da. Log zeigt Schritte."></textarea>
+            </div>
+          </div>
+
+          <div class="labelRow"><label for="a_done">Fertig wenn</label><span class="hint">konkretes Ende-Kriterium</span></div>
+          <textarea id="a_done" placeholder="Beispiel: Selfcheck zeigt 100% grün, keine Fehlermeldung."></textarea>
+
+          <div class="hr"></div>
+
+          <div class="btnRow" aria-label="Editor Aktionen">
+            <button class="btn primary" id="btnSave" type="button">Speichern</button>
+            <button class="btn" id="btnDup" type="button">Duplizieren</button>
+            <button class="btn" id="btnMarkDone" type="button" title="Schnell: Status auf fertig">Fertig</button>
+            <button class="btn danger" id="btnTrash" type="button">In Papierkorb</button>
+            <button class="btn ghost" id="btnClear" type="button" title="Editor leeren">Leeren</button>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="labelRow"><label>Live Markdown</label><span class="hint">Kopieren oder Download</span></div>
+          <pre class="mono" id="liveMd" aria-label="Live Markdown Vorschau"></pre>
+
+          <div class="btnRow" style="margin-top:10px">
+            <button class="btn" id="btnCopyMd" type="button">MD kopieren</button>
+            <button class="btn" id="btnDlMd" type="button">MD downloaden</button>
+            <button class="btn" id="btnDlMdAll" type="button">ALLE AGENTS als MD</button>
+          </div>
+
+          <div class="help" id="formHelp" style="margin-top:10px"></div>
+        </div>
+      </section>
+
+      <!-- RIGHT -->
+      <section class="panel" id="panelRight" style="grid-area:right" aria-label="Rechtes Panel: Templates und Tools">
+        <div class="panelHeader">
+          <h2>Templates & Tools <span class="meta" id="rightMeta">Schnellbaukasten</span></h2>
+          <div class="tools">
+            <button class="btn" id="btnRightMin" type="button" title="Panel einklappen">Einklappen</button>
+            <button class="btn" id="btnRightMax" type="button" title="Panel maximieren">Max</button>
+          </div>
+        </div>
+
+        <div class="panelBody scroller" id="rightBody">
+          <div class="labelRow"><label for="tplSearch">Template-Suche</label><span class="hint">z.B. backup, ui, tests</span></div>
+          <input id="tplSearch" placeholder="Suche in Templates..." autocomplete="off" />
+
+          <div class="hr"></div>
+
+          <div class="labelRow"><label>Template-Baum</label><span class="hint">Enter übernimmt</span></div>
+          <div id="tplTree"></div>
+
+          <div class="hr"></div>
+
+          <div class="labelRow"><label>Template-Details</label><span class="hint">Übernehmen in Editor</span></div>
+          <div class="grid2">
+            <div><input id="tplPicked" placeholder="Template-Key" readonly /></div>
+            <div><button class="btn primary" id="btnTplApply" type="button">Übernehmen</button></div>
+          </div>
+
+          <div class="grid2" style="margin-top:10px">
+            <input id="tplCat" placeholder="Kategorie" readonly />
+            <input id="tplSub" placeholder="Unterkategorie" readonly />
+          </div>
+
+          <div class="labelRow"><label for="tplTitle">Titel</label><span class="hint">anpassbar</span></div>
+          <input id="tplTitle" placeholder="Titel" />
+
+          <div class="labelRow"><label for="tplGoal">Ziel</label><span class="hint">anpassbar</span></div>
+          <textarea id="tplGoal" placeholder="Ziel"></textarea>
+
+          <div class="labelRow"><label for="tplTest">Test</label><span class="hint">anpassbar</span></div>
+          <textarea id="tplTest" placeholder="Test"></textarea>
+
+          <div class="labelRow"><label for="tplDone">Fertig wenn</label><span class="hint">anpassbar</span></div>
+          <textarea id="tplDone" placeholder="Fertig wenn"></textarea>
+
+          <div class="btnRow" style="margin-top:10px">
+            <button class="btn" id="btnTplClear" type="button">Template leeren</button>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="labelRow"><label>Papierkorb</label><span class="hint">Wiederherstellen / löschen</span></div>
+          <div class="btnRow">
+            <button class="btn" id="btnTrashShow" type="button">Papierkorb anzeigen</button>
+            <button class="btn danger" id="btnTrashEmpty" type="button">Papierkorb leeren</button>
+          </div>
+          <div class="list" id="trashList" style="margin-top:10px"></div>
+
+          <div class="help" style="margin-top:10px">
+            Papierkorb ist nur intern (kein Systemeingriff). Du kannst jederzeit wiederherstellen.
+          </div>
+        </div>
+      </section>
+
+      <!-- splitter above bottom -->
+      <div class="splitter" id="splitHReal" tabindex="0" aria-label="Splitter: oben/unten"></div>
+
+      <!-- BOTTOM -->
+      <section class="panel" id="panelBottom" style="grid-area:bottom" aria-label="Unteres Panel: Logs und Debug">
+        <div class="panelHeader">
+          <h2>Logs & Debug <span class="meta" id="bottomMeta">letzte 10 Ereignisse</span></h2>
+          <div class="tools">
+            <button class="btn" id="btnBottomMin" type="button" title="Panel einklappen">Einklappen</button>
+            <button class="btn" id="btnBottomMax" type="button" title="Panel maximieren">Max</button>
+          </div>
+        </div>
+
+        <div class="panelBody scroller" id="bottomBody">
+          <div class="grid2">
+            <div>
+              <div class="labelRow"><label>Letzte 10 Ereignisse</label><span class="hint">automatisch</span></div>
+              <div class="list" id="last10"></div>
+
+              <div class="btnRow" style="margin-top:10px">
+                <button class="btn" id="btnLogsDownload" type="button">Logs als JSON</button>
+                <button class="btn" id="btnTraceDownload" type="button">Trace als JSON</button>
+                <button class="btn danger" id="btnLogsClear" type="button">Logs leeren</button>
+              </div>
+            </div>
+
+            <div>
+              <div class="labelRow"><label>Import/Export</label><span class="hint">JSON rein, MD raus</span></div>
+
+              <div class="help">
+                Browser kann i.d.R. nicht direkt in deinen Ordner schreiben. Export lädt Dateien runter. Danach verschiebst du sie in deinen Projektordner.
+              </div>
+
+              <div class="hr"></div>
+
+              <div class="grid2">
+                <div>
+                  <div class="labelRow"><label for="fileImport">Import</label><span class="hint">merge/ersetzen</span></div>
+                  <input type="file" id="fileImport" accept="application/json" />
+                  <div class="grid2" style="margin-top:10px">
+                    <select id="importMode">
+                      <option value="merge">Import: dazu mischen (merge)</option>
+                      <option value="replace">Import: ersetzen (replace)</option>
+                      <option value="newprofile">Import: neues Profil erstellen</option>
+                    </select>
+                    <input id="importProfileName" placeholder="Profilname (bei neues Profil)" />
+                  </div>
+                  <div class="btnRow" style="margin-top:10px">
+                    <button class="btn primary" id="btnImport" type="button">Import starten</button>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="labelRow"><label>Export</label><span class="hint">Linux-konform</span></div>
+                  <div class="btnRow">
+                    <button class="btn" id="btnExportActive" type="button">agents_active.json</button>
+                    <button class="btn" id="btnExportDone" type="button">agents_done.json</button>
+                    <button class="btn" id="btnExportPack" type="button">profil_pack.json</button>
+                    <button class="btn" id="btnExportMdOne" type="button">ALLE_AGENTS.md</button>
+                  </div>
+
+                  <div class="hr"></div>
+
+                  <div class="btnRow">
+                    <button class="btn" id="btnExportFolder" type="button">In Ordner exportieren (Chrome)</button>
+                  </div>
+                  <div class="help" id="fsHint" style="margin-top:10px"></div>
+                </div>
+              </div>
+
+              <div class="hr"></div>
+
+              <div class="labelRow"><label>Einstellungen</label><span class="hint">Theme, Schrift, Layout</span></div>
+              <div class="grid2">
+                <select id="themeSel" aria-label="Theme Auswahl">
+                  <option value="dark">Theme: Dark</option>
+                  <option value="light">Theme: Light</option>
+                </select>
+                <select id="fontSel" aria-label="Schriftgröße">
+                  <option value="16">Schrift: 16px</option>
+                  <option value="18" selected>Schrift: 18px</option>
+                  <option value="20">Schrift: 20px</option>
+                  <option value="22">Schrift: 22px</option>
+                </select>
+              </div>
+
+              <div class="grid2" style="margin-top:10px">
+                <button class="btn" id="btnResetLayout" type="button">Layout zurücksetzen</button>
+                <button class="btn" id="btnExportState" type="button">State sichern (JSON)</button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Menu popover -->
+  <div class="toast" id="menuToast" role="dialog" aria-label="Menü" aria-modal="false">
+    <div class="tTop">
+      <div class="tTitle">Menü</div>
+      <button class="btn" id="btnMenuClose" type="button">Schließen</button>
+    </div>
+    <div class="tMsg">
+      <div class="btnRow" style="margin-top:10px">
+        <button class="btn" id="btnToggleLeft" type="button">Links Ein/Aus</button>
+        <button class="btn" id="btnToggleCenter" type="button">Mitte Ein/Aus</button>
+        <button class="btn" id="btnToggleRight" type="button">Rechts Ein/Aus</button>
+        <button class="btn" id="btnToggleBottom" type="button">Unten Ein/Aus</button>
+      </div>
+      <div class="btnRow" style="margin-top:10px">
+        <button class="btn" id="btnClearTrashView" type="button">Papierkorb-Ansicht leeren</button>
+        <button class="btn danger" id="btnNukeLocal" type="button">Lokale Daten löschen</button>
+      </div>
+      <div class="help" style="margin-top:10px">
+        Achtung: „Lokale Daten löschen“ entfernt nur localStorage für dieses Tool.
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <div class="tTop">
+      <div class="tTitle" id="toastTitle">Info</div>
+      <button class="btn" id="toastClose" type="button">OK</button>
+    </div>
+    <div class="tMsg" id="toastMsg"></div>
+  </div>
+
+  <!-- Help overlay -->
+  <div class="overlay" id="helpOverlay" role="dialog" aria-label="Hilfe" aria-modal="true">
+    <div class="overlayCard">
+      <div class="btnRow" style="justify-content:space-between">
+        <h3>Hilfe: AGENTEN-DASHBOARD</h3>
+        <button class="btn" id="btnHelpClose" type="button">Schließen</button>
+      </div>
+
+      <div class="help">
+        Ziel: Du baust „AGENTS“ als kleine, klare Arbeitsaufträge. Jeder AGENT ist sofort als Markdown exportierbar, Linux-konform benannt, und kann per Template erzeugt werden.
+      </div>
+
+      <div class="hr"></div>
+
+      <b>Workflow:</b>
+      <ul>
+        <li><b>+ Neuer AGENT</b> links klicken (oder <kbd>Alt</kbd>+<kbd>N</kbd>).</li>
+        <li>Im Editor ausfüllen und <b>Speichern</b> drücken (oder <kbd>Alt</kbd>+<kbd>S</kbd>).</li>
+        <li>Rechts ein <b>Template</b> wählen und <b>Übernehmen</b>, um schneller zu arbeiten.</li>
+        <li>Wenn fertig: Status auf <b>fertig</b>, dann Export als <b>ALLE_AGENTS.md</b>.</li>
+      </ul>
+
+      <b>Shortcuts:</b>
+      <ul>
+        <li><kbd>F1</kbd> Hilfe</li>
+        <li><kbd>Alt</kbd>+<kbd>N</kbd> Neuer AGENT</li>
+        <li><kbd>Alt</kbd>+<kbd>S</kbd> Speichern</li>
+        <li><kbd>Alt</kbd>+<kbd>Z</kbd> Undo, <kbd>Alt</kbd>+<kbd>Y</kbd> Redo</li>
+        <li><kbd>Alt</kbd>+<kbd>D</kbd> Status: fertig (wenn Editor offen)</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+  (() => {
+    "use strict";
+
+    const SCHEMA = "AGENTEN_DASHBOARD_ONEFILE_STANDARD_v1";
+    const LS_KEY = "provoware_agents_dashboard_state_v1";
+
+    const nowISO = () => new Date().toISOString().replace(/\.\d{3}Z$/,'Z');
+    const $ = (s, el=document) => el.querySelector(s);
+    const clamp = (n,a,b)=>Math.max(a,Math.min(b,n));
+
+    const DEFAULT_TEMPLATES = [
+      {key:"ARCH_STARTUP_SELFHEAL", category:"Tool-Architektur", subcategory:"Start & Selfheal", title:"Startroutine: Selfcheck + Self-Repair",
+       goal:"Beim Start läuft eine Startroutine, die Struktur/Abhängigkeiten prüft und typische Fehler automatisch behebt.",
+       test:"Ordner/Datei absichtlich entfernen, Tool starten, Self-Repair stellt alles wieder her. Log zeigt Schritte.",
+       done:"Start zeigt grün, keine Fehlermeldung, Logs dokumentieren alle fixes."},
+
+      {key:"ARCH_PLUGIN_SYSTEM", category:"Tool-Architektur", subcategory:"Module/Plugins", title:"Plugin-Registrierung (sauber & robust)",
+       goal:"Neues Modul kann ohne Bruch integriert werden (Registry, Standard-API, Signals).",
+       test:"Dummy-Modul hinzufügen, Tool erkennt es, lädt UI, kann deaktiviert werden, keine Konsole-Errors.",
+       done:"Registry listet Modul, Selftest ok, Modul togglebar, keine redundante Struktur."},
+
+      {key:"UX_ACCESSIBILITY_BASE", category:"UX & Barrierefreiheit", subcategory:"Basics", title:"Barrierefreiheit: Tastatur, Kontrast, ARIA",
+       goal:"Die Oberfläche ist vollständig per Tastatur bedienbar, kontraststark, mit sinnvollen aria-Labels.",
+       test:"Nur Tastatur nutzen (Tab/Enter/Esc). Dark/Light prüfen. Screenreader-Test: sinnvolle Labels.",
+       done:"Alle Kernfunktionen ohne Maus erreichbar, Kontrast ok, keine Fokus-Fallen."},
+
+      {key:"UX_HELP_OVERLAY", category:"UX & Barrierefreiheit", subcategory:"Hilfe", title:"Hilfe-Overlay (sichtbar, nicht versteckt)",
+       goal:"Laien finden überall Erklärungen: Hilfe-Overlay + kurze Hilfeblöcke in Panels.",
+       test:"F1 drücken: Overlay öffnet/schließt. Inhalte stimmen. Kein Scroll-Chaos.",
+       done:"Hilfe ist verständlich, kurz, überall erreichbar."},
+
+      {key:"DATA_UNDO_REDO", category:"Daten & Sicherheit", subcategory:"Versionierung", title:"Undo/Redo (sicher) pro Profil",
+       goal:"Änderungen können rückgängig gemacht werden, ohne Datenverlust oder Inkonsistenz.",
+       test:"Mehrere Änderungen, Undo/Redo mehrmals. Daten bleiben konsistent. Logs zeigen Aktionen.",
+       done:"Undo/Redo stabil, keine kaputten Zustände."},
+
+      {key:"DATA_TRASH", category:"Daten & Sicherheit", subcategory:"Papierkorb", title:"Papierkorb-System statt sofort löschen",
+       goal:"Löschen verschiebt in Papierkorb, Wiederherstellen möglich, endgültig löschen nur bewusst.",
+       test:"Agent löschen → Papierkorb sichtbar → wiederherstellen. Dann endgültig löschen.",
+       done:"Kein unabsichtlicher Verlust, klare Warnungen, Logs."},
+
+      {key:"EXPORT_LINUX_NAMES", category:"Export & Release", subcategory:"Dateinamen", title:"Linux-konforme Exportnamen (AGENTS groß)",
+       goal:"Exports sind Linux-konform, ohne Sonderzeichen, mit klaren Namen (AGENTS im Dateinamen).",
+       test:"Export ausführen, Dateinamen prüfen. Keine Leerzeichen, keine Sonderzeichen, Endungen korrekt.",
+       done:"Exports passen, Git-Commit möglich, keine Umbenennungsorgie."},
+
+      {key:"RELEASE_ENDCHECK", category:"Export & Release", subcategory:"Checklisten", title:"EndCheck: alles vorhanden, alles läuft",
+       goal:"Vor Release wird automatisch geprüft: Kernfunktionen, Import/Export, Selfcheck, UI-Kontrast, Logs.",
+       test:"Selftests laufen durch, keine Fehler. Manuell im Browser getestet (2 Browser).",
+       done:"EndCheck grün, Dokumentation aktualisiert, keine offenen Blocker."},
+
+      {key:"DEBUG_TRACE", category:"Debug & Qualität", subcategory:"Logs/Trace", title:"Trace-Log mit Änderungsdetails",
+       goal:"Zusätzlich zu Logs wird eine Trace-Liste geführt, die relevante Änderungen protokolliert.",
+       test:"Änderungen durchführen, Trace exportieren. Enthält Zeit, Aktion, Agent-ID.",
+       done:"Trace vollständig, exportierbar, verständlich."},
+    ];
+
+    function defaultState(){
+      return {
+        schema: SCHEMA,
+        meta: { createdAt: nowISO(), updatedAt: nowISO(), version:"1.0.0" },
+        settings:{
+          theme:"dark",
+          fontPx: 18,
+          layout:{ leftw:360, rightw:400, bottomh:240 },
+          panels:{ left:true, center:true, right:true, bottom:true },
+          minimized:{ left:false, center:false, right:false, bottom:false },
+          lastOpenAgentId: null
+        },
+        profiles: [{
+          name:"default",
+          createdAt: nowISO(),
+          agents: [{
+            id:"T001", category:"Tool-Architektur", subcategory:"Start & Selfheal", status:"open",
+            title:"AGENTS Standard einführen",
+            goal:"Agenten als Arbeitsaufträge sauber verwalten.",
+            test:"Neuen Agenten anlegen, exportieren, wieder importieren.",
+            done:"Export/Import sauber, Markdown korrekt.",
+            createdAt: nowISO(), updatedAt: nowISO(), deletedAt:null
+          }]
+        }],
+        activeProfile: "default",
+        history: {},
+        logs: [],
+        trace: [],
+        templates: DEFAULT_TEMPLATES,
+        ui:{ maximize:null }
+      };
+    }
+
+    let state = null;
+    let editingId = null;
+    let saveTimer = null;
+    let autosaveTimer = null;
+
+    const safeParse = (json) => {
+      try{ return {ok:true, data: JSON.parse(json)}; }
+      catch(e){ return {ok:false, err: String(e?.message||e)}; }
+    };
+
+    function pushLog(msg, kind="info", silent=false){
+      state.logs.push({ts: nowISO(), kind, msg});
+      if(state.logs.length > 500) state.logs = state.logs.slice(-500);
+      if(!silent) renderLast10();
+    }
+    function pushTrace(action){
+      state.trace.push({ts: nowISO(), action, agentId: editingId || null, profile: state.activeProfile});
+      if(state.trace.length > 700) state.trace = state.trace.slice(-700);
+    }
+
+    function load(){
+      const raw = localStorage.getItem(LS_KEY);
+      if(!raw){
+        state = defaultState();
+        pushLog("Erststart: Default-State erstellt","ok");
+        save(true);
+        return;
+      }
+      const p = safeParse(raw);
+      if(!p.ok){
+        state = defaultState();
+        pushLog("State beschädigt: neu erzeugt","bad");
+        save(true);
+        return;
+      }
+      state = p.data;
+      validateAndRepair("Load");
+    }
+
+    function save(silent=false){
+      try{
+        state.meta.updatedAt = nowISO();
+        localStorage.setItem(LS_KEY, JSON.stringify(state));
+        if(!silent) toast("Gespeichert","Daten wurden lokal gespeichert.","ok");
+      }catch(e){
+        toast("Speichern fehlgeschlagen", String(e?.message||e), "bad");
+        pushLog("Speichern fehlgeschlagen: "+String(e?.message||e),"bad");
+      }
+      renderPill();
+    }
+
+    function debounceSave(reason){
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(()=>{
+        save(true);
+        if(reason) pushTrace(reason);
+      }, 650);
+    }
+
+    function startAutosave(){
+      clearInterval(autosaveTimer);
+      autosaveTimer = setInterval(()=>{
+        try{ save(true); pushLog("Autosave","info", true); renderLast10(); }catch(_){}
+      }, 5*60*1000);
+    }
+
+    function validateAndRepair(context=""){
+      const fixes = [];
+      if(!state || typeof state!=="object"){ state = defaultState(); fixes.push("state reset"); }
+      if(state.schema !== SCHEMA){ state.schema = SCHEMA; fixes.push("schema gesetzt"); }
+
+      state.meta = state.meta || {};
+      state.meta.createdAt = state.meta.createdAt || nowISO();
+      state.meta.updatedAt = nowISO();
+
+      state.settings = state.settings || {};
+      state.settings.theme = (state.settings.theme==="light") ? "light" : "dark";
+      state.settings.fontPx = clamp(Number(state.settings.fontPx||18), 14, 26);
+
+      state.settings.layout = state.settings.layout || {};
+      state.settings.layout.leftw = clamp(Number(state.settings.layout.leftw||360), 260, 520);
+      state.settings.layout.rightw = clamp(Number(state.settings.layout.rightw||400), 280, 620);
+      state.settings.layout.bottomh = clamp(Number(state.settings.layout.bottomh||240), 160, 420);
+
+      state.settings.panels = state.settings.panels || {left:true,center:true,right:true,bottom:true};
+      state.settings.minimized = state.settings.minimized || {left:false,center:false,right:false,bottom:false};
+
+      state.profiles = Array.isArray(state.profiles) ? state.profiles : [];
+      if(!state.profiles.length){ state.profiles = defaultState().profiles; fixes.push("profiles neu erzeugt"); }
+      if(!state.activeProfile || !state.profiles.find(p=>p.name===state.activeProfile)){
+        state.activeProfile = state.profiles[0].name; fixes.push("activeProfile korrigiert");
+      }
+
+      state.logs = Array.isArray(state.logs) ? state.logs : [];
+      state.trace = Array.isArray(state.trace) ? state.trace : [];
+      state.templates = Array.isArray(state.templates) ? state.templates : DEFAULT_TEMPLATES;
+
+      state.history = state.history || {};
+      for(const p of state.profiles){
+        p.agents = Array.isArray(p.agents) ? p.agents : [];
+        for(const a of p.agents){
+          a.id = String(a.id||"").trim();
+          a.category = String(a.category||"").trim();
+          a.subcategory = String(a.subcategory||"").trim();
+          a.status = (a.status==="in progress"||a.status==="done"||a.status==="deleted"||a.status==="open") ? a.status : "open";
+          a.title = String(a.title||"").trim();
+          a.goal = String(a.goal||"");
+          a.test = String(a.test||"");
+          a.done = String(a.done||"");
+          a.createdAt = a.createdAt || nowISO();
+          a.updatedAt = a.updatedAt || nowISO();
+          a.deletedAt = a.deletedAt || null;
+        }
+        if(!state.history[p.name]) state.history[p.name] = {undo:[], redo:[]};
+      }
+
+      if(fixes.length) pushLog(`Repair (${context}): ${fixes.join(", ")}`,"warn");
+      applyTheme(state.settings.theme, true);
+      applyFont(state.settings.fontPx, true);
+      applyLayoutFromSettings(true);
+      return fixes;
+    }
+
+    function escapeHtml(s){
+      return String(s??"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+    }
+    function linuxFileName(s){
+      return String(s||"").toLowerCase()
+        .replace(/\s+/g,"_")
+        .replace(/[^a-z0-9._-]+/g,"")
+        .replace(/_{2,}/g,"_")
+        .replace(/^_+|_+$/g,"");
+    }
+    function agentFileName(agent){
+      const id = (agent.id||"AGENT").toUpperCase();
+      const slug = linuxFileName(agent.title||"agent");
+      return `${id}_AGENTS_${slug || "item"}.md`;
+    }
+    function dlText(filename, text, mime="text/plain"){
+      const blob = new Blob([text], {type:mime});
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 0);
+    }
+    async function copyText(text){
+      try{
+        if(navigator.clipboard?.writeText){
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+      }catch(_){}
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      ta.setAttribute("readonly","readonly");
+      document.body.appendChild(ta);
+      ta.select();
+      let ok=false;
+      try{ ok = document.execCommand("copy"); }catch(_){}
+      ta.remove();
+      return ok;
+    }
+
+    function toast(title, msg, kind="info"){
+      const t = $("#toast");
+      $("#toastTitle").textContent = title || "Info";
+      $("#toastMsg").textContent = msg || "";
+      t.style.display = "block";
+      if(kind==="bad") t.style.borderColor = "rgba(255,85,113,.75)";
+      else if(kind==="ok") t.style.borderColor = "rgba(64,249,155,.6)";
+      else if(kind==="warn") t.style.borderColor = "rgba(255,176,32,.65)";
+      else t.style.borderColor = "rgba(36,51,72,.75)";
+      $("#toastClose").focus();
+    }
+    function closeToast(){ $("#toast").style.display = "none"; }
+
+    function showMenu(){
+      const m = $("#menuToast");
+      m.style.display = "block";
+      $("#btnMenu").setAttribute("aria-expanded","true");
+      $("#btnMenuClose").focus();
+    }
+    function closeMenu(){
+      $("#menuToast").style.display = "none";
+      $("#btnMenu").setAttribute("aria-expanded","false");
+    }
+
+    function getProfile(){
+      return state.profiles.find(p=>p.name===state.activeProfile) || state.profiles[0];
+    }
+    function ensureHistory(profileName){
+      if(!state.history[profileName]) state.history[profileName] = {undo:[], redo:[]};
+      return state.history[profileName];
+    }
+    function snapshotAgents(){
+      return JSON.parse(JSON.stringify(getProfile().agents));
+    }
+    function pushUndo(reason="Änderung"){
+      const p = getProfile();
+      const h = ensureHistory(p.name);
+      h.undo.push({ts: nowISO(), agents: snapshotAgents(), reason});
+      if(h.undo.length > 60) h.undo = h.undo.slice(-60);
+      h.redo = [];
+      $("#btnUndo").disabled = !h.undo.length;
+      $("#btnRedo").disabled = !h.redo.length;
+    }
+    function doUndo(){
+      const p = getProfile();
+      const h = ensureHistory(p.name);
+      if(!h.undo.length) return;
+      const cur = snapshotAgents();
+      const last = h.undo.pop();
+      h.redo.push({ts: nowISO(), agents: cur, reason:"redo snapshot"});
+      p.agents = last.agents;
+      pushLog("Undo: "+(last.reason||""), "warn");
+      pushTrace("Undo");
+      editingId = null;
+      renderAll();
+      debounceSave("Undo");
+    }
+    function doRedo(){
+      const p = getProfile();
+      const h = ensureHistory(p.name);
+      if(!h.redo.length) return;
+      const cur = snapshotAgents();
+      const next = h.redo.pop();
+      h.undo.push({ts: nowISO(), agents: cur, reason:"undo snapshot"});
+      p.agents = next.agents;
+      pushLog("Redo", "warn");
+      pushTrace("Redo");
+      editingId = null;
+      renderAll();
+      debounceSave("Redo");
+    }
+
+    function agentToMarkdown(a){
+      const lines = [];
+      lines.push(`# ${(a.id||"AGENT").toUpperCase()} • ${a.title||"—"}`);
+      lines.push("");
+      lines.push(`**Kategorie:** ${a.category||"—"}${a.subcategory?(" / "+a.subcategory):""}`);
+      lines.push(`**Status:** ${a.status||"open"}`);
+      lines.push(`**Erstellt:** ${a.createdAt||"—"}  `);
+      lines.push(`**Geändert:** ${a.updatedAt||"—"}`);
+      lines.push("");
+      lines.push("## Ziel");
+      lines.push(a.goal||"—");
+      lines.push("");
+      lines.push("## Test");
+      lines.push(a.test||"—");
+      lines.push("");
+      lines.push("## Fertig wenn");
+      lines.push(a.done||"—");
+      return lines.join("\n");
+    }
+    function exportAllMarkdownCombined(){
+      const p = getProfile();
+      const active = p.agents.filter(a=>a.status!=="deleted");
+      if(!active.length) return "# Keine AGENTS\n";
+      return active.map(agentToMarkdown).join("\n\n---\n\n");
+    }
+
+    function renderPill(){
+      $("#pillProfile").textContent = state.activeProfile || "—";
+      const p = getProfile();
+      const total = p.agents.filter(a=>a.status!=="deleted").length;
+      const done = p.agents.filter(a=>a.status==="done").length;
+      const dot = $("#pillDot");
+      dot.classList.remove("ok","warn","bad");
+      if(total===0) dot.classList.add("warn");
+      else if(done===total) dot.classList.add("ok");
+      else dot.classList.add("warn");
+    }
+
+    function renderProfiles(){
+      const sel = $("#profileSel");
+      sel.innerHTML = state.profiles.map(p=>`<option value="${escapeHtml(p.name)}">${escapeHtml(p.name)}</option>`).join("");
+      sel.value = state.activeProfile;
+      renderPill();
+    }
+
+    function renderCats(){
+      const p = getProfile();
+      const cats = Array.from(new Set(p.agents.filter(a=>a.status!=="deleted").map(a=>a.category).filter(Boolean))).sort((a,b)=>a.localeCompare(b));
+      $("#catList").innerHTML = cats.map(c=>`<option value="${escapeHtml(c)}"></option>`).join("");
+    }
+
+    function computeProgress(){
+      const p = getProfile();
+      const active = p.agents.filter(a=>a.status!=="deleted");
+      const total = active.length;
+      const done = active.filter(a=>a.status==="done").length;
+      const pct = total ? Math.round((done/total)*100) : 0;
+      return {total, done, pct};
+    }
+
+    function renderLeftMeta(){
+      const p = getProfile();
+      $("#leftMeta").textContent = String(p.agents.filter(a=>a.status!=="deleted").length);
+    }
+    function renderCenterMeta(){
+      $("#centerMeta").textContent = editingId ? ("AGENT: "+editingId) : "kein Agent geöffnet";
+    }
+    function renderProgressInBottom(){
+      const {total, done, pct} = computeProgress();
+      $("#bottomMeta").textContent = `${done}/${total} erledigt • ${pct}%`;
+    }
+
+    function validateAgentFields(a){
+      const errs=[];
+      if(!a.id) errs.push("ID fehlt");
+      if(!a.category) errs.push("Kategorie fehlt");
+      if(!a.title) errs.push("Titel fehlt");
+      if(a.id && !/^[A-Za-z0-9._-]{2,32}$/.test(a.id)) errs.push("ID enthält ungültige Zeichen (erlaubt: Buchstaben, Zahlen, . _ -)");
+      return errs;
+    }
+    function readEditor(){
+      return {
+        id: ($("#a_id").value||"").trim(),
+        category: ($("#a_cat").value||"").trim(),
+        subcategory: ($("#a_sub").value||"").trim(),
+        status: $("#a_status").value,
+        title: ($("#a_title").value||"").trim(),
+        goal: $("#a_goal").value||"",
+        test: $("#a_test").value||"",
+        done: $("#a_done").value||"",
+      };
+    }
+    function updateLiveMd(){
+      const a = readEditor();
+      const errs = validateAgentFields(a);
+      const preview = errs.length
+        ? `# (Vorschau) – Pflichtfelder fehlen\n\nFehlt: ${errs.join(", ")}\n\n---\n\n` + agentToMarkdown({ ...a, id: a.id || "AGENT" })
+        : agentToMarkdown({ ...a, createdAt:"—", updatedAt:"—" });
+      $("#liveMd").textContent = preview;
+      debounceSave("LiveMD updated");
+    }
+
+    function setEditorFromAgent(a){
+      editingId = a.id;
+      state.settings.lastOpenAgentId = a.id;
+      $("#a_id").value = a.id || "";
+      $("#a_cat").value = a.category || "";
+      $("#a_sub").value = a.subcategory || "";
+      $("#a_status").value = a.status || "open";
+      $("#a_title").value = a.title || "";
+      $("#a_goal").value = a.goal || "";
+      $("#a_test").value = a.test || "";
+      $("#a_done").value = a.done || "";
+      $("#editorHint").classList.add("hidden");
+      updateLiveMd();
+      renderCenterMeta();
+    }
+
+    function clearEditor(){
+      editingId = null;
+      state.settings.lastOpenAgentId = null;
+      ["a_id","a_cat","a_sub","a_status","a_title","a_goal","a_test","a_done"].forEach(id=>$("#"+id).value="");
+      $("#liveMd").textContent = "";
+      $("#formHelp").textContent = "";
+      $("#editorHint").classList.remove("hidden");
+      renderCenterMeta();
+      debounceSave("Editor geleert");
+    }
+
+    function openAgent(id){
+      const p = getProfile();
+      const a = p.agents.find(x=>x.id===id);
+      if(!a){ toast("Nicht gefunden","AGENT existiert nicht: "+id,"warn"); return; }
+      if(a.status==="deleted") toast("Im Papierkorb","Dieser AGENT ist im Papierkorb. Wiederherstellen im rechten Panel.","warn");
+      setEditorFromAgent(a);
+      pushLog("Geöffnet: "+id,"info");
+      pushTrace("Agent geöffnet");
+      renderAgentList();
+      renderTrash();
+    }
+
+    function newAgent(){
+      const p = getProfile();
+      pushUndo("Neuer Agent");
+      const id = "T" + String(p.agents.length+1).padStart(3,"0");
+      const a = { id, category:"", subcategory:"", status:"open", title:"", goal:"", test:"", done:"", createdAt: nowISO(), updatedAt: nowISO(), deletedAt:null };
+      p.agents.unshift(a);
+      pushLog("Neuer AGENT: "+id,"ok");
+      pushTrace("Neuer Agent");
+      setEditorFromAgent(a);
+      renderAll();
+      debounceSave("Neuer Agent");
+    }
+
+    function saveEditor(){
+      const p = getProfile();
+      const a = readEditor();
+      const errs = validateAgentFields(a);
+      if(errs.length){
+        $("#formHelp").textContent = "Bitte fixen: " + errs.join(" • ");
+        toast("Pflichtfelder fehlen", errs.join(" • "), "warn");
+        return false;
+      }
+
+      const existing = p.agents.find(x=>x.id===editingId) || p.agents.find(x=>x.id===a.id);
+      const isNew = !existing;
+
+      pushUndo(isNew ? "Agent gespeichert (neu)" : "Agent gespeichert (update)");
+
+      if(isNew){
+        const obj = { ...a, createdAt: nowISO(), updatedAt: nowISO(), deletedAt:null };
+        p.agents.unshift(obj);
+        editingId = obj.id;
+        state.settings.lastOpenAgentId = obj.id;
+        pushLog("Gespeichert (neu): "+obj.id, "ok");
+      } else {
+        if(a.id !== existing.id && p.agents.some(x=>x.id===a.id)){
+          toast("ID belegt","Diese ID existiert schon: "+a.id,"bad");
+          return false;
+        }
+        Object.assign(existing, a);
+        existing.updatedAt = nowISO();
+        editingId = existing.id;
+        state.settings.lastOpenAgentId = existing.id;
+        pushLog("Gespeichert: "+existing.id, "ok");
+      }
+
+      $("#formHelp").textContent = "OK. Gespeichert. Export ist unten im Debug-Panel.";
+      pushTrace("Agent gespeichert");
+      updateLiveMd();
+      renderAll();
+      debounceSave("Agent gespeichert");
+      return true;
+    }
+
+    function duplicateAgent(){
+      const p = getProfile();
+      if(!editingId){ toast("Kein Agent offen","Öffne erst einen Agenten.","warn"); return; }
+      const src = p.agents.find(x=>x.id===editingId);
+      if(!src){ toast("Nicht gefunden","AGENT existiert nicht.","warn"); return; }
+      pushUndo("Duplizieren");
+      const copy = JSON.parse(JSON.stringify(src));
+      copy.id = (src.id||"T").toUpperCase() + "_COPY_" + Math.random().toString(16).slice(2,4).toUpperCase();
+      copy.status = "open";
+      copy.createdAt = nowISO();
+      copy.updatedAt = nowISO();
+      copy.deletedAt = null;
+      p.agents.unshift(copy);
+      pushLog("Dupliziert: "+src.id+" → "+copy.id, "ok");
+      pushTrace("Dupliziert");
+      setEditorFromAgent(copy);
+      renderAll();
+      debounceSave("Dupliziert");
+    }
+
+    function moveToTrash(){
+      const p = getProfile();
+      if(!editingId){ toast("Kein Agent offen","Öffne erst einen Agenten.","warn"); return; }
+      const a = p.agents.find(x=>x.id===editingId);
+      if(!a) return;
+      pushUndo("In Papierkorb");
+      a.status = "deleted";
+      a.deletedAt = nowISO();
+      a.updatedAt = nowISO();
+      pushLog("In Papierkorb: "+a.id,"warn");
+      pushTrace("Papierkorb");
+      clearEditor();
+      renderAll();
+      debounceSave("In Papierkorb");
+    }
+
+    function restoreFromTrash(id){
+      const p = getProfile();
+      const a = p.agents.find(x=>x.id===id);
+      if(!a) return;
+      pushUndo("Wiederherstellen");
+      a.status = "open";
+      a.deletedAt = null;
+      a.updatedAt = nowISO();
+      pushLog("Wiederhergestellt: "+id,"ok");
+      pushTrace("Wiederhergestellt");
+      renderAll();
+      debounceSave("Wiederhergestellt");
+    }
+
+    function deleteForever(id){
+      const p = getProfile();
+      pushUndo("Endgültig löschen");
+      p.agents = p.agents.filter(x=>x.id!==id);
+      if(editingId===id) clearEditor();
+      pushLog("Endgültig gelöscht: "+id,"bad");
+      pushTrace("Endgültig gelöscht");
+      renderAll();
+      debounceSave("Endgültig gelöscht");
+    }
+
+    function emptyTrash(){
+      const p = getProfile();
+      const del = p.agents.filter(a=>a.status==="deleted").map(a=>a.id);
+      if(!del.length){ toast("Papierkorb leer","Keine gelöschten AGENTS.","info"); return; }
+      pushUndo("Papierkorb leeren");
+      p.agents = p.agents.filter(a=>a.status!=="deleted");
+      pushLog("Papierkorb geleert ("+del.length+")","bad");
+      pushTrace("Papierkorb geleert");
+      renderAll();
+      debounceSave("Papierkorb geleert");
+    }
+
+    function renderAgentList(){
+      const p = getProfile();
+      const q = ($("#q").value||"").trim().toLowerCase();
+      const st = $("#fStatus").value;
+      const sort = $("#fSort").value;
+
+      let list = p.agents.slice();
+      if(q){
+        list = list.filter(a => (`${a.id} ${a.title} ${a.category} ${a.subcategory} ${a.goal} ${a.test} ${a.done}`.toLowerCase()).includes(q));
+      }
+      if(st) list = list.filter(a=>a.status===st);
+
+      const sorters = {
+        updated_desc:(a,b)=>String(b.updatedAt||"").localeCompare(String(a.updatedAt||"")),
+        created_desc:(a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||"")),
+        created_asc:(a,b)=>String(a.createdAt||"").localeCompare(String(b.createdAt||"")),
+        id_asc:(a,b)=>String(a.id||"").localeCompare(String(b.id||"")),
+        id_desc:(a,b)=>String(b.id||"").localeCompare(String(a.id||"")),
+        status:(a,b)=>String(a.status||"").localeCompare(String(b.status||"")),
+      };
+      list.sort(sorters[sort]||sorters.updated_desc);
+
+      const host = $("#agentList");
+      host.innerHTML = list.map(a=>{
+        const sclass = a.status==="open" ? "s-open" :
+                       a.status==="in progress" ? "s-progress" :
+                       a.status==="done" ? "s-done" : "s-deleted";
+        const cat = a.category || "—";
+        const sub = a.subcategory ? ` / ${a.subcategory}` : "";
+        const meta = `${a.id || "—"} • ${cat}${sub}`;
+        return `
+          <div class="item" role="listitem" data-id="${escapeHtml(a.id)}" tabindex="0" aria-label="Agent ${escapeHtml(a.id)}">
+            <div class="left">
+              <div class="title">${escapeHtml(a.title || "—")}</div>
+              <div class="subline">
+                <span class="tag mono">${escapeHtml(meta)}</span>
+                <span class="status ${sclass}"><span class="dot"></span>${escapeHtml(a.status || "open")}</span>
+              </div>
+            </div>
+            <div class="right">
+              <button class="btn" data-open="${escapeHtml(a.id)}" type="button">Öffnen</button>
+              <button class="btn" data-copy="${escapeHtml(a.id)}" type="button">MD</button>
+            </div>
+          </div>
+        `;
+      }).join("") || `<div class="help">Keine Treffer. Tipp: Filter zurücksetzen oder neuen AGENT anlegen.</div>`;
+
+      host.querySelectorAll("[data-open]").forEach(b=>b.addEventListener("click", ()=>openAgent(b.getAttribute("data-open"))));
+      host.querySelectorAll("[data-copy]").forEach(b=>{
+        b.addEventListener("click", async ()=> {
+          const a = p.agents.find(x=>x.id===b.getAttribute("data-copy"));
+          if(!a) return;
+          const ok = await copyText(agentToMarkdown(a));
+          pushLog(ok ? `MD kopiert: ${a.id}` : `MD kopieren fehlgeschlagen: ${a.id}`, ok?"ok":"bad");
+          toast(ok?"Kopiert":"Fehler", ok?"Markdown wurde in die Zwischenablage kopiert.":"Markdown wurde nicht kopiert.", ok?"ok":"bad");
+        });
+      });
+      host.querySelectorAll(".item").forEach(el=>{
+        el.addEventListener("keydown",(e)=>{ if(e.key==="Enter"){ e.preventDefault(); openAgent(el.getAttribute("data-id")); } });
+      });
+
+      renderLeftMeta(); renderCenterMeta(); renderCats(); renderProgressInBottom();
+    }
+
+    function renderTrash(){
+      const p = getProfile();
+      const del = p.agents.filter(a=>a.status==="deleted").sort((a,b)=>String(b.deletedAt||"").localeCompare(String(a.deletedAt||"")));
+      const host = $("#trashList");
+      host.innerHTML = del.map(a=>`
+        <div class="item">
+          <div class="left">
+            <div class="title">${escapeHtml(a.title || "—")}</div>
+            <div class="subline">
+              <span class="tag mono">${escapeHtml((a.id||"").toUpperCase())}</span>
+              <span class="status s-deleted"><span class="dot"></span>papierkorb</span>
+            </div>
+          </div>
+          <div class="right">
+            <button class="btn" data-restore="${escapeHtml(a.id)}" type="button">Restore</button>
+            <button class="btn danger" data-del="${escapeHtml(a.id)}" type="button">Löschen</button>
+          </div>
+        </div>
+      `).join("") || `<div class="help">Papierkorb ist leer.</div>`;
+
+      host.querySelectorAll("[data-restore]").forEach(b=>b.addEventListener("click", ()=>restoreFromTrash(b.getAttribute("data-restore"))));
+      host.querySelectorAll("[data-del]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const id=b.getAttribute("data-del");
+          if(confirm("Endgültig löschen? "+id)) deleteForever(id);
+        });
+      });
+    }
+
+    function renderLast10(){
+      const host = $("#last10");
+      const last = state.logs.slice(-10).reverse();
+      host.innerHTML = last.map(e=>{
+        const dot = e.kind==="ok" ? "ok" : e.kind==="warn" ? "warn" : e.kind==="bad" ? "bad" : "warn";
+        return `
+          <div class="item" style="align-items:center">
+            <div class="left">
+              <div class="subline"><span class="tag mono">${escapeHtml(e.ts)}</span></div>
+              <div class="title" style="font-size:13px">${escapeHtml(e.msg)}</div>
+            </div>
+            <div class="right">
+              <span class="pill"><span class="dot ${dot}"></span>${escapeHtml(e.kind)}</span>
+            </div>
+          </div>
+        `;
+      }).join("") || `<div class="help">Noch keine Logs.</div>`;
+    }
+
+    function renderTemplatesTree(){
+      const q = ($("#tplSearch").value||"").trim().toLowerCase();
+      const filtered = state.templates.filter(t=>{
+        const hay = `${t.key} ${t.category} ${t.subcategory} ${t.title} ${t.goal} ${t.test} ${t.done}`.toLowerCase();
+        return !q || hay.includes(q);
+      });
+
+      const byCat = new Map();
+      for(const t of filtered){
+        const cat = t.category || "Ohne Kategorie";
+        if(!byCat.has(cat)) byCat.set(cat, []);
+        byCat.get(cat).push(t);
+      }
+
+      const host = $("#tplTree");
+      host.innerHTML = Array.from(byCat.entries()).sort((a,b)=>a[0].localeCompare(b[0])).map(([cat, items])=>{
+        const inner = items.sort((a,b)=>a.title.localeCompare(b.title)).map(t=>{
+          const sub = t.subcategory ? `${t.subcategory} · ` : "";
+          return `
+            <div class="item" style="cursor:pointer" data-tpl="${escapeHtml(t.key)}" tabindex="0" role="button" aria-label="Template ${escapeHtml(t.key)}">
+              <div class="left">
+                <div class="title">${escapeHtml(t.title)}</div>
+                <div class="subline"><span class="tag mono">${escapeHtml(sub + t.key)}</span></div>
+              </div>
+              <div class="right"><span class="tag">${escapeHtml(cat)}</span></div>
+            </div>
+          `;
+        }).join("");
+        return `<div class="help" style="margin-bottom:10px"><b>${escapeHtml(cat)}</b> (${items.length})</div>${inner}<div class="hr"></div>`;
+      }).join("") || `<div class="help">Keine Templates gefunden.</div>`;
+
+      host.querySelectorAll("[data-tpl]").forEach(el=>{
+        const key = el.getAttribute("data-tpl");
+        const act = ()=>pickTemplate(key);
+        el.addEventListener("click", act);
+        el.addEventListener("keydown",(e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); act(); } });
+      });
+    }
+
+    function pickTemplate(key){
+      const t = state.templates.find(x=>x.key===key);
+      if(!t) return;
+      $("#tplPicked").value = t.key;
+      $("#tplCat").value = t.category || "";
+      $("#tplSub").value = t.subcategory || "";
+      $("#tplTitle").value = t.title || "";
+      $("#tplGoal").value = t.goal || "";
+      $("#tplTest").value = t.test || "";
+      $("#tplDone").value = t.done || "";
+      pushLog("Template gewählt: "+t.key,"info");
+    }
+    function clearTemplateForm(){
+      ["tplPicked","tplCat","tplSub","tplTitle","tplGoal","tplTest","tplDone"].forEach(id=>$("#"+id).value="");
+    }
+    function applyTemplateToEditor(){
+      const key = ($("#tplPicked").value||"").trim();
+      if(!key){ toast("Kein Template","Wähle rechts ein Template.","warn"); return; }
+      const t = state.templates.find(x=>x.key===key);
+      if(!t) return;
+      if(!editingId) newAgent();
+
+      const curId = ($("#a_id").value||"").trim();
+      if(!curId) $("#a_id").value = (editingId||"").trim() || "T001";
+      $("#a_cat").value = ($("#tplCat").value||"").trim();
+      $("#a_sub").value = ($("#tplSub").value||"").trim();
+      $("#a_title").value = ($("#tplTitle").value||t.title||"").trim();
+      $("#a_goal").value = $("#tplGoal").value||t.goal||"";
+      $("#a_test").value = $("#tplTest").value||t.test||"";
+      $("#a_done").value = $("#tplDone").value||t.done||"";
+      updateLiveMd();
+      pushLog("Template übernommen: "+key,"ok");
+      pushTrace("Template übernommen");
+      debounceSave("Template übernommen");
+    }
+
+    function exportJson(name, data){
+      dlText(name, JSON.stringify(data, null, 2), "application/json");
+      pushLog("Export: "+name,"info");
+      pushTrace("Export: "+name);
+    }
+    function exportActiveJson(){ exportJson("agents_active.json", getProfile().agents.filter(a=>a.status!=="deleted")); }
+    function exportDoneJson(){ exportJson("agents_done.json", getProfile().agents.filter(a=>a.status==="done")); }
+    function exportPackJson(){ exportJson("profil_pack.json", { schema: SCHEMA, exportedAt: nowISO(), activeProfile: state.activeProfile, state }); }
+    function exportStateJson(){ exportJson("agents_state_backup.json", state); }
+
+    async function exportToFolder(){
+      if(!window.showDirectoryPicker){
+        toast("Nicht unterstützt","Dein Browser unterstützt keinen Ordner-Export. Nutze Downloads.","warn");
+        return;
+      }
+      const active = getProfile().agents.filter(a=>a.status!=="deleted");
+      if(!active.length){ toast("Keine AGENTS","Es gibt nichts zu exportieren.","warn"); return; }
+      try{
+        const dir = await window.showDirectoryPicker();
+        for(const a of active){
+          const handle = await dir.getFileHandle(agentFileName(a), {create:true});
+          const writable = await handle.createWritable();
+          await writable.write(agentToMarkdown(a));
+          await writable.close();
+        }
+        const metaH = await dir.getFileHandle("agents_active.json", {create:true});
+        const w = await metaH.createWritable();
+        await w.write(JSON.stringify(active, null, 2));
+        await w.close();
+        pushLog("Ordner-Export: "+active.length+" Dateien","ok");
+        pushTrace("Ordner-Export");
+        toast("Ordner-Export fertig", active.length+" Dateien geschrieben.","ok");
+      }catch(e){
+        toast("Ordner-Export abgebrochen", String(e?.message||e), "warn");
+        pushLog("Ordner-Export Fehler: "+String(e?.message||e), "bad");
+      }
+    }
+
+    async function importJson(){
+      const file = $("#fileImport").files?.[0];
+      if(!file){ toast("Keine Datei","Wähle eine JSON-Datei.","warn"); return; }
+      const mode = $("#importMode").value;
+      const newName = ($("#importProfileName").value||"").trim();
+
+      let text="";
+      try{ text = await file.text(); }catch(e){ toast("Lesefehler", String(e?.message||e), "bad"); return; }
+      const p = safeParse(text);
+      if(!p.ok){ toast("JSON kaputt", p.err, "bad"); return; }
+
+      let imported = p.data;
+      const isPack = imported && typeof imported==="object" && imported.state && imported.schema;
+      const isArray = Array.isArray(imported);
+
+      pushUndo("Import");
+
+      if(isPack){
+        const packState = imported.state;
+        if(mode==="replace"){
+          state = packState;
+          validateAndRepair("Import replace pack");
+          pushLog("Import: Pack ersetzt State","warn");
+        } else if(mode==="merge"){
+          validateAndRepair("Before merge");
+          const incomingProfiles = Array.isArray(packState.profiles) ? packState.profiles : [];
+          for(const ip of incomingProfiles){
+            if(!ip?.name) continue;
+            if(!state.profiles.find(p=>p.name===ip.name)){
+              state.profiles.push(ip);
+            } else {
+              const target = state.profiles.find(p=>p.name===ip.name);
+              const ids = new Set(target.agents.map(a=>a.id));
+              for(const a of (ip.agents||[])){
+                if(a?.id && !ids.has(a.id)){
+                  target.agents.push(a);
+                  ids.add(a.id);
+                }
+              }
+            }
+          }
+          pushLog("Import: Pack gemerged","ok");
+        } else if(mode==="newprofile"){
+          const name = newName || ("import_"+Date.now());
+          const prof = { name, createdAt: nowISO(), agents: [] };
+          const ip = (packState.profiles||[])[0];
+          prof.agents = Array.isArray(ip?.agents) ? ip.agents : [];
+          state.profiles.push(prof);
+          state.activeProfile = name;
+          pushLog("Import: Pack als neues Profil "+name,"ok");
+        }
+      } else if(isArray){
+        const arr = imported;
+        const name = (mode==="newprofile" && newName) ? newName : state.activeProfile;
+        if(mode==="newprofile"){
+          if(state.profiles.find(p=>p.name===name)){ toast("Profil existiert","Wähle anderen Profilnamen.","warn"); return; }
+          state.profiles.push({ name, createdAt: nowISO(), agents: [] });
+          state.activeProfile = name;
+        }
+        const prof = getProfile();
+        if(mode==="replace") prof.agents = [];
+        const ids = new Set(prof.agents.map(a=>a.id));
+        for(const a of arr){
+          if(!a || !a.id) continue;
+          if(ids.has(a.id)) continue;
+          prof.agents.push(a);
+          ids.add(a.id);
+        }
+        pushLog(`Import: ${arr.length} Einträge verarbeitet (${mode})`,"ok");
+      } else {
+        toast("Unbekanntes Format","Erlaubt: Array von Agenten oder profil_pack.json","bad");
+        return;
+      }
+
+      validateAndRepair("After import");
+      renderAll();
+      debounceSave("Import");
+      toast("Import fertig","Daten wurden eingelesen und geprüft.","ok");
+    }
+
+    function applyTheme(theme, silent=false){
+      document.documentElement.setAttribute("data-theme", theme);
+      state.settings.theme = theme;
+      $("#themeSel").value = theme;
+      if(!silent){ pushLog("Theme: "+theme,"info"); debounceSave("Theme geändert"); }
+    }
+    function applyFont(px, silent=false){
+      document.documentElement.style.setProperty("--font", px+"px");
+      state.settings.fontPx = px;
+      $("#fontSel").value = String(px);
+      if(!silent){ pushLog("Schrift: "+px+"px","info"); debounceSave("Schrift geändert"); }
+    }
+    function applyLayoutFromSettings(silent=false){
+      const l = state.settings.layout;
+      document.documentElement.style.setProperty("--leftw", l.leftw+"px");
+      document.documentElement.style.setProperty("--rightw", l.rightw+"px");
+      document.documentElement.style.setProperty("--bottomh", l.bottomh+"px");
+      if(!silent) debounceSave("Layout geändert");
+    }
+
+    function applyPanelVisibility(){
+      $("#panelLeft").classList.toggle("hidden", !state.settings.panels.left);
+      $("#panelCenter").classList.toggle("hidden", !state.settings.panels.center);
+      $("#panelRight").classList.toggle("hidden", !state.settings.panels.right);
+      $("#panelBottom").classList.toggle("hidden", !state.settings.panels.bottom);
+      $("#splitV1").classList.toggle("hidden", !(state.settings.panels.left && state.settings.panels.center));
+      $("#splitV2").classList.toggle("hidden", !(state.settings.panels.center && state.settings.panels.right));
+      $("#splitHReal").classList.toggle("hidden", !state.settings.panels.bottom);
+    }
+    function applyMinimized(){
+      $("#leftBody").classList.toggle("hidden", !!state.settings.minimized.left);
+      $("#centerBody").classList.toggle("hidden", !!state.settings.minimized.center);
+      $("#rightBody").classList.toggle("hidden", !!state.settings.minimized.right);
+      $("#bottomBody").classList.toggle("hidden", !!state.settings.minimized.bottom);
+    }
+
+    function toggleMaximize(which){
+      state.ui.maximize = (state.ui.maximize===which) ? null : which;
+      const k = state.ui.maximize;
+      const all = {left:$("#panelLeft"), center:$("#panelCenter"), right:$("#panelRight"), bottom:$("#panelBottom")};
+      for(const [key, el] of Object.entries(all)){
+        el.classList.toggle("hidden", !!k && key!==k);
+      }
+      $("#splitV1").classList.toggle("hidden", !!k);
+      $("#splitV2").classList.toggle("hidden", !!k);
+      $("#splitHReal").classList.toggle("hidden", !!k);
+
+      const main = $("#mainGrid");
+      if(!k){
+        main.style.gridTemplateColumns = `var(--leftw) var(--split) 1fr var(--split) var(--rightw)`;
+        main.style.gridTemplateRows = `1fr var(--split) var(--bottomh)`;
+        main.style.gridTemplateAreas =
+          `"left v1 center v2 right" "left v1 center v2 right" "bottom bottom bottom bottom bottom"`;
+      } else {
+        main.style.gridTemplateColumns = "1fr";
+        main.style.gridTemplateRows = "1fr";
+        main.style.gridTemplateAreas = `"${k}"`;
+      }
+      debounceSave("Maximize");
+    }
+
+    function setupSplitters(){
+      const v1 = $("#splitV1");
+      const v2 = $("#splitV2");
+      const h = $("#splitHReal");
+
+      function dragV(el, key){
+        let startX=0, startW=0;
+        const onDown=(e)=>{
+          e.preventDefault();
+          startX = e.clientX;
+          startW = state.settings.layout[key];
+          window.addEventListener("mousemove", onMove);
+          window.addEventListener("mouseup", onUp);
+        };
+        const onMove=(e)=>{
+          const dx = e.clientX - startX;
+          state.settings.layout[key] = clamp(startW + dx, key==="leftw"?260:280, key==="leftw"?520:620);
+          applyLayoutFromSettings(true);
+        };
+        const onUp=()=>{
+          window.removeEventListener("mousemove", onMove);
+          window.removeEventListener("mouseup", onUp);
+          debounceSave("Splitter");
+        };
+        el.addEventListener("mousedown", onDown);
+      }
+      function dragH(el){
+        let startY=0, startH=0;
+        const onDown=(e)=>{
+          e.preventDefault();
+          startY = e.clientY;
+          startH = state.settings.layout.bottomh;
+          window.addEventListener("mousemove", onMove);
+          window.addEventListener("mouseup", onUp);
+        };
+        const onMove=(e)=>{
+          const dy = startY - e.clientY;
+          state.settings.layout.bottomh = clamp(startH + dy, 160, 420);
+          applyLayoutFromSettings(true);
+        };
+        const onUp=()=>{
+          window.removeEventListener("mousemove", onMove);
+          window.removeEventListener("mouseup", onUp);
+          debounceSave("Splitter");
+        };
+        el.addEventListener("mousedown", onDown);
+      }
+
+      dragV(v1, "leftw");
+      dragV(v2, "rightw");
+      dragH(h);
+    }
+
+    function renderFsHint(){
+      const ok = !!window.showDirectoryPicker;
+      $("#fsHint").textContent = ok
+        ? "Chrome kann optional direkt in einen gewählten Ordner schreiben (File System Access)."
+        : "Dein Browser unterstützt keinen Ordner-Export. Nutze Downloads und verschiebe danach in deinen Projektordner.";
+    }
+    function updateUndoRedoButtons(){
+      const h = ensureHistory(getProfile().name);
+      $("#btnUndo").disabled = !h.undo.length;
+      $("#btnRedo").disabled = !h.redo.length;
+    }
+
+    function renderAll(){
+      renderProfiles();
+      renderAgentList();
+      renderTrash();
+      renderTemplatesTree();
+      renderLast10();
+      renderProgressInBottom();
+      applyPanelVisibility();
+      applyMinimized();
+      renderFsHint();
+      updateUndoRedoButtons();
+      renderCats();
+
+      const last = state.settings.lastOpenAgentId;
+      if(last && !editingId){
+        const a = getProfile().agents.find(x=>x.id===last);
+        if(a) setEditorFromAgent(a);
+      }
+      renderPill();
+    }
+
+    async function selfcheck(){
+      const lines = [];
+      lines.push("Selfcheck (lokal):");
+      lines.push("• Schema: "+(state.schema||"—"));
+      lines.push("• Profile: "+state.profiles.length);
+      lines.push("• Templates: "+state.templates.length);
+      lines.push("• Clipboard: "+(!!navigator.clipboard ? "ok" : "fallback"));
+      lines.push("• Folder Export (Chrome): "+(!!window.showDirectoryPicker ? "ok" : "nein"));
+      lines.push("• Theme: "+state.settings.theme+", Font: "+state.settings.fontPx+"px");
+      const {total, done, pct} = computeProgress();
+      lines.push(`• Fortschritt: ${done}/${total} = ${pct}%`);
+      toast("Selfcheck", lines.join("\n"), "ok");
+      pushLog("Selfcheck ausgeführt","ok");
+    }
+
+    function bind(){
+      $("#btnHelp").addEventListener("click", ()=>{ $("#helpOverlay").style.display="flex"; $("#btnHelpClose").focus(); });
+      $("#btnHelpClose").addEventListener("click", ()=>{ $("#helpOverlay").style.display="none"; $("#btnHelp").focus(); });
+      $("#helpOverlay").addEventListener("click",(e)=>{ if(e.target.id==="helpOverlay"){ $("#helpOverlay").style.display="none"; } });
+
+      $("#toastClose").addEventListener("click", closeToast);
+
+      $("#btnMenu").addEventListener("click", ()=>{
+        const open = $("#menuToast").style.display==="block";
+        open ? closeMenu() : showMenu();
+      });
+      $("#btnMenuClose").addEventListener("click", closeMenu);
+
+      $("#btnToggleLeft").addEventListener("click", ()=>{ state.settings.panels.left = !state.settings.panels.left; applyPanelVisibility(); debounceSave("Toggle left"); });
+      $("#btnToggleCenter").addEventListener("click", ()=>{ state.settings.panels.center = !state.settings.panels.center; applyPanelVisibility(); debounceSave("Toggle center"); });
+      $("#btnToggleRight").addEventListener("click", ()=>{ state.settings.panels.right = !state.settings.panels.right; applyPanelVisibility(); debounceSave("Toggle right"); });
+      $("#btnToggleBottom").addEventListener("click", ()=>{ state.settings.panels.bottom = !state.settings.panels.bottom; applyPanelVisibility(); debounceSave("Toggle bottom"); });
+
+      $("#btnClearTrashView").addEventListener("click", ()=>{ $("#trashList").innerHTML=""; toast("OK","Papierkorb-Ansicht geleert (nur UI).","info"); });
+      $("#btnNukeLocal").addEventListener("click", ()=>{
+        if(confirm("Wirklich lokale Daten löschen? (localStorage)")){
+          localStorage.removeItem(LS_KEY);
+          location.reload();
+        }
+      });
+
+      $("#btnLeftMin").addEventListener("click", ()=>{ state.settings.minimized.left = !state.settings.minimized.left; applyMinimized(); debounceSave("Min left"); });
+      $("#btnCenterMin").addEventListener("click", ()=>{ state.settings.minimized.center = !state.settings.minimized.center; applyMinimized(); debounceSave("Min center"); });
+      $("#btnRightMin").addEventListener("click", ()=>{ state.settings.minimized.right = !state.settings.minimized.right; applyMinimized(); debounceSave("Min right"); });
+      $("#btnBottomMin").addEventListener("click", ()=>{ state.settings.minimized.bottom = !state.settings.minimized.bottom; applyMinimized(); debounceSave("Min bottom"); });
+
+      $("#btnLeftMax").addEventListener("click", ()=>toggleMaximize("left"));
+      $("#btnCenterMax").addEventListener("click", ()=>toggleMaximize("center"));
+      $("#btnRightMax").addEventListener("click", ()=>toggleMaximize("right"));
+      $("#btnBottomMax").addEventListener("click", ()=>toggleMaximize("bottom"));
+
+      setupSplitters();
+
+      $("#q").addEventListener("input", renderAgentList);
+      $("#fStatus").addEventListener("change", renderAgentList);
+      $("#fSort").addEventListener("change", renderAgentList);
+
+      $("#profileSel").addEventListener("change", ()=>{ state.activeProfile = $("#profileSel").value; editingId=null; renderAll(); debounceSave("Profil gewechselt"); });
+      $("#btnProfileNew").addEventListener("click", ()=>{
+        const name = prompt("Neues Profil (Name):","projekt_"+Date.now());
+        if(!name) return;
+        const safe = linuxFileName(name).slice(0,32) || ("profil_"+Date.now());
+        if(state.profiles.find(p=>p.name===safe)){ toast("Existiert","Profil existiert schon: "+safe,"warn"); return; }
+        state.profiles.push({name:safe, createdAt: nowISO(), agents: []});
+        state.activeProfile = safe;
+        ensureHistory(safe);
+        pushLog("Profil erstellt: "+safe,"ok");
+        pushTrace("Profil erstellt");
+        renderAll();
+        debounceSave("Profil erstellt");
+      });
+
+      $("#btnNewAgent").addEventListener("click", newAgent);
+      $("#btnSave").addEventListener("click", saveEditor);
+      $("#btnSaveAll").addEventListener("click", ()=>{ save(false); pushLog("Manuell gespeichert","ok"); });
+      $("#btnDup").addEventListener("click", duplicateAgent);
+      $("#btnTrash").addEventListener("click", moveToTrash);
+      $("#btnClear").addEventListener("click", ()=>{ if(confirm("Editor leeren?")) clearEditor(); });
+      $("#btnMarkDone").addEventListener("click", ()=>{
+        if(!editingId){ toast("Kein Agent offen","Öffne einen Agenten.","warn"); return; }
+        $("#a_status").value = "done";
+        saveEditor();
+      });
+
+      ["a_id","a_cat","a_sub","a_status","a_title","a_goal","a_test","a_done"].forEach(id=>{
+        $("#"+id).addEventListener("input", updateLiveMd);
+        $("#"+id).addEventListener("change", updateLiveMd);
+      });
+
+      $("#btnCopyMd").addEventListener("click", async ()=>{
+        const ok = await copyText($("#liveMd").textContent || "");
+        toast(ok?"Kopiert":"Fehler", ok?"Markdown in Zwischenablage.":"Konnte nicht kopieren.", ok?"ok":"bad");
+        pushLog(ok?"MD kopiert":"MD kopieren fehlgeschlagen", ok?"ok":"bad");
+      });
+      $("#btnDlMd").addEventListener("click", ()=>{
+        const a = getProfile().agents.find(x=>x.id===editingId) || readEditor();
+        dlText(agentFileName(a), $("#liveMd").textContent || agentToMarkdown(a), "text/markdown");
+        pushLog("MD Download: "+(a.id||"AGENT"),"info");
+        pushTrace("MD Download");
+      });
+      $("#btnDlMdAll").addEventListener("click", ()=>{
+        dlText("ALLE_AGENTS.md", exportAllMarkdownCombined(), "text/markdown");
+        pushLog("Download: ALLE_AGENTS.md","info");
+        pushTrace("Download all md");
+      });
+
+      $("#btnUndo").addEventListener("click", doUndo);
+      $("#btnRedo").addEventListener("click", doRedo);
+
+      $("#tplSearch").addEventListener("input", renderTemplatesTree);
+      $("#btnTplClear").addEventListener("click", clearTemplateForm);
+      $("#btnTplApply").addEventListener("click", applyTemplateToEditor);
+
+      $("#btnTrashShow").addEventListener("click", renderTrash);
+      $("#btnTrashEmpty").addEventListener("click", ()=>{ if(confirm("Papierkorb wirklich leeren?")) emptyTrash(); });
+
+      $("#btnImport").addEventListener("click", importJson);
+      $("#btnExportActive").addEventListener("click", exportActiveJson);
+      $("#btnExportDone").addEventListener("click", exportDoneJson);
+      $("#btnExportPack").addEventListener("click", exportPackJson);
+      $("#btnExportMdOne").addEventListener("click", ()=> dlText("ALLE_AGENTS.md", exportAllMarkdownCombined(), "text/markdown"));
+      $("#btnExportFolder").addEventListener("click", exportToFolder);
+      $("#btnExportState").addEventListener("click", exportStateJson);
+
+      $("#btnLogsDownload").addEventListener("click", ()=> exportJson("agents_logs.json", state.logs));
+      $("#btnTraceDownload").addEventListener("click", ()=> exportJson("agents_trace.json", state.trace));
+      $("#btnLogsClear").addEventListener("click", ()=>{
+        if(confirm("Logs leeren?")){
+          state.logs = [];
+          pushLog("Logs geleert","bad", true);
+          renderLast10();
+          debounceSave("Logs geleert");
+        }
+      });
+
+      $("#themeSel").addEventListener("change", ()=> applyTheme($("#themeSel").value));
+      $("#fontSel").addEventListener("change", ()=> applyFont(Number($("#fontSel").value)));
+      $("#btnResetLayout").addEventListener("click", ()=>{
+        state.settings.layout = {leftw:360, rightw:400, bottomh:240};
+        applyLayoutFromSettings();
+        pushLog("Layout zurückgesetzt","warn");
+        debounceSave("Layout reset");
+      });
+
+      $("#btnSelfcheck").addEventListener("click", selfcheck);
+      $("#btnRepair").addEventListener("click", ()=>{
+        const fixes = validateAndRepair("Manual");
+        save(true);
+        renderAll();
+        toast("Repair fertig", fixes.length ? ("Fixes: "+fixes.join(", ")) : "Keine Fixes nötig.", fixes.length?"warn":"ok");
+      });
+
+      window.addEventListener("keydown",(e)=>{
+        if(e.key==="F1"){ e.preventDefault(); $("#btnHelp").click(); }
+        if(e.key==="Escape"){
+          if($("#helpOverlay").style.display==="flex"){ $("#btnHelpClose").click(); }
+          if($("#menuToast").style.display==="block"){ closeMenu(); }
+          if($("#toast").style.display==="block"){ closeToast(); }
+        }
+        if(!e.altKey) return;
+        const k = e.key.toLowerCase();
+        if(k==="n"){ e.preventDefault(); newAgent(); }
+        if(k==="s"){ e.preventDefault(); saveEditor(); }
+        if(k==="z"){ e.preventDefault(); doUndo(); }
+        if(k==="y"){ e.preventDefault(); doRedo(); }
+        if(k==="d"){ e.preventDefault(); $("#btnMarkDone").click(); }
+      });
+    }
+
+    // Boot
+    load();
+    bind();
+    startAutosave();
+    applyTheme(state.settings.theme, true);
+    applyFont(state.settings.fontPx, true);
+    applyLayoutFromSettings(true);
+    applyPanelVisibility();
+    applyMinimized();
+
+    for(const p of state.profiles) ensureHistory(p.name);
+    pushUndo("Baseline");
+    renderAll();
+    const last = state.settings.lastOpenAgentId;
+    if(last) openAgent(last);
+    save(true);
+
+  })();
+  </script>
+</body>
+</html>
