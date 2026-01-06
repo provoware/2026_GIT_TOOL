@@ -29,7 +29,9 @@ export const loadConfig = (configOptions = {}) => {
   const resolvedConfigPath = ensureNonEmptyString(configPath, "configPath");
 
   if (!fs.existsSync(resolvedConfigPath)) {
-    throw new Error("Konfigurationsdatei fehlt.");
+    throw new Error(
+      `Konfigurationsdatei fehlt: ${resolvedConfigPath}. Bitte Startroutine ausführen oder Datei anlegen.`
+    );
   }
 
   const raw = fs.readFileSync(resolvedConfigPath, "utf-8");

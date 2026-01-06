@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { buildIpcError, buildIpcSuccess, createSafeHandle } from "../src/utils/ipcSafe.js";
+import { buildIpcError, buildIpcSuccess, createSafeHandle } from "../src/core/ipcSafe.js";
 
 test("buildIpcSuccess wraps data in a valid response", () => {
   const payload = { value: 42 };

@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { loadModules, sortModulesByDependencies } from "../src/utils/moduleLoader.js";
+import { loadModules, sortModulesByDependencies } from "../src/services/moduleLoader.js";
 
 const createTempDir = () => fs.mkdtempSync(path.join(os.tmpdir(), "git-tool-modules-"));
 

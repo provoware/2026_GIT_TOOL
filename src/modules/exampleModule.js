@@ -1,4 +1,4 @@
-import { ensureNonEmptyString, ensurePlainObject } from "../utils/validation.js";
+import { ensureNonEmptyString, ensurePlainObject } from "../core/validation.js";
 
 export const manifest = {
   id: "example-module",

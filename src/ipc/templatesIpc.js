@@ -6,8 +6,8 @@ import {
   importTemplatesFromFile,
   loadTemplatesData,
   saveTemplatesData
-} from "../utils/templates.js";
-import { ensureNonEmptyString, ensurePlainObject } from "../utils/validation.js";
+} from "../services/templates.js";
+import { ensureNonEmptyString, ensurePlainObject } from "../core/validation.js";
 
 const ensureLogger = (logger) => {
   const target = ensurePlainObject(logger, "logger");

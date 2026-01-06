@@ -46,7 +46,7 @@ Dieses Projekt nutzt **globale Standards** über ein Manifest:
   - `availableThemes` = Liste der Themes
 
 ## Logging und Debugging
-- Logger: `src/utils/logger.js`
+- Logger: `src/core/logger.js`
 - Konfiguration: `config/user/app.config.json`
 - Jede Log-Nachricht enthält Zeitstempel und Level.
 

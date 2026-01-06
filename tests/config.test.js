@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { loadConfig } from "../src/utils/config.js";
+import { loadConfig } from "../src/core/config.js";
 
 const writeTempConfig = (config) => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "git-tool-config-"));
@@ -51,4 +51,14 @@ test("loadConfig rejects invalid theme", () => {
   });
 
   assert.throws(() => loadConfig({ configPath }), /theme ist ungültig/);
+});
+
+test("loadConfig explains missing config files", () => {
+  const missingPath = path.join(os.tmpdir(), `missing-config-${Date.now()}.json`);
+
+  assert.throws(() => loadConfig({ configPath: missingPath }), (error) => {
+    assert.match(error.message, /Konfigurationsdatei fehlt/);
+    assert.match(error.message, /Startroutine/);
+    return true;
+  });
 });

@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadConfig } from "./config.js";
-import { initializeTemplatesStorage } from "./templates.js";
+import { initializeTemplatesStorage } from "../services/templates.js";
 import {
   ensureBoolean,
   ensureInList,
@@ -12,7 +12,7 @@ import {
 import {
   buildDefaultQualityConfig,
   buildDefaultQualityManifest
-} from "./quality.js";
+} from "../services/quality.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

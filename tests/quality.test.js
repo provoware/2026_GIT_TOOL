@@ -8,7 +8,7 @@ import {
   buildQualityRunResult,
   loadQualityConfig,
   loadQualityManifest
-} from "../src/utils/quality.js";
+} from "../src/services/quality.js";
 
 const createTempDir = () => fs.mkdtempSync(path.join(os.tmpdir(), "quality-test-"));
 

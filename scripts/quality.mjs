@@ -1,13 +1,17 @@
 import { spawnSync } from "node:child_process";
-import { createLogger } from "../src/utils/logger.js";
-import { loadConfig } from "../src/utils/config.js";
+import { createLogger } from "../src/core/logger.js";
+import { loadConfig } from "../src/core/config.js";
 import {
   buildQualityPlan,
   buildQualityRunResult,
   loadQualityConfig,
   loadQualityManifest
-} from "../src/utils/quality.js";
-import { ensureBoolean, ensureNonEmptyString, ensurePlainObject } from "../src/utils/validation.js";
+} from "../src/services/quality.js";
+import {
+  ensureBoolean,
+  ensureNonEmptyString,
+  ensurePlainObject
+} from "../src/core/validation.js";
 
 const buildRunMessage = (step) => {
   const normalizedStep = ensurePlainObject(step, "step");

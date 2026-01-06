@@ -11,8 +11,8 @@ import {
   exportTemplateToFile,
   importTemplatesFromFile,
   initializeTemplatesStorage
-} from "../src/utils/templates.js";
-import { createLogger } from "../src/utils/logger.js";
+} from "../src/services/templates.js";
+import { createLogger } from "../src/core/logger.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

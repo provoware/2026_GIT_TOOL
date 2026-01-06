@@ -7,7 +7,7 @@ import {
   ensureInList,
   ensureNonEmptyString,
   ensurePlainObject
-} from "../src/utils/validation.js";
+} from "../src/core/validation.js";
 
 test("ensureNonEmptyString trims input", () => {
   const result = ensureNonEmptyString("  ok ", "label");

@@ -1,26 +1,13 @@
 import { app, BrowserWindow, dialog, ipcMain } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { createLogger } from "./utils/logger.js";
-import { loadConfig } from "./utils/config.js";
-import { loadModules } from "./utils/moduleLoader.js";
-import { initializeTemplatesStorage } from "./utils/templates.js";
+import { createLogger } from "./core/logger.js";
+import { loadConfig } from "./core/config.js";
+import { runStartupRoutine } from "./core/startup.js";
+import { ensureBoolean, ensurePlainObject } from "./core/validation.js";
 import { registerTemplatesIpcHandlers } from "./ipc/templatesIpc.js";
-import { createSafeHandle } from "./utils/ipcSafe.js";
-import { runStartupRoutine } from "./utils/startup.js";
-import {
-  ensureBoolean,
-  ensurePlainObject
-} from "./utils/validation.js";
-import {
-  computeTemplatesStats,
-  exportArchiveZip,
-  exportCategoryZip,
-  exportTemplateToFile,
-  importTemplatesFromFile,
-  loadTemplatesData,
-  saveTemplatesData
-} from "./utils/templates.js";
+import { loadModules } from "./services/moduleLoader.js";
+import { initializeTemplatesStorage } from "./services/templates.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -76,8 +63,6 @@ const createWindow = ({ logger, loadRenderer = true, startupStatusBuffer = [] } 
 };
 
 app.whenReady().then(async () => {
-  const config = loadConfig();
-app.whenReady().then(() => {
   const startupStatusBuffer = [];
   let mainWindow = null;
   const bootstrapLogger = createLogger({ debugEnabled: true, loggingEnabled: true });
@@ -96,9 +81,14 @@ app.whenReady().then(() => {
     reportStatus: enqueueStatus
   });
 
+  if (!startupResult.ok) {
+    bootstrapLogger.error("Startroutine fehlgeschlagen. Anwendung wird beendet.");
+    app.quit();
+    return;
+  }
+
   const config = loadConfig({ configPath: startupResult.configPath });
   const logger = createLogger(config);
-  const safeHandle = createSafeHandle({ ipcMain, logger });
 
   logger.info(`${config.appName} startet.`);
   logger.debug(`Aktives Theme: ${config.theme}`);
@@ -109,86 +99,31 @@ app.whenReady().then(() => {
       app,
       appName: config.appName,
       config,
-      dataDir,
+      dataDir: startupResult.dataDir,
       logger
     }
   });
 
-  initializeTemplatesStorage({ dataDir, logger });
-  createWindow(logger);
-  mainWindow = createWindow({
-    logger,
-    loadRenderer: false,
-    startupStatusBuffer
-  });
-  const rendererPath = path.join(__dirname, "renderer", "index.html");
-  mainWindow.loadFile(rendererPath);
+  initializeTemplatesStorage({ dataDir: startupResult.dataDir, logger });
 
   registerTemplatesIpcHandlers({
-    dataDir,
+    dataDir: startupResult.dataDir,
     logger,
     ipcMain,
     dialog
-  safeHandle("templates:load", () => {
-    const payload = loadTemplatesData({ dataDir, logger });
-  ipcMain.handle("templates:load", () => {
-    const payload = loadTemplatesData({ dataDir: startupResult.dataDir, logger });
-    const stats = computeTemplatesStats(payload.templates);
-    return { payload, stats };
   });
 
-  safeHandle("templates:save", (_event, payload) => {
-    const saved = saveTemplatesData({ dataDir, payload, logger });
-  ipcMain.handle("templates:save", (_event, payload) => {
-    const saved = saveTemplatesData({ dataDir: startupResult.dataDir, payload, logger });
-    const stats = computeTemplatesStats(saved.templates);
-    return { payload: saved, stats };
-  });
-
-  safeHandle("templates:export", (_event, { template, format }) =>
-    exportTemplateToFile({ dataDir, template, format, logger })
-  );
-
-  safeHandle("templates:exportCategory", (_event, { category }) =>
-    exportCategoryZip({ dataDir, category, logger })
-  );
-
-  safeHandle("templates:exportArchive", () => exportArchiveZip({ dataDir, logger }));
-  ipcMain.handle("templates:export", (_event, { template, format }) =>
-    exportTemplateToFile({ dataDir: startupResult.dataDir, template, format, logger })
-  );
-
-  ipcMain.handle("templates:exportCategory", (_event, { category }) =>
-    exportCategoryZip({ dataDir: startupResult.dataDir, category, logger })
-  );
-
-  ipcMain.handle("templates:exportArchive", () =>
-    exportArchiveZip({ dataDir: startupResult.dataDir, logger })
-  );
-
-  safeHandle("templates:import", async () => {
-    const result = await dialog.showOpenDialog({
-      title: "Template-Import",
-      properties: ["openFile"],
-      filters: [{ name: "JSON", extensions: ["json"] }]
-    });
-
-    if (result.canceled || result.filePaths.length === 0) {
-      return null;
-    }
-
-    const merged = importTemplatesFromFile({
-      dataDir: startupResult.dataDir,
-      filePath: result.filePaths[0],
-      logger
-    });
-    const stats = computeTemplatesStats(merged.templates);
-    return { payload: merged, stats };
+  mainWindow = createWindow({
+    logger,
+    startupStatusBuffer
   });
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow(logger);
+      mainWindow = createWindow({
+        logger,
+        startupStatusBuffer
+      });
     }
   });
 });

@@ -3,8 +3,8 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { createLogger } from "../src/utils/logger.js";
-import { runStartupRoutine } from "../src/utils/startup.js";
+import { createLogger } from "../src/core/logger.js";
+import { runStartupRoutine } from "../src/core/startup.js";
 
 const createTempRoot = () => fs.mkdtempSync(path.join(os.tmpdir(), "startup-test-"));
 

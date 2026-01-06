@@ -4,8 +4,8 @@ import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
 import { fileURLToPath } from "node:url";
-import { createLogger } from "../src/utils/logger.js";
-import { initializeTemplatesStorage } from "../src/utils/templates.js";
+import { createLogger } from "../src/core/logger.js";
+import { initializeTemplatesStorage } from "../src/services/templates.js";
 import { registerTemplatesIpcHandlers } from "../src/ipc/templatesIpc.js";
 
 const __filename = fileURLToPath(import.meta.url);
