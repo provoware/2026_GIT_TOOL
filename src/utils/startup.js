@@ -4,15 +4,18 @@ import { fileURLToPath } from "node:url";
 import { loadConfig } from "./config.js";
 import { initializeTemplatesStorage } from "./templates.js";
 import {
+  ensureArrayOfNonEmptyStrings,
   ensureBoolean,
   ensureInList,
   ensureNonEmptyString,
-  ensurePlainObject
+  ensurePlainObject,
+  ensurePositiveInteger
 } from "./validation.js";
 import {
   buildDefaultQualityConfig,
   buildDefaultQualityManifest
 } from "./quality.js";
+import { buildDefaultManifest, loadManifest } from "./manifestLoader.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -64,6 +67,35 @@ const ensureDirectoryExists = (directoryPath) => {
     path: resolvedPath,
     created: !existed
   };
+};
+
+const resolveManifestDefaults = (manifest) => {
+  const safeManifest = manifest
+    ? ensurePlainObject(manifest, "manifest")
+    : loadManifest({ appRoot: DEFAULT_APP_ROOT });
+  const app = ensurePlainObject(safeManifest.app, "manifest.app");
+  const logging = ensurePlainObject(safeManifest.logging, "manifest.logging");
+  const themes = ensurePlainObject(safeManifest.themes, "manifest.themes");
+
+  return {
+    app,
+    logging,
+    themes
+  };
+};
+
+const resolveExportDir = ({ dataDir, manifest }) => {
+  const safeManifest = ensurePlainObject(manifest, "manifest");
+  const exportRules = ensurePlainObject(
+    safeManifest.exportRules,
+    "manifest.exportRules"
+  );
+  const exportsSubdir = ensureNonEmptyString(
+    exportRules.exportsSubdir,
+    "manifest.exportRules.exportsSubdir"
+  );
+  const resolvedDataDir = ensureNonEmptyString(dataDir, "dataDir");
+  return path.join(resolvedDataDir, exportsSubdir);
 };
 
 const formatTimestampForFilename = (value = new Date().toISOString()) =>
@@ -146,7 +178,7 @@ const buildRepairResult = ({ ok, backupPath }) => {
   };
 };
 
-const repairConfigFile = ({ configPath, backupDir, logger, reporter }) => {
+const repairConfigFile = ({ configPath, backupDir, logger, reporter, manifest }) => {
   const safeLogger = ensureLogger(logger);
   const safeReporter = ensureReporter(reporter);
   const safeConfigPath = ensureNonEmptyString(configPath, "configPath");
@@ -159,7 +191,7 @@ const repairConfigFile = ({ configPath, backupDir, logger, reporter }) => {
     label: "Konfiguration"
   });
 
-  const written = writeJsonFile(safeConfigPath, buildDefaultConfig());
+  const written = writeJsonFile(safeConfigPath, buildDefaultConfig(manifest));
   if (!written) {
     throw new Error("Konfiguration konnte nicht repariert werden.");
   }
@@ -208,20 +240,51 @@ const repairTemplatesStorage = ({ dataDir, seedPath, logger, reporter }) => {
   return buildRepairResult({ ok: templatesCount >= 0, backupPath });
 };
 
-const buildDefaultConfig = () => ({
-  appName: "2026 Git Tool",
-  debugEnabled: true,
-  loggingEnabled: true,
-  theme: "theme-high-contrast-dark",
-  availableThemes: [
-    "theme-high-contrast-dark",
-    "theme-high-contrast-light",
-    "theme-high-contrast-ocean",
-    "theme-high-contrast-sand",
-    "theme-high-contrast-forest",
-    "theme-high-contrast-violet"
-  ]
-});
+const buildDefaultConfig = (manifest) => {
+  const defaults = resolveManifestDefaults(manifest);
+  const availableThemes = ensureArrayOfNonEmptyStrings(
+    defaults.themes.available,
+    "manifest.themes.available"
+  );
+  const theme = ensureNonEmptyString(
+    defaults.themes.default,
+    "manifest.themes.default"
+  );
+
+  return {
+    appName: ensureNonEmptyString(defaults.app.name, "manifest.app.name"),
+    debugEnabled: ensureBoolean(
+      defaults.logging.defaultDebugEnabled,
+      "manifest.logging.defaultDebugEnabled"
+    ),
+    loggingEnabled: ensureBoolean(
+      defaults.logging.defaultLoggingEnabled,
+      "manifest.logging.defaultLoggingEnabled"
+    ),
+    logToFile: ensureBoolean(
+      defaults.logging.defaultLogToFile,
+      "manifest.logging.defaultLogToFile"
+    ),
+    logLevel: ensureNonEmptyString(
+      defaults.logging.defaultLevel,
+      "manifest.logging.defaultLevel"
+    ),
+    logFilePath: ensureNonEmptyString(
+      defaults.logging.defaultLogFilePath,
+      "manifest.logging.defaultLogFilePath"
+    ),
+    logRotateDaily: ensureBoolean(
+      defaults.logging.defaultRotateDaily,
+      "manifest.logging.defaultRotateDaily"
+    ),
+    logMaxSizeBytes: ensurePositiveInteger(
+      defaults.logging.defaultMaxSizeBytes,
+      "manifest.logging.defaultMaxSizeBytes"
+    ),
+    theme,
+    availableThemes
+  };
+};
 
 const buildDefaultSeed = (nowIso) => ({
   meta: {
@@ -306,19 +369,28 @@ const ensureFileWithDefaults = ({
   return true;
 };
 
-const buildStartupResult = ({ ok, configPath, dataDir, pluginsDir, steps }) => {
+const buildStartupResult = ({
+  ok,
+  configPath,
+  dataDir,
+  pluginsDir,
+  steps,
+  manifest
+}) => {
   const safeOk = ensureBoolean(ok, "ok");
   const safeConfigPath = ensureNonEmptyString(configPath, "configPath");
   const safeDataDir = ensureNonEmptyString(dataDir, "dataDir");
   const safePluginsDir = ensureNonEmptyString(pluginsDir, "pluginsDir");
   const safeSteps = ensureArray(steps, "steps");
+  const safeManifest = ensurePlainObject(manifest, "manifest");
 
   return {
     ok: safeOk,
     configPath: safeConfigPath,
     dataDir: safeDataDir,
     pluginsDir: safePluginsDir,
-    steps: safeSteps
+    steps: safeSteps,
+    manifest: safeManifest
   };
 };
 
@@ -327,15 +399,10 @@ export const runStartupRoutine = (options = {}) => {
   const logger = ensureLogger(settings.logger);
   const reporter = ensureReporter(settings.reportStatus ?? (() => {}));
   const appRoot = ensureNonEmptyString(settings.appRoot ?? DEFAULT_APP_ROOT, "appRoot");
-  const defaultConfigPath = path.join(appRoot, "config", "user", "app.config.json");
-  const defaultSystemDir = path.join(appRoot, "config", "system");
-  const defaultDataDir = path.join(appRoot, "data");
-  const defaultPluginsDir = path.join(appRoot, "plugins");
-  const configPath = ensureNonEmptyString(settings.configPath ?? defaultConfigPath, "configPath");
-  const dataDir = ensureNonEmptyString(settings.dataDir ?? defaultDataDir, "dataDir");
-  const pluginsDir = ensureNonEmptyString(
-    settings.pluginsDir ?? defaultPluginsDir,
-    "pluginsDir"
+  const { path: configRoot } = ensureDirectoryExists(path.join(appRoot, "config"));
+  const manifestPath = ensureNonEmptyString(
+    settings.manifestPath ?? path.join(configRoot, "manifest.json"),
+    "manifestPath"
   );
   const steps = [];
 
@@ -353,11 +420,36 @@ export const runStartupRoutine = (options = {}) => {
     step: "start"
   });
 
-  const { path: systemDir } = ensureDirectoryExists(defaultSystemDir);
+  ensureFileWithDefaults({
+    filePath: manifestPath,
+    buildDefault: buildDefaultManifest,
+    description: "Manifest (App-Defaults)",
+    logger,
+    reporter,
+    step: "manifest"
+  });
+
+  const manifest = loadManifest({ appRoot, manifestPath, logger });
+  const configPath = ensureNonEmptyString(
+    settings.configPath ?? manifest.paths.userConfig,
+    "configPath"
+  );
+  const dataDir = ensureNonEmptyString(
+    settings.dataDir ?? manifest.paths.dataDir,
+    "dataDir"
+  );
+  const pluginsDir = ensureNonEmptyString(
+    settings.pluginsDir ?? manifest.paths.pluginsDir,
+    "pluginsDir"
+  );
+  const { path: systemDir } = ensureDirectoryExists(
+    path.dirname(manifest.paths.qualityManifest)
+  );
   const { path: configDir } = ensureDirectoryExists(path.dirname(configPath));
   const { path: resolvedDataDir } = ensureDirectoryExists(dataDir);
   const { path: resolvedPluginsDir } = ensureDirectoryExists(pluginsDir);
-  const { path: exportDir } = ensureDirectoryExists(path.join(resolvedDataDir, "exports"));
+  const exportDirPath = resolveExportDir({ dataDir: resolvedDataDir, manifest });
+  const { path: exportDir } = ensureDirectoryExists(exportDirPath);
 
   logger.debug(
     `Ordner geprüft: system=${systemDir}, config=${configDir}, data=${resolvedDataDir}, plugins=${resolvedPluginsDir}, exports=${exportDir}`
@@ -370,7 +462,7 @@ export const runStartupRoutine = (options = {}) => {
   });
 
   ensureFileWithDefaults({
-    filePath: path.join(systemDir, "standards.manifest.json"),
+    filePath: manifest.paths.standardsManifest,
     buildDefault: () => ({
       version: "1.0",
       created: new Date().toISOString(),
@@ -383,7 +475,7 @@ export const runStartupRoutine = (options = {}) => {
   });
 
   ensureFileWithDefaults({
-    filePath: path.join(systemDir, "quality.manifest.json"),
+    filePath: manifest.paths.qualityManifest,
     buildDefault: buildDefaultQualityManifest,
     description: "Qualitäts-Manifest (Quality Manifest)",
     logger,
@@ -393,7 +485,7 @@ export const runStartupRoutine = (options = {}) => {
 
   ensureFileWithDefaults({
     filePath: configPath,
-    buildDefault: buildDefaultConfig,
+    buildDefault: () => buildDefaultConfig(manifest),
     description: "Konfiguration (Config)",
     logger,
     reporter,
@@ -401,7 +493,7 @@ export const runStartupRoutine = (options = {}) => {
   });
 
   ensureFileWithDefaults({
-    filePath: path.join(configDir, "quality.config.json"),
+    filePath: manifest.paths.qualityConfig,
     buildDefault: buildDefaultQualityConfig,
     description: "Qualitäts-Konfiguration (Quality Config)",
     logger,
@@ -409,8 +501,8 @@ export const runStartupRoutine = (options = {}) => {
     step: "quality-config"
   });
 
-  const seedPath = path.join(resolvedDataDir, "templates_seed.json");
-  const statsSchemaPath = path.join(resolvedDataDir, "templates_stats_schema.json");
+  const seedPath = manifest.paths.templatesSeed;
+  const statsSchemaPath = manifest.paths.templatesStatsSchema;
 
   ensureFileWithDefaults({
     filePath: seedPath,
@@ -432,7 +524,7 @@ export const runStartupRoutine = (options = {}) => {
 
   let config;
   try {
-    config = loadConfig({ configPath });
+    config = loadConfig({ configPath, manifest });
     pushStep({
       level: "success",
       message: "Konfiguration geprüft und gültig.",
@@ -453,12 +545,13 @@ export const runStartupRoutine = (options = {}) => {
         configPath,
         backupDir: path.join(configDir, "backups"),
         logger,
-        reporter
+        reporter,
+        manifest
       });
       if (!repairResult.ok) {
         throw new Error("Konfiguration konnte nicht repariert werden.");
       }
-      config = loadConfig({ configPath });
+      config = loadConfig({ configPath, manifest });
     } catch (repairError) {
       void repairError;
       logger.error("Konfiguration konnte nicht repariert werden.");
@@ -473,7 +566,8 @@ export const runStartupRoutine = (options = {}) => {
         configPath,
         dataDir: resolvedDataDir,
         pluginsDir: resolvedPluginsDir,
-        steps
+        steps,
+        manifest
       });
     }
   }
@@ -483,7 +577,8 @@ export const runStartupRoutine = (options = {}) => {
   try {
     const { templatesCount } = initializeTemplatesStorage({
       dataDir: resolvedDataDir,
-      logger
+      logger,
+      manifest
     });
     pushStep({
       level: "success",
@@ -529,7 +624,8 @@ export const runStartupRoutine = (options = {}) => {
         configPath,
         dataDir: resolvedDataDir,
         pluginsDir: resolvedPluginsDir,
-        steps
+        steps,
+        manifest
       });
     }
   }
@@ -545,6 +641,7 @@ export const runStartupRoutine = (options = {}) => {
     configPath,
     dataDir: resolvedDataDir,
     pluginsDir: resolvedPluginsDir,
-    steps
+    steps,
+    manifest
   });
 };

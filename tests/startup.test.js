@@ -32,6 +32,7 @@ test("startup routine creates required structure and reports status", () => {
   assert.equal(result.configPath, configPath);
   assert.equal(result.dataDir, dataDir);
   assert.equal(result.pluginsDir, pluginsDir);
+  assert.equal(result.manifest.app.name, "2026 Git Tool");
 
   assert.ok(directoryExists(path.join(appRoot, "config", "system")));
   assert.ok(directoryExists(path.join(appRoot, "config", "user")));
@@ -39,6 +40,7 @@ test("startup routine creates required structure and reports status", () => {
   assert.ok(directoryExists(pluginsDir));
   assert.ok(directoryExists(path.join(dataDir, "exports")));
 
+  assert.ok(fileExists(path.join(appRoot, "config", "manifest.json")));
   assert.ok(fileExists(configPath));
   assert.ok(fileExists(path.join(dataDir, "templates_seed.json")));
   assert.ok(fileExists(path.join(dataDir, "templates.json")));

@@ -1,31 +1,57 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
-import { fileURLToPath } from "node:url";
 import {
   ensureArrayOfNonEmptyStrings,
   ensureBoolean,
   ensureNonEmptyString,
   ensurePlainObject
 } from "./validation.js";
+import { loadManifest } from "./manifestLoader.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const resolveManifest = (manifest) =>
+  manifest ? ensurePlainObject(manifest, "manifest") : loadManifest();
 
-const DEFAULT_CATEGORIES = [
-  "ChatGPT – Universal",
-  "Agenten-Prompting",
-  "Linux / Bash",
-  "Entwickler / Code",
-  "Electron / Desktop-Apps",
-  "KI-Bild-Generierung",
-  "Analyse / Struktur",
-  "Automatisierung / Workflows",
-  "Persönlich / Eigene"
-];
+const resolveTemplatesDefaults = (manifest) => {
+  const safeManifest = resolveManifest(manifest);
+  const paths = ensurePlainObject(safeManifest.paths, "manifest.paths");
+  return {
+    dataDir: ensureNonEmptyString(paths.dataDir, "manifest.paths.dataDir"),
+    templatesSeed: ensureNonEmptyString(
+      paths.templatesSeed,
+      "manifest.paths.templatesSeed"
+    )
+  };
+};
 
-const DEFAULT_DATA_DIR = path.resolve(__dirname, "..", "..", "data");
-const DEFAULT_SEED_PATH = path.join(DEFAULT_DATA_DIR, "templates_seed.json");
+const resolveExportRules = (manifest) => {
+  const safeManifest = resolveManifest(manifest);
+  const exportRules = ensurePlainObject(
+    safeManifest.exportRules,
+    "manifest.exportRules"
+  );
+  const allowedFormats = ensureArrayOfNonEmptyStrings(
+    exportRules.allowedFormats,
+    "manifest.exportRules.allowedFormats"
+  ).map((value) => value.toLowerCase());
+  const exportsSubdir = ensureNonEmptyString(
+    exportRules.exportsSubdir,
+    "manifest.exportRules.exportsSubdir"
+  );
+  return {
+    allowedFormats,
+    exportsSubdir
+  };
+};
+
+const resolveDefaultCategories = (manifest) => {
+  const safeManifest = resolveManifest(manifest);
+  const templates = ensurePlainObject(safeManifest.templates, "manifest.templates");
+  return ensureArrayOfNonEmptyStrings(
+    templates.defaultCategories,
+    "manifest.templates.defaultCategories"
+  );
+};
 
 const ensureNumber = (value, label) => {
   if (typeof value !== "number" || Number.isNaN(value)) {
@@ -152,7 +178,8 @@ const normalizeTemplatesPayload = (payload, nowIso) => {
   };
 };
 
-export const getDefaultCategories = () => ensureArrayOfNonEmptyStrings(DEFAULT_CATEGORIES, "defaultCategories");
+export const getDefaultCategories = (manifest) =>
+  ensureArrayOfNonEmptyStrings(resolveDefaultCategories(manifest), "defaultCategories");
 
 export const computeTemplatesStats = (templates, nowIso = new Date().toISOString()) => {
   const list = Array.isArray(templates) ? templates : [];
@@ -246,20 +273,26 @@ export const computeTemplatesStats = (templates, nowIso = new Date().toISOString
 };
 
 export const initializeTemplatesStorage = ({
-  dataDir = DEFAULT_DATA_DIR,
-  seedPath = DEFAULT_SEED_PATH,
-  logger
+  dataDir,
+  seedPath,
+  logger,
+  manifest
 }) => {
   const safeLogger = ensureLogger(logger);
-  const resolvedDir = ensureDirectoryExists(dataDir);
+  const defaults = resolveTemplatesDefaults(manifest);
+  const resolvedDir = ensureDirectoryExists(dataDir ?? defaults.dataDir);
+  const resolvedSeedPath = ensureNonEmptyString(
+    seedPath ?? defaults.templatesSeed,
+    "seedPath"
+  );
   const nowIso = new Date().toISOString();
   const templatesPath = path.join(resolvedDir, "templates.json");
 
   if (!fs.existsSync(templatesPath)) {
-    if (!fs.existsSync(seedPath)) {
+    if (!fs.existsSync(resolvedSeedPath)) {
       throw new Error("Vorlage für templates.json fehlt.");
     }
-    const seedRaw = fs.readFileSync(seedPath, "utf-8");
+    const seedRaw = fs.readFileSync(resolvedSeedPath, "utf-8");
     const seedData = JSON.parse(seedRaw);
     const normalized = normalizeTemplatesPayload(seedData, nowIso);
     fs.writeFileSync(templatesPath, JSON.stringify(normalized, null, 2));
@@ -278,9 +311,10 @@ export const initializeTemplatesStorage = ({
   };
 };
 
-export const loadTemplatesData = ({ dataDir = DEFAULT_DATA_DIR, logger }) => {
+export const loadTemplatesData = ({ dataDir, logger, manifest } = {}) => {
   const safeLogger = ensureLogger(logger);
-  const resolvedDir = ensureDirectoryExists(dataDir);
+  const defaults = resolveTemplatesDefaults(manifest);
+  const resolvedDir = ensureDirectoryExists(dataDir ?? defaults.dataDir);
   const templatesPath = path.join(resolvedDir, "templates.json");
   const nowIso = new Date().toISOString();
 
@@ -296,9 +330,10 @@ export const loadTemplatesData = ({ dataDir = DEFAULT_DATA_DIR, logger }) => {
   return normalized;
 };
 
-export const saveTemplatesData = ({ dataDir = DEFAULT_DATA_DIR, payload, logger }) => {
+export const saveTemplatesData = ({ dataDir, payload, logger, manifest } = {}) => {
   const safeLogger = ensureLogger(logger);
-  const resolvedDir = ensureDirectoryExists(dataDir);
+  const defaults = resolveTemplatesDefaults(manifest);
+  const resolvedDir = ensureDirectoryExists(dataDir ?? defaults.dataDir);
   const nowIso = new Date().toISOString();
   const templatesPath = path.join(resolvedDir, "templates.json");
   const normalized = normalizeTemplatesPayload(payload, nowIso);
@@ -328,9 +363,15 @@ const buildHash = (template) => {
   return crypto.createHash("sha256").update(content).digest("hex");
 };
 
-export const importTemplatesFromFile = ({ dataDir = DEFAULT_DATA_DIR, filePath, logger }) => {
+export const importTemplatesFromFile = ({
+  dataDir,
+  filePath,
+  logger,
+  manifest
+}) => {
   const safeLogger = ensureLogger(logger);
-  const resolvedDir = ensureDirectoryExists(dataDir);
+  const defaults = resolveTemplatesDefaults(manifest);
+  const resolvedDir = ensureDirectoryExists(dataDir ?? defaults.dataDir);
   const sourcePath = ensureNonEmptyString(filePath, "filePath");
   if (!fs.existsSync(sourcePath)) {
     throw new Error("Importdatei fehlt.");
@@ -375,23 +416,41 @@ export const importTemplatesFromFile = ({ dataDir = DEFAULT_DATA_DIR, filePath, 
     merged.push(imported);
   });
 
-  const saved = saveTemplatesData({ dataDir: resolvedDir, payload: { meta: existing.meta, templates: merged }, logger: safeLogger });
+  const saved = saveTemplatesData({
+    dataDir: resolvedDir,
+    payload: { meta: existing.meta, templates: merged },
+    logger: safeLogger
+  });
   safeLogger.info("Templates wurden importiert.");
   return saved;
 };
 
-const ensureExportDirectory = (dataDir) => {
-  const exportDir = path.join(dataDir, "exports");
+const ensureExportDirectory = ({ dataDir, manifest }) => {
+  const { exportsSubdir } = resolveExportRules(manifest);
+  const exportDir = path.join(dataDir, exportsSubdir);
   return ensureDirectoryExists(exportDir);
 };
 
-export const exportTemplateToFile = ({ dataDir = DEFAULT_DATA_DIR, template, format = "txt", logger }) => {
+export const exportTemplateToFile = ({
+  dataDir,
+  template,
+  format = "txt",
+  logger,
+  manifest
+}) => {
   const safeLogger = ensureLogger(logger);
-  const resolvedDir = ensureDirectoryExists(dataDir);
+  const defaults = resolveTemplatesDefaults(manifest);
+  const resolvedDir = ensureDirectoryExists(dataDir ?? defaults.dataDir);
+  const { allowedFormats } = resolveExportRules(manifest);
   const safeTemplate = normalizeTemplate(template, new Date().toISOString());
-  const exportDir = ensureExportDirectory(resolvedDir);
+  const exportDir = ensureExportDirectory({ dataDir: resolvedDir, manifest });
   const safeName = ensureValidFilename(safeTemplate.title, "template.title");
   const fileFormat = ensureNonEmptyString(format, "format").toLowerCase();
+
+  if (!allowedFormats.includes(fileFormat)) {
+    throw new Error("Format ist nicht erlaubt.");
+  }
+
   const timestamp = new Date().toISOString().replace(/[:]/g, "-");
   const baseName = `${safeName}-${timestamp}`;
   const filePath = path.join(exportDir, `${baseName}.${fileFormat}`);
@@ -424,13 +483,19 @@ const buildZip = async (destination, entries) => {
   });
 };
 
-export const exportCategoryZip = async ({ dataDir = DEFAULT_DATA_DIR, category, logger }) => {
+export const exportCategoryZip = async ({
+  dataDir,
+  category,
+  logger,
+  manifest
+}) => {
   const safeLogger = ensureLogger(logger);
-  const resolvedDir = ensureDirectoryExists(dataDir);
+  const defaults = resolveTemplatesDefaults(manifest);
+  const resolvedDir = ensureDirectoryExists(dataDir ?? defaults.dataDir);
   const categoryName = ensureNonEmptyString(category, "category");
   const data = loadTemplatesData({ dataDir: resolvedDir, logger: safeLogger });
   const templates = data.templates.filter((template) => template.category === categoryName);
-  const exportDir = ensureExportDirectory(resolvedDir);
+  const exportDir = ensureExportDirectory({ dataDir: resolvedDir, manifest });
   const safeName = ensureValidFilename(categoryName, "category");
   const timestamp = new Date().toISOString().replace(/[:]/g, "-");
   const zipPath = path.join(exportDir, `${safeName}-${timestamp}.zip`);
@@ -449,11 +514,12 @@ export const exportCategoryZip = async ({ dataDir = DEFAULT_DATA_DIR, category, 
   return result;
 };
 
-export const exportArchiveZip = async ({ dataDir = DEFAULT_DATA_DIR, logger }) => {
+export const exportArchiveZip = async ({ dataDir, logger, manifest }) => {
   const safeLogger = ensureLogger(logger);
-  const resolvedDir = ensureDirectoryExists(dataDir);
+  const defaults = resolveTemplatesDefaults(manifest);
+  const resolvedDir = ensureDirectoryExists(dataDir ?? defaults.dataDir);
   const data = loadTemplatesData({ dataDir: resolvedDir, logger: safeLogger });
-  const exportDir = ensureExportDirectory(resolvedDir);
+  const exportDir = ensureExportDirectory({ dataDir: resolvedDir, manifest });
   const timestamp = new Date().toISOString().replace(/[:]/g, "-");
   const zipPath = path.join(exportDir, `templates-archive-${timestamp}.zip`);
   const entries = data.templates.map((template) => ({

@@ -1,4 +1,6 @@
 import { spawnSync } from "node:child_process";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { createLogger } from "../src/utils/logger.js";
 import { loadConfig } from "../src/utils/config.js";
 import {
@@ -8,6 +10,11 @@ import {
   loadQualityManifest
 } from "../src/utils/quality.js";
 import { ensureBoolean, ensureNonEmptyString, ensurePlainObject } from "../src/utils/validation.js";
+import { loadManifest } from "../src/utils/manifestLoader.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const appRoot = path.resolve(__dirname, "..");
 
 const buildRunMessage = (step) => {
   const normalizedStep = ensurePlainObject(step, "step");
@@ -107,11 +114,14 @@ const run = () => {
   console.log("\n[Start] Qualitätsprüfung (Quality Check) läuft...");
   console.log("[Info] Wir prüfen Code-Regeln (Linting) und Formatierung.");
 
-  const appConfig = loadConfig();
+  const manifest = loadManifest({ appRoot });
+  const appConfig = loadConfig({ manifest, configPath: manifest.paths.userConfig });
   const logger = createLogger(appConfig);
-  const manifest = loadQualityManifest();
-  const config = loadQualityConfig();
-  const plan = buildQualityPlan({ manifest, config });
+  const qualityManifest = loadQualityManifest({
+    manifestPath: manifest.paths.qualityManifest
+  });
+  const config = loadQualityConfig({ configPath: manifest.paths.qualityConfig });
+  const plan = buildQualityPlan({ manifest: qualityManifest, config });
 
   logger.debug(`[Debug] Qualitätsplan geladen (${plan.steps.length} Schritte).`);
 

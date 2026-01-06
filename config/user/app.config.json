@@ -7,13 +7,5 @@
   "logFilePath": "data/logs/app.log",
   "logRotateDaily": true,
   "logMaxSizeBytes": 5242880,
-  "theme": "theme-high-contrast-dark",
-  "availableThemes": [
-    "theme-high-contrast-dark",
-    "theme-high-contrast-light",
-    "theme-high-contrast-ocean",
-    "theme-high-contrast-sand",
-    "theme-high-contrast-forest",
-    "theme-high-contrast-violet"
-  ]
+  "theme": "theme-high-contrast-dark"
 }

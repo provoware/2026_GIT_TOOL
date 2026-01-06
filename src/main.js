@@ -6,26 +6,15 @@ import { loadConfig } from "./utils/config.js";
 import { loadModules } from "./utils/moduleLoader.js";
 import { initializeTemplatesStorage } from "./utils/templates.js";
 import { registerTemplatesIpcHandlers } from "./ipc/templatesIpc.js";
-import { createSafeHandle } from "./utils/ipcSafe.js";
 import { runStartupRoutine } from "./utils/startup.js";
 import {
   ensureBoolean,
   ensurePlainObject
 } from "./utils/validation.js";
-import {
-  computeTemplatesStats,
-  exportArchiveZip,
-  exportCategoryZip,
-  exportTemplateToFile,
-  importTemplatesFromFile,
-  loadTemplatesData,
-  saveTemplatesData
-} from "./utils/templates.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const appRoot = path.resolve(__dirname, "..");
-const dataDir = path.join(appRoot, "data");
 
 const ensureLogger = (logger) => {
   const target = ensurePlainObject(logger, "logger");
@@ -76,8 +65,6 @@ const createWindow = ({ logger, loadRenderer = true, startupStatusBuffer = [] } 
 };
 
 app.whenReady().then(async () => {
-  const config = loadConfig();
-app.whenReady().then(() => {
   const startupStatusBuffer = [];
   let mainWindow = null;
   const bootstrapLogger = createLogger({ debugEnabled: true, loggingEnabled: true });
@@ -91,14 +78,12 @@ app.whenReady().then(() => {
 
   const startupResult = runStartupRoutine({
     appRoot,
-    dataDir,
     logger: bootstrapLogger,
     reportStatus: enqueueStatus
   });
-
-  const config = loadConfig({ configPath: startupResult.configPath });
+  const { manifest } = startupResult;
+  const config = loadConfig({ configPath: startupResult.configPath, manifest });
   const logger = createLogger(config);
-  const safeHandle = createSafeHandle({ ipcMain, logger });
 
   logger.info(`${config.appName} startet.`);
   logger.debug(`Aktives Theme: ${config.theme}`);
@@ -109,13 +94,18 @@ app.whenReady().then(() => {
       app,
       appName: config.appName,
       config,
-      dataDir,
+      dataDir: startupResult.dataDir,
+      manifest,
       logger
     }
   });
 
-  initializeTemplatesStorage({ dataDir, logger });
-  createWindow(logger);
+  initializeTemplatesStorage({
+    dataDir: startupResult.dataDir,
+    logger,
+    manifest
+  });
+
   mainWindow = createWindow({
     logger,
     loadRenderer: false,
@@ -125,70 +115,16 @@ app.whenReady().then(() => {
   mainWindow.loadFile(rendererPath);
 
   registerTemplatesIpcHandlers({
-    dataDir,
+    dataDir: startupResult.dataDir,
     logger,
     ipcMain,
-    dialog
-  safeHandle("templates:load", () => {
-    const payload = loadTemplatesData({ dataDir, logger });
-  ipcMain.handle("templates:load", () => {
-    const payload = loadTemplatesData({ dataDir: startupResult.dataDir, logger });
-    const stats = computeTemplatesStats(payload.templates);
-    return { payload, stats };
-  });
-
-  safeHandle("templates:save", (_event, payload) => {
-    const saved = saveTemplatesData({ dataDir, payload, logger });
-  ipcMain.handle("templates:save", (_event, payload) => {
-    const saved = saveTemplatesData({ dataDir: startupResult.dataDir, payload, logger });
-    const stats = computeTemplatesStats(saved.templates);
-    return { payload: saved, stats };
-  });
-
-  safeHandle("templates:export", (_event, { template, format }) =>
-    exportTemplateToFile({ dataDir, template, format, logger })
-  );
-
-  safeHandle("templates:exportCategory", (_event, { category }) =>
-    exportCategoryZip({ dataDir, category, logger })
-  );
-
-  safeHandle("templates:exportArchive", () => exportArchiveZip({ dataDir, logger }));
-  ipcMain.handle("templates:export", (_event, { template, format }) =>
-    exportTemplateToFile({ dataDir: startupResult.dataDir, template, format, logger })
-  );
-
-  ipcMain.handle("templates:exportCategory", (_event, { category }) =>
-    exportCategoryZip({ dataDir: startupResult.dataDir, category, logger })
-  );
-
-  ipcMain.handle("templates:exportArchive", () =>
-    exportArchiveZip({ dataDir: startupResult.dataDir, logger })
-  );
-
-  safeHandle("templates:import", async () => {
-    const result = await dialog.showOpenDialog({
-      title: "Template-Import",
-      properties: ["openFile"],
-      filters: [{ name: "JSON", extensions: ["json"] }]
-    });
-
-    if (result.canceled || result.filePaths.length === 0) {
-      return null;
-    }
-
-    const merged = importTemplatesFromFile({
-      dataDir: startupResult.dataDir,
-      filePath: result.filePaths[0],
-      logger
-    });
-    const stats = computeTemplatesStats(merged.templates);
-    return { payload: merged, stats };
+    dialog,
+    manifest
   });
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow(logger);
+      createWindow({ logger });
     }
   });
 });

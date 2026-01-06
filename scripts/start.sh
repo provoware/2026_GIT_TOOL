@@ -35,6 +35,7 @@ check_command "node" "Node.js fehlt. Bitte Node.js installieren."
 check_command "npm" "npm fehlt. Bitte npm installieren."
 
 run_step "Abhängigkeiten (Dependencies) installieren" npm install
+run_step "Manifest prüfen (Manifest Check)" node scripts/validate-manifest.mjs
 run_step "Qualitätsprüfung (Quality Check) starten" npm run quality:auto
 
 printf "\n[Info] Hinweis: Auto-Reparatur (Auto-Fix) läuft schon in der Qualitätsprüfung.\n"
