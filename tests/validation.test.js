@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   ensureArrayOfNonEmptyStrings,
+  ensureArrayOfStrings,
   ensureBoolean,
   ensureInList,
   ensureNonEmptyString,
@@ -28,4 +29,9 @@ test("ensurePlainObject rejects arrays", () => {
 test("ensureArrayOfNonEmptyStrings trims items", () => {
   const result = ensureArrayOfNonEmptyStrings([" a ", "b"], "themes");
   assert.deepEqual(result, ["a", "b"]);
+});
+
+test("ensureArrayOfStrings accepts empty array", () => {
+  const result = ensureArrayOfStrings([], "deps");
+  assert.deepEqual(result, []);
 });

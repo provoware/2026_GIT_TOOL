@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createLogger } from "./utils/logger.js";
 import { loadConfig } from "./utils/config.js";
+import { loadModules } from "./utils/moduleLoader.js";
 import {
   computeTemplatesStats,
   exportArchiveZip,
@@ -34,12 +35,23 @@ const createWindow = (logger) => {
   logger.info("Fenster gestartet.");
 };
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   const config = loadConfig();
   const logger = createLogger(config);
 
   logger.info(`${config.appName} startet.`);
   logger.debug(`Aktives Theme: ${config.theme}`);
+
+  await loadModules({
+    logger,
+    context: {
+      app,
+      appName: config.appName,
+      config,
+      dataDir,
+      logger
+    }
+  });
 
   initializeTemplatesStorage({ dataDir, logger });
   createWindow(logger);
