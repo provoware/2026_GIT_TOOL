@@ -8,9 +8,12 @@
     "start": "electron .",
     "start:bootstrap": "bash scripts/start.sh",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "format": "prettier --check .",
     "format:write": "prettier --write .",
-    "test": "node --test"
+    "test": "node --test",
+    "quality": "npm run lint && npm run format && npm test",
+    "quality:fix": "npm run lint:fix && npm run format:write && npm test"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

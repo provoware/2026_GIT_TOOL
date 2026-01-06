@@ -13,11 +13,21 @@
         <p class="subtitle">Barrierefreies Dashboard (Accessibility) mit hohem Kontrast.</p>
       </div>
       <div class="theme-switcher" role="group" aria-label="Theme Auswahl">
-        <button class="theme-button" data-theme="theme-high-contrast-dark">
+        <button
+          class="theme-button"
+          data-theme="theme-high-contrast-dark"
+          aria-pressed="true"
+        >
           Dunkel (High Contrast)
         </button>
-        <button class="theme-button" data-theme="theme-high-contrast-light">
+        <button class="theme-button" data-theme="theme-high-contrast-light" aria-pressed="false">
           Hell (High Contrast)
+        </button>
+        <button class="theme-button" data-theme="theme-high-contrast-ocean" aria-pressed="false">
+          Ozean (High Contrast)
+        </button>
+        <button class="theme-button" data-theme="theme-high-contrast-sand" aria-pressed="false">
+          Sand (High Contrast)
         </button>
       </div>
     </header>

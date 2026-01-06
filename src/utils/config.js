@@ -10,14 +10,26 @@ import {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const configPath = path.resolve(__dirname, "..", "..", "config", "app.config.json");
+const defaultConfigPath = path.resolve(
+  __dirname,
+  "..",
+  "..",
+  "config",
+  "user",
+  "app.config.json"
+);
 
-export const loadConfig = () => {
-  if (!fs.existsSync(configPath)) {
+export const loadConfig = (configOptions = {}) => {
+  const options =
+    configOptions && typeof configOptions === "object" ? configOptions : {};
+  const { configPath = defaultConfigPath } = options;
+  const resolvedConfigPath = ensureNonEmptyString(configPath, "configPath");
+
+  if (!fs.existsSync(resolvedConfigPath)) {
     throw new Error("Konfigurationsdatei fehlt.");
   }
 
-  const raw = fs.readFileSync(configPath, "utf-8");
+  const raw = fs.readFileSync(resolvedConfigPath, "utf-8");
   const parsed = JSON.parse(raw);
 
   const appName = ensureNonEmptyString(parsed.appName, "appName");
