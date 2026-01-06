@@ -1,6 +1,7 @@
 const themeButtons = document.querySelectorAll(".theme-button");
 const clockElement = document.querySelector(".clock");
 const statusElement = document.querySelector(".status-message");
+const startupStatusList = document.querySelector("#startup-status-list");
 const templateList = document.querySelector("#template-list");
 const favoritesList = document.querySelector("#favorites-list");
 const categoryList = document.querySelector("#category-list");
@@ -52,7 +53,100 @@ const setStatus = (message) => {
   return false;
 };
 
+const STARTUP_LEVEL_LABELS = {
+  info: "Info",
+  success: "OK",
+  warning: "Warnung",
+  error: "Fehler"
+};
+
+const normalizeStartupStatus = (payload) => {
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+  const rawMessage = payload.message;
+  if (!isNonEmptyString(rawMessage)) {
+    return null;
+  }
+  const rawLevel = isNonEmptyString(payload.level) ? payload.level.trim() : "info";
+  const allowedLevels = Object.keys(STARTUP_LEVEL_LABELS);
+  const level = allowedLevels.includes(rawLevel) ? rawLevel : "info";
+  const suggestion = isNonEmptyString(payload.suggestion) ? payload.suggestion.trim() : "";
+
+  return {
+    level,
+    message: rawMessage.trim(),
+    suggestion
+  };
+};
+
+const appendStartupStatus = (payload) => {
+  if (!startupStatusList) {
+    return false;
+  }
+  const normalized = normalizeStartupStatus(payload);
+  if (!normalized) {
+    return false;
+  }
+
+  const item = document.createElement("li");
+  item.className = "startup-status-item";
+  item.dataset.level = normalized.level;
+
+  const label = document.createElement("span");
+  label.className = "startup-status-label";
+  const labelPrefix = STARTUP_LEVEL_LABELS[normalized.level] ?? "Info";
+  label.textContent = `${labelPrefix}: ${normalized.message}`;
+  item.appendChild(label);
+
+  if (normalized.suggestion) {
+    const suggestion = document.createElement("span");
+    suggestion.className = "startup-status-suggestion";
+    suggestion.textContent = `Vorschlag (Tipp): ${normalized.suggestion}`;
+    item.appendChild(suggestion);
+  }
+
+  startupStatusList.appendChild(item);
+  setStatus(normalized.message);
+  return true;
+};
+
 const ensureList = (value) => (Array.isArray(value) ? value : []);
+
+const isIpcResponse = (value) =>
+  Boolean(value) && typeof value === "object" && typeof value.ok === "boolean";
+
+const buildErrorStatus = (error, fallbackMessage) => {
+  const safeFallback = isNonEmptyString(fallbackMessage)
+    ? fallbackMessage
+    : "Aktion fehlgeschlagen.";
+  const message = isNonEmptyString(error?.message) ? error.message : safeFallback;
+  const code = isNonEmptyString(error?.code) ? ` Fehlercode (error code): ${error.code}.` : "";
+  return `${message}${code} Details siehe Protokoll (log).`;
+};
+
+const resolveIpcData = (response, fallbackMessage, validator) => {
+  if (!isIpcResponse(response)) {
+    setStatus(buildErrorStatus({ message: fallbackMessage, code: "INVALID_RESPONSE" }));
+    return null;
+  }
+  if (!response.ok) {
+    setStatus(buildErrorStatus(response.error, fallbackMessage));
+    return null;
+  }
+  const data = response.data;
+  if (validator && !validator(data)) {
+    setStatus(buildErrorStatus({ message: fallbackMessage, code: "INVALID_DATA" }));
+    return null;
+  }
+  return data;
+};
+
+const isTemplatePayload = (value) =>
+  Boolean(value) &&
+  typeof value === "object" &&
+  Object.prototype.hasOwnProperty.call(value, "payload") &&
+  Object.prototype.hasOwnProperty.call(value, "stats");
 
 const getAllowedThemes = (buttons) =>
   Array.from(buttons)
@@ -344,12 +438,16 @@ const saveTemplates = async (templates, message) => {
     templates
   };
   const response = await window.templatesApi.save(payload);
-  updateState(response);
+  const data = resolveIpcData(response, "Speichern fehlgeschlagen.", isTemplatePayload);
+  if (!data) {
+    return null;
+  }
+  updateState(data);
   renderAll();
   if (message) {
     setStatus(message);
   }
-  return response;
+  return data;
 };
 
 const resetForm = () => {
@@ -404,6 +502,7 @@ const handleCopy = async () => {
     setStatus("Inhalt kopiert. Du kannst ihn jetzt einfügen.");
     updateTemplateUsage(current.id);
   } catch (error) {
+    void error;
     setStatus("Kopieren fehlgeschlagen. Bitte erneut versuchen.");
   }
 };
@@ -441,9 +540,18 @@ const handleExportTemplate = async (format) => {
     return;
   }
   try {
-    const filePath = await window.templatesApi.exportTemplate(current, format);
+    const response = await window.templatesApi.exportTemplate(current, format);
+    const filePath = resolveIpcData(
+      response,
+      "Export fehlgeschlagen. Bitte Dateinamen prüfen.",
+      isNonEmptyString
+    );
+    if (!filePath) {
+      return;
+    }
     setStatus(`Export erstellt: ${filePath}`);
   } catch (error) {
+    void error;
     setStatus("Export fehlgeschlagen. Bitte Dateinamen prüfen.");
   }
 };
@@ -457,33 +565,65 @@ const handleExportCategory = async () => {
     return;
   }
   try {
-    const filePath = await window.templatesApi.exportCategory(category);
+    const response = await window.templatesApi.exportCategory(category);
+    const filePath = resolveIpcData(
+      response,
+      "Kategorie-Export fehlgeschlagen. Bitte prüfen.",
+      isNonEmptyString
+    );
+    if (!filePath) {
+      return;
+    }
     setStatus(`Kategorie exportiert: ${filePath}`);
   } catch (error) {
+    void error;
     setStatus("Kategorie-Export fehlgeschlagen. Bitte prüfen.");
   }
 };
 
 const handleExportArchive = async () => {
   try {
-    const filePath = await window.templatesApi.exportArchive();
+    const response = await window.templatesApi.exportArchive();
+    const filePath = resolveIpcData(
+      response,
+      "Archiv-Export fehlgeschlagen. Bitte erneut versuchen.",
+      isNonEmptyString
+    );
+    if (!filePath) {
+      return;
+    }
     setStatus(`Archiv exportiert: ${filePath}`);
   } catch (error) {
+    void error;
     setStatus("Archiv-Export fehlgeschlagen. Bitte erneut versuchen.");
   }
 };
 
 const handleImport = async () => {
   try {
-    const result = await window.templatesApi.importTemplates();
-    if (!result) {
+    const response = await window.templatesApi.importTemplates();
+    if (!isIpcResponse(response)) {
+      setStatus(buildErrorStatus({ message: "Import fehlgeschlagen.", code: "INVALID_RESPONSE" }));
+      return;
+    }
+    if (!response.ok) {
+      setStatus(buildErrorStatus(response.error, "Import fehlgeschlagen. Bitte JSON prüfen."));
+      return;
+    }
+    const data = response.data;
+    if (!data) {
       setStatus("Import abgebrochen.");
       return;
     }
-    updateState(result);
+    if (!isTemplatePayload(data)) {
+      setStatus(buildErrorStatus({ message: "Importdaten unvollständig.", code: "INVALID_DATA" }));
+      return;
+    }
+    updateState(data);
     renderAll();
     setStatus("Import abgeschlossen.");
   } catch (error) {
+    void error;
     setStatus("Import fehlgeschlagen. Bitte JSON prüfen.");
   }
 };
@@ -624,7 +764,11 @@ const init = async () => {
     return;
   }
   const response = await window.templatesApi.load();
-  updateState(response);
+  const data = resolveIpcData(response, "Laden fehlgeschlagen.", isTemplatePayload);
+  if (!data) {
+    return;
+  }
+  updateState(data);
   renderAll();
   setStatus("Templates geladen. Wähle eine Vorlage oder erstelle eine neue.");
 };
@@ -633,3 +777,9 @@ updateClock();
 setInterval(updateClock, 1000);
 
 init();
+
+if (window.startupApi?.onStatus) {
+  window.startupApi.onStatus((payload) => {
+    appendStartupStatus(payload);
+  });
+}
