@@ -9,7 +9,9 @@ const themeClasses = [
   "theme-high-contrast-dark",
   "theme-high-contrast-light",
   "theme-high-contrast-ocean",
-  "theme-high-contrast-sand"
+  "theme-high-contrast-sand",
+  "theme-high-contrast-forest",
+  "theme-high-contrast-violet"
 ];
 
 const indexUrl = pathToFileURL(path.resolve("src/renderer/index.html")).toString();
