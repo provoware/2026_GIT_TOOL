@@ -3,6 +3,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createLogger } from "./utils/logger.js";
 import { loadConfig } from "./utils/config.js";
+import { initializeTemplatesStorage } from "./utils/templates.js";
+import { registerTemplatesIpcHandlers } from "./ipc/templatesIpc.js";
 import { createSafeHandle } from "./utils/ipcSafe.js";
 import { runStartupRoutine } from "./utils/startup.js";
 import {
@@ -106,6 +108,11 @@ app.whenReady().then(() => {
   const rendererPath = path.join(__dirname, "renderer", "index.html");
   mainWindow.loadFile(rendererPath);
 
+  registerTemplatesIpcHandlers({
+    dataDir,
+    logger,
+    ipcMain,
+    dialog
   safeHandle("templates:load", () => {
     const payload = loadTemplatesData({ dataDir, logger });
   ipcMain.handle("templates:load", () => {

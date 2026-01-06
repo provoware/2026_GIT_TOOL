@@ -23,3 +23,4 @@ HauptModul-Interface erstellen
     - [ ] Exportcenter (TXT/JSON/ZIP-Backup) mit Linux-Dateinamenstandard
     - [ ] Suche/Filter/Analytics + Favoriten-Auswertung
     - [ ] Abnahme: manuelle Maus-Tests (3 Szenarien) + Fehlerfixes + Doku
+[x] 2026-01-07 | Tests für Templates-Export/Import und IPC erweitert | Neue Tests für ZIP-Export, Import-Kollisionen und IPC-Handler mit Mock-IPC | prüfen: node --test läuft | fertig wenn: Tests grün und Handler validiert.
