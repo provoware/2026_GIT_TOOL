@@ -1,0 +1,9 @@
+# Editor
+*.swp
+*.tmp
+
+# Logs
+*.log
+
+# OS
+.DS_Store
