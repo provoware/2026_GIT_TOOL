@@ -54,6 +54,41 @@ const setStatus = (message) => {
 
 const ensureList = (value) => (Array.isArray(value) ? value : []);
 
+const isIpcResponse = (value) =>
+  Boolean(value) && typeof value === "object" && typeof value.ok === "boolean";
+
+const buildErrorStatus = (error, fallbackMessage) => {
+  const safeFallback = isNonEmptyString(fallbackMessage)
+    ? fallbackMessage
+    : "Aktion fehlgeschlagen.";
+  const message = isNonEmptyString(error?.message) ? error.message : safeFallback;
+  const code = isNonEmptyString(error?.code) ? ` Fehlercode (error code): ${error.code}.` : "";
+  return `${message}${code} Details siehe Protokoll (log).`;
+};
+
+const resolveIpcData = (response, fallbackMessage, validator) => {
+  if (!isIpcResponse(response)) {
+    setStatus(buildErrorStatus({ message: fallbackMessage, code: "INVALID_RESPONSE" }));
+    return null;
+  }
+  if (!response.ok) {
+    setStatus(buildErrorStatus(response.error, fallbackMessage));
+    return null;
+  }
+  const data = response.data;
+  if (validator && !validator(data)) {
+    setStatus(buildErrorStatus({ message: fallbackMessage, code: "INVALID_DATA" }));
+    return null;
+  }
+  return data;
+};
+
+const isTemplatePayload = (value) =>
+  Boolean(value) &&
+  typeof value === "object" &&
+  Object.prototype.hasOwnProperty.call(value, "payload") &&
+  Object.prototype.hasOwnProperty.call(value, "stats");
+
 const getAllowedThemes = (buttons) =>
   Array.from(buttons)
     .map((button) => button.dataset.theme)
@@ -344,12 +379,16 @@ const saveTemplates = async (templates, message) => {
     templates
   };
   const response = await window.templatesApi.save(payload);
-  updateState(response);
+  const data = resolveIpcData(response, "Speichern fehlgeschlagen.", isTemplatePayload);
+  if (!data) {
+    return null;
+  }
+  updateState(data);
   renderAll();
   if (message) {
     setStatus(message);
   }
-  return response;
+  return data;
 };
 
 const resetForm = () => {
@@ -441,7 +480,15 @@ const handleExportTemplate = async (format) => {
     return;
   }
   try {
-    const filePath = await window.templatesApi.exportTemplate(current, format);
+    const response = await window.templatesApi.exportTemplate(current, format);
+    const filePath = resolveIpcData(
+      response,
+      "Export fehlgeschlagen. Bitte Dateinamen prüfen.",
+      isNonEmptyString
+    );
+    if (!filePath) {
+      return;
+    }
     setStatus(`Export erstellt: ${filePath}`);
   } catch (error) {
     setStatus("Export fehlgeschlagen. Bitte Dateinamen prüfen.");
@@ -457,7 +504,15 @@ const handleExportCategory = async () => {
     return;
   }
   try {
-    const filePath = await window.templatesApi.exportCategory(category);
+    const response = await window.templatesApi.exportCategory(category);
+    const filePath = resolveIpcData(
+      response,
+      "Kategorie-Export fehlgeschlagen. Bitte prüfen.",
+      isNonEmptyString
+    );
+    if (!filePath) {
+      return;
+    }
     setStatus(`Kategorie exportiert: ${filePath}`);
   } catch (error) {
     setStatus("Kategorie-Export fehlgeschlagen. Bitte prüfen.");
@@ -466,7 +521,15 @@ const handleExportCategory = async () => {
 
 const handleExportArchive = async () => {
   try {
-    const filePath = await window.templatesApi.exportArchive();
+    const response = await window.templatesApi.exportArchive();
+    const filePath = resolveIpcData(
+      response,
+      "Archiv-Export fehlgeschlagen. Bitte erneut versuchen.",
+      isNonEmptyString
+    );
+    if (!filePath) {
+      return;
+    }
     setStatus(`Archiv exportiert: ${filePath}`);
   } catch (error) {
     setStatus("Archiv-Export fehlgeschlagen. Bitte erneut versuchen.");
@@ -475,12 +538,25 @@ const handleExportArchive = async () => {
 
 const handleImport = async () => {
   try {
-    const result = await window.templatesApi.importTemplates();
-    if (!result) {
+    const response = await window.templatesApi.importTemplates();
+    if (!isIpcResponse(response)) {
+      setStatus(buildErrorStatus({ message: "Import fehlgeschlagen.", code: "INVALID_RESPONSE" }));
+      return;
+    }
+    if (!response.ok) {
+      setStatus(buildErrorStatus(response.error, "Import fehlgeschlagen. Bitte JSON prüfen."));
+      return;
+    }
+    const data = response.data;
+    if (!data) {
       setStatus("Import abgebrochen.");
       return;
     }
-    updateState(result);
+    if (!isTemplatePayload(data)) {
+      setStatus(buildErrorStatus({ message: "Importdaten unvollständig.", code: "INVALID_DATA" }));
+      return;
+    }
+    updateState(data);
     renderAll();
     setStatus("Import abgeschlossen.");
   } catch (error) {
@@ -624,7 +700,11 @@ const init = async () => {
     return;
   }
   const response = await window.templatesApi.load();
-  updateState(response);
+  const data = resolveIpcData(response, "Laden fehlgeschlagen.", isTemplatePayload);
+  if (!data) {
+    return;
+  }
+  updateState(data);
   renderAll();
   setStatus("Templates geladen. Wähle eine Vorlage oder erstelle eine neue.");
 };
