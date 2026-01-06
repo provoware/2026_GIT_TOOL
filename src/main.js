@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createLogger } from "./utils/logger.js";
 import { loadConfig } from "./utils/config.js";
+import { createSafeHandle } from "./utils/ipcSafe.js";
 import { runStartupRoutine } from "./utils/startup.js";
 import {
   ensureBoolean,
@@ -92,6 +93,7 @@ app.whenReady().then(() => {
 
   const config = loadConfig({ configPath: startupResult.configPath });
   const logger = createLogger(config);
+  const safeHandle = createSafeHandle({ ipcMain, logger });
 
   logger.info(`${config.appName} startet.`);
   logger.debug(`Aktives Theme: ${config.theme}`);
@@ -104,18 +106,31 @@ app.whenReady().then(() => {
   const rendererPath = path.join(__dirname, "renderer", "index.html");
   mainWindow.loadFile(rendererPath);
 
+  safeHandle("templates:load", () => {
+    const payload = loadTemplatesData({ dataDir, logger });
   ipcMain.handle("templates:load", () => {
     const payload = loadTemplatesData({ dataDir: startupResult.dataDir, logger });
     const stats = computeTemplatesStats(payload.templates);
     return { payload, stats };
   });
 
+  safeHandle("templates:save", (_event, payload) => {
+    const saved = saveTemplatesData({ dataDir, payload, logger });
   ipcMain.handle("templates:save", (_event, payload) => {
     const saved = saveTemplatesData({ dataDir: startupResult.dataDir, payload, logger });
     const stats = computeTemplatesStats(saved.templates);
     return { payload: saved, stats };
   });
 
+  safeHandle("templates:export", (_event, { template, format }) =>
+    exportTemplateToFile({ dataDir, template, format, logger })
+  );
+
+  safeHandle("templates:exportCategory", (_event, { category }) =>
+    exportCategoryZip({ dataDir, category, logger })
+  );
+
+  safeHandle("templates:exportArchive", () => exportArchiveZip({ dataDir, logger }));
   ipcMain.handle("templates:export", (_event, { template, format }) =>
     exportTemplateToFile({ dataDir: startupResult.dataDir, template, format, logger })
   );
@@ -128,7 +143,7 @@ app.whenReady().then(() => {
     exportArchiveZip({ dataDir: startupResult.dataDir, logger })
   );
 
-  ipcMain.handle("templates:import", async () => {
+  safeHandle("templates:import", async () => {
     const result = await dialog.showOpenDialog({
       title: "Template-Import",
       properties: ["openFile"],
