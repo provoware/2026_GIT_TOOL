@@ -4,11 +4,15 @@ import { fileURLToPath } from "node:url";
 import { loadConfig } from "./config.js";
 import { initializeTemplatesStorage } from "./templates.js";
 import {
+  ensureArray,
+  ensureArrayOfNonEmptyStrings,
   ensureBoolean,
+  ensureFunction,
   ensureInList,
   ensureNonEmptyString,
+  ensureOptionalString,
   ensurePlainObject
-} from "./validation.js";
+} from "./validate.js";
 import {
   buildDefaultQualityConfig,
   buildDefaultQualityManifest
@@ -27,28 +31,11 @@ const ensureLogger = (logger) => {
       throw new Error(`logger.${key} muss eine Funktion sein.`);
     }
   });
-  return target;
+  return ensurePlainObject(target, "logger");
 };
 
 const ensureReporter = (reporter) => {
-  if (typeof reporter !== "function") {
-    throw new Error("reportStatus muss eine Funktion sein.");
-  }
-  return reporter;
-};
-
-const ensureOptionalString = (value, label) => {
-  if (value === undefined || value === null || value === "") {
-    return null;
-  }
-  return ensureNonEmptyString(value, label);
-};
-
-const ensureArray = (value, label) => {
-  if (!Array.isArray(value)) {
-    throw new Error(`${label} muss eine Liste sein.`);
-  }
-  return value;
+  return ensureFunction(reporter, "reportStatus");
 };
 
 const ensureDirectoryExists = (directoryPath) => {
@@ -60,21 +47,29 @@ const ensureDirectoryExists = (directoryPath) => {
   if (!fs.statSync(resolvedPath).isDirectory()) {
     throw new Error("directoryPath muss ein Ordner sein.");
   }
-  return {
+  const result = {
     path: resolvedPath,
     created: !existed
   };
+  ensurePlainObject(result, "directoryResult");
+  ensureNonEmptyString(result.path, "directoryResult.path");
+  ensureBoolean(result.created, "directoryResult.created");
+  return result;
 };
 
-const formatTimestampForFilename = (value = new Date().toISOString()) =>
-  ensureNonEmptyString(value, "timestamp").replace(/[:.]/g, "-");
+const formatTimestampForFilename = (value = new Date().toISOString()) => {
+  const safeValue = ensureNonEmptyString(value, "timestamp");
+  const formatted = safeValue.replace(/[:.]/g, "-");
+  return ensureNonEmptyString(formatted, "formattedTimestamp");
+};
 
 const buildBackupPath = ({ filePath, backupDir }) => {
   const safePath = ensureNonEmptyString(filePath, "filePath");
   const safeBackupDir = ensureNonEmptyString(backupDir, "backupDir");
   const filename = path.basename(safePath);
   const timestamp = formatTimestampForFilename();
-  return path.join(safeBackupDir, `${filename}.backup-${timestamp}`);
+  const result = path.join(safeBackupDir, `${filename}.backup-${timestamp}`);
+  return ensureNonEmptyString(result, "backupPath");
 };
 
 const backupFile = ({ filePath, backupDir, logger, label }) => {
@@ -85,7 +80,7 @@ const backupFile = ({ filePath, backupDir, logger, label }) => {
 
   if (!fs.existsSync(safePath)) {
     safeLogger.warn(`${safeLabel} konnte nicht gesichert werden: Datei fehlt.`);
-    return null;
+    return ensureOptionalString(null, "backupPath");
   }
 
   const backupPath = buildBackupPath({ filePath: safePath, backupDir: resolvedBackupDir });
@@ -100,7 +95,8 @@ const writeJsonFile = (filePath, payload) => {
     throw new Error("payload muss ein Objekt sein.");
   }
   fs.writeFileSync(resolvedPath, JSON.stringify(payload, null, 2));
-  return fs.existsSync(resolvedPath);
+  const written = fs.existsSync(resolvedPath);
+  return ensureBoolean(written, "fileWritten");
 };
 
 const buildStatusPayload = ({ level, message, suggestion, step }) => {
@@ -127,6 +123,7 @@ const buildStatusPayload = ({ level, message, suggestion, step }) => {
     payload.step = safeStep;
   }
 
+  ensurePlainObject(payload, "statusPayload");
   return payload;
 };
 
@@ -134,16 +131,18 @@ const reportStatus = (reporter, payload) => {
   const safeReporter = ensureReporter(reporter);
   const safePayload = buildStatusPayload(payload);
   safeReporter(safePayload);
-  return safePayload;
+  return ensurePlainObject(safePayload, "reportedPayload");
 };
 
 const buildRepairResult = ({ ok, backupPath }) => {
   const safeOk = ensureBoolean(ok, "ok");
   const safeBackupPath = ensureOptionalString(backupPath, "backupPath");
-  return {
+  const result = {
     ok: safeOk,
     backupPath: safeBackupPath
   };
+  ensurePlainObject(result, "repairResult");
+  return result;
 };
 
 const repairConfigFile = ({ configPath, backupDir, logger, reporter }) => {
@@ -208,35 +207,56 @@ const repairTemplatesStorage = ({ dataDir, seedPath, logger, reporter }) => {
   return buildRepairResult({ ok: templatesCount >= 0, backupPath });
 };
 
-const buildDefaultConfig = () => ({
-  appName: "2026 Git Tool",
-  debugEnabled: true,
-  loggingEnabled: true,
-  theme: "theme-high-contrast-dark",
-  availableThemes: [
-    "theme-high-contrast-dark",
-    "theme-high-contrast-light",
-    "theme-high-contrast-ocean",
-    "theme-high-contrast-sand",
-    "theme-high-contrast-forest",
-    "theme-high-contrast-violet"
-  ]
-});
+const buildDefaultConfig = () => {
+  const result = {
+    appName: "2026 Git Tool",
+    debugEnabled: true,
+    loggingEnabled: true,
+    theme: "theme-high-contrast-dark",
+    availableThemes: [
+      "theme-high-contrast-dark",
+      "theme-high-contrast-light",
+      "theme-high-contrast-ocean",
+      "theme-high-contrast-sand",
+      "theme-high-contrast-forest",
+      "theme-high-contrast-violet"
+    ]
+  };
 
-const buildDefaultSeed = (nowIso) => ({
-  meta: {
-    version: "2.0",
-    created: nowIso,
-    description: "Automatisch erzeugtes Start-Seed für Templates (Fallback)."
-  },
-  templates: []
-});
+  ensurePlainObject(result, "defaultConfig");
+  ensureNonEmptyString(result.appName, "defaultConfig.appName");
+  ensureArrayOfNonEmptyStrings(result.availableThemes, "defaultConfig.availableThemes");
+  return result;
+};
 
-const buildDefaultStatsSchema = () => ({
-  version: "1.0",
-  description: "Schema für Template-Statistiken (minimaler Fallback).",
-  requiredFields: ["meta", "totals", "topTemplates", "categoryStats"]
-});
+const buildDefaultSeed = (nowIso) => {
+  const created = ensureNonEmptyString(nowIso, "nowIso");
+  const result = {
+    meta: {
+      version: "2.0",
+      created,
+      description: "Automatisch erzeugtes Start-Seed für Templates (Fallback)."
+    },
+    templates: []
+  };
+
+  ensurePlainObject(result, "defaultSeed");
+  ensurePlainObject(result.meta, "defaultSeed.meta");
+  ensureNonEmptyString(result.meta.version, "defaultSeed.meta.version");
+  return result;
+};
+
+const buildDefaultStatsSchema = () => {
+  const result = {
+    version: "1.0",
+    description: "Schema für Template-Statistiken (minimaler Fallback).",
+    requiredFields: ["meta", "totals", "topTemplates", "categoryStats"]
+  };
+
+  ensurePlainObject(result, "statsSchema");
+  ensureArray(result.requiredFields, "statsSchema.requiredFields");
+  return result;
+};
 
 const mapErrorToHint = (error, fallbackMessage) => {
   const rawMessage = error instanceof Error ? error.message : "Unbekannter Fehler";
@@ -263,10 +283,14 @@ const mapErrorToHint = (error, fallbackMessage) => {
     };
   }
 
-  return {
+  const result = {
     message,
     suggestion: "Bitte prüfen Sie die Datei und starten Sie erneut."
   };
+  ensurePlainObject(result, "errorHint");
+  ensureNonEmptyString(result.message, "errorHint.message");
+  ensureNonEmptyString(result.suggestion, "errorHint.suggestion");
+  return result;
 };
 
 const ensureFileWithDefaults = ({
@@ -303,7 +327,7 @@ const ensureFileWithDefaults = ({
     message: `${safeDescription} gefunden.`,
     step: safeStep
   });
-  return true;
+  return ensureBoolean(true, "fileEnsured");
 };
 
 const buildStartupResult = ({ ok, configPath, dataDir, pluginsDir, steps }) => {
@@ -313,13 +337,15 @@ const buildStartupResult = ({ ok, configPath, dataDir, pluginsDir, steps }) => {
   const safePluginsDir = ensureNonEmptyString(pluginsDir, "pluginsDir");
   const safeSteps = ensureArray(steps, "steps");
 
-  return {
+  const result = {
     ok: safeOk,
     configPath: safeConfigPath,
     dataDir: safeDataDir,
     pluginsDir: safePluginsDir,
     steps: safeSteps
   };
+  ensurePlainObject(result, "startupResult");
+  return result;
 };
 
 export const runStartupRoutine = (options = {}) => {
@@ -468,13 +494,13 @@ export const runStartupRoutine = (options = {}) => {
         suggestion: "Bitte Datei löschen und neu starten.",
         step: "config-validate"
       });
-      return buildStartupResult({
-        ok: false,
-        configPath,
-        dataDir: resolvedDataDir,
-        pluginsDir: resolvedPluginsDir,
-        steps
-      });
+    return buildStartupResult({
+      ok: false,
+      configPath,
+      dataDir: resolvedDataDir,
+      pluginsDir: resolvedPluginsDir,
+      steps
+    });
     }
   }
 
