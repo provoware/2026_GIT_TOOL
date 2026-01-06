@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2026 Git Tool</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="theme-high-contrast-dark">
+    <header class="app-header">
+      <div>
+        <h1>2026 Git Tool</h1>
+        <p class="subtitle">Barrierefreies Dashboard (Accessibility) mit hohem Kontrast.</p>
+      </div>
+      <div class="theme-switcher" role="group" aria-label="Theme Auswahl">
+        <button class="theme-button" data-theme="theme-high-contrast-dark">
+          Dunkel (High Contrast)
+        </button>
+        <button class="theme-button" data-theme="theme-high-contrast-light">
+          Hell (High Contrast)
+        </button>
+      </div>
+    </header>
+    <main class="dashboard" role="main">
+      <section class="panel" aria-labelledby="panel-status">
+        <h2 id="panel-status">Status</h2>
+        <ul>
+          <li>Debugging-Modus: <strong>aktiv</strong></li>
+          <li>Logging-Modus: <strong>aktiv</strong></li>
+          <li>Letzter Check: <strong>bereit</strong></li>
+        </ul>
+      </section>
+      <section class="panel" aria-labelledby="panel-tools">
+        <h2 id="panel-tools">Tools</h2>
+        <button class="primary">Startroutine starten</button>
+        <button>Tests ausführen</button>
+        <button>Format prüfen</button>
+      </section>
+      <section class="panel" aria-labelledby="panel-help">
+        <h2 id="panel-help">Hilfe</h2>
+        <p>
+          Nutze die Startroutine, um Abhängigkeiten (Dependencies) automatisch zu
+          installieren und Tests zu starten.
+        </p>
+        <div class="clock" aria-live="polite" aria-label="Aktuelle Uhrzeit"></div>
+      </section>
+    </main>
+    <script src="renderer.js"></script>
+  </body>
+</html>

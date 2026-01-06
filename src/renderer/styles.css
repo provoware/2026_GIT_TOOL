@@ -1,0 +1,95 @@
+:root {
+  color-scheme: light dark;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #0b0d11;
+  color: #f2f6ff;
+}
+
+body.theme-high-contrast-light {
+  background: #fdfdfd;
+  color: #111827;
+}
+
+.app-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 2rem;
+  border-bottom: 2px solid currentcolor;
+}
+
+.subtitle {
+  max-width: 32rem;
+}
+
+.theme-switcher {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.theme-button {
+  border: 2px solid currentcolor;
+  background: transparent;
+  color: inherit;
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.theme-button:focus-visible,
+.primary:focus-visible,
+button:focus-visible {
+  outline: 3px solid #ffcc00;
+  outline-offset: 3px;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.panel {
+  border: 2px solid currentcolor;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+body.theme-high-contrast-light .panel {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.primary {
+  background: #1e40af;
+  color: #ffffff;
+  border: 2px solid #1e40af;
+  padding: 0.6rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+.clock {
+  margin-top: 1rem;
+  font-weight: 700;
+}
+
+button {
+  display: block;
+  margin-bottom: 0.5rem;
+  border: 2px solid currentcolor;
+  background: transparent;
+  color: inherit;
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}

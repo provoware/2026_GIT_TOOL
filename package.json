@@ -1,0 +1,21 @@
+{
+  "name": "2026-git-tool",
+  "version": "0.1.0",
+  "description": "Electron base structure with automation and quality checks",
+  "main": "src/main.js",
+  "type": "module",
+  "scripts": {
+    "start": "electron .",
+    "start:bootstrap": "bash scripts/start.sh",
+    "lint": "eslint .",
+    "format": "prettier --check .",
+    "format:write": "prettier --write .",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.0",
+    "electron": "^32.0.1",
+    "eslint": "^9.9.0",
+    "prettier": "^3.3.3"
+  }
+}
