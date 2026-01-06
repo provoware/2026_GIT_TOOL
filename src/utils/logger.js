@@ -1,14 +1,49 @@
 import {
   ensureBoolean,
   ensureInList,
-  ensureNonEmptyString
+  ensureNonEmptyString,
+  ensurePlainObject,
+  ensurePositiveInteger
 } from "./validation.js";
+import { createFileLogWriter } from "./logging/file-log-writer.js";
 
-export const createLogger = ({ debugEnabled, loggingEnabled }) => {
-  ensureBoolean(debugEnabled, "debugEnabled");
-  ensureBoolean(loggingEnabled, "loggingEnabled");
+const allowedLevels = ["DEBUG", "INFO", "WARN", "ERROR"];
+const levelRank = {
+  DEBUG: 0,
+  INFO: 1,
+  WARN: 2,
+  ERROR: 3
+};
 
-  const allowedLevels = ["INFO", "WARN", "ERROR", "DEBUG"];
+export const createLogger = (options = {}) => {
+  const normalizedOptions =
+    options === undefined ? {} : ensurePlainObject(options, "options");
+  const debugEnabled = ensureBoolean(
+    normalizedOptions.debugEnabled,
+    "debugEnabled"
+  );
+  const loggingEnabled = ensureBoolean(
+    normalizedOptions.loggingEnabled,
+    "loggingEnabled"
+  );
+  const logToFile = ensureBoolean(normalizedOptions.logToFile ?? false, "logToFile");
+  const logLevel = ensureInList(
+    normalizedOptions.logLevel ?? "INFO",
+    allowedLevels,
+    "logLevel"
+  );
+  const logFilePath = ensureNonEmptyString(
+    normalizedOptions.logFilePath ?? "data/logs/app.log",
+    "logFilePath"
+  );
+  const logRotateDaily = ensureBoolean(
+    normalizedOptions.logRotateDaily ?? true,
+    "logRotateDaily"
+  );
+  const logMaxSizeBytes = ensurePositiveInteger(
+    normalizedOptions.logMaxSizeBytes ?? 5_242_880,
+    "logMaxSizeBytes"
+  );
 
   const buildEntry = (level, message, delivered) => {
     const normalizedLevel = ensureInList(level, allowedLevels, "level");
@@ -24,14 +59,33 @@ export const createLogger = ({ debugEnabled, loggingEnabled }) => {
     };
   };
 
-  const log = (level, message) => {
-    const entry = buildEntry(level, message, loggingEnabled);
+  const fileWriter = logToFile
+    ? createFileLogWriter({
+        logFilePath,
+        logRotateDaily,
+        logMaxSizeBytes
+      })
+    : null;
 
-    if (!loggingEnabled) {
+  const shouldLogLevel = (level) => {
+    const normalizedLevel = ensureInList(level, allowedLevels, "level");
+    const allowed = levelRank[normalizedLevel] >= levelRank[logLevel];
+    return ensureBoolean(allowed, "shouldLogLevel");
+  };
+
+  const log = (level, message) => {
+    const shouldLog = loggingEnabled && shouldLogLevel(level);
+    const entry = buildEntry(level, message, shouldLog);
+
+    if (!shouldLog) {
       return entry;
     }
 
     console.log(`[${entry.timestamp}] [${entry.level}] ${entry.message}`);
+    if (fileWriter) {
+      fileWriter.writeEntry(entry);
+    }
+
     return entry;
   };
 

@@ -17,6 +17,11 @@ test("loadConfig loads and validates configuration", () => {
     appName: "Test Tool",
     debugEnabled: false,
     loggingEnabled: true,
+    logToFile: true,
+    logLevel: "INFO",
+    logFilePath: "data/logs/test.log",
+    logRotateDaily: false,
+    logMaxSizeBytes: 1024,
     theme: "theme-high-contrast-dark",
     availableThemes: ["theme-high-contrast-dark", "theme-high-contrast-light"]
   });
@@ -26,6 +31,8 @@ test("loadConfig loads and validates configuration", () => {
   assert.equal(config.appName, "Test Tool");
   assert.equal(config.debugEnabled, false);
   assert.equal(config.loggingEnabled, true);
+  assert.equal(config.logToFile, true);
+  assert.equal(config.logLevel, "INFO");
   assert.equal(config.theme, "theme-high-contrast-dark");
 });
 
@@ -34,6 +41,11 @@ test("loadConfig rejects invalid theme", () => {
     appName: "Test Tool",
     debugEnabled: true,
     loggingEnabled: true,
+    logToFile: false,
+    logLevel: "INFO",
+    logFilePath: "data/logs/test.log",
+    logRotateDaily: true,
+    logMaxSizeBytes: 2048,
     theme: "invalid",
     availableThemes: ["theme-high-contrast-dark"]
   });

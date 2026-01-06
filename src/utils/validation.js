@@ -43,3 +43,11 @@ export const ensureInList = (value, list, label) => {
 
   return value;
 };
+
+export const ensurePositiveInteger = (value, label) => {
+  if (!Number.isInteger(value) || value <= 0) {
+    throw new Error(`${label} muss eine positive ganze Zahl sein.`);
+  }
+
+  return value;
+};

@@ -6,7 +6,8 @@ import {
   ensureBoolean,
   ensureInList,
   ensureNonEmptyString,
-  ensurePlainObject
+  ensurePlainObject,
+  ensurePositiveInteger
 } from "./validation.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -34,9 +35,28 @@ export const loadConfig = (configOptions = {}) => {
   const raw = fs.readFileSync(resolvedConfigPath, "utf-8");
   const parsed = JSON.parse(raw);
 
+  const allowedLogLevels = ["DEBUG", "INFO", "WARN", "ERROR"];
   const appName = ensureNonEmptyString(parsed.appName, "appName");
   const debugEnabled = ensureBoolean(parsed.debugEnabled, "debugEnabled");
   const loggingEnabled = ensureBoolean(parsed.loggingEnabled, "loggingEnabled");
+  const logToFile = ensureBoolean(parsed.logToFile ?? false, "logToFile");
+  const logLevel = ensureInList(
+    ensureNonEmptyString(parsed.logLevel ?? "INFO", "logLevel"),
+    allowedLogLevels,
+    "logLevel"
+  );
+  const logFilePath = ensureNonEmptyString(
+    parsed.logFilePath ?? "data/logs/app.log",
+    "logFilePath"
+  );
+  const logRotateDaily = ensureBoolean(
+    parsed.logRotateDaily ?? true,
+    "logRotateDaily"
+  );
+  const logMaxSizeBytes = ensurePositiveInteger(
+    parsed.logMaxSizeBytes ?? 5_242_880,
+    "logMaxSizeBytes"
+  );
   const availableThemes = ensureArrayOfNonEmptyStrings(
     parsed.availableThemes,
     "availableThemes"
@@ -51,6 +71,11 @@ export const loadConfig = (configOptions = {}) => {
     appName,
     debugEnabled,
     loggingEnabled,
+    logToFile,
+    logLevel,
+    logFilePath,
+    logRotateDaily,
+    logMaxSizeBytes,
     availableThemes,
     theme
   };

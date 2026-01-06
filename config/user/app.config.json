@@ -2,6 +2,11 @@
   "appName": "2026 Git Tool",
   "debugEnabled": true,
   "loggingEnabled": true,
+  "logToFile": true,
+  "logLevel": "DEBUG",
+  "logFilePath": "data/logs/app.log",
+  "logRotateDaily": true,
+  "logMaxSizeBytes": 5242880,
   "theme": "theme-high-contrast-dark",
   "availableThemes": [
     "theme-high-contrast-dark",
