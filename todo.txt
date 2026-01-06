@@ -3,6 +3,7 @@ HauptModul-Interface erstellen
 debugging modus detailiert und professionell 
 logging modusdetailiert und professionell
 Vollautomatische perfekte Laien optimierte und fehlerfrei selbständig arbeitende startroutine mit allem drum und dran
+[ ] 2026-01-06 | Generator-Ökosystem v2 (History, Profile, Heatmap, Reuse) | Generator-Core UI-neutral auslagern, history.json v2 + profiles.json v2, Analyse-Controller für Heatmap, Cluster-Ansicht, Reuse in min. zwei Modulen, Doku & Beispielprofile | prüfen: Core ohne Electron, History/Profile stabil, Heatmap aus realen Daten, Reuse in Modulen, kein Modul schreibt Core/History direkt | fertig wenn: Abnahmebedingung erfüllt ist.
 [x] 2026-01-06 | UI Dashboard dreispaltig implementieren mit Standardtoolfunktionen | Implementiere ein modernes dreispaltiges Dashboard mit allen notwendigen standard toolfunktionen und auch datum und uhrzeit, sowie andere hilfreiche informationen | prüfen: ist alles vorhanden und konsistent? | fertig wenn: alles fehlerfrei und code kommentiert ist.
 [x] 2026-01-06 | Grundstruktur Electron | Ordnerstruktur (src/config/tests/scripts) anlegen, Startroutine mit Feedback, Tests und Code-Qualität integrieren | prüfen: Struktur vorhanden, lint/test/format laufen, Startskript vorhanden | fertig wenn: alle Dateien angelegt und dokumentiert sind.
 [ ] 2026-01-06 | Erweiterte Start-Routine | Nutzerfeedback erweitern (Fortschritt, Fehlerdetails), automatische Theme-Auswahl aus Config übernehmen | prüfen: Startroutine zeigt klare Meldungen | fertig wenn: Startprozess stabil und benutzerfreundlich ist.
