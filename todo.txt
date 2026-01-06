@@ -6,6 +6,7 @@ offene punkte ins projekt übertragen
 HauptModul-Interface erstellen
 [x] 2026-01-07 | Debugging-Modus detailiert und professionell | Logger liefert strukturierte Debug-Ausgaben mit Validierung | prüfen: Debug-Einträge enthalten Level/Zeit/Status | fertig wenn: Logger-Tests grün.
 [x] 2026-01-07 | Logging-Modus detailiert und professionell | Logging-Ausgaben validiert, Einträge enthalten Status-Flag | prüfen: Log-Einträge validiert und getestet | fertig wenn: Logger-Tests grün.
+[x] 2026-01-07 | A11y-Tests für Renderer | A11y-Scan (axe), Kontrast-Checks für Themes und Fokus-Tests ergänzt | prüfen: Tests laufen, Kontrast >= 4.5:1, Fokus sichtbar | fertig wenn: A11y-Testbestand grün.
 [x] 2026-01-07 | [MODULE] Templates-Modul v2 (Favoriten, Kategorien, Statistik, Smart-Sortierung) | Templates-Modul v2 mit Favoritenbereich, Kategorienfilter, Statistik-Übersicht, Smart-Sortierung und Import/Export umgesetzt | prüfen: templates.json + stats vorhanden, UI bedienbar, Import/Export laufen | fertig wenn: Templates nutzbar und validiert sind.
 [x] 2026-01-07 | Modul-Loader + Manifest + Plugin-Verzeichnis | Modul-Verzeichnis, Manifestformat, Loader mit Sortierung/Validierung/Logging und Test ergänzt | prüfen: Manifest validiert, Module in Reihenfolge, Tests grün | fertig wenn: Loader aktiv und dokumentiert.
 Vollautomatische perfekte Laien optimierte und fehlerfrei selbständig arbeitende startroutine mit allem drum und dran
