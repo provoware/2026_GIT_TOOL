@@ -1,0 +1,5 @@
+offene punkte ins projekt übertragen
+HauptModul-Interface erstellen
+debugging modus detailiert und professionell 
+logging modusdetailiert und professionell
+Vollautomatische perfekte Laien optimierte und fehlerfrei selbständig arbeitende startroutine mit allem drum und dran
