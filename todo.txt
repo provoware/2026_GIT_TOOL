@@ -1,3 +1,4 @@
+[x] 2026-01-07 | Setup | Repo-Basis steht | fertig wenn: Push erfolgreich
 [ ] 2026-01-07 | Setup | Repo-Basis steht | fertig wenn: Push erfolgreich
 [x] 2026-01-07 | Architektur | Zentrale Tool-Standards definieren | prüfen: standards.md öffnen | fertig wenn: eine verbindliche Standards-Datei existiert
 [ ] 2026-01-07 | Architektur | Einheitliche Modul-Schnittstelle festlegen | prüfen: zwei Module vergleichen | fertig wenn: gleiche Init-/Exit-Struktur
