@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.2] – 2026-01-07
+- Startroutine mit Fortschrittsanzeige ergänzt (inkl. Prüfung von Speicher und Datenmodell)
+- Fehlerfall erklärt und sichtbar gestoppt
+- Dokumentation zu Start/Tests aktualisiert
+
 ## [0.1.1] – 2026-01-07
 - README überarbeitet: Analyse, Ziele und einfache Anleitung ergänzt
 - Entwickler-Dokumentation hinzugefügt

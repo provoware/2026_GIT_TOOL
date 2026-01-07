@@ -5,7 +5,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 
 ## Projektstatus
 - Derzeit liegt der Fokus auf Dokumentation und Aufgabenplanung.
-- Start-Routine, Tests und Modul-Standards werden in den nächsten Tasks umgesetzt.
+- Die Startroutine prüft beim Start Browser, Speicher und Datenmodell mit Fortschrittsanzeige.
+- Weitere Tests und Modul-Standards folgen in den nächsten Tasks.
 
 ## Struktur (geplant)
 - `src/`: Systemlogik (stabile Kernlogik).
@@ -29,4 +30,10 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
-Aktuell gibt es keine lauffähigen Skripte. Diese Sektion wird ergänzt, sobald Start- und Testscripte existieren.
+### Start (lokal)
+1. In das Projekt wechseln: `cd gms-archiv-tool_v1.2.3_2026-01-06`
+2. Starten: `npm run dev`
+
+### Build (lokal)
+1. In das Projekt wechseln: `cd gms-archiv-tool_v1.2.3_2026-01-06`
+2. Build ausführen: `npm run build`
