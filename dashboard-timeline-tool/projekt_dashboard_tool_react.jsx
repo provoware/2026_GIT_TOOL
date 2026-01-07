@@ -58,6 +58,12 @@ type TypeMeta = {
   icon: React.ReactNode;
 };
 
+type UiError = {
+  title: string;
+  explanation: string;
+  solution: string;
+};
+
 const STORAGE_KEY = "provoware.projekt-dashboard.v1";
 const AUTOSAVE_EVERY_MS = 10 * 60 * 1000;
 
@@ -118,8 +124,11 @@ function toYMD(d: Date) {
   return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
 }
 
+const DATE_FORMAT_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+const DATE_FORMAT_HINT = "JJJJ-MM-TT (z. B. 2026-01-07)";
+
 function isYMD(ymd: string) {
-  return /^\d{4}-\d{2}-\d{2}$/.test(ymd);
+  return DATE_FORMAT_REGEX.test(ymd);
 }
 
 function isMonthKey(mk: string) {
@@ -189,8 +198,52 @@ function safeJsonParse<T>(
   try {
     const value = JSON.parse(s);
     return { ok: true, value };
-  } catch (e: any) {
-    return { ok: false, error: e?.message || "Ungültiges JSON" };
+  } catch (_e: any) {
+    return { ok: false, error: "Ungültiges JSON" };
+  }
+}
+
+function formatErrorMessage({ title, explanation, solution }: UiError) {
+  return `Titel: ${title}. Erklärung: ${explanation} Lösung: ${solution}`;
+}
+
+function importErrorFor(reason: string): UiError {
+  const base = {
+    title: "Import nicht möglich",
+    solution: "Bitte eine exportierte JSON-Datei (Datenformat) verwenden und erneut importieren.",
+  };
+
+  switch (reason) {
+    case "Kein Objekt":
+      return {
+        ...base,
+        explanation:
+          "Die Datei enthält kein JSON-Objekt (Datenpaket) für dieses Tool.",
+      };
+    case "Falsche Version":
+      return {
+        ...base,
+        explanation:
+          "Die Datei passt nicht zur erwarteten Version des Tools.",
+      };
+    case "Einträge fehlen":
+      return {
+        ...base,
+        explanation:
+          "In der Datei fehlen die Einträge, die für den Import nötig sind.",
+      };
+    case "Ungültiges JSON":
+      return {
+        ...base,
+        explanation:
+          "Die Datei ist kein gültiges JSON (Datenformat) und kann nicht gelesen werden.",
+      };
+    default:
+      return {
+        ...base,
+        explanation:
+          "Die Datei hat nicht das erwartete Format oder enthält unvollständige Daten.",
+      };
   }
 }
 
@@ -372,7 +425,7 @@ function IconButton({
       className={classNames(
         "inline-flex items-center justify-center rounded-xl border border-white/10",
         "bg-white/5 hover:bg-white/8 active:bg-white/10",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80",
         "transition",
         active && "bg-blue-500/15 border-blue-300/25",
         className
@@ -405,7 +458,7 @@ function ChipToggle({
         "inline-flex items-center gap-2 rounded-xl border px-3",
         dense ? "py-1.5 text-xs" : "py-2 text-sm",
         "transition",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80",
         pressed ? meta.chip : "bg-white/5 border-white/10 text-white/80 hover:bg-white/8"
       )}
     >
@@ -457,7 +510,7 @@ function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
       className={classNames(
         "w-full rounded-xl border border-white/12 bg-black/25 px-3 py-2 text-sm text-white/92",
         "placeholder:text-white/40",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80",
         "transition",
         props.className
       )}
@@ -472,7 +525,7 @@ function TextArea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
       className={classNames(
         "w-full rounded-xl border border-white/12 bg-black/25 px-3 py-2 text-sm text-white/92",
         "placeholder:text-white/40",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80",
         "transition",
         props.className
       )}
@@ -500,7 +553,7 @@ function Select({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         aria-describedby={describedBy}
-        className="w-full appearance-none rounded-xl border border-white/12 bg-black/25 px-3 py-2 pr-10 text-sm text-white/92 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+        className="w-full appearance-none rounded-xl border border-white/12 bg-black/25 px-3 py-2 pr-10 text-sm text-white/92 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value} className="bg-zinc-900">
@@ -557,11 +610,11 @@ function SidebarNav({
             <div className="space-y-3">
               <SideItem
                 icon={<Home className="h-5 w-5" />}
-                label="Dashboard"
+                label="Übersicht"
                 sub=""
                 active={active === "dashboard"}
                 onClick={() => onActive("dashboard")}
-                ariaLabel="Dashboard"
+                ariaLabel="Übersicht"
               />
               <SideItem
                 icon={<Boxes className="h-5 w-5" />}
@@ -573,11 +626,11 @@ function SidebarNav({
               />
               <SideItem
                 icon={<Puzzle className="h-5 w-5" />}
-                label="Plugins"
+                label="Zusatzmodule"
                 sub=""
                 active={active === "plugins"}
                 onClick={() => onActive("plugins")}
-                ariaLabel="Plugins"
+                ariaLabel="Zusatzmodule"
               />
             </div>
           </div>
@@ -618,7 +671,7 @@ function SideItem({
       className={classNames(
         "group w-full rounded-2xl border border-white/10 bg-white/5",
         "hover:bg-white/8 active:bgwhite/10",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80",
         "transition",
         active && "bg-blue-500/15 border-blue-300/25"
       )}
@@ -725,7 +778,7 @@ function TopBar({
             onClick={() => onView("Alle Einträge")}
             className={classNames(
               "inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80",
               view === "Alle Einträge"
                 ? "border-blue-300/25 bg-blue-500/15 text-blue-100"
                 : "border-white/10 bg-white/5 text-white/80 hover:bg-white/8"
@@ -739,7 +792,7 @@ function TopBar({
             onClick={() => onView("Filter")}
             className={classNames(
               "inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80",
               view === "Filter"
                 ? "border-white/15 bg-white/8 text-white/92"
                 : "border-white/10 bg-white/5 text-white/80 hover:bg-white/8"
@@ -768,7 +821,7 @@ function TopBar({
             className={classNames(
               "w-full rounded-xl border border-white/12 bg-black/25 pl-10 pr-3 py-2 text-sm text-white/92",
               "placeholder:text-white/40",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
             )}
           />
         </div>
@@ -782,7 +835,7 @@ function TopBar({
             className={classNames(
               "inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5",
               "px-3 py-2 text-sm text-white/85 hover:bg-white/8",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
             )}
           >
             <Info className="h-4 w-4" aria-hidden />
@@ -795,7 +848,7 @@ function TopBar({
             className={classNames(
               "inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5",
               "px-3 py-2 text-sm text-white/85 hover:bg-white/8",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
             )}
           >
             <Download className="h-4 w-4" aria-hidden />
@@ -835,14 +888,22 @@ function LeftEntryPanel({
   const [type, setType] = useState<EntryType>("Fund");
   const [comment, setComment] = useState("");
   const [sourceUrl, setSourceUrl] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<UiError | null>(null);
 
   function submit() {
     setError(null);
 
     if (!date || !isYMD(date)) {
-      setError("Bitte ein gültiges Datum wählen.");
-      announce("Fehler: Datum fehlt oder ist ungültig.");
+      const msg = `Datum fehlt oder ist falsch. Bitte ${DATE_FORMAT_HINT}.`;
+      setError(msg);
+      announce(`Fehler: ${msg}`);
+      const dateError: UiError = {
+        title: "Ungültiges Datum",
+        explanation: "Das Datum fehlt oder hat kein gültiges Format.",
+        solution: "Bitte ein Datum im Format JJJJ-MM-TT auswählen.",
+      };
+      setError(dateError);
+      announce(formatErrorMessage(dateError));
       return;
     }
 
@@ -887,7 +948,9 @@ function LeftEntryPanel({
               role="alert"
               className="rounded-xl border border-rose-400/25 bg-rose-500/10 px-3 py-2 text-sm text-rose-100"
             >
-              {error}
+              <p className="font-semibold">Titel: {error.title}</p>
+              <p>Erklärung: {error.explanation}</p>
+              <p>Lösung: {error.solution}</p>
             </div>
           ) : null}
 
@@ -977,7 +1040,7 @@ function LeftEntryPanel({
               "mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl",
               "border border-white/10 bg-blue-500/15 px-3 py-2.5 text-sm font-semibold",
               "text-blue-100 hover:bg-blue-500/18 active:bg-blue-500/20",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
             )}
           >
             <Plus className="h-4 w-4" aria-hidden />
@@ -1063,7 +1126,7 @@ function RightFilterPanel({
               onClick={() => onTagMode("Alle")}
               className={classNames(
                 "inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold",
-                "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80",
                 tagMode === "Alle"
                   ? "border-blue-300/25 bg-blue-500/15 text-blue-100"
                   : "border-white/10 bg-white/5 text-white/80 hover:bg-white/8"
@@ -1081,7 +1144,7 @@ function RightFilterPanel({
                 onClick={() => onTagMode(t)}
                 className={classNames(
                   "inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80",
                   tagMode === t
                     ? TYPE_META[t].chip
                     : "border-white/10 bg-white/5 text-white/80 hover:bg-white/8"
@@ -1111,7 +1174,7 @@ function RightFilterPanel({
               className={classNames(
                 "w-full rounded-xl border border-white/12 bg-black/25 pl-10 pr-3 py-2 text-sm text-white/92",
                 "placeholder:text-white/40",
-                "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
               )}
             />
           </div>
@@ -1124,7 +1187,7 @@ function RightFilterPanel({
           className={classNames(
             "ml-auto flex w-full items-center justify-center rounded-xl",
             "border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/80",
-            "hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+            "hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
           )}
           aria-label="Panel einklappen (Platzhalter)"
           disabled
@@ -1169,7 +1232,7 @@ function CenterHeaderArea({
             <p className="text-sm text-white/60">
               {view === "Alle Einträge"
                 ? "Hier erscheinen deine Einträge. Klick auf einen Eintrag, um Details zu sehen."
-                : "Aktive Filter steuern Liste und Timeline."}
+                : "Aktive Filter steuern Liste und Zeitachse."}
             </p>
             <p className="text-xs text-white/45">Tipp: Suche + Typ-Buttons kombinieren.</p>
           </div>
@@ -1213,14 +1276,14 @@ function Timeline({
     "bg-[linear-gradient(90deg,rgba(59,130,246,0.75),rgba(16,185,129,0.75),rgba(245,158,11,0.75),rgba(244,63,94,0.75))]";
 
   return (
-    <GlassCard className="p-0" ariaLabel="Timeline">
+    <GlassCard className="p-0" ariaLabel="Zeitachse">
       <div className="p-4">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => moveMonth(-12)}
-              className="rounded-xl border border-white/10 bg-white/5 px-2 py-2 text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+              className="rounded-xl border border-white/10 bg-white/5 px-2 py-2 text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
               aria-label="Ein Jahr zurück"
             >
               <ChevronsLeft className="h-4 w-4" aria-hidden />
@@ -1228,7 +1291,7 @@ function Timeline({
             <button
               type="button"
               onClick={() => moveMonth(-1)}
-              className="rounded-xl border border-white/10 bg-white/5 px-2 py-2 text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+              className="rounded-xl border border-white/10 bg-white/5 px-2 py-2 text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
               aria-label="Vormonat"
             >
               <ChevronLeft className="h-4 w-4" aria-hidden />
@@ -1243,7 +1306,7 @@ function Timeline({
             <button
               type="button"
               onClick={() => moveMonth(1)}
-              className="rounded-xl border border-white/10 bg-white/5 px-2 py-2 text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+              className="rounded-xl border border-white/10 bg-white/5 px-2 py-2 text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
               aria-label="Nächster Monat"
             >
               <ChevronRight className="h-4 w-4" aria-hidden />
@@ -1251,7 +1314,7 @@ function Timeline({
             <button
               type="button"
               onClick={() => moveMonth(12)}
-              className="rounded-xl border border-white/10 bg-white/5 px-2 py-2 text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+              className="rounded-xl border border-white/10 bg-white/5 px-2 py-2 text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
               aria-label="Ein Jahr vor"
             >
               <ChevronsRight className="h-4 w-4" aria-hidden />
@@ -1283,7 +1346,7 @@ function Timeline({
                       key={e.id}
                       type="button"
                       onClick={() => onOpen(e)}
-                      className="absolute"
+                      className="absolute rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
                       style={{ left: `calc(${pos}% - 10px)` }}
                       aria-label={`Eintrag öffnen: ${e.title}, ${e.type}, ${formatDE(e.date)}`}
                     >
@@ -1388,7 +1451,7 @@ function EntriesList({
                     className={classNames(
                       "flex-1 rounded-lg p-1.5 text-left",
                       "hover:bg-white/6 active:bg-white/8",
-                      "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                      "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
                     )}
                     aria-label={`Eintrag öffnen: ${e.title}`}
                   >
@@ -1420,7 +1483,7 @@ function EntriesList({
                     className={classNames(
                       "shrink-0 rounded-lg border border-white/10 bg-white/4 px-2",
                       "text-white/75 hover:bg-white/8",
-                      "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                      "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
                     )}
                     aria-label={`Eintrag löschen: ${e.title}`}
                     title="Löschen"
@@ -1471,7 +1534,7 @@ function Modal({
         el.querySelectorAll<HTMLElement>(
           "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])"
         )
-      ).filter((x) => !x.hasAttribute("disabled"));
+      ).filter((x) => !x.hasAttribute("disabled") && !x.hasAttribute("data-focus-exclude"));
 
     const focusables = getFocusables();
     (focusables[0] || el).focus();
@@ -1513,14 +1576,20 @@ function Modal({
 
   return (
     <div role="dialog" aria-modal="true" aria-labelledby={titleId} className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <button type="button" onClick={onClose} className="absolute inset-0 bg-black/70" aria-label="Schließen" />
+      <button
+        type="button"
+        onClick={onClose}
+        className="absolute inset-0 bg-black/70"
+        aria-label="Schließen"
+        data-focus-exclude
+      />
       <div ref={dialogRef} tabIndex={-1} className="relative w-full max-w-2xl rounded-2xl border border-white/10 bg-zinc-950/70 backdrop-blur-xl shadow-[0_30px_120px_rgba(0,0,0,0.8)]">
         <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
           <h3 id={titleId} className="text-sm font-semibold text-white/92">{title}</h3>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+            className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
           >
             <span className="inline-flex items-center gap-2">
               <X className="h-4 w-4" aria-hidden /> Schließen
@@ -1564,7 +1633,7 @@ function EntryDetails({ entry }: { entry: Entry }) {
             href={entry.sourceUrl}
             target="_blank"
             rel="noreferrer"
-            className="mt-1 block break-all rounded text-sm text-blue-200 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+            className="mt-1 block break-all rounded text-sm text-blue-200 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
           >
             {entry.sourceUrl}
           </a>
@@ -1581,8 +1650,8 @@ function HelpContent() {
         <h4 className="text-sm font-semibold text-white/90">So nutzt du das Tool</h4>
         <ul className="mt-2 list-disc space-y-1 pl-5 text-white/75">
           <li>Links: neuen Eintrag anlegen. Pflicht ist nur das Datum.</li>
-          <li>Mitte/Rechts: Typ-Filter und Suche. Steuert Liste und Timeline.</li>
-          <li>Unten: Timeline. Klick auf einen Punkt öffnet Details.</li>
+          <li>Mitte/Rechts: Typ-Filter und Suche. Steuert Liste und Zeitachse.</li>
+          <li>Unten: Zeitachse. Klick auf einen Punkt öffnet Details.</li>
           <li>Oben: „Daten“ für Export/Import. Alles wird gespeichert.</li>
         </ul>
       </div>
@@ -1637,22 +1706,39 @@ function DataManager({
   ):
     | { ok: true; value: AppStateV1 }
     | { ok: false; error: string } {
+    if (!candidate || typeof candidate !== "object") {
+      return { ok: false, error: "Datei passt nicht zu diesem Tool." };
+    }
+    if (candidate.v !== 1) {
+      return { ok: false, error: "Datei-Version passt nicht. Bitte Export aus diesem Tool nutzen." };
+    }
+    if (!Array.isArray(candidate.entries)) {
+      return { ok: false, error: "Einträge fehlen in der Datei." };
+    }
     if (!candidate || typeof candidate !== "object") return { ok: false, error: "Kein Objekt" };
     if (candidate.v !== 1) return { ok: false, error: "Falsche Version" };
-    if (!Array.isArray(candidate.entries)) return { ok: false, error: "entries fehlt" };
+    if (!Array.isArray(candidate.entries)) return { ok: false, error: "Einträge fehlen" };
 
     const types = new Set(Object.keys(TYPE_META) as EntryType[]);
     const seenIds = new Set<string>();
 
-    const entries: Entry[] = candidate.entries.map((e: any) => {
+    const entries: Entry[] = [];
+    for (const [index, e] of candidate.entries.entries()) {
+      if (typeof e?.date !== "string" || !isYMD(e.date)) {
+        return {
+          ok: false,
+          error: `Eintrag ${index + 1}: Datum hat falsches Format. Bitte ${DATE_FORMAT_HINT}.`,
+        };
+      }
+
       const type: EntryType = types.has(e?.type) ? e.type : "Fund";
-      const date = typeof e?.date === "string" && isYMD(e.date) ? e.date : toYMD(new Date());
+      const date = e.date;
 
       let id = typeof e?.id === "string" && e.id ? e.id : uid();
       if (seenIds.has(id)) id = uid();
       seenIds.add(id);
 
-      return {
+      entries.push({
         id,
         title: typeof e?.title === "string" && e.title.trim() ? e.title : `${type}-Eintrag`,
         date,
@@ -1660,8 +1746,8 @@ function DataManager({
         comment: typeof e?.comment === "string" ? e.comment : "",
         sourceUrl: typeof e?.sourceUrl === "string" ? ensureUrlLike(e.sourceUrl) : "",
         type,
-      };
-    });
+      });
+    }
 
     const selectedTypes: EntryType[] = Array.isArray(candidate.selectedTypes)
       ? candidate.selectedTypes.filter((t: any) => types.has(t))
@@ -1690,12 +1776,14 @@ function DataManager({
   function importNow(text: string) {
     const parsed = safeJsonParse<any>(text);
     if (!parsed.ok) {
-      announce(`Import-Fehler: ${parsed.error}`);
+      const parseError = importErrorFor(parsed.error);
+      announce(formatErrorMessage(parseError));
       return;
     }
     const validated = validateState(parsed.value);
     if (!validated.ok) {
-      announce(`Import-Fehler: ${validated.error}`);
+      const validationError = importErrorFor(validated.error);
+      announce(formatErrorMessage(validationError));
       return;
     }
     onImportState(validated.value);
@@ -1719,7 +1807,7 @@ function DataManager({
           <button
             type="button"
             onClick={copyExport}
-            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
           >
             <Copy className="h-4 w-4" aria-hidden />
             Kopieren
@@ -1728,15 +1816,15 @@ function DataManager({
           <button
             type="button"
             onClick={downloadExport}
-            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
           >
             <Download className="h-4 w-4" aria-hidden />
-            Download
+            Herunterladen
           </button>
         </div>
 
         <div className="mt-3">
-          <TextArea value={exportJson} readOnly rows={8} aria-label="Export JSON" />
+          <TextArea value={exportJson} readOnly rows={8} aria-label="JSON-Export" />
         </div>
       </div>
 
@@ -1748,7 +1836,7 @@ function DataManager({
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
           >
             <Upload className="h-4 w-4" aria-hidden />
             Datei wählen
@@ -1771,7 +1859,7 @@ function DataManager({
             onClick={() => importNow(importText)}
             disabled={!importText.trim()}
             className={classNames(
-              "inline-flex items-center gap-2 rounded-xl border border-white/10 px-3 py-2 text-sm font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
+              "inline-flex items-center gap-2 rounded-xl border border-white/10 px-3 py-2 text-sm font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80",
               !importText.trim() ? "bg-white/3 text-white/35" : "bg-blue-500/15 text-blue-100 hover:bg-blue-500/18"
             )}
           >
@@ -1786,7 +1874,7 @@ function DataManager({
             onChange={(e) => setImportText(e.target.value)}
             rows={8}
             placeholder="JSON hier einfügen…"
-            aria-label="Import JSON"
+            aria-label="JSON-Import"
           />
         </div>
       </div>
@@ -1797,7 +1885,7 @@ function DataManager({
         <button
           type="button"
           onClick={onReset}
-          className="mt-3 inline-flex items-center gap-2 rounded-xl border border-rose-300/25 bg-rose-500/10 px-3 py-2 text-sm font-semibold text-rose-100 hover:bg-rose-500/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+          className="mt-3 inline-flex items-center gap-2 rounded-xl border border-rose-300/25 bg-rose-500/10 px-3 py-2 text-sm font-semibold text-rose-100 hover:bg-rose-500/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
         >
           <Trash2 className="h-4 w-4" aria-hidden />
           Alles löschen
@@ -1808,7 +1896,7 @@ function DataManager({
 }
 
 function assert(cond: any, msg: string) {
-  if (!cond) throw new Error(`Test failed: ${msg}`);
+  if (!cond) throw new Error(`Selbsttest fehlgeschlagen: ${msg}`);
 }
 
 function runSelfTests() {
@@ -1826,6 +1914,24 @@ function runSelfTests() {
   assert(ok.ok && ok.value.a === 1, "safeJsonParse ok");
   const bad = safeJsonParse("{");
   assert(!bad.ok, "safeJsonParse bad");
+  const msgA = formatErrorMessage({
+    title: "Test A",
+    explanation: "Erklärung A.",
+    solution: "Lösung A.",
+  });
+  const msgB = formatErrorMessage({
+    title: "Test B",
+    explanation: "Erklärung B.",
+    solution: "Lösung B.",
+  });
+  assert(
+    ["Titel:", "Erklärung:", "Lösung:"].every((part) => msgA.includes(part)),
+    "error format structure A"
+  );
+  assert(
+    ["Titel:", "Erklärung:", "Lösung:"].every((part) => msgB.includes(part)),
+    "error format structure B"
+  );
   return "ok" as const;
 }
 
@@ -1857,7 +1963,7 @@ export default function ProjektDashboardTool() {
         title: "Fund X entdeckt",
         date: "2024-01-16",
         category: "Notiz",
-        comment: "Erster Marker auf der Timeline.",
+        comment: "Erster Marker auf der Zeitachse.",
         sourceUrl: "",
         type: "Fund",
       },
