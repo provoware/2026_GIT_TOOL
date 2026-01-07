@@ -35,16 +35,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
-### Lokaler Start (GMS Archiv Tool)
-```bash
-cd gms-archiv-tool_v1.2.3_2026-01-06
-npm install
-npm run dev
-```
+Aktuell gibt es keine lauffähigen Skripte. Diese Sektion wird ergänzt, sobald Start- und Testscripte existieren.
 
-### Build-Check (Produktion)
-```bash
-cd gms-archiv-tool_v1.2.3_2026-01-06
-npm install
-npm run build
-```
+### Manuelle Checks (UI)
+- Tastaturtest: Mit `Tab`/`Shift+Tab` die Reihenfolge prüfen, mit `Enter`/`Leertaste` (Space) Buttons auslösen.
+- Fokusprüfung: Fokus-Ringe müssen klar sichtbar sein (Kontrast sichtbar).

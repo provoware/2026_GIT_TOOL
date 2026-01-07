@@ -1,9 +1,8 @@
 # Changelog
 
 ## [0.1.2] – 2026-01-07
-- Zentrales Logging vereinheitlicht (Zeit/Modul/Level) und Fehler optisch markiert
-- Log-Ansicht zeigt jetzt die letzten 10 Ereignisse
-- Logging-Helfer in eigene Utility ausgelagert
+- Tastaturfokus verbessert und Fokus-Reihenfolge in Modals stabilisiert
+- Fokus-Ringe kontrastreicher gemacht (bessere Sichtbarkeit)
 
 ## [0.1.1] – 2026-01-07
 - README überarbeitet: Analyse, Ziele und einfache Anleitung ergänzt
