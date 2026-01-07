@@ -26,7 +26,6 @@
 [x] 2026-01-07 | UI | Kontrast und Lesbarkeit optimieren | prüfen: Darkmode testen | fertig wenn: gut lesbar
 
 [ ] 2026-01-07 | Sprache | Alle UI-Texte auf Deutsch prüfen | prüfen: englische Begriffe suchen | fertig wenn: alles deutsch
-[x] 2026-01-07 | Sprache | Alle UI-Texte auf Deutsch prüfen | prüfen: englische Begriffe suchen | fertig wenn: alles deutsch
 [x] 2026-01-07 | Sprache | Fehlermeldungen vereinheitlichen | prüfen: zwei Fehler erzeugen | fertig wenn: gleicher Stil
 
 [ ] 2026-01-07 | Module | Neues Modul nach Standards integrieren | prüfen: Modul hinzufügen | fertig wenn: ohne Sonderlogik

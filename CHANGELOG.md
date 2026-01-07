@@ -1,8 +1,9 @@
 # Changelog
 
 ## [0.1.2] – 2026-01-07
-- UI-Design: Farbthemen klar benannt und Kontraste verstärkt
-- UI-Design: Abstands-Skala (4/8/16/24/32) ergänzt und im Layout genutzt
+- Einheitliches, laienverständliches Fehlerformat für wichtige Fehlerfälle ergänzt
+- Selbsttest-, Import-, Export- und Datei-Fehler mit klarer Erklärung und nächstem Schritt versehen
+- Dokumentation zu Fehlerformat und Beispiel-Fehlern ergänzt
 
 ## [0.1.1] – 2026-01-07
 - README überarbeitet: Analyse, Ziele und einfache Anleitung ergänzt
