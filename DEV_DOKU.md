@@ -16,8 +16,12 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 ## Standards (verbindlich)
 - Zentrale Standards stehen in `standards.md`.
 - Einheitliche Modul-Schnittstellen (Init/Exit).
-- Zentrales Datenmodell.
+- Zentrales Datenmodell (`data/schema.json`).
+## Standards (verbindlich)
+- Siehe `standards.md` für verbindliche Vorgaben.
+- Einheitliche Modul-Schnittstellen (Init/Exit, Run, Shutdown).
 - Barrierefreie UI-Texte (Deutsch, klar, laienverständlich).
+- Verbindliche Regeln in `standards.md`.
 
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen.
