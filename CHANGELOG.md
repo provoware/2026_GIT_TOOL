@@ -1,6 +1,9 @@
 # Changelog
 
 ## [0.1.2] – 2026-01-07
+- Selftest- und Startlogik in ein eigenes State-Modul ausgelagert
+- Automatische Tests für Startroutine und Validierung ergänzt
+- Testlauf per `npm test` dokumentiert
 - Zentrale Tool-Standards ergänzt (standards.md)
 - Entwickler-Dokumentation um Startlauf, Push-Probe und Remote-Prüfung erweitert
 - Standards-Datei ergänzt (strukturierte Modul- und Qualitätsregeln)

@@ -4,6 +4,8 @@
 Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschreibt Struktur, Standards und den geplanten Ablauf.
 
 ## Projektstatus
+- Der Fokus liegt aktuell auf stabilen Start- und Test-Abläufen.
+- Erste automatische Tests (Tests/automatische Prüfungen) sind eingerichtet.
 - Derzeit liegt der Fokus auf Dokumentation und Aufgabenplanung.
 - Start-Routine und Tests werden in den nächsten Tasks umgesetzt.
 
@@ -24,9 +26,9 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Verbindliche Regeln in `standards.md`.
 
 ## Qualitätssicherung
-- **Tests**: Automatische Tests für Kernfunktionen.
-- **Formatierung**: Automatische Codeformatierung (einheitlicher Stil).
-- **Prüfungen**: Start-Routine prüft Struktur und Abhängigkeiten.
+- **Tests**: Automatische Tests (Tests/automatische Prüfungen) für Kernfunktionen.
+- **Formatierung**: Einheitlicher Stil durch feste Regeln (Formatierung/einheitliches Layout).
+- **Prüfungen**: Start-Routine prüft Struktur und Daten.
 
 ## Dokumentationsregeln
 - Änderungen werden im `CHANGELOG.md` beschrieben.
@@ -34,6 +36,18 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
+Alle Befehle bitte im Ordner `gms-archiv-tool_v1.2.3_2026-01-06` ausführen:
+
+1. Abhängigkeiten installieren (Dependencies/benötigte Pakete):
+   - `npm install`
+2. Tests ausführen (Vitest/Test-Runner):
+   - `npm test`
+3. Entwicklungsstart (Dev-Server/Entwicklungsserver):
+   - `npm run dev`
+4. Produktion bauen (Build/Release-Build):
+   - `npm run build`
+5. Vorschau starten (Preview/Vorschau):
+   - `npm run preview`
 ### Minimaler Startlauf (Beispiel)
 Projektordner für das Frontend: `gms-archiv-tool_v1.2.3_2026-01-06`
 1) Abhängigkeiten installieren (Dependencies):
