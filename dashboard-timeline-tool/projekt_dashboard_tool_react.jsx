@@ -118,8 +118,11 @@ function toYMD(d: Date) {
   return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
 }
 
+const DATE_FORMAT_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+const DATE_FORMAT_HINT = "JJJJ-MM-TT (z. B. 2026-01-07)";
+
 function isYMD(ymd: string) {
-  return /^\d{4}-\d{2}-\d{2}$/.test(ymd);
+  return DATE_FORMAT_REGEX.test(ymd);
 }
 
 function isMonthKey(mk: string) {
@@ -841,8 +844,9 @@ function LeftEntryPanel({
     setError(null);
 
     if (!date || !isYMD(date)) {
-      setError("Bitte ein gültiges Datum wählen.");
-      announce("Fehler: Datum fehlt oder ist ungültig.");
+      const msg = `Datum fehlt oder ist falsch. Bitte ${DATE_FORMAT_HINT}.`;
+      setError(msg);
+      announce(`Fehler: ${msg}`);
       return;
     }
 
@@ -1637,22 +1641,36 @@ function DataManager({
   ):
     | { ok: true; value: AppStateV1 }
     | { ok: false; error: string } {
-    if (!candidate || typeof candidate !== "object") return { ok: false, error: "Kein Objekt" };
-    if (candidate.v !== 1) return { ok: false, error: "Falsche Version" };
-    if (!Array.isArray(candidate.entries)) return { ok: false, error: "entries fehlt" };
+    if (!candidate || typeof candidate !== "object") {
+      return { ok: false, error: "Datei passt nicht zu diesem Tool." };
+    }
+    if (candidate.v !== 1) {
+      return { ok: false, error: "Datei-Version passt nicht. Bitte Export aus diesem Tool nutzen." };
+    }
+    if (!Array.isArray(candidate.entries)) {
+      return { ok: false, error: "Einträge fehlen in der Datei." };
+    }
 
     const types = new Set(Object.keys(TYPE_META) as EntryType[]);
     const seenIds = new Set<string>();
 
-    const entries: Entry[] = candidate.entries.map((e: any) => {
+    const entries: Entry[] = [];
+    for (const [index, e] of candidate.entries.entries()) {
+      if (typeof e?.date !== "string" || !isYMD(e.date)) {
+        return {
+          ok: false,
+          error: `Eintrag ${index + 1}: Datum hat falsches Format. Bitte ${DATE_FORMAT_HINT}.`,
+        };
+      }
+
       const type: EntryType = types.has(e?.type) ? e.type : "Fund";
-      const date = typeof e?.date === "string" && isYMD(e.date) ? e.date : toYMD(new Date());
+      const date = e.date;
 
       let id = typeof e?.id === "string" && e.id ? e.id : uid();
       if (seenIds.has(id)) id = uid();
       seenIds.add(id);
 
-      return {
+      entries.push({
         id,
         title: typeof e?.title === "string" && e.title.trim() ? e.title : `${type}-Eintrag`,
         date,
@@ -1660,8 +1678,8 @@ function DataManager({
         comment: typeof e?.comment === "string" ? e.comment : "",
         sourceUrl: typeof e?.sourceUrl === "string" ? ensureUrlLike(e.sourceUrl) : "",
         type,
-      };
-    });
+      });
+    }
 
     const selectedTypes: EntryType[] = Array.isArray(candidate.selectedTypes)
       ? candidate.selectedTypes.filter((t: any) => types.has(t))
