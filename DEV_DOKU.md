@@ -17,6 +17,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Einheitliche Modul-Schnittstellen (Init/Exit).
 - Zentrales Datenmodell.
 - Barrierefreie UI-Texte (Deutsch, klar, laienverständlich).
+- Logging-Format: `Zeit | Modul | LEVEL | Nachricht` (ISO-Zeitstempel).
+- Fehler-Logs sind optisch hervorgehoben (Level `ERROR`).
 
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen.
@@ -29,4 +31,16 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
-Aktuell gibt es keine lauffähigen Skripte. Diese Sektion wird ergänzt, sobald Start- und Testscripte existieren.
+### Lokaler Start (GMS Archiv Tool)
+```bash
+cd gms-archiv-tool_v1.2.3_2026-01-06
+npm install
+npm run dev
+```
+
+### Build-Check (Produktion)
+```bash
+cd gms-archiv-tool_v1.2.3_2026-01-06
+npm install
+npm run build
+```

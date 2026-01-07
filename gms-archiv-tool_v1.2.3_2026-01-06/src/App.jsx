@@ -39,6 +39,7 @@ import {
   CartesianGrid,
   Tooltip as RTooltip,
 } from "recharts";
+import { createLogEntry, formatLogLine, normalizeLogEntry } from "./utils/logging";
 
 const APP_VERSION = "1.2.3";
 const LS_KEY = "pppoppi_gms_archiv_v1";
@@ -403,7 +404,8 @@ function coerceState(maybe) {
     };
   }
 
-  state.logs = Array.isArray(maybe.logs) ? maybe.logs : [];
+  const rawLogs = Array.isArray(maybe.logs) ? maybe.logs : [];
+  state.logs = rawLogs.map((entry) => normalizeLogEntry(entry));
   state.stats = { ...fallback.stats, ...(maybe.stats || {}) };
   state.version = 1;
   state.updatedAt = maybe.updatedAt || nowIso();
@@ -1309,15 +1311,24 @@ function DashboardView({
 
         <Card title="Letzte Logs" icon={Activity}>
           <div className="space-y-2">
-            {(state.logs || []).slice(0, 8).map((l) => (
-              <div key={l.id} className="rounded-lg border px-3 py-2" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
-                <div className="flex items-center justify-between gap-2">
-                  <div className="text-xs" style={{ color: "var(--muted2)" }}>{humanTime(l.at)}</div>
-                  <span className="badge">{l.type}</span>
+            {(state.logs || []).slice(0, 10).map((l) => {
+              const moduleLabel = l.module || l.type || "system";
+              const levelLabel = (l.level || "info").toUpperCase();
+              const levelClass = l.level === "error" ? "badge badge-error" : l.level === "warn" ? "badge badge-warn" : "badge";
+              const line = l.line || formatLogLine(l);
+              return (
+                <div key={l.id} className="rounded-lg border px-3 py-2" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="text-xs" style={{ color: "var(--muted2)" }}>{humanTime(l.at)}</div>
+                    <div className="flex items-center gap-2">
+                      <span className="badge">{moduleLabel}</span>
+                      <span className={levelClass}>{levelLabel}</span>
+                    </div>
+                  </div>
+                  <div className="text-sm mt-1" style={{ color: "var(--text)" }}>{line}</div>
                 </div>
-                <div className="text-sm mt-1" style={{ color: "var(--text)" }}>{l.message}</div>
-              </div>
-            ))}
+              );
+            })}
             {(!state.logs || state.logs.length === 0) ? <div className="text-sm" style={{ color: "var(--muted)" }}>Noch keine Logs.</div> : null}
           </div>
         </Card>
@@ -1453,10 +1464,10 @@ export default function App() {
   };
   useEffect(() => () => { if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current); }, []);
 
-  const pushLog = (type, message, meta = {}) => {
+  const pushLog = (module, message, meta = {}, level = "info") => {
     setState((prev) => {
       const maxLogs = prev.settings?.maxLogs ?? 500;
-      const entry = { id: makeId(), at: nowIso(), type, message, meta };
+      const entry = createLogEntry({ module, level, message, meta });
       const nextLogs = [entry, ...(prev.logs || [])].slice(0, maxLogs);
       return { ...prev, logs: nextLogs, updatedAt: nowIso() };
     });
@@ -1488,7 +1499,7 @@ export default function App() {
     const id = window.setInterval(() => {
       const snapshot = stateRef.current;
       const ok = safeLsSet(LS_KEY, JSON.stringify({ ...snapshot, updatedAt: nowIso() }));
-      pushLog(ok ? "autosave" : "error", ok ? "Autosave ausgeführt" : "Autosave fehlgeschlagen", { minutes });
+      pushLog("autosave", ok ? "Autosave ausgeführt" : "Autosave fehlgeschlagen", { minutes }, ok ? "info" : "error");
     }, intervalMs);
     return () => window.clearInterval(id);
   }, [state.settings.autosaveMinutes]);
@@ -1746,7 +1757,7 @@ export default function App() {
 
     if (!pool.length) {
       setGenerator((s) => ({ ...s, results: [], error: "Pool leer. Erst Einträge hinzufügen oder Favoriten aktivieren." }));
-      pushLog("generator", "Generator: Pool leer", { mode });
+      pushLog("generator", "Generator: Pool leer", { mode }, "warn");
       showToast("Pool leer");
       return;
     }
@@ -1829,7 +1840,7 @@ export default function App() {
       pushLog("clipboard", "Generator-Ergebnis kopiert", { chars: txt.length, items: (generator.results || []).length });
       showToast("Kopiert ✅");
     } catch (e) {
-      pushLog("error", "Clipboard fehlgeschlagen", { error: String(e) });
+      pushLog("clipboard", "Clipboard fehlgeschlagen", { error: String(e) }, "error");
       showToast("Clipboard nicht verfügbar");
     }
   };
@@ -1838,7 +1849,7 @@ export default function App() {
     const payloadObj = { ...state, exportedAt: nowIso() };
     const v = validateState(payloadObj);
     if (!v.ok) {
-      pushLog("error", "Export blockiert: State invalid", { errors: v.errors });
+      pushLog("export", "Export blockiert: State invalid", { errors: v.errors }, "error");
       showToast("Export blockiert: Daten invalid");
       return;
     }
@@ -1847,7 +1858,7 @@ export default function App() {
     const round = safeJsonParse(payload);
     const v2 = round.ok ? validateState(coerceState(round.value)) : { ok: false, errors: ["Roundtrip Parse fehlgeschlagen"] };
     if (!v2.ok) {
-      pushLog("error", "Export Roundtrip fehlgeschlagen", { errors: v2.errors });
+      pushLog("export", "Export Roundtrip fehlgeschlagen", { errors: v2.errors }, "error");
       showToast("Export Roundtrip FAIL");
       return;
     }
@@ -1867,7 +1878,7 @@ export default function App() {
 
     const round = safeJsonParse(payload);
     if (!round.ok || !round.value?.profile || !round.value?.data) {
-      pushLog("error", "Profil-Export Roundtrip fehlgeschlagen", {});
+      pushLog("export", "Profil-Export Roundtrip fehlgeschlagen", {}, "error");
       showToast("Profil-Export FAIL");
       return;
     }
@@ -1883,7 +1894,7 @@ export default function App() {
     const parsed = safeJsonParse(importText);
     if (!parsed.ok) {
       showToast("Ungültiges JSON");
-      pushLog("error", "Import JSON ungültig", { error: String(parsed.error) });
+      pushLog("import", "Import JSON ungültig", { error: String(parsed.error) }, "error");
       return;
     }
     const data = parsed.value;
@@ -1893,7 +1904,7 @@ export default function App() {
       const vin = validateState(incoming);
       if (!vin.ok) {
         showToast("Import blockiert: Daten invalid");
-        pushLog("error", "Gesamt-Import invalid", { errors: vin.errors });
+        pushLog("import", "Gesamt-Import invalid", { errors: vin.errors }, "error");
         return;
       }
 
@@ -1954,7 +1965,7 @@ export default function App() {
     }
 
     showToast("Unbekanntes Import-Format");
-    pushLog("error", "Import-Format unbekannt", { keys: Object.keys(data || {}) });
+    pushLog("import", "Import-Format unbekannt", { keys: Object.keys(data || {}) }, "error");
   };
 
   const importFromFile = async (file) => {
@@ -1965,7 +1976,7 @@ export default function App() {
       pushLog("import", "Import-Datei geladen", { name: file.name, bytes: text.length });
       showToast("Datei geladen");
     } catch (e) {
-      pushLog("error", "Datei lesen fehlgeschlagen", { error: String(e) });
+      pushLog("import", "Datei lesen fehlgeschlagen", { error: String(e) }, "error");
       showToast("Dateifehler");
     }
   };
@@ -1973,7 +1984,7 @@ export default function App() {
   const runSelfTest = () => {
     const v = validateState(state);
     if (!v.ok) {
-      pushLog("diagnose", "Self-Test FAIL", { errors: v.errors });
+      pushLog("diagnose", "Self-Test FAIL", { errors: v.errors }, "error");
       showToast("Self-Test FAIL");
       return;
     }
@@ -1981,7 +1992,7 @@ export default function App() {
     const parsed = safeJsonParse(payload);
     const v2 = parsed.ok ? validateState(coerceState(parsed.value)) : { ok: false, errors: ["Parse fail"] };
     if (!v2.ok) {
-      pushLog("diagnose", "Self-Test Roundtrip FAIL", { errors: v2.errors });
+      pushLog("diagnose", "Self-Test Roundtrip FAIL", { errors: v2.errors }, "error");
       showToast("Roundtrip FAIL");
       return;
     }
