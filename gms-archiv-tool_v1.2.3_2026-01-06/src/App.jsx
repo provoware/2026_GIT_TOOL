@@ -182,16 +182,16 @@ const THEMES = [
       "--bg2": "#070d1f",
       "--star": "rgba(255,255,255,0.18)",
 
-      "--panel": "rgba(2,6,23,0.78)",
-      "--panel2": "rgba(2,6,23,0.90)",
+      "--panel": "rgba(2,6,23,0.82)",
+      "--panel2": "rgba(2,6,23,0.92)",
       "--panelHover": "rgba(2,6,23,0.97)",
 
       "--border": "rgba(148,163,184,0.58)",
       "--border2": "rgba(148,163,184,0.36)",
 
       "--text": "rgba(248,250,252,0.99)",
-      "--muted": "rgba(226,232,240,0.86)",
-      "--muted2": "rgba(226,232,240,0.78)",
+      "--muted": "rgba(226,232,240,0.88)",
+      "--muted2": "rgba(226,232,240,0.72)",
 
       "--inputBg": "rgba(2,6,23,0.96)",
       "--inputBorder": "rgba(148,163,184,0.52)",
@@ -232,8 +232,8 @@ const THEMES = [
       "--border2": "rgba(255,255,255,0.66)",
 
       "--text": "rgba(255,255,255,1)",
-      "--muted": "rgba(255,255,255,0.92)",
-      "--muted2": "rgba(255,255,255,0.86)",
+      "--muted": "rgba(255,255,255,0.94)",
+      "--muted2": "rgba(255,255,255,0.82)",
 
       "--inputBg": "rgba(0,0,0,0.99)",
       "--inputBorder": "rgba(255,255,255,0.86)",
@@ -266,16 +266,16 @@ const THEMES = [
       "--bg2": "#020a1f",
       "--star": "rgba(255,255,255,0.16)",
 
-      "--panel": "rgba(2,6,23,0.78)",
-      "--panel2": "rgba(2,6,23,0.90)",
+      "--panel": "rgba(2,6,23,0.82)",
+      "--panel2": "rgba(2,6,23,0.92)",
       "--panelHover": "rgba(2,6,23,0.97)",
 
       "--border": "rgba(148,163,184,0.54)",
       "--border2": "rgba(148,163,184,0.34)",
 
       "--text": "rgba(248,250,252,0.99)",
-      "--muted": "rgba(226,232,240,0.86)",
-      "--muted2": "rgba(226,232,240,0.78)",
+      "--muted": "rgba(226,232,240,0.88)",
+      "--muted2": "rgba(226,232,240,0.72)",
 
       "--inputBg": "rgba(2,6,23,0.96)",
       "--inputBorder": "rgba(148,163,184,0.48)",
@@ -312,12 +312,12 @@ const THEMES = [
       "--panel2": "rgba(255,255,255,0.98)",
       "--panelHover": "rgba(255,255,255,1)",
 
-      "--border": "rgba(15,23,42,0.40)",
-      "--border2": "rgba(15,23,42,0.24)",
+      "--border": "rgba(15,23,42,0.50)",
+      "--border2": "rgba(15,23,42,0.32)",
 
       "--text": "rgba(15,23,42,0.98)",
-      "--muted": "rgba(15,23,42,0.78)",
-      "--muted2": "rgba(15,23,42,0.70)",
+      "--muted": "rgba(15,23,42,0.88)",
+      "--muted2": "rgba(15,23,42,0.72)",
 
       "--inputBg": "rgba(255,255,255,1)",
       "--inputBorder": "rgba(15,23,42,0.36)",
@@ -353,7 +353,7 @@ function applyTheme(themeId) {
 
 function applyScale(scale) {
   const root = document.documentElement;
-  const px = 16 * clamp(scale, 0.8, 1.6);
+  const px = 16 * clamp(scale, 1, 1.6);
   root.style.fontSize = `${px}px`;
 }
 
@@ -502,7 +502,7 @@ function useCtrlWheelZoom(scale, setScale) {
       if (!e.ctrlKey) return;
       e.preventDefault();
       const delta = e.deltaY > 0 ? -0.05 : 0.05;
-      setScale((s) => clamp(Number(s) + delta, 0.8, 1.6));
+      setScale((s) => clamp(Number(s) + delta, 1, 1.6));
     };
     window.addEventListener("wheel", onWheel, { passive: false });
     return () => window.removeEventListener("wheel", onWheel);
@@ -522,7 +522,7 @@ function TonePill({ children, tone = "slate" }) {
     red: "bg-[rgba(244,63,94,0.20)] border-[rgba(244,63,94,0.50)] text-[color:var(--text)]",
   };
   return (
-    <span className={`inline-flex items-center gap-2 rounded-md border px-2 py-1 text-xs ${toneMap[tone] || toneMap.slate}`}>
+    <span className={`inline-flex items-center gap-2 rounded-md border px-2 py-1 text-base ${toneMap[tone] || toneMap.slate}`}>
       {children}
     </span>
   );
@@ -561,7 +561,7 @@ function Button({ children, onClick, disabled, tone = "secondary", className = "
     ghost: "btn btn-ghost",
   }[tone] || "btn btn-secondary";
   return (
-    <button type="button" className={`${toneClass} px-3 py-2 text-sm font-medium ${className}`} onClick={onClick} disabled={disabled}>
+    <button type="button" className={`${toneClass} px-3 py-2 text-base font-medium ${className}`} onClick={onClick} disabled={disabled}>
       {children}
     </button>
   );
@@ -569,8 +569,8 @@ function Button({ children, onClick, disabled, tone = "secondary", className = "
 
 function Card({ title, icon: Icon, actions, children }) {
   return (
-    <section className="glass rounded-xl overflow-hidden">
-      <header className="px-4 py-3 border-b" style={{ borderColor: "var(--border2)" }}>
+    <section className="glass ui-surface overflow-hidden">
+      <header className="ui-surface-header border-b" style={{ borderColor: "var(--border2)" }}>
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             {Icon ? <Icon className="h-5 w-5" /> : null}
@@ -579,7 +579,7 @@ function Card({ title, icon: Icon, actions, children }) {
           {actions}
         </div>
       </header>
-      <div className="px-4 py-4">{children}</div>
+      <div className="ui-surface-body">{children}</div>
     </section>
   );
 }
@@ -587,9 +587,9 @@ function Card({ title, icon: Icon, actions, children }) {
 function StatTile({ label, value, hint }) {
   return (
     <div className="rounded-lg border p-3" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
-      <div className="text-xs uppercase tracking-wide" style={{ color: "var(--muted2)" }}>{label}</div>
+      <div className="text-base uppercase tracking-wide" style={{ color: "var(--muted2)" }}>{label}</div>
       <div className="mt-1 text-2xl font-semibold" style={{ color: "var(--text)" }}>{value}</div>
-      {hint ? <div className="mt-1 text-xs" style={{ color: "var(--muted2)" }}>{hint}</div> : null}
+      {hint ? <div className="mt-1 text-base" style={{ color: "var(--muted2)" }}>{hint}</div> : null}
     </div>
   );
 }
@@ -613,7 +613,7 @@ function Sidebar({ nav, setNav }) {
   ]), []);
 
   return (
-    <aside className="glass rounded-xl overflow-hidden">
+    <aside className="glass ui-surface overflow-hidden">
       <div className="h-14 grid place-items-center border-b" style={{ borderColor: "var(--border2)" }}>
         <div className="h-9 w-9 rounded-lg grid place-items-center" style={{ background: "var(--panel2)", border: "1px solid var(--border2)" }}>
           <BadgeInfo className="h-5 w-5" />
@@ -655,7 +655,7 @@ function Topbar({
   const ThemeIcon = theme.icon;
 
   return (
-    <div className="glass rounded-xl px-4 py-3">
+    <div className="glass ui-surface ui-surface-body">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-xl grid place-items-center" style={{ background: "var(--panel2)", border: "1px solid var(--border2)" }}>
@@ -663,7 +663,7 @@ function Topbar({
           </div>
           <div>
             <div className="text-xl font-semibold tracking-wide" style={{ color: "var(--text)" }}>GMS Archiv Tool</div>
-            <div className="text-sm" style={{ color: "var(--muted2)" }}>
+            <div className="text-base" style={{ color: "var(--muted2)" }}>
               v{APP_VERSION} • Themes • Zoom
             </div>
           </div>
@@ -683,7 +683,7 @@ function Topbar({
 
           <div className="flex items-center gap-2 flex-wrap">
             <div className="rounded-xl border px-3 py-2 flex items-center gap-2" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
-              <label className="text-sm" style={{ color: "var(--muted)" }}>Nur Favoriten</label>
+              <label className="text-base" style={{ color: "var(--muted)" }}>Nur Favoriten</label>
               <input
                 type="checkbox"
                 checked={!!favoritesOnly}
@@ -699,7 +699,7 @@ function Topbar({
             <div className="rounded-xl border px-3 py-2 flex items-center gap-2" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
               <ThemeIcon className="h-4 w-4" />
               <select
-                className="bg-transparent outline-none text-sm"
+                className="bg-transparent outline-none text-base"
                 style={{ color: "var(--text)" }}
                 value={themeId}
                 onChange={(e) => {
@@ -716,8 +716,8 @@ function Topbar({
 
             <div className="rounded-xl border px-3 py-2 flex items-center gap-2" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
               <Scale className="h-4 w-4" />
-              <span className="text-sm" style={{ color: "var(--muted)" }}>{Math.round(scale * 100)}%</span>
-              <button type="button" className="btn btn-ghost px-2 py-1 text-xs" onClick={resetScale}>Reset</button>
+              <span className="text-base" style={{ color: "var(--muted)" }}>{Math.round(scale * 100)}%</span>
+              <button type="button" className="btn btn-ghost px-2 py-1 text-base" onClick={resetScale}>Reset</button>
             </div>
 
             <Button tone="primary" onClick={exportAll} className="flex items-center gap-2">
@@ -750,7 +750,7 @@ function QuickInputs({ addInputs, setAddInputs, onSubmitType }) {
         const submit = () => onSubmitType(t.id, addInputs[t.id]);
         return (
           <div key={t.id} className="space-y-2">
-            <label className="text-sm font-semibold flex items-center gap-2" style={{ color: "var(--text)" }}>
+            <label className="text-base font-semibold flex items-center gap-2" style={{ color: "var(--text)" }}>
               <Icon className="h-4 w-4" /> {t.label}
             </label>
             <div className="flex gap-2">
@@ -771,7 +771,7 @@ function QuickInputs({ addInputs, setAddInputs, onSubmitType }) {
                 <Plus className="h-4 w-4" /> OK
               </Button>
             </div>
-            <div className="text-xs" style={{ color: "var(--muted2)" }}>
+            <div className="text-base" style={{ color: "var(--muted2)" }}>
               Enter bestätigt. Duplikate (Groß/Klein egal) werden ignoriert.
             </div>
           </div>
@@ -789,11 +789,11 @@ function ArchiveTable({ rows, showProfile, onToggleFav, onMove, onEdit, onDelete
           className={`grid ${showProfile ? "grid-cols-[40px_120px_90px_1fr_220px]" : "grid-cols-[40px_90px_1fr_220px]"} px-3 py-3 border-b`}
           style={{ borderColor: "var(--border2)", background: "var(--panel2)" }}
         >
-          <div className="text-xs uppercase tracking-wide" style={{ color: "var(--muted2)" }}>Fav</div>
-          {showProfile ? <div className="text-xs uppercase tracking-wide" style={{ color: "var(--muted2)" }}>Profil</div> : null}
-          <div className="text-xs uppercase tracking-wide" style={{ color: "var(--muted2)" }}>Typ</div>
-          <div className="text-xs uppercase tracking-wide" style={{ color: "var(--muted2)" }}>Wert</div>
-          <div className="text-xs uppercase tracking-wide text-right" style={{ color: "var(--muted2)" }}>Aktion</div>
+          <div className="text-base uppercase tracking-wide" style={{ color: "var(--muted2)" }}>Fav</div>
+          {showProfile ? <div className="text-base uppercase tracking-wide" style={{ color: "var(--muted2)" }}>Profil</div> : null}
+          <div className="text-base uppercase tracking-wide" style={{ color: "var(--muted2)" }}>Typ</div>
+          <div className="text-base uppercase tracking-wide" style={{ color: "var(--muted2)" }}>Wert</div>
+          <div className="text-base uppercase tracking-wide text-right" style={{ color: "var(--muted2)" }}>Aktion</div>
         </div>
 
         <div className="divide-y" style={{ borderColor: "var(--border2)" }}>
@@ -808,11 +808,11 @@ function ArchiveTable({ rows, showProfile, onToggleFav, onMove, onEdit, onDelete
                   {r.favorite ? <Star className="h-4 w-4" /> : <StarOff className="h-4 w-4" />}
                 </IconButton>
               </div>
-              {showProfile ? <div className="text-sm truncate" style={{ color: "var(--muted)" }}>{r.profile}</div> : null}
+              {showProfile ? <div className="text-base truncate" style={{ color: "var(--muted)" }}>{r.profile}</div> : null}
               <div className="flex items-center gap-2"><TypeBadge type={r.type} /></div>
               <div className="min-w-0">
                 <div className="truncate" style={{ color: "var(--text)" }}>{r.value}</div>
-                <div className="text-xs" style={{ color: "var(--muted2)" }}>
+                <div className="text-base" style={{ color: "var(--muted2)" }}>
                   {(r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "–")} • key: {r.key}
                 </div>
               </div>
@@ -824,7 +824,7 @@ function ArchiveTable({ rows, showProfile, onToggleFav, onMove, onEdit, onDelete
               </div>
             </div>
           ))}
-          {rows.length === 0 ? <div className="px-3 py-8 text-sm" style={{ color: "var(--muted)" }}>Keine Treffer.</div> : null}
+          {rows.length === 0 ? <div className="px-3 py-8 text-base" style={{ color: "var(--muted)" }}>Keine Treffer.</div> : null}
         </div>
       </div>
     </div>
@@ -881,8 +881,8 @@ function GeneratorPanel({
 
       <div className="rounded-lg border p-3" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
         <div className="flex items-center justify-between gap-2">
-          <div className="text-sm font-semibold" style={{ color: "var(--text)" }}>Schnell-Presets</div>
-          <div className="text-xs" style={{ color: "var(--muted2)" }}>Setzt Modus + Werte</div>
+          <div className="text-base font-semibold" style={{ color: "var(--text)" }}>Schnell-Presets</div>
+          <div className="text-base" style={{ color: "var(--muted2)" }}>Setzt Modus + Werte</div>
         </div>
         <div className="mt-2 flex flex-wrap gap-2">
           {quickPresets.map((p) => (
@@ -901,7 +901,7 @@ function GeneratorPanel({
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         <div className="rounded-lg border p-3" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
           <div className="flex items-center justify-between gap-2">
-            <div className="text-sm font-semibold flex items-center gap-2" style={{ color: "var(--text)" }}>
+            <div className="text-base font-semibold flex items-center gap-2" style={{ color: "var(--text)" }}>
               <Filter className="h-4 w-4" /> Modus
             </div>
           </div>
@@ -918,7 +918,7 @@ function GeneratorPanel({
               <button
                 key={m.id}
                 type="button"
-                className={`btn px-3 py-2 text-sm ${g.mode === m.id ? "btn-primary" : "btn-secondary"}`}
+                className={`btn px-3 py-2 text-base ${g.mode === m.id ? "btn-primary" : "btn-secondary"}`}
                 onClick={() => { setGen({ mode: m.id }); pushLog("generator", "Modus gesetzt", { mode: m.id }); }}
               >
                 {m.label}
@@ -927,12 +927,12 @@ function GeneratorPanel({
           </div>
 
           <div className="mt-3">
-            <div className="text-xs uppercase tracking-wide" style={{ color: "var(--muted2)" }}>Typen im Pool</div>
+            <div className="text-base uppercase tracking-wide" style={{ color: "var(--muted2)" }}>Typen im Pool</div>
             <div className="mt-2 flex flex-wrap gap-2">
               {["genre", "mood", "style"].map((t) => (
                 <label
                   key={t}
-                  className="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm"
+                  className="flex items-center gap-2 rounded-lg border px-3 py-2 text-base"
                   style={{ borderColor: "var(--border2)", background: "var(--panel2)" }}
                 >
                   <input
@@ -949,11 +949,11 @@ function GeneratorPanel({
         </div>
 
         <div className="rounded-lg border p-3" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
-          <div className="text-sm font-semibold" style={{ color: "var(--text)" }}>Parameter</div>
+          <div className="text-base font-semibold" style={{ color: "var(--text)" }}>Parameter</div>
 
           {(g.mode === "mix" || g.mode === "balanced" || g.mode === "favFirst") ? (
             <div className="mt-2 space-y-2">
-              <label className="text-sm" style={{ color: "var(--muted)" }}>Anzahl (N)</label>
+              <label className="text-base" style={{ color: "var(--muted)" }}>Anzahl (N)</label>
               <input
                 type="number"
                 className="ui-input rounded-lg px-3 py-2 w-full"
@@ -969,7 +969,7 @@ function GeneratorPanel({
             <div className="mt-2 grid grid-cols-3 gap-2">
               {["genre", "mood", "style"].map((t) => (
                 <div key={t} className="space-y-2">
-                  <label className="text-sm" style={{ color: "var(--muted)" }}>{t}</label>
+                  <label className="text-base" style={{ color: "var(--muted)" }}>{t}</label>
                   <input
                     type="number"
                     className="ui-input rounded-lg px-3 py-2 w-full"
@@ -986,7 +986,7 @@ function GeneratorPanel({
           {g.mode === "range" ? (
             <div className="mt-2 grid grid-cols-2 gap-2">
               <div className="space-y-2">
-                <label className="text-sm" style={{ color: "var(--muted)" }}>Min</label>
+                <label className="text-base" style={{ color: "var(--muted)" }}>Min</label>
                 <input
                   type="number"
                   className="ui-input rounded-lg px-3 py-2 w-full"
@@ -1000,7 +1000,7 @@ function GeneratorPanel({
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm" style={{ color: "var(--muted)" }}>Max</label>
+                <label className="text-base" style={{ color: "var(--muted)" }}>Max</label>
                 <input
                   type="number"
                   className="ui-input rounded-lg px-3 py-2 w-full"
@@ -1017,14 +1017,14 @@ function GeneratorPanel({
           ) : null}
 
           <div className="mt-3 space-y-2">
-            <label className="text-sm" style={{ color: "var(--muted)" }}>Delimiter</label>
+            <label className="text-base" style={{ color: "var(--muted)" }}>Delimiter</label>
             <input
               className="ui-input rounded-lg px-3 py-2 w-full"
               value={g.delimiter}
               onChange={(e) => setGen({ delimiter: e.target.value })}
               placeholder=", "
             />
-            <label className="flex items-center gap-2 text-sm" style={{ color: "var(--muted)" }}>
+            <label className="flex items-center gap-2 text-base" style={{ color: "var(--muted)" }}>
               <input type="checkbox" checked={!!g.showTypeLabels} onChange={(e) => setGen({ showTypeLabels: e.target.checked })} />
               Typ-Labels (genre:value)
             </label>
@@ -1033,14 +1033,14 @@ function GeneratorPanel({
       </div>
 
       {generatorError ? (
-        <div className="rounded-lg border p-3 text-sm" style={{ borderColor: "var(--dangerBorder)", background: "rgba(244,63,94,0.14)", color: "var(--text)" }}>
+        <div className="rounded-lg border p-3 text-base" style={{ borderColor: "var(--dangerBorder)", background: "rgba(244,63,94,0.14)", color: "var(--text)" }}>
           {generatorError}
         </div>
       ) : null}
 
       <div className="rounded-lg border p-3" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
         <div className="flex items-center justify-between gap-2">
-          <div className="text-sm font-semibold" style={{ color: "var(--text)" }}>Ergebnis</div>
+          <div className="text-base font-semibold" style={{ color: "var(--text)" }}>Ergebnis</div>
           <div className="flex items-center gap-2">
             <TonePill tone="slate">Count: {generatorResults?.length || 0}</TonePill>
             <TonePill tone="slate">Kopiert: {lastCopiedAt ? humanTime(lastCopiedAt) : "–"}</TonePill>
@@ -1079,10 +1079,10 @@ function ProfileManager({
   return (
     <div className="space-y-4">
       <div className="rounded-lg border p-3" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
-        <div className="text-sm font-semibold" style={{ color: "var(--text)" }}>Profil wählen</div>
+        <div className="text-base font-semibold" style={{ color: "var(--text)" }}>Profil wählen</div>
         <div className="mt-2 flex flex-wrap gap-2">
           {profiles.map((p) => (
-            <button key={p} type="button" className={`btn px-3 py-2 text-sm ${p === activeProfileName ? "btn-primary" : "btn-secondary"}`} onClick={() => onSelect(p)}>
+            <button key={p} type="button" className={`btn px-3 py-2 text-base ${p === activeProfileName ? "btn-primary" : "btn-secondary"}`} onClick={() => onSelect(p)}>
               {p}
             </button>
           ))}
@@ -1091,7 +1091,7 @@ function ProfileManager({
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
         <div className="rounded-lg border p-3" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
-          <div className="text-sm font-semibold" style={{ color: "var(--text)" }}>Neues Profil</div>
+          <div className="text-base font-semibold" style={{ color: "var(--text)" }}>Neues Profil</div>
           <div className="mt-2 flex gap-2">
             <input className="ui-input rounded-lg px-3 py-2 w-full" value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="z.B. EDM, Film, Dark" />
             <Button tone="ok" onClick={() => { onCreate(newName); setNewName(""); }} className="flex items-center gap-2">
@@ -1101,7 +1101,7 @@ function ProfileManager({
         </div>
 
         <div className="rounded-lg border p-3" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
-          <div className="text-sm font-semibold" style={{ color: "var(--text)" }}>Umbenennen</div>
+          <div className="text-base font-semibold" style={{ color: "var(--text)" }}>Umbenennen</div>
           <div className="mt-2 space-y-2">
             <select className="ui-input rounded-lg px-3 py-2 w-full" value={renameFrom} onChange={(e) => setRenameFrom(e.target.value)} aria-label="Quelle Profil">
               {profiles.map((p) => <option key={p} value={p}>{p}</option>)}
@@ -1116,9 +1116,9 @@ function ProfileManager({
         </div>
 
         <div className="rounded-lg border p-3" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
-          <div className="text-sm font-semibold" style={{ color: "var(--text)" }}>Löschen</div>
+          <div className="text-base font-semibold" style={{ color: "var(--text)" }}>Löschen</div>
           <div className="mt-2 space-y-2">
-            <div className="text-sm" style={{ color: "var(--muted)" }}>Löscht Profil inkl. aller Einträge.</div>
+            <div className="text-base" style={{ color: "var(--muted)" }}>Löscht Profil inkl. aller Einträge.</div>
             <Button tone="danger" onClick={() => onDelete(activeProfileName)} className="w-full flex items-center justify-center gap-2">
               <Trash2 className="h-4 w-4" /> Aktives Profil löschen
             </Button>
@@ -1126,7 +1126,7 @@ function ProfileManager({
         </div>
       </div>
 
-      <div className="rounded-lg border p-3 text-sm" style={{ borderColor: "var(--border2)", background: "var(--panel)", color: "var(--muted)" }}>
+      <div className="rounded-lg border p-3 text-base" style={{ borderColor: "var(--border2)", background: "var(--panel)", color: "var(--muted)" }}>
         Tipp: Favoriten sind global. „Nur Favoriten“ macht den Generator profil-übergreifend.
       </div>
     </div>
@@ -1181,7 +1181,7 @@ function ImportExport({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-semibold" style={{ color: "var(--text)" }}>JSON einfügen</label>
+            <label className="text-base font-semibold" style={{ color: "var(--text)" }}>JSON einfügen</label>
             <textarea
               className="ui-input rounded-xl p-3 w-full min-h-[260px]"
               value={importText}
@@ -1202,72 +1202,9 @@ function ImportExport({
         </div>
       </Card>
 
-      <Card
-        title="Diagnose"
-        icon={ShieldCheck}
-        actions={(
-          <div className="flex flex-wrap gap-2">
-            <Button tone="primary" onClick={onSelfTest}>Self-Test starten</Button>
-            <Button tone="warn" onClick={onSelfTestFail}>Fehler simulieren</Button>
-          </div>
-        )}
-      >
-        <div className="space-y-3 text-sm">
-          <div className="flex flex-wrap items-center gap-2" role="status" aria-live="polite">
-            <TonePill tone={statusTone}>
-              {statusLabel}
-            </TonePill>
-            <span style={{ color: "var(--muted)" }}>
-              Letzter Lauf: {selfTest?.ranAt ? humanTime(selfTest.ranAt) : "Noch nicht gestartet"}
-            </span>
-          </div>
-          <div className="text-sm" style={{ color: "var(--muted)" }}>
-            {selfTest?.summary || "Self-Test prüft State + Export-Roundtrip."}
-          </div>
-          <ul className="space-y-2">
-            {(selfTest?.results || []).map((item) => (
-              <li key={item.id} className="rounded-lg border px-3 py-2" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
-                <div className="flex flex-wrap items-center gap-2">
-                  <TonePill tone={item.ok ? "green" : "red"}>{item.ok ? "OK" : "Fehler"}</TonePill>
-                  <span className="font-semibold">{item.label}</span>
-                </div>
-                <div className="mt-1 text-xs" style={{ color: "var(--muted)" }}>{item.details}</div>
-                {item.hint ? <div className="mt-1 text-xs" style={{ color: "var(--muted2)" }}>{item.hint}</div> : null}
-          <div className="flex flex-wrap items-center gap-2">
-            <Button tone="secondary" onClick={onStartupCheck}>Start-Check</Button>
-            <Button tone="primary" onClick={onSelfTest}>Self-Test</Button>
-          </div>
-        )}
-      >
-        <div className="space-y-2">
-          <div className="text-sm" style={{ color: "var(--muted)" }}>
-            Start-Check prüft Module, Speicher und Basisdaten. Self-Test prüft State + Export-Roundtrip.
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <TonePill tone={summary.error ? "red" : "green"}>
-              Start-Check: {summary.error ? "Fehler" : "OK"}
-            </TonePill>
-            <TonePill tone="green">OK: {summary.ok}</TonePill>
-            <TonePill tone="amber">Hinweise: {summary.warn}</TonePill>
-            <TonePill tone={summary.error ? "red" : "slate"}>Fehler: {summary.error}</TonePill>
-          </div>
-          <ul className="space-y-2">
-            {(startupReport?.results || []).map((result) => (
-              <li
-                key={result.id}
-                className="rounded-lg border px-3 py-2 text-sm"
-                style={{ borderColor: "var(--border2)", background: "var(--panel)" }}
-              >
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="font-semibold" style={{ color: "var(--text)" }}>{result.label}</div>
-                  <TonePill tone={result.severity === "error" ? "red" : result.severity === "warn" ? "amber" : "green"}>
-                    {result.severity === "error" ? "Fehler" : result.severity === "warn" ? "Hinweis" : "OK"}
-                  </TonePill>
-                </div>
-                <div className="mt-1" style={{ color: "var(--muted)" }}>{result.message}</div>
-              </li>
-            ))}
-          </ul>
+      <Card title="Diagnose" icon={ShieldCheck} actions={<Button tone="primary" onClick={onSelfTest}>Self-Test</Button>}>
+        <div className="text-base" style={{ color: "var(--muted)" }}>
+          Self-Test prüft State + Export-Roundtrip.
         </div>
       </Card>
     </div>
@@ -1279,7 +1216,7 @@ function SettingsPanel({ onResetStorage, runTestsAfterRound, setRunTestsAfterRou
     <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_1fr]">
       <Card title="UI" icon={Settings}>
         <div className="rounded-lg border p-3" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
-          <div className="text-sm" style={{ color: "var(--muted)" }}>
+          <div className="text-base" style={{ color: "var(--muted)" }}>
             Ctrl + Mausrad zoomt UI. Themes sind kontrastig. Fokus-Ring ist stark sichtbar.
           </div>
         </div>
@@ -1371,7 +1308,7 @@ function DashboardView({
             </div>
           }
         >
-          <div className="text-sm mb-2" style={{ color: "var(--muted)" }}>
+          <div className="text-base mb-2" style={{ color: "var(--muted)" }}>
             Dashboard zeigt max. 10 Treffer (Filter über Suche oben). Vollansicht im Tab Archiv.
           </div>
           <ArchiveTable
@@ -1425,7 +1362,7 @@ function DashboardView({
 
           <div className="mt-4 grid grid-cols-1 gap-4">
             <div className="rounded-lg border p-3" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
-              <div className="text-sm font-semibold" style={{ color: "var(--text)" }}>Typen Gesamt (Graph)</div>
+              <div className="text-base font-semibold" style={{ color: "var(--text)" }}>Typen Gesamt (Graph)</div>
               <div className="h-52 mt-2">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartAll}>
@@ -1440,7 +1377,7 @@ function DashboardView({
             </div>
 
             <div className="rounded-lg border p-3" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
-              <div className="text-sm font-semibold" style={{ color: "var(--text)" }}>Aktives Profil (Graph)</div>
+              <div className="text-base font-semibold" style={{ color: "var(--text)" }}>Aktives Profil (Graph)</div>
               <div className="h-44 mt-2">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartProfile}>
@@ -1458,25 +1395,16 @@ function DashboardView({
 
         <Card title={`Letzte ${LOG_QUEUE_LIMIT} Logs`} icon={Activity}>
           <div className="space-y-2">
-            {(state.logs || []).slice(0, 10).map((l) => {
-              const moduleLabel = l.module || l.type || "system";
-              const levelLabel = (l.level || "info").toUpperCase();
-              const levelClass = l.level === "error" ? "badge badge-error" : l.level === "warn" ? "badge badge-warn" : "badge";
-              const line = l.line || formatLogLine(l);
-              return (
-                <div key={l.id} className="rounded-lg border px-3 py-2" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="text-xs" style={{ color: "var(--muted2)" }}>{humanTime(l.at)}</div>
-                    <div className="flex items-center gap-2">
-                      <span className="badge">{moduleLabel}</span>
-                      <span className={levelClass}>{levelLabel}</span>
-                    </div>
-                  </div>
-                  <div className="text-sm mt-1" style={{ color: "var(--text)" }}>{line}</div>
+            {(state.logs || []).slice(0, 8).map((l) => (
+              <div key={l.id} className="rounded-lg border px-3 py-2" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="text-base" style={{ color: "var(--muted2)" }}>{humanTime(l.at)}</div>
+                  <span className="badge">{l.type}</span>
                 </div>
-              );
-            })}
-            {(!state.logs || state.logs.length === 0) ? <div className="text-sm" style={{ color: "var(--muted)" }}>Noch keine Logs.</div> : null}
+                <div className="text-base mt-1" style={{ color: "var(--text)" }}>{l.message}</div>
+              </div>
+            ))}
+            {(!state.logs || state.logs.length === 0) ? <div className="text-base" style={{ color: "var(--muted)" }}>Noch keine Logs.</div> : null}
           </div>
         </Card>
       </div>
@@ -1512,7 +1440,7 @@ function ArchivView({
         actions={
           <div className="flex items-center gap-2">
             <select
-              className="ui-input rounded-xl px-3 py-2 text-sm"
+              className="ui-input rounded-xl px-3 py-2 text-base"
               value=""
               onChange={(e) => sortItems(activeProfileName, e.target.value)}
               aria-label="Sortieren"
@@ -1536,7 +1464,7 @@ function ArchivView({
             <TonePill tone="slate">Favoriten: {archiveStats.perProfile[activeProfileName]?.favorites ?? 0}</TonePill>
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-sm" style={{ color: "var(--muted)" }}>Profil</label>
+            <label className="text-base" style={{ color: "var(--muted)" }}>Profil</label>
             <select
               className="ui-input rounded-xl px-3 py-2"
               value={activeProfileName}
@@ -1655,7 +1583,8 @@ export default function App() {
   const scale = state.settings.uiScale ?? DEFAULT_SCALE;
   useCtrlWheelZoom(scale, (updater) => {
     setState((prev) => {
-      const next = typeof updater === "function" ? updater(prev.settings.uiScale ?? DEFAULT_SCALE) : updater;
+      const raw = typeof updater === "function" ? updater(prev.settings.uiScale ?? DEFAULT_SCALE) : updater;
+      const next = clamp(Number(raw), 1, 1.6);
       return { ...prev, settings: { ...prev.settings, uiScale: next }, updatedAt: nowIso() };
     });
   });
@@ -2384,7 +2313,7 @@ export default function App() {
             ) : null}
 
             {nav === "generator" ? (
-              <div className="glass rounded-xl p-4">
+              <div className="glass ui-surface ui-surface-body">
                 <GeneratorPanel
                   activeProfileName={activeProfileName}
                   favoritesOnly={state.settings.favoritesOnly}
@@ -2436,7 +2365,7 @@ export default function App() {
       {modalOpen ? (
         <div className="fixed inset-0 z-50 grid place-items-center px-4" role="dialog" aria-modal="true" aria-label="Eintrag bearbeiten">
           <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.55)" }} onClick={() => setEditDialog({ open: false, itemId: null, profile: null, value: "" })} />
-          <div className="relative glass rounded-xl w-full max-w-[560px]">
+          <div className="relative glass ui-surface w-full max-w-[560px]">
             <div className="px-4 py-3 border-b flex items-center justify-between" style={{ borderColor: "var(--border2)" }}>
               <div className="font-semibold" style={{ color: "var(--text)" }}>Eintrag bearbeiten</div>
               <IconButton label="Schließen" onClick={() => setEditDialog({ open: false, itemId: null, profile: null, value: "" })} tone="secondary">
@@ -2444,13 +2373,13 @@ export default function App() {
               </IconButton>
             </div>
             <div className="px-4 py-4 space-y-2">
-              <label className="text-sm font-semibold" style={{ color: "var(--text)" }}>Wert</label>
+              <label className="text-base font-semibold" style={{ color: "var(--text)" }}>Wert</label>
               <input
                 className="ui-input rounded-xl px-3 py-2 w-full"
                 value={editDialog.value}
                 onChange={(e) => setEditDialog((p) => ({ ...p, value: e.target.value }))}
               />
-              <div className="text-xs" style={{ color: "var(--muted2)" }}>
+              <div className="text-base" style={{ color: "var(--muted2)" }}>
                 Duplikate im gleichen Profil+Typ sind nicht erlaubt (Groß/Klein egal).
               </div>
             </div>
@@ -2465,7 +2394,7 @@ export default function App() {
       {toast ? (
         <div className="fixed bottom-5 right-5 z-50" aria-live="polite" aria-atomic="true">
           <div className="toast rounded-xl px-4 py-3 shadow-[0_20px_70px_rgba(0,0,0,0.55)]">
-            <div className="text-sm">{toast.text}</div>
+            <div className="text-base">{toast.text}</div>
           </div>
         </div>
       ) : null}
