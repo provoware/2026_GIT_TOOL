@@ -18,6 +18,26 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Zentrales Datenmodell.
 - Barrierefreie UI-Texte (Deutsch, klar, laienverständlich).
 
+## Fehlerstandard (aktuell)
+Einheitliches Format für Nutzer-Fehlermeldungen:
+
+```
+Fehler <Code>: <Titel> (<Fachbegriff/Technik).
+Erklärung: <kurz und einfach>.
+Nächster Schritt: <konkrete nächste Aktion>.
+Details: <optional>.
+```
+
+Aktive Fehlertypen:
+- **E1001** Datei fehlt oder ist nicht lesbar (Dateizugriff / file access).
+- **E2001** Modul reagiert nicht wie erwartet (Modulprüfung / module check).
+- **E3001** Selbsttest fehlgeschlagen (Selbsttest / self-test).
+
+## Beispiel-Fehler testen (absichtlich provozieren)
+- **Datei fehlt**: Import/Export öffnen, eine Datei auswählen und diese vorher löschen/verschieben. Erwartung: Fehler E1001 mit nächstem Schritt.
+- **Modul defekt**: Eine Import-Datei öffnen und absichtlich ungültiges JSON einfügen (z. B. eine fehlende Klammer). Erwartung: Fehler E2001.
+- **Test fail**: Daten exportieren, die JSON-Datei manuell beschädigen (z. B. ein Pflichtfeld entfernen), dann Self-Test ausführen. Erwartung: Fehler E3001.
+
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen.
 - **Formatierung**: Automatische Codeformatierung (einheitlicher Stil).
@@ -29,4 +49,6 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
-Aktuell gibt es keine lauffähigen Skripte. Diese Sektion wird ergänzt, sobald Start- und Testscripte existieren.
+Aktuell nutzbare Befehle (im Ordner `gms-archiv-tool_v1.2.3_2026-01-06`):
+- **Bauen (Build)**: `npm run build`
+- **Starten lokal (Development Server)**: `npm run dev`

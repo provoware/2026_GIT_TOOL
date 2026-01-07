@@ -49,6 +49,36 @@ const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 const norm = (s) => (s ?? "").trim().replace(/\s+/g, " ");
 const normKey = (s) => norm(s).toLowerCase();
 
+const ERROR_TYPES = {
+  FILE_MISSING: {
+    code: "E1001",
+    title: "Datei fehlt oder ist nicht lesbar",
+    tech: "Dateizugriff (file access)",
+    explanation: "Die Datei ist nicht vorhanden oder der Zugriff wird blockiert.",
+    action: "Datei erneut auswählen und prüfen, ob sie lokal vorhanden ist.",
+  },
+  MODULE_BROKEN: {
+    code: "E2001",
+    title: "Modul reagiert nicht wie erwartet",
+    tech: "Modulprüfung (module check)",
+    explanation: "Ein Teil der App liefert ungültige Daten oder ist nicht verfügbar.",
+    action: "Aktion wiederholen oder App neu laden. Falls es bleibt: Daten exportieren und neu importieren.",
+  },
+  TEST_FAIL: {
+    code: "E3001",
+    title: "Selbsttest fehlgeschlagen",
+    tech: "Selbsttest (self-test)",
+    explanation: "Die interne Prüfung hat Fehler in den Daten gefunden.",
+    action: "Daten sichern, Import/Export prüfen und den Selbsttest erneut starten.",
+  },
+};
+
+const formatUserError = (typeKey, details = "") => {
+  const spec = ERROR_TYPES[typeKey] || ERROR_TYPES.MODULE_BROKEN;
+  const detailText = details ? ` Details: ${details}.` : "";
+  return `Fehler ${spec.code}: ${spec.title} (${spec.tech}). Erklärung: ${spec.explanation} Nächster Schritt: ${spec.action}${detailText}`;
+};
+
 function safeJsonParse(text) {
   try {
     return { ok: true, value: JSON.parse(text) };
@@ -1829,8 +1859,9 @@ export default function App() {
       pushLog("clipboard", "Generator-Ergebnis kopiert", { chars: txt.length, items: (generator.results || []).length });
       showToast("Kopiert ✅");
     } catch (e) {
-      pushLog("error", "Clipboard fehlgeschlagen", { error: String(e) });
-      showToast("Clipboard nicht verfügbar");
+      const message = formatUserError("MODULE_BROKEN", "Zwischenablage (Clipboard) nicht verfügbar");
+      pushLog("error", message, { error: String(e) });
+      showToast(message);
     }
   };
 
@@ -1838,8 +1869,9 @@ export default function App() {
     const payloadObj = { ...state, exportedAt: nowIso() };
     const v = validateState(payloadObj);
     if (!v.ok) {
-      pushLog("error", "Export blockiert: State invalid", { errors: v.errors });
-      showToast("Export blockiert: Daten invalid");
+      const message = formatUserError("MODULE_BROKEN", "Exportdaten sind ungültig");
+      pushLog("error", message, { errors: v.errors });
+      showToast(message);
       return;
     }
     const payload = JSON.stringify(payloadObj, null, 2);
@@ -1847,8 +1879,9 @@ export default function App() {
     const round = safeJsonParse(payload);
     const v2 = round.ok ? validateState(coerceState(round.value)) : { ok: false, errors: ["Roundtrip Parse fehlgeschlagen"] };
     if (!v2.ok) {
-      pushLog("error", "Export Roundtrip fehlgeschlagen", { errors: v2.errors });
-      showToast("Export Roundtrip FAIL");
+      const message = formatUserError("TEST_FAIL", "Export-Roundtrip");
+      pushLog("error", message, { errors: v2.errors });
+      showToast(message);
       return;
     }
 
@@ -1867,8 +1900,9 @@ export default function App() {
 
     const round = safeJsonParse(payload);
     if (!round.ok || !round.value?.profile || !round.value?.data) {
-      pushLog("error", "Profil-Export Roundtrip fehlgeschlagen", {});
-      showToast("Profil-Export FAIL");
+      const message = formatUserError("TEST_FAIL", "Profil-Export");
+      pushLog("error", message, {});
+      showToast(message);
       return;
     }
 
@@ -1882,8 +1916,9 @@ export default function App() {
   const importFromText = (mode) => {
     const parsed = safeJsonParse(importText);
     if (!parsed.ok) {
-      showToast("Ungültiges JSON");
-      pushLog("error", "Import JSON ungültig", { error: String(parsed.error) });
+      const message = formatUserError("MODULE_BROKEN", "Import-Datei enthält ungültiges JSON");
+      showToast(message);
+      pushLog("error", message, { error: String(parsed.error) });
       return;
     }
     const data = parsed.value;
@@ -1892,8 +1927,9 @@ export default function App() {
       const incoming = coerceState(data);
       const vin = validateState(incoming);
       if (!vin.ok) {
-        showToast("Import blockiert: Daten invalid");
-        pushLog("error", "Gesamt-Import invalid", { errors: vin.errors });
+        const message = formatUserError("MODULE_BROKEN", "Importdaten sind ungültig");
+        showToast(message);
+        pushLog("error", message, { errors: vin.errors });
         return;
       }
 
@@ -1953,8 +1989,9 @@ export default function App() {
       return;
     }
 
-    showToast("Unbekanntes Import-Format");
-    pushLog("error", "Import-Format unbekannt", { keys: Object.keys(data || {}) });
+    const message = formatUserError("MODULE_BROKEN", "Import-Format ist unbekannt");
+    showToast(message);
+    pushLog("error", message, { keys: Object.keys(data || {}) });
   };
 
   const importFromFile = async (file) => {
@@ -1965,24 +2002,27 @@ export default function App() {
       pushLog("import", "Import-Datei geladen", { name: file.name, bytes: text.length });
       showToast("Datei geladen");
     } catch (e) {
-      pushLog("error", "Datei lesen fehlgeschlagen", { error: String(e) });
-      showToast("Dateifehler");
+      const message = formatUserError("FILE_MISSING", `Datei: ${file?.name || "unbekannt"}`);
+      pushLog("error", message, { error: String(e) });
+      showToast(message);
     }
   };
 
   const runSelfTest = () => {
     const v = validateState(state);
     if (!v.ok) {
-      pushLog("diagnose", "Self-Test FAIL", { errors: v.errors });
-      showToast("Self-Test FAIL");
+      const message = formatUserError("TEST_FAIL", "State-Validierung");
+      pushLog("diagnose", message, { errors: v.errors });
+      showToast(message);
       return;
     }
     const payload = JSON.stringify({ ...state, exportedAt: nowIso() });
     const parsed = safeJsonParse(payload);
     const v2 = parsed.ok ? validateState(coerceState(parsed.value)) : { ok: false, errors: ["Parse fail"] };
     if (!v2.ok) {
-      pushLog("diagnose", "Self-Test Roundtrip FAIL", { errors: v2.errors });
-      showToast("Roundtrip FAIL");
+      const message = formatUserError("TEST_FAIL", "Roundtrip-Validierung");
+      pushLog("diagnose", message, { errors: v2.errors });
+      showToast(message);
       return;
     }
     pushLog("diagnose", "Self-Test OK", { profiles: profiles.length, items: allItems.length });
