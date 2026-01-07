@@ -18,6 +18,11 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Zentrales Datenmodell.
 - Barrierefreie UI-Texte (Deutsch, klar, laienverständlich).
 
+## Fortschritt (Zählregel)
+- Als Task zählt jede Zeile in `todo.txt`, die mit `[ ]` oder `[x]` beginnt.
+- **Erledigt** ist eine Zeile mit `[x]` (Groß/Klein egal).
+- **Offen** ist eine Zeile mit `[ ]`.
+
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen.
 - **Formatierung**: Automatische Codeformatierung (einheitlicher Stil).
@@ -29,4 +34,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
-Aktuell gibt es keine lauffähigen Skripte. Diese Sektion wird ergänzt, sobald Start- und Testscripte existieren.
+### Start (Fortschritt aktualisieren)
+- `./scripts/start.sh` (berechnet den Fortschritt aus `todo.txt` und aktualisiert `PROGRESS.md`).
+
+### Check (Fortschritt prüfen)
+- `node scripts/progress.js --check` (prüft, ob `PROGRESS.md` zu `todo.txt` passt).
