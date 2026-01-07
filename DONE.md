@@ -3,6 +3,8 @@
 ## 2026-01-07
 - Doku: Entwickler-Dokumentation strukturiert.
 - Doku: Projekt-Anleitung für Laien erstellt.
+- Tests: Basis-Selftest-Modul integriert (grün/rot, Ergebnisliste).
+- Tests: Startdiagnose führt Self-Test automatisch aus.
 - Steuerung: Einheitliches To-Do-Format erzwungen (Regex + Import-Validierung).
 - Launcher: Fehler laienverständlich erklärt (klare Import- und Eingabe-Fehler).
 - Steuerung: Fortschritt aus To-Dos berechnen.

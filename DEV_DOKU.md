@@ -50,6 +50,13 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
+- **Installieren** (Abhängigkeiten (Dependencies) laden):  
+  `cd gms-archiv-tool_v1.2.3_2026-01-06 && npm install`
+- **Starten** (Entwicklungsmodus):  
+  `npm run dev`
+- **Self-Test (UI)**:  
+  Menü „Import/Export“ → Karte „Diagnose“ → „Self-Test starten“ oder „Fehler simulieren“.  
+  Die Startdiagnose läuft automatisch beim Öffnen der App.
 ### Start (Fortschritt aktualisieren)
 - `./scripts/start.sh` (berechnet den Fortschritt aus `todo.txt` und aktualisiert `PROGRESS.md`).
 

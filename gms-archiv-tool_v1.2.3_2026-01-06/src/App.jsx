@@ -39,6 +39,7 @@ import {
   CartesianGrid,
   Tooltip as RTooltip,
 } from "recharts";
+import { buildSelfTestReport } from "./selftest";
 import { MODULE_DEFINITIONS } from "./config/modules";
 import { buildModuleRegistry, runStartupChecks } from "./system/startupChecks";
 
@@ -449,6 +450,15 @@ function validateState(st) {
   }
   if (!st?.settings?.activeProfile || !st?.profiles?.[st.settings.activeProfile]) errors.push("activeProfile fehlt oder existiert nicht.");
   return { ok: errors.length === 0, errors };
+}
+
+function collectAllItems(st) {
+  const rows = [];
+  if (!st?.profiles || typeof st.profiles !== "object") return rows;
+  for (const [pname, p] of Object.entries(st.profiles)) {
+    for (const it of p?.items || []) rows.push({ ...it, profile: pname });
+  }
+  return rows;
 }
 
 function useCtrlWheelZoom(scale, setScale) {
@@ -1097,6 +1107,12 @@ function ImportExport({
   exportProfile,
   activeProfileName,
   onSelfTest,
+  onSelfTestFail,
+  selfTest,
+  fileRef,
+}) {
+  const statusTone = selfTest?.ok === true ? "green" : selfTest?.ok === false ? "red" : "slate";
+  const statusLabel = selfTest?.ok === true ? "Status: OK" : selfTest?.ok === false ? "Status: Fehler" : "Status: offen";
   onStartupCheck,
   startupReport,
   fileRef,
@@ -1155,6 +1171,33 @@ function ImportExport({
         title="Diagnose"
         icon={ShieldCheck}
         actions={(
+          <div className="flex flex-wrap gap-2">
+            <Button tone="primary" onClick={onSelfTest}>Self-Test starten</Button>
+            <Button tone="warn" onClick={onSelfTestFail}>Fehler simulieren</Button>
+          </div>
+        )}
+      >
+        <div className="space-y-3 text-sm">
+          <div className="flex flex-wrap items-center gap-2" role="status" aria-live="polite">
+            <TonePill tone={statusTone}>
+              {statusLabel}
+            </TonePill>
+            <span style={{ color: "var(--muted)" }}>
+              Letzter Lauf: {selfTest?.ranAt ? humanTime(selfTest.ranAt) : "Noch nicht gestartet"}
+            </span>
+          </div>
+          <div className="text-sm" style={{ color: "var(--muted)" }}>
+            {selfTest?.summary || "Self-Test prüft State + Export-Roundtrip."}
+          </div>
+          <ul className="space-y-2">
+            {(selfTest?.results || []).map((item) => (
+              <li key={item.id} className="rounded-lg border px-3 py-2" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
+                <div className="flex flex-wrap items-center gap-2">
+                  <TonePill tone={item.ok ? "green" : "red"}>{item.ok ? "OK" : "Fehler"}</TonePill>
+                  <span className="font-semibold">{item.label}</span>
+                </div>
+                <div className="mt-1 text-xs" style={{ color: "var(--muted)" }}>{item.details}</div>
+                {item.hint ? <div className="mt-1 text-xs" style={{ color: "var(--muted2)" }}>{item.hint}</div> : null}
           <div className="flex flex-wrap items-center gap-2">
             <Button tone="secondary" onClick={onStartupCheck}>Start-Check</Button>
             <Button tone="primary" onClick={onSelfTest}>Self-Test</Button>
@@ -1516,6 +1559,7 @@ export default function App() {
   const [generator, setGenerator] = useState({ results: [], error: null, lastCopiedAt: null });
   const [toast, setToast] = useState(null);
   const toastTimerRef = useRef(null);
+  const [selfTest, setSelfTest] = useState({ ok: null, results: [], summary: "", ranAt: null, auto: false });
   const modules = useMemo(() => buildModuleRegistry(MODULE_DEFINITIONS), []);
   const [startupReport, setStartupReport] = useState(() => ({
     ok: true,
@@ -1539,6 +1583,31 @@ export default function App() {
     });
   };
 
+  const runSelfTest = ({ simulateFailure = false, auto = false, snapshot } = {}) => {
+    const baseState = snapshot || stateRef.current;
+    const profilesList = Object.keys(baseState?.profiles || {}).sort((a, b) => a.localeCompare(b));
+    const itemsList = collectAllItems(baseState);
+    const storageKey = "__gms_selftest__";
+    const storageAvailable = safeLsSet(storageKey, "1");
+    if (storageAvailable) safeLsRemove(storageKey);
+
+    const report = buildSelfTestReport({
+      state: baseState,
+      profiles: profilesList,
+      allItems: itemsList,
+      storageAvailable,
+      validateState,
+      coerceState,
+      safeJsonParse,
+      nowIso,
+      simulateFailure,
+    });
+
+    setSelfTest({ ...report, auto });
+    pushLog("diagnose", report.ok ? "Self-Test OK" : "Self-Test FAIL", { failed: report.results.filter((r) => !r.ok).length, auto });
+    showToast(report.ok ? (auto ? "Startdiagnose OK" : "Self-Test OK") : (auto ? "Startdiagnose FEHLER" : "Self-Test FEHLER"));
+  };
+
   const scale = state.settings.uiScale ?? DEFAULT_SCALE;
   useCtrlWheelZoom(scale, (updater) => {
     setState((prev) => {
@@ -1549,6 +1618,8 @@ export default function App() {
 
   useEffect(() => { applyTheme(state.settings.themeId); }, [state.settings.themeId]);
 
+  useEffect(() => {
+    runSelfTest({ auto: true, snapshot: stateRef.current });
   const runStartupCheck = () => {
     const report = runStartupChecks({
       state: stateRef.current,
@@ -2315,9 +2386,9 @@ export default function App() {
                 exportAll={exportAll}
                 exportProfile={exportProfile}
                 activeProfileName={activeProfileName}
-                onSelfTest={runSelfTest}
-                onStartupCheck={runStartupCheck}
-                startupReport={startupReport}
+                onSelfTest={() => runSelfTest({ simulateFailure: false, auto: false })}
+                onSelfTestFail={() => runSelfTest({ simulateFailure: true, auto: false })}
+                selfTest={selfTest}
                 fileRef={fileRef}
               />
             ) : null}

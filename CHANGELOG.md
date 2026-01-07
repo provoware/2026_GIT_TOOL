@@ -1,6 +1,8 @@
 # Changelog
 
 ## [0.1.2] – 2026-01-07
+- Self-Test-Runner mit Ergebnisliste (grün/rot) ergänzt
+- Startdiagnose führt Self-Test automatisch aus und gibt Nutzerfeedback
 - Projekt-Dashboard: Datumsformat-Regel (Regex) ergänzt und Import validiert
 - Fehlermeldungen im Import und beim Anlegen vereinfacht (laienverständlich)
 - Start-Routine ergänzt, die den Fortschritt aus todo.txt berechnet und anzeigt
