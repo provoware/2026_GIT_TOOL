@@ -5,7 +5,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 
 ## Projektstatus
 - Derzeit liegt der Fokus auf Dokumentation und Aufgabenplanung.
-- Start-Routine, Tests und Modul-Standards werden in den nächsten Tasks umgesetzt.
+- Start-Routine und Tests werden in den nächsten Tasks umgesetzt.
 
 ## Struktur (geplant)
 - `src/`: Systemlogik (stabile Kernlogik).
@@ -13,7 +13,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - `data/`: Variable Daten und Laufzeitdateien.
 - `scripts/`: Start- und Prüfskripte.
 
-## Standards (geplant)
+## Standards (verbindlich)
+- Zentrale Standards stehen in `standards.md`.
 - Einheitliche Modul-Schnittstellen (Init/Exit).
 - Zentrales Datenmodell (`data/schema.json`).
 ## Standards (verbindlich)
