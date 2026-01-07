@@ -4,6 +4,8 @@
 Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschreibt Struktur, Standards und den geplanten Ablauf.
 
 ## Projektstatus
+- Derzeit liegt der Fokus auf Dokumentation und Aufgabenplanung.
+- Start-Routine, Tests und Modul-Standards werden schrittweise umgesetzt.
 - Start-Check und Modul-Check sind umgesetzt und in der Diagnose sichtbar.
 - Modul-Check wird im Self-Test mit einem defekten Modul automatisch geprüft.
 
@@ -12,7 +14,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - `gms-archiv-tool_v1.2.3_2026-01-06/src/config/`: Konfiguration (Modul-Definitionen).
 - `gms-archiv-tool_v1.2.3_2026-01-06/src/`: App-UI und Kernlogik.
 
-## Standards (geplant)
+## Standards (verbindlich)
+- Zentrale Standards sind in `standards.md` beschrieben.
 - Einheitliche Modul-Schnittstellen (Init/Exit).
 - Zentrales Datenmodell.
 - Barrierefreie UI-Texte (Deutsch, klar, laienverständlich).

@@ -1,6 +1,8 @@
 # Changelog
 
 ## [0.1.2] – 2026-01-07
+- Verbindliche Standards-Datei ergänzt (Modul-Schnittstelle, Start-Routine, Tests, Barrierefreiheit)
+- Entwickler-Dokumentation auf verbindliche Standards aktualisiert
 - Fehlermeldungen vereinheitlicht: Format mit Titel, Erklärung und Lösung
 - Import- und Datumsfehler laienverständlich formuliert und konsistent angekündigt
 - Selbsttest ergänzt, der die Fehlerstruktur prüft
