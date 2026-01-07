@@ -1,6 +1,9 @@
+[x] 2026-01-07 | Setup | Repo-Basis steht | fertig wenn: Push erfolgreich
 [ ] 2026-01-07 | Setup | Repo-Basis steht | fertig wenn: Push erfolgreich
-[ ] 2026-01-07 | Architektur | Zentrale Tool-Standards definieren | prüfen: standards.md öffnen | fertig wenn: eine verbindliche Standards-Datei existiert
+[x] 2026-01-07 | Architektur | Zentrale Tool-Standards definieren | prüfen: standards.md öffnen | fertig wenn: eine verbindliche Standards-Datei existiert
 [ ] 2026-01-07 | Architektur | Einheitliche Modul-Schnittstelle festlegen | prüfen: zwei Module vergleichen | fertig wenn: gleiche Init-/Exit-Struktur
+[x] 2026-01-07 | Architektur | Zentrales Datenmodell festlegen | prüfen: Module greifen darauf zu | fertig wenn: ein gemeinsames Schema genutzt wird
+[x] 2026-01-07 | Architektur | Einheitliche Modul-Schnittstelle festlegen | prüfen: zwei Module vergleichen | fertig wenn: gleiche Init-/Exit-Struktur
 [ ] 2026-01-07 | Architektur | Zentrales Datenmodell festlegen | prüfen: Module greifen darauf zu | fertig wenn: ein gemeinsames Schema genutzt wird
 
 [ ] 2026-01-07 | Launcher | Launcher zeigt alle Tools übersichtlich | prüfen: Start öffnen | fertig wenn: alle Module klickbar erreichbar
@@ -34,5 +37,3 @@
 
 [ ] 2026-01-07 | Module | Neues Modul nach Standards integrieren | prüfen: Modul hinzufügen | fertig wenn: ohne Sonderlogik
 [ ] 2026-01-07 | Module | Modul-Check beim Start durchführen | prüfen: defektes Modul | fertig wenn: sauber abgefangen
-[ ] 2026-01-07 | Architektur | Zentrale Tool-Standards definieren | prüfen: standards.md öffnen | fertig wenn: Standards-Datei existiert
-[ ] 2026-01-07 | Architektur | Einheitliche Modul-Schnittstelle festlegen | prüfen: zwei Module vergleichen | fertig wenn: gleiche Init-/Exit-Struktur
