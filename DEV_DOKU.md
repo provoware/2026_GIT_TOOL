@@ -29,4 +29,18 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
-Aktuell gibt es keine lauffähigen Skripte. Diese Sektion wird ergänzt, sobald Start- und Testscripte existieren.
+### Lokaler Start (UI prüfen)
+1. `cd gms-archiv-tool_v1.2.3_2026-01-06`
+2. `npm install`
+3. `npm run dev`
+
+### Build/Preview
+1. `cd gms-archiv-tool_v1.2.3_2026-01-06`
+2. `npm install`
+3. `npm run build`
+4. `npm run preview`
+
+### Manuelle UI-Checks (Barrierefreiheit)
+- Kontrast prüfen (Dark/Light-Theme vergleichen, Ziel ≥ 4,5:1).
+- Schriftgröße prüfen (mind. 16px).
+- Darkmode-Lesbarkeit prüfen (Text + Buttons).
