@@ -607,11 +607,11 @@ function SidebarNav({
             <div className="space-y-3">
               <SideItem
                 icon={<Home className="h-5 w-5" />}
-                label="Dashboard"
+                label="Übersicht"
                 sub=""
                 active={active === "dashboard"}
                 onClick={() => onActive("dashboard")}
-                ariaLabel="Dashboard"
+                ariaLabel="Übersicht"
               />
               <SideItem
                 icon={<Boxes className="h-5 w-5" />}
@@ -623,11 +623,11 @@ function SidebarNav({
               />
               <SideItem
                 icon={<Puzzle className="h-5 w-5" />}
-                label="Plugins"
+                label="Zusatzmodule"
                 sub=""
                 active={active === "plugins"}
                 onClick={() => onActive("plugins")}
-                ariaLabel="Plugins"
+                ariaLabel="Zusatzmodule"
               />
             </div>
           </div>
@@ -1226,7 +1226,7 @@ function CenterHeaderArea({
             <p className="text-sm text-white/60">
               {view === "Alle Einträge"
                 ? "Hier erscheinen deine Einträge. Klick auf einen Eintrag, um Details zu sehen."
-                : "Aktive Filter steuern Liste und Timeline."}
+                : "Aktive Filter steuern Liste und Zeitachse."}
             </p>
             <p className="text-xs text-white/45">Tipp: Suche + Typ-Buttons kombinieren.</p>
           </div>
@@ -1270,7 +1270,7 @@ function Timeline({
     "bg-[linear-gradient(90deg,rgba(59,130,246,0.75),rgba(16,185,129,0.75),rgba(245,158,11,0.75),rgba(244,63,94,0.75))]";
 
   return (
-    <GlassCard className="p-0" ariaLabel="Timeline">
+    <GlassCard className="p-0" ariaLabel="Zeitachse">
       <div className="p-4">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
@@ -1638,8 +1638,8 @@ function HelpContent() {
         <h4 className="text-sm font-semibold text-white/90">So nutzt du das Tool</h4>
         <ul className="mt-2 list-disc space-y-1 pl-5 text-white/75">
           <li>Links: neuen Eintrag anlegen. Pflicht ist nur das Datum.</li>
-          <li>Mitte/Rechts: Typ-Filter und Suche. Steuert Liste und Timeline.</li>
-          <li>Unten: Timeline. Klick auf einen Punkt öffnet Details.</li>
+          <li>Mitte/Rechts: Typ-Filter und Suche. Steuert Liste und Zeitachse.</li>
+          <li>Unten: Zeitachse. Klick auf einen Punkt öffnet Details.</li>
           <li>Oben: „Daten“ für Export/Import. Alles wird gespeichert.</li>
         </ul>
       </div>
@@ -1790,12 +1790,12 @@ function DataManager({
             className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
           >
             <Download className="h-4 w-4" aria-hidden />
-            Download
+            Herunterladen
           </button>
         </div>
 
         <div className="mt-3">
-          <TextArea value={exportJson} readOnly rows={8} aria-label="Export JSON" />
+          <TextArea value={exportJson} readOnly rows={8} aria-label="JSON-Export" />
         </div>
       </div>
 
@@ -1845,7 +1845,7 @@ function DataManager({
             onChange={(e) => setImportText(e.target.value)}
             rows={8}
             placeholder="JSON hier einfügen…"
-            aria-label="Import JSON"
+            aria-label="JSON-Import"
           />
         </div>
       </div>
@@ -1867,7 +1867,7 @@ function DataManager({
 }
 
 function assert(cond: any, msg: string) {
-  if (!cond) throw new Error(`Test failed: ${msg}`);
+  if (!cond) throw new Error(`Selbsttest fehlgeschlagen: ${msg}`);
 }
 
 function runSelfTests() {
@@ -1934,7 +1934,7 @@ export default function ProjektDashboardTool() {
         title: "Fund X entdeckt",
         date: "2024-01-16",
         category: "Notiz",
-        comment: "Erster Marker auf der Timeline.",
+        comment: "Erster Marker auf der Zeitachse.",
         sourceUrl: "",
         type: "Fund",
       },

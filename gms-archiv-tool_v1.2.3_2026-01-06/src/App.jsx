@@ -39,6 +39,8 @@ import {
   CartesianGrid,
   Tooltip as RTooltip,
 } from "recharts";
+import { MODULE_DEFINITIONS } from "./config/modules";
+import { buildModuleRegistry, runStartupChecks } from "./system/startupChecks";
 
 const APP_VERSION = "1.2.3";
 const LS_KEY = "pppoppi_gms_archiv_v1";
@@ -1086,8 +1088,11 @@ function ImportExport({
   exportProfile,
   activeProfileName,
   onSelfTest,
+  onStartupCheck,
+  startupReport,
   fileRef,
 }) {
+  const summary = startupReport?.summary || { ok: 0, warn: 0, error: 0 };
   return (
     <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_1fr]">
       <Card title="Export" icon={Download}>
@@ -1137,9 +1142,45 @@ function ImportExport({
         </div>
       </Card>
 
-      <Card title="Diagnose" icon={ShieldCheck} actions={<Button tone="primary" onClick={onSelfTest}>Self-Test</Button>}>
-        <div className="text-sm" style={{ color: "var(--muted)" }}>
-          Self-Test prüft State + Export-Roundtrip.
+      <Card
+        title="Diagnose"
+        icon={ShieldCheck}
+        actions={(
+          <div className="flex flex-wrap items-center gap-2">
+            <Button tone="secondary" onClick={onStartupCheck}>Start-Check</Button>
+            <Button tone="primary" onClick={onSelfTest}>Self-Test</Button>
+          </div>
+        )}
+      >
+        <div className="space-y-2">
+          <div className="text-sm" style={{ color: "var(--muted)" }}>
+            Start-Check prüft Module, Speicher und Basisdaten. Self-Test prüft State + Export-Roundtrip.
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <TonePill tone={summary.error ? "red" : "green"}>
+              Start-Check: {summary.error ? "Fehler" : "OK"}
+            </TonePill>
+            <TonePill tone="green">OK: {summary.ok}</TonePill>
+            <TonePill tone="amber">Hinweise: {summary.warn}</TonePill>
+            <TonePill tone={summary.error ? "red" : "slate"}>Fehler: {summary.error}</TonePill>
+          </div>
+          <ul className="space-y-2">
+            {(startupReport?.results || []).map((result) => (
+              <li
+                key={result.id}
+                className="rounded-lg border px-3 py-2 text-sm"
+                style={{ borderColor: "var(--border2)", background: "var(--panel)" }}
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="font-semibold" style={{ color: "var(--text)" }}>{result.label}</div>
+                  <TonePill tone={result.severity === "error" ? "red" : result.severity === "warn" ? "amber" : "green"}>
+                    {result.severity === "error" ? "Fehler" : result.severity === "warn" ? "Hinweis" : "OK"}
+                  </TonePill>
+                </div>
+                <div className="mt-1" style={{ color: "var(--muted)" }}>{result.message}</div>
+              </li>
+            ))}
+          </ul>
         </div>
       </Card>
     </div>
@@ -1445,6 +1486,12 @@ export default function App() {
   const [generator, setGenerator] = useState({ results: [], error: null, lastCopiedAt: null });
   const [toast, setToast] = useState(null);
   const toastTimerRef = useRef(null);
+  const modules = useMemo(() => buildModuleRegistry(MODULE_DEFINITIONS), []);
+  const [startupReport, setStartupReport] = useState(() => ({
+    ok: true,
+    results: [],
+    summary: { ok: 0, warn: 0, error: 0 },
+  }));
 
   const showToast = (text) => {
     setToast({ id: makeId(), text });
@@ -1471,6 +1518,35 @@ export default function App() {
   });
 
   useEffect(() => { applyTheme(state.settings.themeId); }, [state.settings.themeId]);
+
+  const runStartupCheck = () => {
+    const report = runStartupChecks({
+      state: stateRef.current,
+      modules,
+      storage: {
+        get: safeLsGet,
+        set: safeLsSet,
+        remove: safeLsRemove,
+      },
+      persistedSnapshot: safeLsGet(LS_KEY),
+    });
+    setStartupReport(report);
+    if (!report.ok) {
+      pushLog("error", "Start-Check Fehler", { summary: report.summary });
+      showToast("Start-Check: Fehler gefunden");
+    } else if (report.summary.warn > 0) {
+      pushLog("diagnose", "Start-Check Hinweise", { summary: report.summary });
+      showToast("Start-Check: Hinweise");
+    } else {
+      pushLog("diagnose", "Start-Check OK", { summary: report.summary });
+    }
+    return report;
+  };
+
+  useEffect(() => {
+    runStartupCheck();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const saveTimerRef = useRef(null);
   useEffect(() => {
@@ -1977,6 +2053,22 @@ export default function App() {
       showToast("Self-Test FAIL");
       return;
     }
+    const brokenModuleReport = runStartupChecks({
+      state,
+      modules: [{ id: "defekt", label: "Defektes Modul", init: "keine-funktion" }],
+      storage: {
+        get: safeLsGet,
+        set: safeLsSet,
+        remove: safeLsRemove,
+      },
+      persistedSnapshot: safeLsGet(LS_KEY),
+    });
+    const brokenModuleError = brokenModuleReport.results.some((r) => r.severity === "error");
+    if (!brokenModuleError) {
+      pushLog("diagnose", "Self-Test Modul-Check FAIL", { report: brokenModuleReport });
+      showToast("Modul-Check FAIL");
+      return;
+    }
     const payload = JSON.stringify({ ...state, exportedAt: nowIso() });
     const parsed = safeJsonParse(payload);
     const v2 = parsed.ok ? validateState(coerceState(parsed.value)) : { ok: false, errors: ["Parse fail"] };
@@ -2150,6 +2242,8 @@ export default function App() {
                 exportProfile={exportProfile}
                 activeProfileName={activeProfileName}
                 onSelfTest={runSelfTest}
+                onStartupCheck={runStartupCheck}
+                startupReport={startupReport}
                 fileRef={fileRef}
               />
             ) : null}
