@@ -30,3 +30,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Build: `npm -C gms-archiv-tool_v1.2.3_2026-01-06 run build`
 - Dev-Start: `npm -C gms-archiv-tool_v1.2.3_2026-01-06 run dev`
 - Diagnose: Start-Check oder Self-Test im UI ausführen.
+Aktuell gibt es keine lauffähigen Skripte. Diese Sektion wird ergänzt, sobald Start- und Testscripte existieren.
+
+Letzte Prüfung (manuell):
+- UI-Textprüfung (Deutsch/Fehlerstil) im Projekt-Übersichtstool.
