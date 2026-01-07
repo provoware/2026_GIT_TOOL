@@ -2,6 +2,10 @@
 *.swp
 *.tmp
 
+# Python
+__pycache__/
+*.pyc
+
 # Logs
 *.log
 

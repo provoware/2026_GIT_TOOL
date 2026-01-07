@@ -5,25 +5,29 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 
 ## Projektstatus
 - Derzeit liegt der Fokus auf Dokumentation und Aufgabenplanung.
-- Start-Routine, Tests und Modul-Standards werden in den nächsten Tasks umgesetzt.
+- Start-Routine, Tests und Modul-Standards werden schrittweise umgesetzt.
+- Start-Check und Modul-Check sind umgesetzt und in der Diagnose sichtbar.
+- Modul-Check wird im Self-Test mit einem defekten Modul automatisch geprüft.
 
-## Struktur (geplant)
+## Struktur (aktuell)
 - `src/`: Systemlogik (stabile Kernlogik).
-- `config/`: Konfiguration (änderbar ohne Code).
-- `data/`: Variable Daten und Laufzeitdateien.
+  - `src/records/record_updater.py`: Logik für Archivierung und Changelog.
+- `config/`: Konfiguration (Config = Einstellungen, änderbar ohne Code).
+  - `config/records.json`: Regeln für Einträge.
 - `scripts/`: Start- und Prüfskripte.
+- `tests/`: Automatische Tests (Unit-Tests).
 
-## Standards (geplant)
-- Einheitliche Modul-Schnittstellen (Init/Exit).
-- Zentrales Datenmodell.
+## Standards (aktuell)
+- Einheitliche To-Do-Validierung (Formatprüfung).
+- Agent-Zuordnung über zentrale Regeldatei (`config/agent_rules.json`).
 - Barrierefreie UI-Texte (Deutsch, klar, laienverständlich).
 - Logging-Format: `Zeit | Modul | LEVEL | Nachricht` (ISO-Zeitstempel).
 - Fehler-Logs sind optisch hervorgehoben (Level `ERROR`).
 
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen.
-- **Formatierung**: Automatische Codeformatierung (einheitlicher Stil).
-- **Prüfungen**: Start-Routine prüft Struktur und Abhängigkeiten.
+- **Formatierung**: Automatische Codeformatierung (einheitlicher Stil, geplant).
+- **Prüfungen**: Start-Routine prüft Struktur und Abhängigkeiten (geplant).
 
 ## Dokumentationsregeln
 - Änderungen werden im `CHANGELOG.md` beschrieben.
