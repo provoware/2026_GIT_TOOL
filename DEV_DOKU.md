@@ -21,40 +21,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Einheitliche To-Do-Validierung (Formatprüfung).
 - Agent-Zuordnung über zentrale Regeldatei (`config/agent_rules.json`).
 - Barrierefreie UI-Texte (Deutsch, klar, laienverständlich).
-- Fehlermeldungen folgen dem Format: Titel + Erklärung + Lösung.
-## Standards (teilweise umgesetzt)
-- Modul-Schnittstelle wird beim Start geprüft (Id, Name, Start-Funktion).
-- Barrierefreie UI-Texte: Deutsch, klar, laienverständlich.
-
-## Fortschritt (Zählregel)
-- Als Task zählt jede Zeile in `todo.txt`, die mit `[ ]` oder `[x]` beginnt.
-- **Erledigt** ist eine Zeile mit `[x]` (Groß/Klein egal).
-- **Offen** ist eine Zeile mit `[ ]`.
-
-## UI-Standards (aktuell umgesetzt)
-- **Farben/Themes**: zentrale Theme-Definition in `gms-archiv-tool_v1.2.3_2026-01-06/src/App.jsx` (THEMES).
-- **Abstände**: feste Skala 4/8/16/24/32 in `gms-archiv-tool_v1.2.3_2026-01-06/src/index.css` (CSS-Variablen).
-- **Kontrast (WCAG)**: Mindestziel 4,5:1 für Fließtext, 3:1 für UI-Elemente; Muted-Farben wurden angehoben.
-
-## Fehlerstandard (aktuell)
-Einheitliches Format für Nutzer-Fehlermeldungen:
-
-```
-Fehler <Code>: <Titel> (<Fachbegriff/Technik).
-Erklärung: <kurz und einfach>.
-Nächster Schritt: <konkrete nächste Aktion>.
-Details: <optional>.
-```
-
-Aktive Fehlertypen:
-- **E1001** Datei fehlt oder ist nicht lesbar (Dateizugriff / file access).
-- **E2001** Modul reagiert nicht wie erwartet (Modulprüfung / module check).
-- **E3001** Selbsttest fehlgeschlagen (Selbsttest / self-test).
-
-## Beispiel-Fehler testen (absichtlich provozieren)
-- **Datei fehlt**: Import/Export öffnen, eine Datei auswählen und diese vorher löschen/verschieben. Erwartung: Fehler E1001 mit nächstem Schritt.
-- **Modul defekt**: Eine Import-Datei öffnen und absichtlich ungültiges JSON einfügen (z. B. eine fehlende Klammer). Erwartung: Fehler E2001.
-- **Test fail**: Daten exportieren, die JSON-Datei manuell beschädigen (z. B. ein Pflichtfeld entfernen), dann Self-Test ausführen. Erwartung: Fehler E3001.
+- Logging-Format: `Zeit | Modul | LEVEL | Nachricht` (ISO-Zeitstempel).
+- Fehler-Logs sind optisch hervorgehoben (Level `ERROR`).
 
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen.
@@ -67,14 +35,16 @@ Aktive Fehlertypen:
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
-### GMS Archiv Tool (Vite)
+### Lokaler Start (GMS Archiv Tool)
 ```bash
 cd gms-archiv-tool_v1.2.3_2026-01-06
 npm install
 npm run dev
 ```
 
-### Self-Test (manuell in der UI)
-1. In der App zu **Import/Export** wechseln.
-2. Button **Self-Test** ausführen.
-3. Erwartung: „Self-Test OK“ inklusive Log-Queue-Prüfung (max. 10 Logs).
+### Build-Check (Produktion)
+```bash
+cd gms-archiv-tool_v1.2.3_2026-01-06
+npm install
+npm run build
+```

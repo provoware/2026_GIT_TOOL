@@ -139,6 +139,16 @@
   font-size: 0.78rem;
   color: var(--text);
 }
+.badge-error{
+  background: var(--danger);
+  border-color: var(--dangerBorder);
+  color: rgba(255,255,255,0.98);
+}
+.badge-warn{
+  background: var(--warn);
+  border-color: var(--warnBorder);
+  color: rgba(255,255,255,0.98);
+}
 
 .toast{
   background: var(--panel2);
