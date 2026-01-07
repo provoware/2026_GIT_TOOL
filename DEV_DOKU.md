@@ -25,6 +25,10 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Barrierefreie UI-Texte: Deutsch, klar, laienverständlich.
 
 ## Qualitätssicherung
+- **Tests**: Automatische Tests für Kernfunktionen.
+- **Formatierung**: Automatische Codeformatierung (einheitlicher Stil).
+- **Prüfungen**: Start-Routine prüft Struktur und Abhängigkeiten.
+- **Self-Test im Tool**: Optionaler Selbsttest nach einer Runde (2 erledigte Aufgaben), aktivierbar in den Einstellungen.
 - **Tests**: Self-Test inkl. Start-Check (Module, Speicher, Basisdaten).
 - **Formatierung**: Vite/Tailwind Standard-Setup.
 - **Prüfungen**: Start-Check meldet Fehler/Hinweise in der Diagnose.
@@ -35,6 +39,18 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
+### Lokales Frontend (GMS Archiv Tool)
+```bash
+cd gms-archiv-tool_v1.2.3_2026-01-06
+npm install
+npm run dev
+```
+
+### Build-Check
+```bash
+cd gms-archiv-tool_v1.2.3_2026-01-06
+npm run build
+```
 - Build: `npm -C gms-archiv-tool_v1.2.3_2026-01-06 run build`
 - Dev-Start: `npm -C gms-archiv-tool_v1.2.3_2026-01-06 run dev`
 - Diagnose: Start-Check oder Self-Test im UI ausführen.
