@@ -58,6 +58,12 @@ type TypeMeta = {
   icon: React.ReactNode;
 };
 
+type UiError = {
+  title: string;
+  explanation: string;
+  solution: string;
+};
+
 const STORAGE_KEY = "provoware.projekt-dashboard.v1";
 const AUTOSAVE_EVERY_MS = 10 * 60 * 1000;
 
@@ -189,8 +195,52 @@ function safeJsonParse<T>(
   try {
     const value = JSON.parse(s);
     return { ok: true, value };
-  } catch (e: any) {
-    return { ok: false, error: e?.message || "Ungültiges JSON" };
+  } catch (_e: any) {
+    return { ok: false, error: "Ungültiges JSON" };
+  }
+}
+
+function formatErrorMessage({ title, explanation, solution }: UiError) {
+  return `Titel: ${title}. Erklärung: ${explanation} Lösung: ${solution}`;
+}
+
+function importErrorFor(reason: string): UiError {
+  const base = {
+    title: "Import nicht möglich",
+    solution: "Bitte eine exportierte JSON-Datei (Datenformat) verwenden und erneut importieren.",
+  };
+
+  switch (reason) {
+    case "Kein Objekt":
+      return {
+        ...base,
+        explanation:
+          "Die Datei enthält kein JSON-Objekt (Datenpaket) für dieses Tool.",
+      };
+    case "Falsche Version":
+      return {
+        ...base,
+        explanation:
+          "Die Datei passt nicht zur erwarteten Version des Tools.",
+      };
+    case "Einträge fehlen":
+      return {
+        ...base,
+        explanation:
+          "In der Datei fehlen die Einträge, die für den Import nötig sind.",
+      };
+    case "Ungültiges JSON":
+      return {
+        ...base,
+        explanation:
+          "Die Datei ist kein gültiges JSON (Datenformat) und kann nicht gelesen werden.",
+      };
+    default:
+      return {
+        ...base,
+        explanation:
+          "Die Datei hat nicht das erwartete Format oder enthält unvollständige Daten.",
+      };
   }
 }
 
@@ -557,11 +607,11 @@ function SidebarNav({
             <div className="space-y-3">
               <SideItem
                 icon={<Home className="h-5 w-5" />}
-                label="Dashboard"
+                label="Übersicht"
                 sub=""
                 active={active === "dashboard"}
                 onClick={() => onActive("dashboard")}
-                ariaLabel="Dashboard"
+                ariaLabel="Übersicht"
               />
               <SideItem
                 icon={<Boxes className="h-5 w-5" />}
@@ -573,11 +623,11 @@ function SidebarNav({
               />
               <SideItem
                 icon={<Puzzle className="h-5 w-5" />}
-                label="Plugins"
+                label="Zusatzmodule"
                 sub=""
                 active={active === "plugins"}
                 onClick={() => onActive("plugins")}
-                ariaLabel="Plugins"
+                ariaLabel="Zusatzmodule"
               />
             </div>
           </div>
@@ -835,14 +885,19 @@ function LeftEntryPanel({
   const [type, setType] = useState<EntryType>("Fund");
   const [comment, setComment] = useState("");
   const [sourceUrl, setSourceUrl] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<UiError | null>(null);
 
   function submit() {
     setError(null);
 
     if (!date || !isYMD(date)) {
-      setError("Bitte ein gültiges Datum wählen.");
-      announce("Fehler: Datum fehlt oder ist ungültig.");
+      const dateError: UiError = {
+        title: "Ungültiges Datum",
+        explanation: "Das Datum fehlt oder hat kein gültiges Format.",
+        solution: "Bitte ein Datum im Format JJJJ-MM-TT auswählen.",
+      };
+      setError(dateError);
+      announce(formatErrorMessage(dateError));
       return;
     }
 
@@ -887,7 +942,9 @@ function LeftEntryPanel({
               role="alert"
               className="rounded-xl border border-rose-400/25 bg-rose-500/10 px-3 py-2 text-sm text-rose-100"
             >
-              {error}
+              <p className="font-semibold">Titel: {error.title}</p>
+              <p>Erklärung: {error.explanation}</p>
+              <p>Lösung: {error.solution}</p>
             </div>
           ) : null}
 
@@ -1169,7 +1226,7 @@ function CenterHeaderArea({
             <p className="text-sm text-white/60">
               {view === "Alle Einträge"
                 ? "Hier erscheinen deine Einträge. Klick auf einen Eintrag, um Details zu sehen."
-                : "Aktive Filter steuern Liste und Timeline."}
+                : "Aktive Filter steuern Liste und Zeitachse."}
             </p>
             <p className="text-xs text-white/45">Tipp: Suche + Typ-Buttons kombinieren.</p>
           </div>
@@ -1213,7 +1270,7 @@ function Timeline({
     "bg-[linear-gradient(90deg,rgba(59,130,246,0.75),rgba(16,185,129,0.75),rgba(245,158,11,0.75),rgba(244,63,94,0.75))]";
 
   return (
-    <GlassCard className="p-0" ariaLabel="Timeline">
+    <GlassCard className="p-0" ariaLabel="Zeitachse">
       <div className="p-4">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
@@ -1581,8 +1638,8 @@ function HelpContent() {
         <h4 className="text-sm font-semibold text-white/90">So nutzt du das Tool</h4>
         <ul className="mt-2 list-disc space-y-1 pl-5 text-white/75">
           <li>Links: neuen Eintrag anlegen. Pflicht ist nur das Datum.</li>
-          <li>Mitte/Rechts: Typ-Filter und Suche. Steuert Liste und Timeline.</li>
-          <li>Unten: Timeline. Klick auf einen Punkt öffnet Details.</li>
+          <li>Mitte/Rechts: Typ-Filter und Suche. Steuert Liste und Zeitachse.</li>
+          <li>Unten: Zeitachse. Klick auf einen Punkt öffnet Details.</li>
           <li>Oben: „Daten“ für Export/Import. Alles wird gespeichert.</li>
         </ul>
       </div>
@@ -1639,7 +1696,7 @@ function DataManager({
     | { ok: false; error: string } {
     if (!candidate || typeof candidate !== "object") return { ok: false, error: "Kein Objekt" };
     if (candidate.v !== 1) return { ok: false, error: "Falsche Version" };
-    if (!Array.isArray(candidate.entries)) return { ok: false, error: "entries fehlt" };
+    if (!Array.isArray(candidate.entries)) return { ok: false, error: "Einträge fehlen" };
 
     const types = new Set(Object.keys(TYPE_META) as EntryType[]);
     const seenIds = new Set<string>();
@@ -1690,12 +1747,14 @@ function DataManager({
   function importNow(text: string) {
     const parsed = safeJsonParse<any>(text);
     if (!parsed.ok) {
-      announce(`Import-Fehler: ${parsed.error}`);
+      const parseError = importErrorFor(parsed.error);
+      announce(formatErrorMessage(parseError));
       return;
     }
     const validated = validateState(parsed.value);
     if (!validated.ok) {
-      announce(`Import-Fehler: ${validated.error}`);
+      const validationError = importErrorFor(validated.error);
+      announce(formatErrorMessage(validationError));
       return;
     }
     onImportState(validated.value);
@@ -1731,12 +1790,12 @@ function DataManager({
             className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
           >
             <Download className="h-4 w-4" aria-hidden />
-            Download
+            Herunterladen
           </button>
         </div>
 
         <div className="mt-3">
-          <TextArea value={exportJson} readOnly rows={8} aria-label="Export JSON" />
+          <TextArea value={exportJson} readOnly rows={8} aria-label="JSON-Export" />
         </div>
       </div>
 
@@ -1786,7 +1845,7 @@ function DataManager({
             onChange={(e) => setImportText(e.target.value)}
             rows={8}
             placeholder="JSON hier einfügen…"
-            aria-label="Import JSON"
+            aria-label="JSON-Import"
           />
         </div>
       </div>
@@ -1808,7 +1867,7 @@ function DataManager({
 }
 
 function assert(cond: any, msg: string) {
-  if (!cond) throw new Error(`Test failed: ${msg}`);
+  if (!cond) throw new Error(`Selbsttest fehlgeschlagen: ${msg}`);
 }
 
 function runSelfTests() {
@@ -1826,6 +1885,24 @@ function runSelfTests() {
   assert(ok.ok && ok.value.a === 1, "safeJsonParse ok");
   const bad = safeJsonParse("{");
   assert(!bad.ok, "safeJsonParse bad");
+  const msgA = formatErrorMessage({
+    title: "Test A",
+    explanation: "Erklärung A.",
+    solution: "Lösung A.",
+  });
+  const msgB = formatErrorMessage({
+    title: "Test B",
+    explanation: "Erklärung B.",
+    solution: "Lösung B.",
+  });
+  assert(
+    ["Titel:", "Erklärung:", "Lösung:"].every((part) => msgA.includes(part)),
+    "error format structure A"
+  );
+  assert(
+    ["Titel:", "Erklärung:", "Lösung:"].every((part) => msgB.includes(part)),
+    "error format structure B"
+  );
   return "ok" as const;
 }
 
@@ -1857,7 +1934,7 @@ export default function ProjektDashboardTool() {
         title: "Fund X entdeckt",
         date: "2024-01-16",
         category: "Notiz",
-        comment: "Erster Marker auf der Timeline.",
+        comment: "Erster Marker auf der Zeitachse.",
         sourceUrl: "",
         type: "Fund",
       },
