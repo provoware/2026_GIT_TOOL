@@ -1,7 +1,7 @@
-Projektbeschreibung: „Projekt-Dashboard Tool“ (Offline, robust, laientauglich, barrierefrei)
+Projektbeschreibung: „Projekt-Übersichtstool“ (Offline, robust, laientauglich, barrierefrei)
 1) Zweck & Kernidee
 
-Dieses Tool ist ein lokales Projekt-Dashboard, das Informationen als Einträge sammelt, filtert, durchsucht und visuell über eine Timeline pro Monat darstellt.
+Dieses Tool ist eine lokale Projektübersicht, die Informationen als Einträge sammelt, filtert, durchsucht und visuell über eine Zeitachse pro Monat darstellt.
 Es ist gedacht als schneller Arbeitsraum für: Funde, Studien, Theorien und Quellen. Alles läuft offline im Browser, ohne Server, ohne Cloud, ohne Telemetrie.
 
 2) Zielgruppe & Nutzungsszenarien
@@ -46,7 +46,7 @@ Titel wird automatisch abgeleitet (aus Kommentar/Kategorie/Typ), falls leer
 
 Lesen/Ansehen:
 
-Klick auf Eintrag in Liste oder Timeline öffnet Detail-Modal
+Klick auf Eintrag in Liste oder Zeitachse öffnet Detail-Modal
 
 Details zeigen Typ, Datum, Kategorie, Kommentar, Quelle als Link
 
@@ -76,9 +76,9 @@ durchsucht normalisiert (klein/trim) folgende Felder:
 
 title, category, comment, sourceUrl, type
 
-3.3 Timeline (Monats-Ansicht)
+3.3 Zeitachse (Monats-Ansicht)
 
-Timeline zeigt Einträge des gewählten Monats
+Zeitachse zeigt Einträge des gewählten Monats
 
 Monat ist navigierbar:
 
@@ -100,7 +100,7 @@ Export ist möglich als:
 
 Kopieren in Zwischenablage
 
-Download als .json
+Herunterladen als .json
 
 Import:
 
@@ -138,7 +138,7 @@ Layout in 3 Ebenen:
 
 Sidebar (links)
 
-Dashboard / Erweiterungen / Plugins (derzeit UI-Stub)
+Übersicht / Erweiterungen / Zusatzmodule (derzeit UI-Stub)
 
 Topbar
 
@@ -164,7 +164,7 @@ Untere Reihe:
 
 Links: Eintragsliste
 
-Rechts: Timeline
+Rechts: Zeitachse
 
 5) Barrierefreiheit (konkret umgesetzt)
 
@@ -211,7 +211,7 @@ Search-Index via useMemo: Map(id → normalisierter Suchstring)
 
 Filterung arbeitet dann auf includes(q) statt Felder jedes Mal neu zu joinen
 
-Timeline rendert nur Monatsdaten (reduziert DOM)
+Zeitachse rendert nur Monatsdaten (reduziert DOM)
 
 LocalStorage Zugriffe über try/catch
 
@@ -238,7 +238,7 @@ Liste zeigt aktuell maximal 10 Treffer (Hinweis wird angezeigt)
 
 Kein Edit-Dialog für Einträge (nur Add/Delete/View)
 
-Sidebar-Punkte „Erweiterungen/Plugins“ sind visuell vorhanden, aber ohne Funktion
+Sidebar-Punkte „Erweiterungen/Zusatzmodule“ sind visuell vorhanden, aber ohne Funktion
 
 10) Geplante Profi-Erweiterungen (logisch nächste Schritte)
 
