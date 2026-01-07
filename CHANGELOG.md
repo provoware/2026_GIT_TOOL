@@ -3,6 +3,14 @@
 ## [0.1.2] – 2026-01-07
 - Verbindliche Standards-Datei ergänzt (Modul-Schnittstelle, Start-Routine, Tests, Barrierefreiheit)
 - Entwickler-Dokumentation auf verbindliche Standards aktualisiert
+- Fehlermeldungen vereinheitlicht: Format mit Titel, Erklärung und Lösung
+- Import- und Datumsfehler laienverständlich formuliert und konsistent angekündigt
+- Selbsttest ergänzt, der die Fehlerstruktur prüft
+- Start-Check ergänzt: prüft Module, lokalen Speicher und Basisdaten mit laienverständlichen Meldungen
+- Modul-Check in Diagnose integriert, inkl. Self-Test für defektes Modul
+- Konfigurations- und Systemlogik in eigene Ordner ausgelagert (Module + Start-Checks)
+- UI-Texte im Projekt-Übersichtstool vereinheitlicht und englische Begriffe ersetzt
+- Fehlermeldungen im Selbsttest auf klaren deutschen Stil umgestellt
 
 ## [0.1.1] – 2026-01-07
 - README überarbeitet: Analyse, Ziele und einfache Anleitung ergänzt
