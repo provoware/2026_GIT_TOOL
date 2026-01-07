@@ -137,7 +137,7 @@ const ITEM_TYPES = [
 const THEMES = [
   {
     id: "nebula",
-    name: "Nebula (Dark)",
+    name: "Nebel (Dunkel)",
     icon: Moon,
     vars: {
       "--bg": "#050812",
@@ -153,7 +153,7 @@ const THEMES = [
 
       "--text": "rgba(248,250,252,0.99)",
       "--muted": "rgba(226,232,240,0.86)",
-      "--muted2": "rgba(226,232,240,0.70)",
+      "--muted2": "rgba(226,232,240,0.78)",
 
       "--inputBg": "rgba(2,6,23,0.96)",
       "--inputBorder": "rgba(148,163,184,0.52)",
@@ -179,7 +179,7 @@ const THEMES = [
   },
   {
     id: "high-contrast",
-    name: "High Contrast",
+    name: "Hoher Kontrast",
     icon: ShieldCheck,
     vars: {
       "--bg": "#000000",
@@ -195,7 +195,7 @@ const THEMES = [
 
       "--text": "rgba(255,255,255,1)",
       "--muted": "rgba(255,255,255,0.92)",
-      "--muted2": "rgba(255,255,255,0.78)",
+      "--muted2": "rgba(255,255,255,0.86)",
 
       "--inputBg": "rgba(0,0,0,0.99)",
       "--inputBorder": "rgba(255,255,255,0.86)",
@@ -221,7 +221,7 @@ const THEMES = [
   },
   {
     id: "midnight",
-    name: "Midnight Blue",
+    name: "Mitternachtsblau",
     icon: Monitor,
     vars: {
       "--bg": "#020617",
@@ -237,7 +237,7 @@ const THEMES = [
 
       "--text": "rgba(248,250,252,0.99)",
       "--muted": "rgba(226,232,240,0.86)",
-      "--muted2": "rgba(226,232,240,0.70)",
+      "--muted2": "rgba(226,232,240,0.78)",
 
       "--inputBg": "rgba(2,6,23,0.96)",
       "--inputBorder": "rgba(148,163,184,0.48)",
@@ -263,7 +263,7 @@ const THEMES = [
   },
   {
     id: "paper",
-    name: "Paper (Light)",
+    name: "Papier (Hell)",
     icon: Sun,
     vars: {
       "--bg": "#f8fafc",
@@ -279,7 +279,7 @@ const THEMES = [
 
       "--text": "rgba(15,23,42,0.98)",
       "--muted": "rgba(15,23,42,0.78)",
-      "--muted2": "rgba(15,23,42,0.62)",
+      "--muted2": "rgba(15,23,42,0.70)",
 
       "--inputBg": "rgba(255,255,255,1)",
       "--inputBorder": "rgba(15,23,42,0.36)",
@@ -2042,11 +2042,11 @@ export default function App() {
         }}
       />
 
-      <div className="relative mx-auto max-w-[1500px] px-4 py-5">
+      <div className="relative mx-auto max-w-[1500px] pad-page">
         <div className="grid grid-cols-[78px_1fr] gap-4">
           <Sidebar nav={nav} setNav={setNav} />
 
-          <main className="space-y-4">
+          <main className="stack-md">
             <Topbar
               globalSearch={globalSearch}
               setGlobalSearch={setGlobalSearch}
