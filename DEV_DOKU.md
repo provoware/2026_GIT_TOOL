@@ -30,3 +30,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 
 ## Bauen/Starten/Testen
 Aktuell gibt es keine lauffähigen Skripte. Diese Sektion wird ergänzt, sobald Start- und Testscripte existieren.
+
+### Manuelle Checks (UI)
+- Tastaturtest: Mit `Tab`/`Shift+Tab` die Reihenfolge prüfen, mit `Enter`/`Leertaste` (Space) Buttons auslösen.
+- Fokusprüfung: Fokus-Ringe müssen klar sichtbar sein (Kontrast sichtbar).
