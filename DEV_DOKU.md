@@ -5,24 +5,33 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 
 ## Projektstatus
 - Derzeit liegt der Fokus auf Dokumentation und Aufgabenplanung.
-- Start-Routine, Tests und Modul-Standards werden in den nächsten Tasks umgesetzt.
+- Start-Routine, Tests und Modul-Standards werden schrittweise umgesetzt.
+- Start-Check und Modul-Check sind umgesetzt und in der Diagnose sichtbar.
+- Modul-Check wird im Self-Test mit einem defekten Modul automatisch geprüft.
 
-## Struktur (geplant)
-- `src/`: Systemlogik (stabile Kernlogik).
-- `config/`: Konfiguration (änderbar ohne Code).
-- `data/`: Variable Daten und Laufzeitdateien.
-- `scripts/`: Start- und Prüfskripte.
+## Struktur (aktuell)
+- `gms-archiv-tool_v1.2.3_2026-01-06/src/system/`: Systemlogik (Start-Checks).
+- `gms-archiv-tool_v1.2.3_2026-01-06/src/config/`: Konfiguration (Modul-Definitionen).
+- `gms-archiv-tool_v1.2.3_2026-01-06/src/`: App-UI und Kernlogik.
 
-## Standards (geplant)
+## Standards (verbindlich)
+- Zentrale Standards sind in `standards.md` beschrieben.
 - Einheitliche Modul-Schnittstellen (Init/Exit).
 - Zentrales Datenmodell.
 - Barrierefreie UI-Texte (Deutsch, klar, laienverständlich).
+- Fehlermeldungen folgen dem Format: Titel + Erklärung + Lösung.
+## Standards (teilweise umgesetzt)
+- Modul-Schnittstelle wird beim Start geprüft (Id, Name, Start-Funktion).
+- Barrierefreie UI-Texte: Deutsch, klar, laienverständlich.
 
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen.
 - **Formatierung**: Automatische Codeformatierung (einheitlicher Stil).
 - **Prüfungen**: Start-Routine prüft Struktur und Abhängigkeiten.
 - **Self-Test im Tool**: Optionaler Selbsttest nach einer Runde (2 erledigte Aufgaben), aktivierbar in den Einstellungen.
+- **Tests**: Self-Test inkl. Start-Check (Module, Speicher, Basisdaten).
+- **Formatierung**: Vite/Tailwind Standard-Setup.
+- **Prüfungen**: Start-Check meldet Fehler/Hinweise in der Diagnose.
 
 ## Dokumentationsregeln
 - Änderungen werden im `CHANGELOG.md` beschrieben.
@@ -42,3 +51,10 @@ npm run dev
 cd gms-archiv-tool_v1.2.3_2026-01-06
 npm run build
 ```
+- Build: `npm -C gms-archiv-tool_v1.2.3_2026-01-06 run build`
+- Dev-Start: `npm -C gms-archiv-tool_v1.2.3_2026-01-06 run dev`
+- Diagnose: Start-Check oder Self-Test im UI ausführen.
+Aktuell gibt es keine lauffähigen Skripte. Diese Sektion wird ergänzt, sobald Start- und Testscripte existieren.
+
+Letzte Prüfung (manuell):
+- UI-Textprüfung (Deutsch/Fehlerstil) im Projekt-Übersichtstool.
