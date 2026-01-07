@@ -38,6 +38,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - **Tests**: Automatische Tests für Kernfunktionen.
 - **Formatierung**: Automatische Codeformatierung (einheitlicher Stil).
 - **Prüfungen**: Start-Routine prüft Struktur und Abhängigkeiten.
+- **Validierung**: Import-Daten werden beim Einlesen geprüft (z. B. Datumsformat).
 - **Self-Test im Tool**: Optionaler Selbsttest nach einer Runde (2 erledigte Aufgaben), aktivierbar in den Einstellungen.
 - **Tests**: Self-Test inkl. Start-Check (Module, Speicher, Basisdaten).
 - **Formatierung**: Vite/Tailwind Standard-Setup.
@@ -79,5 +80,8 @@ npm run build
 - Diagnose: Start-Check oder Self-Test im UI ausführen.
 Aktuell gibt es keine lauffähigen Skripte. Diese Sektion wird ergänzt, sobald Start- und Testscripte existieren.
 
+Manuelle Checks (bis automatisierte Tests vorhanden sind):
+1) Import mit falschem Datumsformat (z. B. `2026/01/07`) → Fehlermeldung erscheint.
+2) Import mit korrektem Format (`JJJJ-MM-TT`) → Import läuft durch.
 Letzte Prüfung (manuell):
 - UI-Textprüfung (Deutsch/Fehlerstil) im Projekt-Übersichtstool.
