@@ -9,7 +9,7 @@
 [x] 2026-01-07 | Launcher | Fehler laienverständlich erklären | prüfen: Fehler provozieren | fertig wenn: klare Meldung erscheint
 
 [x] 2026-01-07 | Steuerung | Einheitliches To-Do-Format erzwingen | prüfen: falsches Format eingeben | fertig wenn: Fehler erkannt wird
-[ ] 2026-01-07 | Steuerung | To-Do logisch zu Agent zuordnen | prüfen: To-Do anlegen | fertig wenn: genau ein Agent entsteht
+[x] 2026-01-07 | Steuerung | To-Do logisch zu Agent zuordnen | prüfen: To-Do anlegen | fertig wenn: genau ein Agent entsteht
 [ ] 2026-01-07 | Steuerung | Fortschritt aus To-Dos berechnen | prüfen: To-Do abhaken | fertig wenn: Prozent korrekt steigt
 
 [x] 2026-01-07 | Tests | Basis-Selftest-Modul integrieren | prüfen: Selftest starten | fertig wenn: grün/rot sichtbar

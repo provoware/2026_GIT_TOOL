@@ -15,19 +15,11 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - `config/`: Konfiguration (Config = Einstellungen, änderbar ohne Code).
   - `config/records.json`: Regeln für Einträge.
 - `scripts/`: Start- und Prüfskripte.
-  - `scripts/update_records.py`: Startet die automatische Archivierung.
+- `tests/`: Automatische Tests (Unit-Tests).
 
-## Regeln für automatische Einträge
-- Ein Eintrag wird erzeugt, wenn eine To-Do-Zeile mit `[x]` markiert ist.
-- Das Datum muss im Format `JJJJ-MM-TT` stehen.
-- Der Bereich und der Titel dürfen nicht leer sein.
-- **DONE.md** erhält den vollständigen Task-Eintrag.
-- **CHANGELOG.md** bekommt einen Eintrag im Abschnitt **[Unreleased]** mit Datum und Inhalt.
-
-## Standards (verbindlich)
-- Zentrale Standards sind in `standards.md` beschrieben.
-- Einheitliche Modul-Schnittstellen (Init/Exit).
-- Zentrales Datenmodell.
+## Standards (aktuell)
+- Einheitliche To-Do-Validierung (Formatprüfung).
+- Agent-Zuordnung über zentrale Regeldatei (`config/agent_rules.json`).
 - Barrierefreie UI-Texte (Deutsch, klar, laienverständlich).
 - Fehlermeldungen folgen dem Format: Titel + Erklärung + Lösung.
 ## Standards (teilweise umgesetzt)
@@ -66,13 +58,8 @@ Aktive Fehlertypen:
 
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen.
-- **Formatierung**: Automatische Codeformatierung (einheitlicher Stil).
-- **Prüfungen**: Start-Routine prüft Struktur und Abhängigkeiten.
-- **Validierung**: Import-Daten werden beim Einlesen geprüft (z. B. Datumsformat).
-- **Self-Test im Tool**: Optionaler Selbsttest nach einer Runde (2 erledigte Aufgaben), aktivierbar in den Einstellungen.
-- **Tests**: Self-Test inkl. Start-Check (Module, Speicher, Basisdaten).
-- **Formatierung**: Vite/Tailwind Standard-Setup.
-- **Prüfungen**: Start-Check meldet Fehler/Hinweise in der Diagnose.
+- **Formatierung**: Automatische Codeformatierung (einheitlicher Stil, geplant).
+- **Prüfungen**: Start-Routine prüft Struktur und Abhängigkeiten (geplant).
 
 ## Dokumentationsregeln
 - Änderungen werden im `CHANGELOG.md` beschrieben.
@@ -80,6 +67,9 @@ Aktive Fehlertypen:
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
-Aktuell nutzbare Befehle (im Ordner `gms-archiv-tool_v1.2.3_2026-01-06`):
-- **Bauen (Build)**: `npm run build`
-- **Starten lokal (Development Server)**: `npm run dev`
+Aktuell gibt es keine zentrale Start-Routine. Vorhanden sind:
+
+- **To-Do-Agent-Zuordnung (CLI)**:
+  - `python scripts/assign_agent.py "[ ] 2026-01-07 | Steuerung | To-Do logisch zu Agent zuordnen | fertig wenn: genau ein Agent entsteht"`
+- **Tests**:
+  - `python -m unittest discover -s tests`
