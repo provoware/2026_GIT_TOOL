@@ -9,15 +9,20 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Start-Check und Modul-Check sind umgesetzt und in der Diagnose sichtbar.
 - Modul-Check wird im Self-Test mit einem defekten Modul automatisch geprüft.
 
-## Struktur (geplant)
-- `system/`: Systemlogik (stabile Kernlogik).
-- `config/`: Konfiguration (änderbar ohne Code).
-- `data/`: Variable Daten und Laufzeitdateien.
-- `tests/`: Automatische Tests.
 ## Struktur (aktuell)
-- `gms-archiv-tool_v1.2.3_2026-01-06/src/system/`: Systemlogik (Start-Checks).
-- `gms-archiv-tool_v1.2.3_2026-01-06/src/config/`: Konfiguration (Modul-Definitionen).
-- `gms-archiv-tool_v1.2.3_2026-01-06/src/`: App-UI und Kernlogik.
+- `src/`: Systemlogik (stabile Kernlogik).
+  - `src/records/record_updater.py`: Logik für Archivierung und Changelog.
+- `config/`: Konfiguration (Config = Einstellungen, änderbar ohne Code).
+  - `config/records.json`: Regeln für Einträge.
+- `scripts/`: Start- und Prüfskripte.
+  - `scripts/update_records.py`: Startet die automatische Archivierung.
+
+## Regeln für automatische Einträge
+- Ein Eintrag wird erzeugt, wenn eine To-Do-Zeile mit `[x]` markiert ist.
+- Das Datum muss im Format `JJJJ-MM-TT` stehen.
+- Der Bereich und der Titel dürfen nicht leer sein.
+- **DONE.md** erhält den vollständigen Task-Eintrag.
+- **CHANGELOG.md** bekommt einen Eintrag im Abschnitt **[Unreleased]** mit Datum und Inhalt.
 
 ## Standards (verbindlich)
 - Zentrale Standards sind in `standards.md` beschrieben.
@@ -50,45 +55,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
-- **Installieren** (Abhängigkeiten (Dependencies) laden):  
-  `cd gms-archiv-tool_v1.2.3_2026-01-06 && npm install`
-- **Starten** (Entwicklungsmodus):  
-  `npm run dev`
-- **Self-Test (UI)**:  
-  Menü „Import/Export“ → Karte „Diagnose“ → „Self-Test starten“ oder „Fehler simulieren“.  
-  Die Startdiagnose läuft automatisch beim Öffnen der App.
-### Start (Fortschritt aktualisieren)
-- `./scripts/start.sh` (berechnet den Fortschritt aus `todo.txt` und aktualisiert `PROGRESS.md`).
+Aktuell gibt es keine Start-Routine für das gesamte Projekt.
 
-### Check (Fortschritt prüfen)
-- `node scripts/progress.js --check` (prüft, ob `PROGRESS.md` zu `todo.txt` passt).
-### To-Do-Manager (CLI)
-- **Fortschritt prüfen**: `python system/todo_manager.py progress`
-- **Archivieren**: `python system/todo_manager.py archive`
-- **Debug-Modus**: `python system/todo_manager.py progress --debug`
-- **Konfiguration**: `config/todo_config.json` (Pfad zu `todo.txt` und Archivdatei)
-
-### Tests
-- `python -m unittest discover -s tests`
-### Lokales Frontend (GMS Archiv Tool)
-```bash
-cd gms-archiv-tool_v1.2.3_2026-01-06
-npm install
-npm run dev
-```
-
-### Build-Check
-```bash
-cd gms-archiv-tool_v1.2.3_2026-01-06
-npm run build
-```
-- Build: `npm -C gms-archiv-tool_v1.2.3_2026-01-06 run build`
-- Dev-Start: `npm -C gms-archiv-tool_v1.2.3_2026-01-06 run dev`
-- Diagnose: Start-Check oder Self-Test im UI ausführen.
-Aktuell gibt es keine lauffähigen Skripte. Diese Sektion wird ergänzt, sobald Start- und Testscripte existieren.
-
-Manuelle Checks (bis automatisierte Tests vorhanden sind):
-1) Import mit falschem Datumsformat (z. B. `2026/01/07`) → Fehlermeldung erscheint.
-2) Import mit korrektem Format (`JJJJ-MM-TT`) → Import läuft durch.
-Letzte Prüfung (manuell):
-- UI-Textprüfung (Deutsch/Fehlerstil) im Projekt-Übersichtstool.
+**Einträge archivieren und Changelog ergänzen**:
+- `python scripts/update_records.py`
+- Optionaler Testlauf (Dry-Run = Probelauf ohne Schreiben): `python scripts/update_records.py --dry-run`
