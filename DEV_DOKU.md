@@ -4,8 +4,8 @@
 Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschreibt Struktur, Standards und den geplanten Ablauf.
 
 ## Projektstatus
-- Derzeit liegt der Fokus auf Dokumentation und Aufgabenplanung.
-- Start-Routine, Tests und Modul-Standards werden in den nächsten Tasks umgesetzt.
+- Der Fokus liegt aktuell auf stabilen Start- und Test-Abläufen.
+- Erste automatische Tests (Tests/automatische Prüfungen) sind eingerichtet.
 
 ## Struktur (geplant)
 - `src/`: Systemlogik (stabile Kernlogik).
@@ -19,9 +19,9 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Barrierefreie UI-Texte (Deutsch, klar, laienverständlich).
 
 ## Qualitätssicherung
-- **Tests**: Automatische Tests für Kernfunktionen.
-- **Formatierung**: Automatische Codeformatierung (einheitlicher Stil).
-- **Prüfungen**: Start-Routine prüft Struktur und Abhängigkeiten.
+- **Tests**: Automatische Tests (Tests/automatische Prüfungen) für Kernfunktionen.
+- **Formatierung**: Einheitlicher Stil durch feste Regeln (Formatierung/einheitliches Layout).
+- **Prüfungen**: Start-Routine prüft Struktur und Daten.
 
 ## Dokumentationsregeln
 - Änderungen werden im `CHANGELOG.md` beschrieben.
@@ -29,4 +29,15 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
-Aktuell gibt es keine lauffähigen Skripte. Diese Sektion wird ergänzt, sobald Start- und Testscripte existieren.
+Alle Befehle bitte im Ordner `gms-archiv-tool_v1.2.3_2026-01-06` ausführen:
+
+1. Abhängigkeiten installieren (Dependencies/benötigte Pakete):
+   - `npm install`
+2. Tests ausführen (Vitest/Test-Runner):
+   - `npm test`
+3. Entwicklungsstart (Dev-Server/Entwicklungsserver):
+   - `npm run dev`
+4. Produktion bauen (Build/Release-Build):
+   - `npm run build`
+5. Vorschau starten (Preview/Vorschau):
+   - `npm run preview`
