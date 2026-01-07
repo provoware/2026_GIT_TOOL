@@ -10,8 +10,8 @@
 
 [ ] 2026-01-07 | Steuerung | Einheitliches To-Do-Format erzwingen | prüfen: falsches Format eingeben | fertig wenn: Fehler erkannt wird
 [ ] 2026-01-07 | Steuerung | To-Do logisch zu Agent zuordnen | prüfen: To-Do anlegen | fertig wenn: genau ein Agent entsteht
-[ ] 2026-01-07 | Steuerung | Fortschritt aus To-Dos berechnen | prüfen: To-Do abhaken | fertig wenn: Prozent korrekt steigt
-[ ] 2026-01-07 | Steuerung | Abgeschlossene To-Dos archivieren | prüfen: To-Do auf [x] setzen | fertig wenn: Eintrag verschoben
+[x] 2026-01-07 | Steuerung | Fortschritt aus To-Dos berechnen | prüfen: To-Do abhaken | fertig wenn: Prozent korrekt steigt
+[x] 2026-01-07 | Steuerung | Abgeschlossene To-Dos archivieren | prüfen: To-Do auf [x] setzen | fertig wenn: Eintrag verschoben
 
 [ ] 2026-01-07 | Tests | Basis-Selftest-Modul integrieren | prüfen: Selftest starten | fertig wenn: grün/rot sichtbar
 [ ] 2026-01-07 | Tests | Startroutine automatisch testen | prüfen: Fehler simulieren | fertig wenn: Fehler erkannt

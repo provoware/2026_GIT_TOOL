@@ -1,6 +1,8 @@
 # Changelog
 
 ## [0.1.2] – 2026-01-07
+- To-Do-Manager ergänzt: Fortschritt berechnen und erledigte Einträge archivieren
+- Konfiguration und Archivpfad ergänzt, Tests für Archivierung/Progress hinzugefügt
 - Automatische Self-Tests nach abgeschlossener Runde ergänzt (inkl. Schalter und Logstart)
 - Loganzeige auf die letzten 10 Ereignisse erweitert
 - Verbindliche Standards-Datei ergänzt (Modul-Schnittstelle, Start-Routine, Tests, Barrierefreiheit)

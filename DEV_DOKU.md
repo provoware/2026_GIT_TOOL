@@ -9,6 +9,11 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Start-Check und Modul-Check sind umgesetzt und in der Diagnose sichtbar.
 - Modul-Check wird im Self-Test mit einem defekten Modul automatisch geprüft.
 
+## Struktur (geplant)
+- `system/`: Systemlogik (stabile Kernlogik).
+- `config/`: Konfiguration (änderbar ohne Code).
+- `data/`: Variable Daten und Laufzeitdateien.
+- `tests/`: Automatische Tests.
 ## Struktur (aktuell)
 - `gms-archiv-tool_v1.2.3_2026-01-06/src/system/`: Systemlogik (Start-Checks).
 - `gms-archiv-tool_v1.2.3_2026-01-06/src/config/`: Konfiguration (Modul-Definitionen).
@@ -39,6 +44,14 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
+### To-Do-Manager (CLI)
+- **Fortschritt prüfen**: `python system/todo_manager.py progress`
+- **Archivieren**: `python system/todo_manager.py archive`
+- **Debug-Modus**: `python system/todo_manager.py progress --debug`
+- **Konfiguration**: `config/todo_config.json` (Pfad zu `todo.txt` und Archivdatei)
+
+### Tests
+- `python -m unittest discover -s tests`
 ### Lokales Frontend (GMS Archiv Tool)
 ```bash
 cd gms-archiv-tool_v1.2.3_2026-01-06

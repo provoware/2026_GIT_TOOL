@@ -3,6 +3,8 @@
 ## 2026-01-07
 - Doku: Entwickler-Dokumentation strukturiert.
 - Doku: Projekt-Anleitung für Laien erstellt.
+- Steuerung: Fortschritt aus To-Dos berechnet.
+- Steuerung: Abgeschlossene To-Dos werden archiviert.
 - Tests: Automatische Tests nach kompletter Runde umgesetzt.
 - Logs: Anzeige der letzten 10 Ereignisse aktiviert.
 - Architektur: Zentrale Tool-Standards definiert.
