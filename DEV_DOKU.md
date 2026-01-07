@@ -13,10 +13,14 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - `data/`: Variable Daten und Laufzeitdateien.
 - `scripts/`: Start- und Prüfskripte.
 
+## Standards (geplant)
+- Einheitliche Modul-Schnittstellen (Init/Exit).
+- Zentrales Datenmodell (`data/schema.json`).
 ## Standards (verbindlich)
 - Siehe `standards.md` für verbindliche Vorgaben.
 - Einheitliche Modul-Schnittstellen (Init/Exit, Run, Shutdown).
 - Barrierefreie UI-Texte (Deutsch, klar, laienverständlich).
+- Verbindliche Regeln in `standards.md`.
 
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen.
