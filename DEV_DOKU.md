@@ -7,21 +7,22 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Derzeit liegt der Fokus auf Dokumentation und Aufgabenplanung.
 - Start-Routine, Tests und Modul-Standards werden in den nächsten Tasks umgesetzt.
 
-## Struktur (geplant)
+## Struktur (aktuell)
 - `src/`: Systemlogik (stabile Kernlogik).
 - `config/`: Konfiguration (änderbar ohne Code).
 - `data/`: Variable Daten und Laufzeitdateien.
 - `scripts/`: Start- und Prüfskripte.
+- `tests/`: Automatische Tests (Unit-Tests).
 
-## Standards (geplant)
-- Einheitliche Modul-Schnittstellen (Init/Exit).
-- Zentrales Datenmodell.
+## Standards (aktuell)
+- Einheitliche To-Do-Validierung (Formatprüfung).
+- Agent-Zuordnung über zentrale Regeldatei (`config/agent_rules.json`).
 - Barrierefreie UI-Texte (Deutsch, klar, laienverständlich).
 
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen.
-- **Formatierung**: Automatische Codeformatierung (einheitlicher Stil).
-- **Prüfungen**: Start-Routine prüft Struktur und Abhängigkeiten.
+- **Formatierung**: Automatische Codeformatierung (einheitlicher Stil, geplant).
+- **Prüfungen**: Start-Routine prüft Struktur und Abhängigkeiten (geplant).
 
 ## Dokumentationsregeln
 - Änderungen werden im `CHANGELOG.md` beschrieben.
@@ -29,4 +30,9 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
-Aktuell gibt es keine lauffähigen Skripte. Diese Sektion wird ergänzt, sobald Start- und Testscripte existieren.
+Aktuell gibt es keine zentrale Start-Routine. Vorhanden sind:
+
+- **To-Do-Agent-Zuordnung (CLI)**:
+  - `python scripts/assign_agent.py "[ ] 2026-01-07 | Steuerung | To-Do logisch zu Agent zuordnen | fertig wenn: genau ein Agent entsteht"`
+- **Tests**:
+  - `python -m unittest discover -s tests`
