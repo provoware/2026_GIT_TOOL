@@ -17,8 +17,8 @@
 [ ] 2026-01-07 | Tests | Startroutine automatisch testen | prüfen: Fehler simulieren | fertig wenn: Fehler erkannt
 [ ] 2026-01-07 | Tests | Tests erst nach kompletter Runde ausführen | prüfen: 3 Tasks erledigt | fertig wenn: Tests dann starten
 
-[ ] 2026-01-07 | Logs | Zentrales Logging einheitlich umsetzen | prüfen: Aktion auslösen | fertig wenn: Logeintrag entsteht
-[ ] 2026-01-07 | Logs | Letzte 10 Ereignisse anzeigen | prüfen: 12 Aktionen | fertig wenn: nur 10 sichtbar
+[x] 2026-01-07 | Logs | Zentrales Logging einheitlich umsetzen | prüfen: Aktion auslösen | fertig wenn: Logeintrag entsteht
+[x] 2026-01-07 | Logs | Letzte 10 Ereignisse anzeigen | prüfen: 12 Aktionen | fertig wenn: nur 10 sichtbar
 [ ] 2026-01-07 | Logs | Log-Export ermöglichen | prüfen: Export klicken | fertig wenn: Datei erzeugt wird
 
 [x] 2026-01-07 | Doku | Entwickler-Dokumentation strukturieren | prüfen: Doku lesen | fertig wenn: Aufbau verständlich

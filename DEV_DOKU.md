@@ -29,4 +29,14 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
-Aktuell gibt es keine lauffähigen Skripte. Diese Sektion wird ergänzt, sobald Start- und Testscripte existieren.
+### GMS Archiv Tool (Vite)
+```bash
+cd gms-archiv-tool_v1.2.3_2026-01-06
+npm install
+npm run dev
+```
+
+### Self-Test (manuell in der UI)
+1. In der App zu **Import/Export** wechseln.
+2. Button **Self-Test** ausführen.
+3. Erwartung: „Self-Test OK“ inklusive Log-Queue-Prüfung (max. 10 Logs).

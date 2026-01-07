@@ -43,6 +43,7 @@ import {
 const APP_VERSION = "1.2.3";
 const LS_KEY = "pppoppi_gms_archiv_v1";
 const DEFAULT_SCALE = 1.0;
+const LOG_QUEUE_LIMIT = 10;
 
 const nowIso = () => new Date().toISOString();
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
@@ -126,6 +127,12 @@ function makeId() {
   const c = typeof globalThis !== "undefined" ? globalThis.crypto : null;
   if (c && typeof c.randomUUID === "function") return c.randomUUID();
   return Math.random().toString(16).slice(2) + "_" + Date.now().toString(16);
+}
+
+function limitLogs(logs, maxLogs) {
+  const max = clamp(Number(maxLogs ?? LOG_QUEUE_LIMIT), 1, LOG_QUEUE_LIMIT);
+  if (!Array.isArray(logs)) return [];
+  return logs.slice(0, max);
 }
 
 const ITEM_TYPES = [
@@ -339,7 +346,7 @@ function makeDefaultState() {
         includeTypes: { genre: true, mood: true, style: true },
       },
       autosaveMinutes: 10,
-      maxLogs: 500,
+      maxLogs: LOG_QUEUE_LIMIT,
     },
     profiles: {
       Standard: {
@@ -392,6 +399,7 @@ function coerceState(maybe) {
   state.settings.generator.perType = { ...fallback.settings.generator.perType, ...(((maybe.settings || {}).generator || {}).perType || {}) };
   state.settings.generator.range = { ...fallback.settings.generator.range, ...(((maybe.settings || {}).generator || {}).range || {}) };
   state.settings.generator.includeTypes = { ...fallback.settings.generator.includeTypes, ...(((maybe.settings || {}).generator || {}).includeTypes || {}) };
+  state.settings.maxLogs = LOG_QUEUE_LIMIT;
 
   state.profiles = { ...(maybe.profiles || fallback.profiles) };
   for (const [p, v] of Object.entries(state.profiles)) {
@@ -403,7 +411,7 @@ function coerceState(maybe) {
     };
   }
 
-  state.logs = Array.isArray(maybe.logs) ? maybe.logs : [];
+  state.logs = limitLogs(Array.isArray(maybe.logs) ? maybe.logs : [], state.settings.maxLogs);
   state.stats = { ...fallback.stats, ...(maybe.stats || {}) };
   state.version = 1;
   state.updatedAt = maybe.updatedAt || nowIso();
@@ -1307,9 +1315,9 @@ function DashboardView({
           </div>
         </Card>
 
-        <Card title="Letzte Logs" icon={Activity}>
+        <Card title={`Letzte ${LOG_QUEUE_LIMIT} Logs`} icon={Activity}>
           <div className="space-y-2">
-            {(state.logs || []).slice(0, 8).map((l) => (
+            {(state.logs || []).slice(0, LOG_QUEUE_LIMIT).map((l) => (
               <div key={l.id} className="rounded-lg border px-3 py-2" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
                 <div className="flex items-center justify-between gap-2">
                   <div className="text-xs" style={{ color: "var(--muted2)" }}>{humanTime(l.at)}</div>
@@ -1455,9 +1463,9 @@ export default function App() {
 
   const pushLog = (type, message, meta = {}) => {
     setState((prev) => {
-      const maxLogs = prev.settings?.maxLogs ?? 500;
+      const maxLogs = prev.settings?.maxLogs ?? LOG_QUEUE_LIMIT;
       const entry = { id: makeId(), at: nowIso(), type, message, meta };
-      const nextLogs = [entry, ...(prev.logs || [])].slice(0, maxLogs);
+      const nextLogs = limitLogs([entry, ...(prev.logs || [])], maxLogs);
       return { ...prev, logs: nextLogs, updatedAt: nowIso() };
     });
   };
@@ -1974,6 +1982,19 @@ export default function App() {
     const v = validateState(state);
     if (!v.ok) {
       pushLog("diagnose", "Self-Test FAIL", { errors: v.errors });
+      showToast("Self-Test FAIL");
+      return;
+    }
+    const demoLogs = Array.from({ length: LOG_QUEUE_LIMIT + 2 }, (_, i) => ({
+      id: `test_${i}`,
+      at: nowIso(),
+      type: "test",
+      message: `Test ${i + 1}`,
+      meta: { index: i + 1 },
+    }));
+    const limitedLogs = limitLogs(demoLogs, LOG_QUEUE_LIMIT);
+    if (limitedLogs.length !== LOG_QUEUE_LIMIT) {
+      pushLog("diagnose", "Self-Test FAIL: Log-Queue", { expected: LOG_QUEUE_LIMIT, got: limitedLogs.length });
       showToast("Self-Test FAIL");
       return;
     }
