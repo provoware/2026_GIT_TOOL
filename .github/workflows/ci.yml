@@ -1,0 +1,20 @@
+name: CI
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Basis-Checks
+        run: |
+          ls -la
+          test -f AGENTS.md || (echo "AGENTS.md fehlt" && exit 1)
+          test -f todo.txt || (echo "todo.txt fehlt" && exit 1)
+
+      - name: Optional: Projekt-spezifische Tests
+        run: |
+          echo "Hier später: npm test / python -m pytest / startcheck.sh"

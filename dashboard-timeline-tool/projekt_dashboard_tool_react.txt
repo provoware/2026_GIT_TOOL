@@ -1,0 +1,257 @@
+Projektbeschreibung: „Projekt-Dashboard Tool“ (Offline, robust, laientauglich, barrierefrei)
+1) Zweck & Kernidee
+
+Dieses Tool ist ein lokales Projekt-Dashboard, das Informationen als Einträge sammelt, filtert, durchsucht und visuell über eine Timeline pro Monat darstellt.
+Es ist gedacht als schneller Arbeitsraum für: Funde, Studien, Theorien und Quellen. Alles läuft offline im Browser, ohne Server, ohne Cloud, ohne Telemetrie.
+
+2) Zielgruppe & Nutzungsszenarien
+
+Zielgruppe: Laien bis Power-User, die schnell strukturieren wollen, ohne „Tool-Wissenschaft“.
+Typische Szenarien:
+
+Recherche-Logbuch (Artikel/Links, Notizen, Status)
+
+Ideen- und Projektjournal (Zeitpunkte, Kategorien, nächste Schritte)
+
+Quellenverwaltung (URL + kurze Zusammenfassung)
+
+Argumentations-/Beweis-Kette (Theorie → Fund → Studie → Quelle)
+
+3) Funktionsumfang im Detail
+3.1 Einträge (CRUD)
+
+Ein Eintrag besteht aus:
+
+id (unique)
+
+title (Titel)
+
+date (YYYY-MM-DD)
+
+category (freie Kategorie)
+
+comment (Notiz/Kommentar)
+
+sourceUrl (Quelle)
+
+type (Fund | Studie | Theorie | Quelle)
+
+Erstellen:
+
+Linkes Panel „Neuer Eintrag“
+
+Pflichtfeld: Datum
+
+Titel wird automatisch abgeleitet (aus Kommentar/Kategorie/Typ), falls leer
+
+Lesen/Ansehen:
+
+Klick auf Eintrag in Liste oder Timeline öffnet Detail-Modal
+
+Details zeigen Typ, Datum, Kategorie, Kommentar, Quelle als Link
+
+Löschen:
+
+In der Liste per Trash-Button
+
+(Bearbeiten ist derzeit nicht als eigener „Edit“-Flow umgesetzt, kann aber geplant werden.)
+
+3.2 Filter & Suche
+
+Typ-Filter (Chips):
+
+Multi-Select: mehrere Typen gleichzeitig
+
+Schutzlogik: es bleibt immer mindestens 1 Typ aktiv (nie „leerfiltern“)
+
+TagMode („Schnell-Tag“):
+
+Optionaler „Single-Mode“, um nur einen Typ zu zeigen
+
+„Alle“ deaktiviert diese Einschränkung
+
+Volltextsuche:
+
+durchsucht normalisiert (klein/trim) folgende Felder:
+
+title, category, comment, sourceUrl, type
+
+3.3 Timeline (Monats-Ansicht)
+
+Timeline zeigt Einträge des gewählten Monats
+
+Monat ist navigierbar:
+
+±1 Monat
+
+±12 Monate
+
+Einträge werden entlang der Linie positioniert nach Tag im Monat (01..31)
+
+Klick auf Marker öffnet Details
+
+3.4 Export / Import / Reset
+
+Export:
+
+JSON wird angezeigt (lesbar, formatiert)
+
+Export ist möglich als:
+
+Kopieren in Zwischenablage
+
+Download als .json
+
+Import:
+
+JSON einfügen oder Datei wählen
+
+Validierung:
+
+Version muss passen (v: 1)
+
+Einträge werden normalisiert
+
+IDs werden dedupliziert
+
+Datum/Typ werden abgesichert
+
+Reset:
+
+Löscht localStorage-Daten und setzt Demo-Daten zurück
+
+3.5 Autosave & Datensicherheit
+
+Speicherung:
+
+LocalStorage Key: provoware.projekt-dashboard.v1
+
+Autosave alle 10 Minuten
+
+Zusätzlich Save bei beforeunload
+
+Fehlerfälle (Quota/Storage blockiert) werden abgefangen und per UI-Message angekündigt (Live-Region)
+
+4) UI-Aufbau (Layout & Module)
+
+Layout in 3 Ebenen:
+
+Sidebar (links)
+
+Dashboard / Erweiterungen / Plugins (derzeit UI-Stub)
+
+Topbar
+
+View-Umschalter
+
+Suche
+
+Status (Speichert / Gespeichert)
+
+Hilfe / Daten (Modal)
+
+Hauptbereich
+
+Grid 3 Spalten:
+
+Links: Eintrag anlegen
+
+Mitte: Filterchips + Hinweise
+
+Rechts: Filterpanel (Typ + TagMode + Suche)
+
+Untere Reihe:
+
+Links: Eintragsliste
+
+Rechts: Timeline
+
+5) Barrierefreiheit (konkret umgesetzt)
+
+Skip-Link („Zum Inhalt springen“)
+
+Focus-Rings auf interaktiven Elementen (focus-visible:ring)
+
+ARIA Labels für Buttons/Navigation
+
+Live-Region für Statusmeldungen (role="status", aria-live="polite")
+
+Modal-Dialog mit:
+
+role="dialog", aria-modal="true"
+
+Fokus-Falle (Tab/Shift-Tab)
+
+Escape schließt Modal
+
+Restore Focus nach Schließen
+
+Gute Tastaturbedienbarkeit (Tab, Enter, Esc)
+
+6) Datenmodell & Versionierung
+
+AppStateV1
+
+{
+  "v": 1,
+  "entries": [],
+  "selectedTypes": ["Fund","Studie","Theorie","Quelle"],
+  "tagMode": "Alle",
+  "monthKey": "YYYY-MM"
+}
+
+
+Version v: 1 ermöglicht spätere Migrationen
+
+Import validiert strikt und repariert „schmutzige“ Daten
+
+7) Performance & Robustheit (für ~1000 Einträge)
+
+Search-Index via useMemo: Map(id → normalisierter Suchstring)
+
+Filterung arbeitet dann auf includes(q) statt Felder jedes Mal neu zu joinen
+
+Timeline rendert nur Monatsdaten (reduziert DOM)
+
+LocalStorage Zugriffe über try/catch
+
+8) Integrierte Selftests
+
+Im Browser verfügbar als:
+
+window.__ProjektDashboardTests()
+
+
+Tests prüfen u.a.:
+
+Datumsformat
+
+monthKey & addMonths
+
+JSON parsing
+
+URL Normalisierung
+
+9) Grenzen (bewusst / aktuell)
+
+Liste zeigt aktuell maximal 10 Treffer (Hinweis wird angezeigt)
+
+Kein Edit-Dialog für Einträge (nur Add/Delete/View)
+
+Sidebar-Punkte „Erweiterungen/Plugins“ sind visuell vorhanden, aber ohne Funktion
+
+10) Geplante Profi-Erweiterungen (logisch nächste Schritte)
+
+Edit-Funktion (Eintrag bearbeiten + Speichern)
+
+Pagination oder „Mehr laden“ (statt harter 10er Grenze)
+
+Favoriten / Sterne + Filter „nur Favoriten“
+
+Statistiken (Counts nach Typ, pro Monat, Trends)
+
+Undo/Trash-System (gelöschte Einträge wiederherstellen)
+
+Export einzelner Monate / Typen
+
+Keyboard-Shortcuts (z.B. Ctrl+K Suche, N Neuer Eintrag)
