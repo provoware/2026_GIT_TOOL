@@ -39,10 +39,14 @@ import {
   CartesianGrid,
   Tooltip as RTooltip,
 } from "recharts";
+import { buildSelfTestReport } from "./selftest";
+import { MODULE_DEFINITIONS } from "./config/modules";
+import { buildModuleRegistry, runStartupChecks } from "./system/startupChecks";
 
 const APP_VERSION = "1.2.3";
 const LS_KEY = "pppoppi_gms_archiv_v1";
 const DEFAULT_SCALE = 1.0;
+const ROUND_TASKS_PER_ROUND = 2;
 
 const nowIso = () => new Date().toISOString();
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
@@ -338,6 +342,9 @@ function makeDefaultState() {
         showTypeLabels: false,
         includeTypes: { genre: true, mood: true, style: true },
       },
+      tests: {
+        runAfterRound: false,
+      },
       autosaveMinutes: 10,
       maxLogs: 500,
     },
@@ -361,6 +368,10 @@ function makeDefaultState() {
       imports: 0,
       lastExportAt: null,
       lastImportAt: null,
+      roundTasksDone: 0,
+      roundsCompleted: 0,
+      lastRoundTaskAt: null,
+      lastAutoTestAt: null,
     },
   };
 }
@@ -392,6 +403,7 @@ function coerceState(maybe) {
   state.settings.generator.perType = { ...fallback.settings.generator.perType, ...(((maybe.settings || {}).generator || {}).perType || {}) };
   state.settings.generator.range = { ...fallback.settings.generator.range, ...(((maybe.settings || {}).generator || {}).range || {}) };
   state.settings.generator.includeTypes = { ...fallback.settings.generator.includeTypes, ...(((maybe.settings || {}).generator || {}).includeTypes || {}) };
+  state.settings.tests = { ...fallback.settings.tests, ...((maybe.settings || {}).tests || {}) };
 
   state.profiles = { ...(maybe.profiles || fallback.profiles) };
   for (const [p, v] of Object.entries(state.profiles)) {
@@ -438,6 +450,15 @@ function validateState(st) {
   }
   if (!st?.settings?.activeProfile || !st?.profiles?.[st.settings.activeProfile]) errors.push("activeProfile fehlt oder existiert nicht.");
   return { ok: errors.length === 0, errors };
+}
+
+function collectAllItems(st) {
+  const rows = [];
+  if (!st?.profiles || typeof st.profiles !== "object") return rows;
+  for (const [pname, p] of Object.entries(st.profiles)) {
+    for (const it of p?.items || []) rows.push({ ...it, profile: pname });
+  }
+  return rows;
 }
 
 function useCtrlWheelZoom(scale, setScale) {
@@ -1086,8 +1107,17 @@ function ImportExport({
   exportProfile,
   activeProfileName,
   onSelfTest,
+  onSelfTestFail,
+  selfTest,
   fileRef,
 }) {
+  const statusTone = selfTest?.ok === true ? "green" : selfTest?.ok === false ? "red" : "slate";
+  const statusLabel = selfTest?.ok === true ? "Status: OK" : selfTest?.ok === false ? "Status: Fehler" : "Status: offen";
+  onStartupCheck,
+  startupReport,
+  fileRef,
+}) {
+  const summary = startupReport?.summary || { ok: 0, warn: 0, error: 0 };
   return (
     <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_1fr]">
       <Card title="Export" icon={Download}>
@@ -1137,16 +1167,79 @@ function ImportExport({
         </div>
       </Card>
 
-      <Card title="Diagnose" icon={ShieldCheck} actions={<Button tone="primary" onClick={onSelfTest}>Self-Test</Button>}>
-        <div className="text-sm" style={{ color: "var(--muted)" }}>
-          Self-Test prüft State + Export-Roundtrip.
+      <Card
+        title="Diagnose"
+        icon={ShieldCheck}
+        actions={(
+          <div className="flex flex-wrap gap-2">
+            <Button tone="primary" onClick={onSelfTest}>Self-Test starten</Button>
+            <Button tone="warn" onClick={onSelfTestFail}>Fehler simulieren</Button>
+          </div>
+        )}
+      >
+        <div className="space-y-3 text-sm">
+          <div className="flex flex-wrap items-center gap-2" role="status" aria-live="polite">
+            <TonePill tone={statusTone}>
+              {statusLabel}
+            </TonePill>
+            <span style={{ color: "var(--muted)" }}>
+              Letzter Lauf: {selfTest?.ranAt ? humanTime(selfTest.ranAt) : "Noch nicht gestartet"}
+            </span>
+          </div>
+          <div className="text-sm" style={{ color: "var(--muted)" }}>
+            {selfTest?.summary || "Self-Test prüft State + Export-Roundtrip."}
+          </div>
+          <ul className="space-y-2">
+            {(selfTest?.results || []).map((item) => (
+              <li key={item.id} className="rounded-lg border px-3 py-2" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
+                <div className="flex flex-wrap items-center gap-2">
+                  <TonePill tone={item.ok ? "green" : "red"}>{item.ok ? "OK" : "Fehler"}</TonePill>
+                  <span className="font-semibold">{item.label}</span>
+                </div>
+                <div className="mt-1 text-xs" style={{ color: "var(--muted)" }}>{item.details}</div>
+                {item.hint ? <div className="mt-1 text-xs" style={{ color: "var(--muted2)" }}>{item.hint}</div> : null}
+          <div className="flex flex-wrap items-center gap-2">
+            <Button tone="secondary" onClick={onStartupCheck}>Start-Check</Button>
+            <Button tone="primary" onClick={onSelfTest}>Self-Test</Button>
+          </div>
+        )}
+      >
+        <div className="space-y-2">
+          <div className="text-sm" style={{ color: "var(--muted)" }}>
+            Start-Check prüft Module, Speicher und Basisdaten. Self-Test prüft State + Export-Roundtrip.
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <TonePill tone={summary.error ? "red" : "green"}>
+              Start-Check: {summary.error ? "Fehler" : "OK"}
+            </TonePill>
+            <TonePill tone="green">OK: {summary.ok}</TonePill>
+            <TonePill tone="amber">Hinweise: {summary.warn}</TonePill>
+            <TonePill tone={summary.error ? "red" : "slate"}>Fehler: {summary.error}</TonePill>
+          </div>
+          <ul className="space-y-2">
+            {(startupReport?.results || []).map((result) => (
+              <li
+                key={result.id}
+                className="rounded-lg border px-3 py-2 text-sm"
+                style={{ borderColor: "var(--border2)", background: "var(--panel)" }}
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="font-semibold" style={{ color: "var(--text)" }}>{result.label}</div>
+                  <TonePill tone={result.severity === "error" ? "red" : result.severity === "warn" ? "amber" : "green"}>
+                    {result.severity === "error" ? "Fehler" : result.severity === "warn" ? "Hinweis" : "OK"}
+                  </TonePill>
+                </div>
+                <div className="mt-1" style={{ color: "var(--muted)" }}>{result.message}</div>
+              </li>
+            ))}
+          </ul>
         </div>
       </Card>
     </div>
   );
 }
 
-function SettingsPanel({ onResetStorage }) {
+function SettingsPanel({ onResetStorage, runTestsAfterRound, setRunTestsAfterRound, roundTasksDone, roundsCompleted }) {
   return (
     <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_1fr]">
       <Card title="UI" icon={Settings}>
@@ -1162,6 +1255,27 @@ function SettingsPanel({ onResetStorage }) {
           <Button tone="danger" onClick={onResetStorage}>
             Reset (LocalStorage)
           </Button>
+        </div>
+      </Card>
+
+      <Card title="Tests" icon={ShieldCheck}>
+        <div className="rounded-lg border p-3 space-y-3" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
+          <div className="text-sm" style={{ color: "var(--muted)" }}>
+            Runde bedeutet {ROUND_TASKS_PER_ROUND} erledigte Aufgaben. Nach einer Runde kann der Self-Test automatisch starten.
+          </div>
+          <label className="flex items-center gap-3 text-sm" style={{ color: "var(--text)" }}>
+            <input
+              type="checkbox"
+              className="h-4 w-4"
+              checked={runTestsAfterRound}
+              onChange={(e) => setRunTestsAfterRound(e.target.checked)}
+              aria-label="Self-Test nach Runde automatisch starten"
+            />
+            Self-Test nach Runde automatisch starten
+          </label>
+          <div className="text-xs" style={{ color: "var(--muted2)" }}>
+            Aktuelle Runde: {roundTasksDone}/{ROUND_TASKS_PER_ROUND} Aufgaben erledigt • Abgeschlossene Runden: {roundsCompleted}
+          </div>
         </div>
       </Card>
     </div>
@@ -1309,7 +1423,7 @@ function DashboardView({
 
         <Card title="Letzte Logs" icon={Activity}>
           <div className="space-y-2">
-            {(state.logs || []).slice(0, 8).map((l) => (
+            {(state.logs || []).slice(0, 10).map((l) => (
               <div key={l.id} className="rounded-lg border px-3 py-2" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
                 <div className="flex items-center justify-between gap-2">
                   <div className="text-xs" style={{ color: "var(--muted2)" }}>{humanTime(l.at)}</div>
@@ -1445,6 +1559,13 @@ export default function App() {
   const [generator, setGenerator] = useState({ results: [], error: null, lastCopiedAt: null });
   const [toast, setToast] = useState(null);
   const toastTimerRef = useRef(null);
+  const [selfTest, setSelfTest] = useState({ ok: null, results: [], summary: "", ranAt: null, auto: false });
+  const modules = useMemo(() => buildModuleRegistry(MODULE_DEFINITIONS), []);
+  const [startupReport, setStartupReport] = useState(() => ({
+    ok: true,
+    results: [],
+    summary: { ok: 0, warn: 0, error: 0 },
+  }));
 
   const showToast = (text) => {
     setToast({ id: makeId(), text });
@@ -1462,6 +1583,31 @@ export default function App() {
     });
   };
 
+  const runSelfTest = ({ simulateFailure = false, auto = false, snapshot } = {}) => {
+    const baseState = snapshot || stateRef.current;
+    const profilesList = Object.keys(baseState?.profiles || {}).sort((a, b) => a.localeCompare(b));
+    const itemsList = collectAllItems(baseState);
+    const storageKey = "__gms_selftest__";
+    const storageAvailable = safeLsSet(storageKey, "1");
+    if (storageAvailable) safeLsRemove(storageKey);
+
+    const report = buildSelfTestReport({
+      state: baseState,
+      profiles: profilesList,
+      allItems: itemsList,
+      storageAvailable,
+      validateState,
+      coerceState,
+      safeJsonParse,
+      nowIso,
+      simulateFailure,
+    });
+
+    setSelfTest({ ...report, auto });
+    pushLog("diagnose", report.ok ? "Self-Test OK" : "Self-Test FAIL", { failed: report.results.filter((r) => !r.ok).length, auto });
+    showToast(report.ok ? (auto ? "Startdiagnose OK" : "Self-Test OK") : (auto ? "Startdiagnose FEHLER" : "Self-Test FEHLER"));
+  };
+
   const scale = state.settings.uiScale ?? DEFAULT_SCALE;
   useCtrlWheelZoom(scale, (updater) => {
     setState((prev) => {
@@ -1471,6 +1617,37 @@ export default function App() {
   });
 
   useEffect(() => { applyTheme(state.settings.themeId); }, [state.settings.themeId]);
+
+  useEffect(() => {
+    runSelfTest({ auto: true, snapshot: stateRef.current });
+  const runStartupCheck = () => {
+    const report = runStartupChecks({
+      state: stateRef.current,
+      modules,
+      storage: {
+        get: safeLsGet,
+        set: safeLsSet,
+        remove: safeLsRemove,
+      },
+      persistedSnapshot: safeLsGet(LS_KEY),
+    });
+    setStartupReport(report);
+    if (!report.ok) {
+      pushLog("error", "Start-Check Fehler", { summary: report.summary });
+      showToast("Start-Check: Fehler gefunden");
+    } else if (report.summary.warn > 0) {
+      pushLog("diagnose", "Start-Check Hinweise", { summary: report.summary });
+      showToast("Start-Check: Hinweise");
+    } else {
+      pushLog("diagnose", "Start-Check OK", { summary: report.summary });
+    }
+    return report;
+  };
+
+  useEffect(() => {
+    runStartupCheck();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const saveTimerRef = useRef(null);
   useEffect(() => {
@@ -1548,6 +1725,32 @@ export default function App() {
     setState((prev) => ({ ...prev, stats: { ...(prev.stats || {}), ...patch }, updatedAt: nowIso() }));
   };
 
+  const recordRoundTask = (taskLabel) => {
+    const label = norm(taskLabel);
+    if (!label) return;
+    let shouldRun = false;
+    setState((prev) => {
+      const stats = prev.stats || {};
+      const current = Number(stats.roundTasksDone || 0);
+      const nextDone = current + 1;
+      const completed = nextDone >= ROUND_TASKS_PER_ROUND;
+      const nextStats = {
+        ...stats,
+        roundTasksDone: completed ? 0 : nextDone,
+        roundsCompleted: Number(stats.roundsCompleted || 0) + (completed ? 1 : 0),
+        lastRoundTaskAt: nowIso(),
+      };
+      if (completed && prev.settings?.tests?.runAfterRound) {
+        shouldRun = true;
+        nextStats.lastAutoTestAt = nowIso();
+      }
+      return { ...prev, stats: nextStats, updatedAt: nowIso() };
+    });
+    if (shouldRun) {
+      runSelfTest({ source: "auto-round", task: label, roundSize: ROUND_TASKS_PER_ROUND });
+    }
+  };
+
   const setActiveProfile = (p) => setState((prev) => ({ ...prev, settings: { ...prev.settings, activeProfile: p }, updatedAt: nowIso() }));
 
   const ensureProfile = (name) => {
@@ -1566,6 +1769,7 @@ export default function App() {
     });
     pushLog("profile", "Profil erstellt", { profile: pname });
     showToast(`Profil „${pname}“ erstellt`);
+    recordRoundTask("Profil erstellt");
   };
 
   const renameProfile = (from, to) => {
@@ -1582,6 +1786,7 @@ export default function App() {
     });
     pushLog("profile", "Profil umbenannt", { from: src, to: dst });
     showToast(`Profil umbenannt: ${src} → ${dst}`);
+    recordRoundTask("Profil umbenannt");
   };
 
   const deleteProfile = (name) => {
@@ -1597,6 +1802,7 @@ export default function App() {
     });
     pushLog("profile", "Profil gelöscht", { profile: pname });
     showToast(`Profil gelöscht: ${pname}`);
+    recordRoundTask("Profil gelöscht");
   };
 
   const addCommaSeparated = (type, raw) => {
@@ -1651,6 +1857,7 @@ export default function App() {
       duplicatesIgnored: Number(state.stats.duplicatesIgnored || 0) + dupes,
     });
     setAddInputs((p) => ({ ...p, [type]: "" }));
+    recordRoundTask(`Eintrag hinzugefügt (${type})`);
   };
 
   const toggleFavorite = (profile, itemId) => {
@@ -1671,6 +1878,7 @@ export default function App() {
       return { ...prev, profiles: { ...prev.profiles, [profile]: { ...p, items: after, updatedAt: nowIso() } }, updatedAt: nowIso() };
     });
     pushLog("delete", "Eintrag gelöscht", { profile, itemId });
+    recordRoundTask("Eintrag gelöscht");
   };
 
   const moveItem = (profile, itemId, dir) => {
@@ -1730,6 +1938,7 @@ export default function App() {
     pushLog("edit", "Eintrag bearbeitet", { profile: editDialog.profile, itemId: editDialog.itemId });
     showToast("Gespeichert");
     setEditDialog({ open: false, itemId: null, profile: null, value: "" });
+    recordRoundTask("Eintrag bearbeitet");
   };
 
   const formatResults = (items) => {
@@ -1902,6 +2111,7 @@ export default function App() {
         pushLog("import", "Gesamt-Import (Ersetzen)", { profiles: Object.keys(incoming.profiles).length });
         setState((prev) => ({ ...prev, stats: { ...prev.stats, imports: Number(prev.stats.imports || 0) + 1, lastImportAt: nowIso() }, updatedAt: nowIso() }));
         showToast("Import: ersetzt");
+        recordRoundTask("Gesamt-Import ersetzt");
         return;
       }
 
@@ -1921,6 +2131,7 @@ export default function App() {
       pushLog("import", "Gesamt-Import (Merge)", { profiles: Object.keys(incoming.profiles).length });
       setState((prev) => ({ ...prev, stats: { ...prev.stats, imports: Number(prev.stats.imports || 0) + 1, lastImportAt: nowIso() }, updatedAt: nowIso() }));
       showToast("Import: gemerged");
+      recordRoundTask("Gesamt-Import gemerged");
       return;
     }
 
@@ -1950,6 +2161,7 @@ export default function App() {
       pushLog("import", "Profil-Import", { profile: pname, mode });
       setState((prev) => ({ ...prev, stats: { ...prev.stats, imports: Number(prev.stats.imports || 0) + 1, lastImportAt: nowIso() }, updatedAt: nowIso() }));
       showToast("Profil importiert");
+      recordRoundTask("Profil importiert");
       return;
     }
 
@@ -1970,11 +2182,31 @@ export default function App() {
     }
   };
 
-  const runSelfTest = () => {
-    const v = validateState(state);
+  const runSelfTest = (context = {}) => {
+    const source = typeof context?.source === "string" ? context.source : "manual";
+    pushLog("diagnose", "Self-Test gestartet", { source, roundSize: context?.roundSize, task: context?.task });
+    const snapshot = stateRef.current || state;
+    const v = validateState(snapshot);
     if (!v.ok) {
       pushLog("diagnose", "Self-Test FAIL", { errors: v.errors });
       showToast("Self-Test FAIL");
+      return;
+    }
+    const payload = JSON.stringify({ ...snapshot, exportedAt: nowIso() });
+    const brokenModuleReport = runStartupChecks({
+      state,
+      modules: [{ id: "defekt", label: "Defektes Modul", init: "keine-funktion" }],
+      storage: {
+        get: safeLsGet,
+        set: safeLsSet,
+        remove: safeLsRemove,
+      },
+      persistedSnapshot: safeLsGet(LS_KEY),
+    });
+    const brokenModuleError = brokenModuleReport.results.some((r) => r.severity === "error");
+    if (!brokenModuleError) {
+      pushLog("diagnose", "Self-Test Modul-Check FAIL", { report: brokenModuleReport });
+      showToast("Modul-Check FAIL");
       return;
     }
     const payload = JSON.stringify({ ...state, exportedAt: nowIso() });
@@ -2007,6 +2239,11 @@ export default function App() {
   const setFavoritesOnly = (v) => setState((prev) => ({ ...prev, settings: { ...prev.settings, favoritesOnly: v }, updatedAt: nowIso() }));
   const setThemeId = (id) => setState((prev) => ({ ...prev, settings: { ...prev.settings, themeId: id }, updatedAt: nowIso() }));
   const setGen = (patch) => setState((prev) => ({ ...prev, settings: { ...prev.settings, generator: { ...prev.settings.generator, ...patch } }, updatedAt: nowIso() }));
+  const setRunTestsAfterRound = (enabled) => {
+    const normalized = Boolean(enabled);
+    setState((prev) => ({ ...prev, settings: { ...prev.settings, tests: { ...prev.settings.tests, runAfterRound: normalized } }, updatedAt: nowIso() }));
+    pushLog("settings", "Auto-Test nach Runde geändert", { enabled: normalized });
+  };
   const resetScale = () => { setState((prev) => ({ ...prev, settings: { ...prev.settings, uiScale: DEFAULT_SCALE }, updatedAt: nowIso() })); pushLog("ui", "Zoom Reset", {}); showToast("Zoom Reset"); };
 
   const onResetStorage = () => {
@@ -2149,12 +2386,22 @@ export default function App() {
                 exportAll={exportAll}
                 exportProfile={exportProfile}
                 activeProfileName={activeProfileName}
-                onSelfTest={runSelfTest}
+                onSelfTest={() => runSelfTest({ simulateFailure: false, auto: false })}
+                onSelfTestFail={() => runSelfTest({ simulateFailure: true, auto: false })}
+                selfTest={selfTest}
                 fileRef={fileRef}
               />
             ) : null}
 
-            {nav === "settings" ? <SettingsPanel onResetStorage={onResetStorage} /> : null}
+            {nav === "settings" ? (
+              <SettingsPanel
+                onResetStorage={onResetStorage}
+                runTestsAfterRound={state.settings.tests?.runAfterRound ?? false}
+                setRunTestsAfterRound={setRunTestsAfterRound}
+                roundTasksDone={state.stats.roundTasksDone ?? 0}
+                roundsCompleted={state.stats.roundsCompleted ?? 0}
+              />
+            ) : null}
           </main>
         </div>
       </div>
