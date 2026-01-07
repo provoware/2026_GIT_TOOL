@@ -22,6 +22,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - **Tests**: Automatische Tests für Kernfunktionen.
 - **Formatierung**: Automatische Codeformatierung (einheitlicher Stil).
 - **Prüfungen**: Start-Routine prüft Struktur und Abhängigkeiten.
+- **Self-Test im Tool**: Optionaler Selbsttest nach einer Runde (2 erledigte Aufgaben), aktivierbar in den Einstellungen.
 
 ## Dokumentationsregeln
 - Änderungen werden im `CHANGELOG.md` beschrieben.
@@ -29,4 +30,15 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
-Aktuell gibt es keine lauffähigen Skripte. Diese Sektion wird ergänzt, sobald Start- und Testscripte existieren.
+### Lokales Frontend (GMS Archiv Tool)
+```bash
+cd gms-archiv-tool_v1.2.3_2026-01-06
+npm install
+npm run dev
+```
+
+### Build-Check
+```bash
+cd gms-archiv-tool_v1.2.3_2026-01-06
+npm run build
+```

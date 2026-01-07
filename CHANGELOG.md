@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.2] – 2026-01-07
+- Automatische Self-Tests nach abgeschlossener Runde ergänzt (inkl. Schalter und Logstart)
+- Loganzeige auf die letzten 10 Ereignisse erweitert
+
 ## [0.1.1] – 2026-01-07
 - README überarbeitet: Analyse, Ziele und einfache Anleitung ergänzt
 - Entwickler-Dokumentation hinzugefügt

@@ -43,6 +43,7 @@ import {
 const APP_VERSION = "1.2.3";
 const LS_KEY = "pppoppi_gms_archiv_v1";
 const DEFAULT_SCALE = 1.0;
+const ROUND_TASKS_PER_ROUND = 2;
 
 const nowIso = () => new Date().toISOString();
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
@@ -338,6 +339,9 @@ function makeDefaultState() {
         showTypeLabels: false,
         includeTypes: { genre: true, mood: true, style: true },
       },
+      tests: {
+        runAfterRound: false,
+      },
       autosaveMinutes: 10,
       maxLogs: 500,
     },
@@ -361,6 +365,10 @@ function makeDefaultState() {
       imports: 0,
       lastExportAt: null,
       lastImportAt: null,
+      roundTasksDone: 0,
+      roundsCompleted: 0,
+      lastRoundTaskAt: null,
+      lastAutoTestAt: null,
     },
   };
 }
@@ -392,6 +400,7 @@ function coerceState(maybe) {
   state.settings.generator.perType = { ...fallback.settings.generator.perType, ...(((maybe.settings || {}).generator || {}).perType || {}) };
   state.settings.generator.range = { ...fallback.settings.generator.range, ...(((maybe.settings || {}).generator || {}).range || {}) };
   state.settings.generator.includeTypes = { ...fallback.settings.generator.includeTypes, ...(((maybe.settings || {}).generator || {}).includeTypes || {}) };
+  state.settings.tests = { ...fallback.settings.tests, ...((maybe.settings || {}).tests || {}) };
 
   state.profiles = { ...(maybe.profiles || fallback.profiles) };
   for (const [p, v] of Object.entries(state.profiles)) {
@@ -1146,7 +1155,7 @@ function ImportExport({
   );
 }
 
-function SettingsPanel({ onResetStorage }) {
+function SettingsPanel({ onResetStorage, runTestsAfterRound, setRunTestsAfterRound, roundTasksDone, roundsCompleted }) {
   return (
     <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_1fr]">
       <Card title="UI" icon={Settings}>
@@ -1162,6 +1171,27 @@ function SettingsPanel({ onResetStorage }) {
           <Button tone="danger" onClick={onResetStorage}>
             Reset (LocalStorage)
           </Button>
+        </div>
+      </Card>
+
+      <Card title="Tests" icon={ShieldCheck}>
+        <div className="rounded-lg border p-3 space-y-3" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
+          <div className="text-sm" style={{ color: "var(--muted)" }}>
+            Runde bedeutet {ROUND_TASKS_PER_ROUND} erledigte Aufgaben. Nach einer Runde kann der Self-Test automatisch starten.
+          </div>
+          <label className="flex items-center gap-3 text-sm" style={{ color: "var(--text)" }}>
+            <input
+              type="checkbox"
+              className="h-4 w-4"
+              checked={runTestsAfterRound}
+              onChange={(e) => setRunTestsAfterRound(e.target.checked)}
+              aria-label="Self-Test nach Runde automatisch starten"
+            />
+            Self-Test nach Runde automatisch starten
+          </label>
+          <div className="text-xs" style={{ color: "var(--muted2)" }}>
+            Aktuelle Runde: {roundTasksDone}/{ROUND_TASKS_PER_ROUND} Aufgaben erledigt • Abgeschlossene Runden: {roundsCompleted}
+          </div>
         </div>
       </Card>
     </div>
@@ -1309,7 +1339,7 @@ function DashboardView({
 
         <Card title="Letzte Logs" icon={Activity}>
           <div className="space-y-2">
-            {(state.logs || []).slice(0, 8).map((l) => (
+            {(state.logs || []).slice(0, 10).map((l) => (
               <div key={l.id} className="rounded-lg border px-3 py-2" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
                 <div className="flex items-center justify-between gap-2">
                   <div className="text-xs" style={{ color: "var(--muted2)" }}>{humanTime(l.at)}</div>
@@ -1548,6 +1578,32 @@ export default function App() {
     setState((prev) => ({ ...prev, stats: { ...(prev.stats || {}), ...patch }, updatedAt: nowIso() }));
   };
 
+  const recordRoundTask = (taskLabel) => {
+    const label = norm(taskLabel);
+    if (!label) return;
+    let shouldRun = false;
+    setState((prev) => {
+      const stats = prev.stats || {};
+      const current = Number(stats.roundTasksDone || 0);
+      const nextDone = current + 1;
+      const completed = nextDone >= ROUND_TASKS_PER_ROUND;
+      const nextStats = {
+        ...stats,
+        roundTasksDone: completed ? 0 : nextDone,
+        roundsCompleted: Number(stats.roundsCompleted || 0) + (completed ? 1 : 0),
+        lastRoundTaskAt: nowIso(),
+      };
+      if (completed && prev.settings?.tests?.runAfterRound) {
+        shouldRun = true;
+        nextStats.lastAutoTestAt = nowIso();
+      }
+      return { ...prev, stats: nextStats, updatedAt: nowIso() };
+    });
+    if (shouldRun) {
+      runSelfTest({ source: "auto-round", task: label, roundSize: ROUND_TASKS_PER_ROUND });
+    }
+  };
+
   const setActiveProfile = (p) => setState((prev) => ({ ...prev, settings: { ...prev.settings, activeProfile: p }, updatedAt: nowIso() }));
 
   const ensureProfile = (name) => {
@@ -1566,6 +1622,7 @@ export default function App() {
     });
     pushLog("profile", "Profil erstellt", { profile: pname });
     showToast(`Profil „${pname}“ erstellt`);
+    recordRoundTask("Profil erstellt");
   };
 
   const renameProfile = (from, to) => {
@@ -1582,6 +1639,7 @@ export default function App() {
     });
     pushLog("profile", "Profil umbenannt", { from: src, to: dst });
     showToast(`Profil umbenannt: ${src} → ${dst}`);
+    recordRoundTask("Profil umbenannt");
   };
 
   const deleteProfile = (name) => {
@@ -1597,6 +1655,7 @@ export default function App() {
     });
     pushLog("profile", "Profil gelöscht", { profile: pname });
     showToast(`Profil gelöscht: ${pname}`);
+    recordRoundTask("Profil gelöscht");
   };
 
   const addCommaSeparated = (type, raw) => {
@@ -1651,6 +1710,7 @@ export default function App() {
       duplicatesIgnored: Number(state.stats.duplicatesIgnored || 0) + dupes,
     });
     setAddInputs((p) => ({ ...p, [type]: "" }));
+    recordRoundTask(`Eintrag hinzugefügt (${type})`);
   };
 
   const toggleFavorite = (profile, itemId) => {
@@ -1671,6 +1731,7 @@ export default function App() {
       return { ...prev, profiles: { ...prev.profiles, [profile]: { ...p, items: after, updatedAt: nowIso() } }, updatedAt: nowIso() };
     });
     pushLog("delete", "Eintrag gelöscht", { profile, itemId });
+    recordRoundTask("Eintrag gelöscht");
   };
 
   const moveItem = (profile, itemId, dir) => {
@@ -1730,6 +1791,7 @@ export default function App() {
     pushLog("edit", "Eintrag bearbeitet", { profile: editDialog.profile, itemId: editDialog.itemId });
     showToast("Gespeichert");
     setEditDialog({ open: false, itemId: null, profile: null, value: "" });
+    recordRoundTask("Eintrag bearbeitet");
   };
 
   const formatResults = (items) => {
@@ -1902,6 +1964,7 @@ export default function App() {
         pushLog("import", "Gesamt-Import (Ersetzen)", { profiles: Object.keys(incoming.profiles).length });
         setState((prev) => ({ ...prev, stats: { ...prev.stats, imports: Number(prev.stats.imports || 0) + 1, lastImportAt: nowIso() }, updatedAt: nowIso() }));
         showToast("Import: ersetzt");
+        recordRoundTask("Gesamt-Import ersetzt");
         return;
       }
 
@@ -1921,6 +1984,7 @@ export default function App() {
       pushLog("import", "Gesamt-Import (Merge)", { profiles: Object.keys(incoming.profiles).length });
       setState((prev) => ({ ...prev, stats: { ...prev.stats, imports: Number(prev.stats.imports || 0) + 1, lastImportAt: nowIso() }, updatedAt: nowIso() }));
       showToast("Import: gemerged");
+      recordRoundTask("Gesamt-Import gemerged");
       return;
     }
 
@@ -1950,6 +2014,7 @@ export default function App() {
       pushLog("import", "Profil-Import", { profile: pname, mode });
       setState((prev) => ({ ...prev, stats: { ...prev.stats, imports: Number(prev.stats.imports || 0) + 1, lastImportAt: nowIso() }, updatedAt: nowIso() }));
       showToast("Profil importiert");
+      recordRoundTask("Profil importiert");
       return;
     }
 
@@ -1970,14 +2035,17 @@ export default function App() {
     }
   };
 
-  const runSelfTest = () => {
-    const v = validateState(state);
+  const runSelfTest = (context = {}) => {
+    const source = typeof context?.source === "string" ? context.source : "manual";
+    pushLog("diagnose", "Self-Test gestartet", { source, roundSize: context?.roundSize, task: context?.task });
+    const snapshot = stateRef.current || state;
+    const v = validateState(snapshot);
     if (!v.ok) {
       pushLog("diagnose", "Self-Test FAIL", { errors: v.errors });
       showToast("Self-Test FAIL");
       return;
     }
-    const payload = JSON.stringify({ ...state, exportedAt: nowIso() });
+    const payload = JSON.stringify({ ...snapshot, exportedAt: nowIso() });
     const parsed = safeJsonParse(payload);
     const v2 = parsed.ok ? validateState(coerceState(parsed.value)) : { ok: false, errors: ["Parse fail"] };
     if (!v2.ok) {
@@ -2007,6 +2075,11 @@ export default function App() {
   const setFavoritesOnly = (v) => setState((prev) => ({ ...prev, settings: { ...prev.settings, favoritesOnly: v }, updatedAt: nowIso() }));
   const setThemeId = (id) => setState((prev) => ({ ...prev, settings: { ...prev.settings, themeId: id }, updatedAt: nowIso() }));
   const setGen = (patch) => setState((prev) => ({ ...prev, settings: { ...prev.settings, generator: { ...prev.settings.generator, ...patch } }, updatedAt: nowIso() }));
+  const setRunTestsAfterRound = (enabled) => {
+    const normalized = Boolean(enabled);
+    setState((prev) => ({ ...prev, settings: { ...prev.settings, tests: { ...prev.settings.tests, runAfterRound: normalized } }, updatedAt: nowIso() }));
+    pushLog("settings", "Auto-Test nach Runde geändert", { enabled: normalized });
+  };
   const resetScale = () => { setState((prev) => ({ ...prev, settings: { ...prev.settings, uiScale: DEFAULT_SCALE }, updatedAt: nowIso() })); pushLog("ui", "Zoom Reset", {}); showToast("Zoom Reset"); };
 
   const onResetStorage = () => {
@@ -2154,7 +2227,15 @@ export default function App() {
               />
             ) : null}
 
-            {nav === "settings" ? <SettingsPanel onResetStorage={onResetStorage} /> : null}
+            {nav === "settings" ? (
+              <SettingsPanel
+                onResetStorage={onResetStorage}
+                runTestsAfterRound={state.settings.tests?.runAfterRound ?? false}
+                setRunTestsAfterRound={setRunTestsAfterRound}
+                roundTasksDone={state.stats.roundTasksDone ?? 0}
+                roundsCompleted={state.stats.roundsCompleted ?? 0}
+              />
+            ) : null}
           </main>
         </div>
       </div>
