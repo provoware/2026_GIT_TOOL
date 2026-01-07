@@ -21,9 +21,9 @@
 [ ] 2026-01-07 | Logs | Log-Export ermöglichen | prüfen: Export klicken | fertig wenn: Datei erzeugt wird
 
 
-[ ] 2026-01-07 | UI | Einheitliche Farben und Abstände definieren | prüfen: zwei Module vergleichen | fertig wenn: konsistentes Erscheinungsbild
+[x] 2026-01-07 | UI | Einheitliche Farben und Abstände definieren | prüfen: zwei Module vergleichen | fertig wenn: konsistentes Erscheinungsbild
 [ ] 2026-01-07 | UI | Tastaturbedienung vollständig prüfen | prüfen: ohne Maus bedienen | fertig wenn: alles erreichbar
-[ ] 2026-01-07 | UI | Kontrast und Lesbarkeit optimieren | prüfen: Darkmode testen | fertig wenn: gut lesbar
+[x] 2026-01-07 | UI | Kontrast und Lesbarkeit optimieren | prüfen: Darkmode testen | fertig wenn: gut lesbar
 
 [ ] 2026-01-07 | Sprache | Alle UI-Texte auf Deutsch prüfen | prüfen: englische Begriffe suchen | fertig wenn: alles deutsch
 [x] 2026-01-07 | Sprache | Alle UI-Texte auf Deutsch prüfen | prüfen: englische Begriffe suchen | fertig wenn: alles deutsch

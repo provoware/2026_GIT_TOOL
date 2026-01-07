@@ -39,6 +39,11 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - **Erledigt** ist eine Zeile mit `[x]` (Groß/Klein egal).
 - **Offen** ist eine Zeile mit `[ ]`.
 
+## UI-Standards (aktuell umgesetzt)
+- **Farben/Themes**: zentrale Theme-Definition in `gms-archiv-tool_v1.2.3_2026-01-06/src/App.jsx` (THEMES).
+- **Abstände**: feste Skala 4/8/16/24/32 in `gms-archiv-tool_v1.2.3_2026-01-06/src/index.css` (CSS-Variablen).
+- **Kontrast (WCAG)**: Mindestziel 4,5:1 für Fließtext, 3:1 für UI-Elemente; Muted-Farben wurden angehoben.
+
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen.
 - **Formatierung**: Automatische Codeformatierung (einheitlicher Stil).
@@ -55,8 +60,6 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
-Aktuell gibt es keine Start-Routine für das gesamte Projekt.
-
-**Einträge archivieren und Changelog ergänzen**:
-- `python scripts/update_records.py`
-- Optionaler Testlauf (Dry-Run = Probelauf ohne Schreiben): `python scripts/update_records.py --dry-run`
+Aktuell gibt es keine zentrale Start-Routine im Repo. Für das UI-Modul:
+- `cd gms-archiv-tool_v1.2.3_2026-01-06`
+- `npm run build` (Build-Check für die UI)

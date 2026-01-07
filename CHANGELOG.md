@@ -1,10 +1,8 @@
 # Changelog
 
-## [Unreleased] – 2026-01-07
-- Automatisch ergänzt: Steuerung: Abgeschlossene To-Dos archivieren
-- Automatisch ergänzt: Doku: Entwickler-Dokumentation strukturieren
-- Automatisch ergänzt: Doku: Projekt-Anleitung für Laien schreiben
-- Automatisch ergänzt: Doku: Changelog automatisch erweitern
+## [0.1.2] – 2026-01-07
+- UI-Design: Farbthemen klar benannt und Kontraste verstärkt
+- UI-Design: Abstands-Skala (4/8/16/24/32) ergänzt und im Layout genutzt
 
 ## [0.1.1] – 2026-01-07
 - README überarbeitet: Analyse, Ziele und einfache Anleitung ergänzt
