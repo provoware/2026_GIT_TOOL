@@ -11,7 +11,6 @@
 [ ] 2026-01-07 | Steuerung | Einheitliches To-Do-Format erzwingen | prüfen: falsches Format eingeben | fertig wenn: Fehler erkannt wird
 [ ] 2026-01-07 | Steuerung | To-Do logisch zu Agent zuordnen | prüfen: To-Do anlegen | fertig wenn: genau ein Agent entsteht
 [ ] 2026-01-07 | Steuerung | Fortschritt aus To-Dos berechnen | prüfen: To-Do abhaken | fertig wenn: Prozent korrekt steigt
-[ ] 2026-01-07 | Steuerung | Abgeschlossene To-Dos archivieren | prüfen: To-Do auf [x] setzen | fertig wenn: Eintrag verschoben
 
 [ ] 2026-01-07 | Tests | Basis-Selftest-Modul integrieren | prüfen: Selftest starten | fertig wenn: grün/rot sichtbar
 [ ] 2026-01-07 | Tests | Startroutine automatisch testen | prüfen: Fehler simulieren | fertig wenn: Fehler erkannt
@@ -21,9 +20,6 @@
 [ ] 2026-01-07 | Logs | Letzte 10 Ereignisse anzeigen | prüfen: 12 Aktionen | fertig wenn: nur 10 sichtbar
 [ ] 2026-01-07 | Logs | Log-Export ermöglichen | prüfen: Export klicken | fertig wenn: Datei erzeugt wird
 
-[x] 2026-01-07 | Doku | Entwickler-Dokumentation strukturieren | prüfen: Doku lesen | fertig wenn: Aufbau verständlich
-[x] 2026-01-07 | Doku | Projekt-Anleitung für Laien schreiben | prüfen: fremde Person liest | fertig wenn: ohne Hilfe nutzbar
-[ ] 2026-01-07 | Doku | Changelog automatisch erweitern | prüfen: Task abschließen | fertig wenn: Eintrag ergänzt
 
 [ ] 2026-01-07 | UI | Einheitliche Farben und Abstände definieren | prüfen: zwei Module vergleichen | fertig wenn: konsistentes Erscheinungsbild
 [ ] 2026-01-07 | UI | Tastaturbedienung vollständig prüfen | prüfen: ohne Maus bedienen | fertig wenn: alles erreichbar

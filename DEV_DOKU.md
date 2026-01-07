@@ -7,11 +7,20 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Derzeit liegt der Fokus auf Dokumentation und Aufgabenplanung.
 - Start-Routine, Tests und Modul-Standards werden in den nächsten Tasks umgesetzt.
 
-## Struktur (geplant)
+## Struktur (aktuell)
 - `src/`: Systemlogik (stabile Kernlogik).
-- `config/`: Konfiguration (änderbar ohne Code).
-- `data/`: Variable Daten und Laufzeitdateien.
+  - `src/records/record_updater.py`: Logik für Archivierung und Changelog.
+- `config/`: Konfiguration (Config = Einstellungen, änderbar ohne Code).
+  - `config/records.json`: Regeln für Einträge.
 - `scripts/`: Start- und Prüfskripte.
+  - `scripts/update_records.py`: Startet die automatische Archivierung.
+
+## Regeln für automatische Einträge
+- Ein Eintrag wird erzeugt, wenn eine To-Do-Zeile mit `[x]` markiert ist.
+- Das Datum muss im Format `JJJJ-MM-TT` stehen.
+- Der Bereich und der Titel dürfen nicht leer sein.
+- **DONE.md** erhält den vollständigen Task-Eintrag.
+- **CHANGELOG.md** bekommt einen Eintrag im Abschnitt **[Unreleased]** mit Datum und Inhalt.
 
 ## Standards (geplant)
 - Einheitliche Modul-Schnittstellen (Init/Exit).
@@ -29,4 +38,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
-Aktuell gibt es keine lauffähigen Skripte. Diese Sektion wird ergänzt, sobald Start- und Testscripte existieren.
+Aktuell gibt es keine Start-Routine für das gesamte Projekt.
+
+**Einträge archivieren und Changelog ergänzen**:
+- `python scripts/update_records.py`
+- Optionaler Testlauf (Dry-Run = Probelauf ohne Schreiben): `python scripts/update_records.py --dry-run`
