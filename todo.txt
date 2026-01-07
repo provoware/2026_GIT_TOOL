@@ -29,6 +29,7 @@
 [ ] 2026-01-07 | UI | Tastaturbedienung vollständig prüfen | prüfen: ohne Maus bedienen | fertig wenn: alles erreichbar
 [ ] 2026-01-07 | UI | Kontrast und Lesbarkeit optimieren | prüfen: Darkmode testen | fertig wenn: gut lesbar
 
+[ ] 2026-01-07 | Sprache | Alle UI-Texte auf Deutsch prüfen | prüfen: englische Begriffe suchen | fertig wenn: alles deutsch
 [x] 2026-01-07 | Sprache | Alle UI-Texte auf Deutsch prüfen | prüfen: englische Begriffe suchen | fertig wenn: alles deutsch
 [x] 2026-01-07 | Sprache | Fehlermeldungen vereinheitlichen | prüfen: zwei Fehler erzeugen | fertig wenn: gleicher Stil
 

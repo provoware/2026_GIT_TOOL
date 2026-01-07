@@ -12,6 +12,11 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - `gms-archiv-tool_v1.2.3_2026-01-06/src/config/`: Konfiguration (Modul-Definitionen).
 - `gms-archiv-tool_v1.2.3_2026-01-06/src/`: App-UI und Kernlogik.
 
+## Standards (geplant)
+- Einheitliche Modul-Schnittstellen (Init/Exit).
+- Zentrales Datenmodell.
+- Barrierefreie UI-Texte (Deutsch, klar, laienverständlich).
+- Fehlermeldungen folgen dem Format: Titel + Erklärung + Lösung.
 ## Standards (teilweise umgesetzt)
 - Modul-Schnittstelle wird beim Start geprüft (Id, Name, Start-Funktion).
 - Barrierefreie UI-Texte: Deutsch, klar, laienverständlich.

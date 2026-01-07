@@ -1,6 +1,9 @@
 # Changelog
 
 ## [0.1.2] – 2026-01-07
+- Fehlermeldungen vereinheitlicht: Format mit Titel, Erklärung und Lösung
+- Import- und Datumsfehler laienverständlich formuliert und konsistent angekündigt
+- Selbsttest ergänzt, der die Fehlerstruktur prüft
 - Start-Check ergänzt: prüft Module, lokalen Speicher und Basisdaten mit laienverständlichen Meldungen
 - Modul-Check in Diagnose integriert, inkl. Self-Test für defektes Modul
 - Konfigurations- und Systemlogik in eigene Ordner ausgelagert (Module + Start-Checks)
