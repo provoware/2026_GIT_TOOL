@@ -5,7 +5,9 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 
 ## Projektstatus
 - Derzeit liegt der Fokus auf Dokumentation und Aufgabenplanung.
-- Start-Routine, Tests und Modul-Standards werden in den nächsten Tasks umgesetzt.
+- Start-Routine, Tests und Modul-Standards werden schrittweise umgesetzt.
+- Start-Check und Modul-Check sind umgesetzt und in der Diagnose sichtbar.
+- Modul-Check wird im Self-Test mit einem defekten Modul automatisch geprüft.
 
 ## Struktur (aktuell)
 - `src/`: Systemlogik (stabile Kernlogik).
@@ -22,15 +24,30 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - **DONE.md** erhält den vollständigen Task-Eintrag.
 - **CHANGELOG.md** bekommt einen Eintrag im Abschnitt **[Unreleased]** mit Datum und Inhalt.
 
-## Standards (geplant)
+## Standards (verbindlich)
+- Zentrale Standards sind in `standards.md` beschrieben.
 - Einheitliche Modul-Schnittstellen (Init/Exit).
 - Zentrales Datenmodell.
 - Barrierefreie UI-Texte (Deutsch, klar, laienverständlich).
+- Fehlermeldungen folgen dem Format: Titel + Erklärung + Lösung.
+## Standards (teilweise umgesetzt)
+- Modul-Schnittstelle wird beim Start geprüft (Id, Name, Start-Funktion).
+- Barrierefreie UI-Texte: Deutsch, klar, laienverständlich.
+
+## Fortschritt (Zählregel)
+- Als Task zählt jede Zeile in `todo.txt`, die mit `[ ]` oder `[x]` beginnt.
+- **Erledigt** ist eine Zeile mit `[x]` (Groß/Klein egal).
+- **Offen** ist eine Zeile mit `[ ]`.
 
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen.
 - **Formatierung**: Automatische Codeformatierung (einheitlicher Stil).
 - **Prüfungen**: Start-Routine prüft Struktur und Abhängigkeiten.
+- **Validierung**: Import-Daten werden beim Einlesen geprüft (z. B. Datumsformat).
+- **Self-Test im Tool**: Optionaler Selbsttest nach einer Runde (2 erledigte Aufgaben), aktivierbar in den Einstellungen.
+- **Tests**: Self-Test inkl. Start-Check (Module, Speicher, Basisdaten).
+- **Formatierung**: Vite/Tailwind Standard-Setup.
+- **Prüfungen**: Start-Check meldet Fehler/Hinweise in der Diagnose.
 
 ## Dokumentationsregeln
 - Änderungen werden im `CHANGELOG.md` beschrieben.

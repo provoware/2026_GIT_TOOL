@@ -1,0 +1,2 @@
+# Archiv für erledigte To-Dos
+# Format: Originalzeile + Zeitstempel (ISO-Format)
