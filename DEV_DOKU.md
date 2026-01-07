@@ -29,6 +29,11 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Modul-Schnittstelle wird beim Start geprüft (Id, Name, Start-Funktion).
 - Barrierefreie UI-Texte: Deutsch, klar, laienverständlich.
 
+## Fortschritt (Zählregel)
+- Als Task zählt jede Zeile in `todo.txt`, die mit `[ ]` oder `[x]` beginnt.
+- **Erledigt** ist eine Zeile mit `[x]` (Groß/Klein egal).
+- **Offen** ist eine Zeile mit `[ ]`.
+
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen.
 - **Formatierung**: Automatische Codeformatierung (einheitlicher Stil).
@@ -44,6 +49,11 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
+### Start (Fortschritt aktualisieren)
+- `./scripts/start.sh` (berechnet den Fortschritt aus `todo.txt` und aktualisiert `PROGRESS.md`).
+
+### Check (Fortschritt prüfen)
+- `node scripts/progress.js --check` (prüft, ob `PROGRESS.md` zu `todo.txt` passt).
 ### To-Do-Manager (CLI)
 - **Fortschritt prüfen**: `python system/todo_manager.py progress`
 - **Archivieren**: `python system/todo_manager.py archive`
