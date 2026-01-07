@@ -17,6 +17,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Einheitliche Modul-Schnittstellen (Init/Exit).
 - Zentrales Datenmodell.
 - Barrierefreie UI-Texte (Deutsch, klar, laienverständlich).
+- Fehlermeldungen folgen dem Format: Titel + Erklärung + Lösung.
 
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen.

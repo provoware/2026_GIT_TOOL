@@ -58,6 +58,12 @@ type TypeMeta = {
   icon: React.ReactNode;
 };
 
+type UiError = {
+  title: string;
+  explanation: string;
+  solution: string;
+};
+
 const STORAGE_KEY = "provoware.projekt-dashboard.v1";
 const AUTOSAVE_EVERY_MS = 10 * 60 * 1000;
 
@@ -189,8 +195,52 @@ function safeJsonParse<T>(
   try {
     const value = JSON.parse(s);
     return { ok: true, value };
-  } catch (e: any) {
-    return { ok: false, error: e?.message || "Ungültiges JSON" };
+  } catch (_e: any) {
+    return { ok: false, error: "Ungültiges JSON" };
+  }
+}
+
+function formatErrorMessage({ title, explanation, solution }: UiError) {
+  return `Titel: ${title}. Erklärung: ${explanation} Lösung: ${solution}`;
+}
+
+function importErrorFor(reason: string): UiError {
+  const base = {
+    title: "Import nicht möglich",
+    solution: "Bitte eine exportierte JSON-Datei (Datenformat) verwenden und erneut importieren.",
+  };
+
+  switch (reason) {
+    case "Kein Objekt":
+      return {
+        ...base,
+        explanation:
+          "Die Datei enthält kein JSON-Objekt (Datenpaket) für dieses Tool.",
+      };
+    case "Falsche Version":
+      return {
+        ...base,
+        explanation:
+          "Die Datei passt nicht zur erwarteten Version des Tools.",
+      };
+    case "Einträge fehlen":
+      return {
+        ...base,
+        explanation:
+          "In der Datei fehlen die Einträge, die für den Import nötig sind.",
+      };
+    case "Ungültiges JSON":
+      return {
+        ...base,
+        explanation:
+          "Die Datei ist kein gültiges JSON (Datenformat) und kann nicht gelesen werden.",
+      };
+    default:
+      return {
+        ...base,
+        explanation:
+          "Die Datei hat nicht das erwartete Format oder enthält unvollständige Daten.",
+      };
   }
 }
 
@@ -835,14 +885,19 @@ function LeftEntryPanel({
   const [type, setType] = useState<EntryType>("Fund");
   const [comment, setComment] = useState("");
   const [sourceUrl, setSourceUrl] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<UiError | null>(null);
 
   function submit() {
     setError(null);
 
     if (!date || !isYMD(date)) {
-      setError("Bitte ein gültiges Datum wählen.");
-      announce("Fehler: Datum fehlt oder ist ungültig.");
+      const dateError: UiError = {
+        title: "Ungültiges Datum",
+        explanation: "Das Datum fehlt oder hat kein gültiges Format.",
+        solution: "Bitte ein Datum im Format JJJJ-MM-TT auswählen.",
+      };
+      setError(dateError);
+      announce(formatErrorMessage(dateError));
       return;
     }
 
@@ -887,7 +942,9 @@ function LeftEntryPanel({
               role="alert"
               className="rounded-xl border border-rose-400/25 bg-rose-500/10 px-3 py-2 text-sm text-rose-100"
             >
-              {error}
+              <p className="font-semibold">Titel: {error.title}</p>
+              <p>Erklärung: {error.explanation}</p>
+              <p>Lösung: {error.solution}</p>
             </div>
           ) : null}
 
@@ -1639,7 +1696,7 @@ function DataManager({
     | { ok: false; error: string } {
     if (!candidate || typeof candidate !== "object") return { ok: false, error: "Kein Objekt" };
     if (candidate.v !== 1) return { ok: false, error: "Falsche Version" };
-    if (!Array.isArray(candidate.entries)) return { ok: false, error: "entries fehlt" };
+    if (!Array.isArray(candidate.entries)) return { ok: false, error: "Einträge fehlen" };
 
     const types = new Set(Object.keys(TYPE_META) as EntryType[]);
     const seenIds = new Set<string>();
@@ -1690,12 +1747,14 @@ function DataManager({
   function importNow(text: string) {
     const parsed = safeJsonParse<any>(text);
     if (!parsed.ok) {
-      announce(`Import-Fehler: ${parsed.error}`);
+      const parseError = importErrorFor(parsed.error);
+      announce(formatErrorMessage(parseError));
       return;
     }
     const validated = validateState(parsed.value);
     if (!validated.ok) {
-      announce(`Import-Fehler: ${validated.error}`);
+      const validationError = importErrorFor(validated.error);
+      announce(formatErrorMessage(validationError));
       return;
     }
     onImportState(validated.value);
@@ -1826,6 +1885,24 @@ function runSelfTests() {
   assert(ok.ok && ok.value.a === 1, "safeJsonParse ok");
   const bad = safeJsonParse("{");
   assert(!bad.ok, "safeJsonParse bad");
+  const msgA = formatErrorMessage({
+    title: "Test A",
+    explanation: "Erklärung A.",
+    solution: "Lösung A.",
+  });
+  const msgB = formatErrorMessage({
+    title: "Test B",
+    explanation: "Erklärung B.",
+    solution: "Lösung B.",
+  });
+  assert(
+    ["Titel:", "Erklärung:", "Lösung:"].every((part) => msgA.includes(part)),
+    "error format structure A"
+  );
+  assert(
+    ["Titel:", "Erklärung:", "Lösung:"].every((part) => msgB.includes(part)),
+    "error format structure B"
+  );
   return "ok" as const;
 }
 
