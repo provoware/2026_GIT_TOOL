@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.2] – 2026-01-07
+- To-Do-Manager ergänzt: Fortschritt berechnen und erledigte Einträge archivieren
+- Konfiguration und Archivpfad ergänzt, Tests für Archivierung/Progress hinzugefügt
+
 ## [0.1.1] – 2026-01-07
 - README überarbeitet: Analyse, Ziele und einfache Anleitung ergänzt
 - Entwickler-Dokumentation hinzugefügt

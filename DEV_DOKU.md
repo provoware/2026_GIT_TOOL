@@ -8,10 +8,10 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Start-Routine, Tests und Modul-Standards werden in den nächsten Tasks umgesetzt.
 
 ## Struktur (geplant)
-- `src/`: Systemlogik (stabile Kernlogik).
+- `system/`: Systemlogik (stabile Kernlogik).
 - `config/`: Konfiguration (änderbar ohne Code).
 - `data/`: Variable Daten und Laufzeitdateien.
-- `scripts/`: Start- und Prüfskripte.
+- `tests/`: Automatische Tests.
 
 ## Standards (geplant)
 - Einheitliche Modul-Schnittstellen (Init/Exit).
@@ -29,4 +29,11 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
-Aktuell gibt es keine lauffähigen Skripte. Diese Sektion wird ergänzt, sobald Start- und Testscripte existieren.
+### To-Do-Manager (CLI)
+- **Fortschritt prüfen**: `python system/todo_manager.py progress`
+- **Archivieren**: `python system/todo_manager.py archive`
+- **Debug-Modus**: `python system/todo_manager.py progress --debug`
+- **Konfiguration**: `config/todo_config.json` (Pfad zu `todo.txt` und Archivdatei)
+
+### Tests
+- `python -m unittest discover -s tests`
