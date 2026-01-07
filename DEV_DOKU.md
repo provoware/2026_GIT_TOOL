@@ -30,3 +30,6 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 
 ## Bauen/Starten/Testen
 Aktuell gibt es keine lauffähigen Skripte. Diese Sektion wird ergänzt, sobald Start- und Testscripte existieren.
+
+Letzte Prüfung (manuell):
+- UI-Textprüfung (Deutsch/Fehlerstil) im Projekt-Übersichtstool.
