@@ -21,8 +21,8 @@
 [ ] 2026-01-07 | Logs | Letzte 10 Ereignisse anzeigen | prüfen: 12 Aktionen | fertig wenn: nur 10 sichtbar
 [ ] 2026-01-07 | Logs | Log-Export ermöglichen | prüfen: Export klicken | fertig wenn: Datei erzeugt wird
 
-[ ] 2026-01-07 | Doku | Entwickler-Dokumentation strukturieren | prüfen: Doku lesen | fertig wenn: Aufbau verständlich
-[ ] 2026-01-07 | Doku | Projekt-Anleitung für Laien schreiben | prüfen: fremde Person liest | fertig wenn: ohne Hilfe nutzbar
+[x] 2026-01-07 | Doku | Entwickler-Dokumentation strukturieren | prüfen: Doku lesen | fertig wenn: Aufbau verständlich
+[x] 2026-01-07 | Doku | Projekt-Anleitung für Laien schreiben | prüfen: fremde Person liest | fertig wenn: ohne Hilfe nutzbar
 [ ] 2026-01-07 | Doku | Changelog automatisch erweitern | prüfen: Task abschließen | fertig wenn: Eintrag ergänzt
 
 [ ] 2026-01-07 | UI | Einheitliche Farben und Abstände definieren | prüfen: zwei Module vergleichen | fertig wenn: konsistentes Erscheinungsbild
