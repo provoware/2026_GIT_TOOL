@@ -15,8 +15,9 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 
 ## Standards (geplant)
 - Einheitliche Modul-Schnittstellen (Init/Exit).
-- Zentrales Datenmodell.
+- Zentrales Datenmodell (`data/schema.json`).
 - Barrierefreie UI-Texte (Deutsch, klar, laienverständlich).
+- Verbindliche Regeln in `standards.md`.
 
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen.
