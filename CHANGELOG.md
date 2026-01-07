@@ -1,6 +1,9 @@
 # Changelog
 
 ## [0.1.2] – 2026-01-07
+- Startroutine mit Fortschrittsanzeige ergänzt (inkl. Prüfung von Speicher und Datenmodell)
+- Fehlerfall erklärt und sichtbar gestoppt
+- Dokumentation zu Start/Tests aktualisiert
 - Selftest- und Startlogik in ein eigenes State-Modul ausgelagert
 - Automatische Tests für Startroutine und Validierung ergänzt
 - Testlauf per `npm test` dokumentiert

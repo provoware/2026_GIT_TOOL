@@ -7,6 +7,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Der Fokus liegt aktuell auf stabilen Start- und Test-Abläufen.
 - Erste automatische Tests (Tests/automatische Prüfungen) sind eingerichtet.
 - Derzeit liegt der Fokus auf Dokumentation und Aufgabenplanung.
+- Die Startroutine prüft beim Start Browser, Speicher und Datenmodell mit Fortschrittsanzeige.
+- Weitere Tests und Modul-Standards folgen in den nächsten Tasks.
 - Start-Routine und Tests werden in den nächsten Tasks umgesetzt.
 
 ## Struktur (geplant)
@@ -36,6 +38,13 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
+### Start (lokal)
+1. In das Projekt wechseln: `cd gms-archiv-tool_v1.2.3_2026-01-06`
+2. Starten: `npm run dev`
+
+### Build (lokal)
+1. In das Projekt wechseln: `cd gms-archiv-tool_v1.2.3_2026-01-06`
+2. Build ausführen: `npm run build`
 Alle Befehle bitte im Ordner `gms-archiv-tool_v1.2.3_2026-01-06` ausführen:
 
 1. Abhängigkeiten installieren (Dependencies/benötigte Pakete):
