@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0.0",
+  "objects": {
+    "task": {
+      "id": "task-001",
+      "status": "offen",
+      "zeit": "2026-01-07T12:00:00Z",
+      "quelle": "user",
+      "titel": "Standards festlegen",
+      "beschreibung": "Gemeinsames Schema dokumentieren",
+      "prioritaet": "mittel"
+    },
+    "log": {
+      "id": "log-001",
+      "status": "info",
+      "zeit": "2026-01-07T12:00:00Z",
+      "quelle": "system",
+      "level": "info",
+      "nachricht": "Start erfolgreich",
+      "kontext": {
+        "modul": "launcher"
+      }
+    },
+    "module": {
+      "id": "module-launcher",
+      "status": "aktiv",
+      "zeit": "2026-01-07T12:00:00Z",
+      "quelle": "system",
+      "name": "Launcher",
+      "version": "1.0.0",
+      "status_detail": "Bereit"
+    }
+  }
+}

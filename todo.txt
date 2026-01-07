@@ -1,20 +1,25 @@
+[x] 2026-01-07 | Setup | Repo-Basis steht | fertig wenn: Push erfolgreich
 [ ] 2026-01-07 | Setup | Repo-Basis steht | fertig wenn: Push erfolgreich
-[ ] 2026-01-07 | Architektur | Zentrale Tool-Standards definieren | prüfen: standards.md öffnen | fertig wenn: eine verbindliche Standards-Datei existiert
+[x] 2026-01-07 | Architektur | Zentrale Tool-Standards definieren | prüfen: standards.md öffnen | fertig wenn: eine verbindliche Standards-Datei existiert
 [ ] 2026-01-07 | Architektur | Einheitliche Modul-Schnittstelle festlegen | prüfen: zwei Module vergleichen | fertig wenn: gleiche Init-/Exit-Struktur
+[x] 2026-01-07 | Architektur | Zentrales Datenmodell festlegen | prüfen: Module greifen darauf zu | fertig wenn: ein gemeinsames Schema genutzt wird
+[x] 2026-01-07 | Architektur | Einheitliche Modul-Schnittstelle festlegen | prüfen: zwei Module vergleichen | fertig wenn: gleiche Init-/Exit-Struktur
 [ ] 2026-01-07 | Architektur | Zentrales Datenmodell festlegen | prüfen: Module greifen darauf zu | fertig wenn: ein gemeinsames Schema genutzt wird
 
 [ ] 2026-01-07 | Launcher | Launcher zeigt alle Tools übersichtlich | prüfen: Start öffnen | fertig wenn: alle Module klickbar erreichbar
-[ ] 2026-01-07 | Launcher | Startroutine prüft Projektstruktur | prüfen: Ordner löschen, starten | fertig wenn: Struktur automatisch neu erstellt
+[x] 2026-01-07 | Launcher | Startroutine prüft Projektstruktur | prüfen: Ordner löschen, starten | fertig wenn: Struktur automatisch neu erstellt
 [ ] 2026-01-07 | Launcher | Fortschrittsanzeige beim Start einbauen | prüfen: Start beobachten | fertig wenn: Prozent sichtbar
-[ ] 2026-01-07 | Launcher | Fehler laienverständlich erklären | prüfen: Fehler provozieren | fertig wenn: klare Meldung erscheint
+[ ] 2026-01-07 | Launcher | Startroutine prüft Projektstruktur | prüfen: Ordner löschen, starten | fertig wenn: Struktur automatisch neu erstellt
+[x] 2026-01-07 | Launcher | Fortschrittsanzeige beim Start einbauen | prüfen: Start beobachten | fertig wenn: Prozent sichtbar
+[x] 2026-01-07 | Launcher | Fehler laienverständlich erklären | prüfen: Fehler provozieren | fertig wenn: klare Meldung erscheint
 
 [ ] 2026-01-07 | Steuerung | Einheitliches To-Do-Format erzwingen | prüfen: falsches Format eingeben | fertig wenn: Fehler erkannt wird
 [ ] 2026-01-07 | Steuerung | To-Do logisch zu Agent zuordnen | prüfen: To-Do anlegen | fertig wenn: genau ein Agent entsteht
 [ ] 2026-01-07 | Steuerung | Fortschritt aus To-Dos berechnen | prüfen: To-Do abhaken | fertig wenn: Prozent korrekt steigt
 [ ] 2026-01-07 | Steuerung | Abgeschlossene To-Dos archivieren | prüfen: To-Do auf [x] setzen | fertig wenn: Eintrag verschoben
 
-[ ] 2026-01-07 | Tests | Basis-Selftest-Modul integrieren | prüfen: Selftest starten | fertig wenn: grün/rot sichtbar
-[ ] 2026-01-07 | Tests | Startroutine automatisch testen | prüfen: Fehler simulieren | fertig wenn: Fehler erkannt
+[x] 2026-01-07 | Tests | Basis-Selftest-Modul integrieren | prüfen: Selftest starten | fertig wenn: grün/rot sichtbar
+[x] 2026-01-07 | Tests | Startroutine automatisch testen | prüfen: Fehler simulieren | fertig wenn: Fehler erkannt
 [ ] 2026-01-07 | Tests | Tests erst nach kompletter Runde ausführen | prüfen: 3 Tasks erledigt | fertig wenn: Tests dann starten
 
 [ ] 2026-01-07 | Logs | Zentrales Logging einheitlich umsetzen | prüfen: Aktion auslösen | fertig wenn: Logeintrag entsteht
@@ -34,5 +39,3 @@
 
 [ ] 2026-01-07 | Module | Neues Modul nach Standards integrieren | prüfen: Modul hinzufügen | fertig wenn: ohne Sonderlogik
 [ ] 2026-01-07 | Module | Modul-Check beim Start durchführen | prüfen: defektes Modul | fertig wenn: sauber abgefangen
-[ ] 2026-01-07 | Architektur | Zentrale Tool-Standards definieren | prüfen: standards.md öffnen | fertig wenn: Standards-Datei existiert
-[ ] 2026-01-07 | Architektur | Einheitliche Modul-Schnittstelle festlegen | prüfen: zwei Module vergleichen | fertig wenn: gleiche Init-/Exit-Struktur

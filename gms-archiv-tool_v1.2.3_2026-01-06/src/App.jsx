@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Activity,
   ArrowDown,
@@ -39,6 +39,7 @@ import {
   CartesianGrid,
   Tooltip as RTooltip,
 } from "recharts";
+import { runStartupSequence } from "./startup/runStartupSequence";
 
 const APP_VERSION = "1.2.3";
 const LS_KEY = "pppoppi_gms_archiv_v1";
@@ -46,8 +47,13 @@ const DEFAULT_SCALE = 1.0;
 
 const nowIso = () => new Date().toISOString();
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+const formatPercent = (value) => {
+  if (!Number.isFinite(value)) return 0;
+  return clamp(Math.round(value), 0, 100);
+};
 const norm = (s) => (s ?? "").trim().replace(/\s+/g, " ");
 const normKey = (s) => norm(s).toLowerCase();
+const waitMs = (ms) => new Promise((resolve) => window.setTimeout(resolve, clamp(Number(ms) || 0, 0, 2000)));
 
 function safeJsonParse(text) {
   try {
@@ -56,6 +62,23 @@ function safeJsonParse(text) {
     return { ok: false, error: e };
   }
 }
+import {
+  DEFAULT_SCALE,
+  clamp,
+  coerceState,
+  initStateFromStorage,
+  makeDefaultState,
+  makeId,
+  norm,
+  normKey,
+  nowIso,
+  normalizeItem,
+  safeJsonParse,
+  validateState,
+} from "./lib/state";
+
+const APP_VERSION = "1.2.3";
+const LS_KEY = "pppoppi_gms_archiv_v1";
 
 function safeLsGet(key) {
   try {
@@ -126,12 +149,6 @@ function humanTime(iso) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "–";
   return d.toLocaleString();
-}
-
-function makeId() {
-  const c = typeof globalThis !== "undefined" ? globalThis.crypto : null;
-  if (c && typeof c.randomUUID === "function") return c.randomUUID();
-  return Math.random().toString(16).slice(2) + "_" + Date.now().toString(16);
 }
 
 const ITEM_TYPES = [
@@ -325,126 +342,15 @@ function applyScale(scale) {
   root.style.fontSize = `${px}px`;
 }
 
-function makeDefaultState() {
-  const createdAt = nowIso();
-  return {
-    version: 1,
-    updatedAt: createdAt,
-    settings: {
-      activeProfile: "Standard",
-      favoritesOnly: false,
-      themeId: "nebula",
-      uiScale: DEFAULT_SCALE,
-      generator: {
-        mode: "mix",
-        count: 12,
-        perType: { genre: 6, mood: 4, style: 6 },
-        range: { min: 8, max: 24 },
-        delimiter: ", ",
-        showTypeLabels: false,
-        includeTypes: { genre: true, mood: true, style: true },
-      },
-      autosaveMinutes: 10,
-      maxLogs: 500,
-    },
-    profiles: {
-      Standard: {
-        createdAt,
-        updatedAt: createdAt,
-        items: [],
-      },
-    },
-    logs: [],
-    stats: {
-      generatorRuns: 0,
-      lastRunAt: null,
-      lastRunMode: null,
-      lastRunCount: 0,
-      totalGeneratedTokens: 0,
-      duplicatesIgnored: 0,
-      itemsAdded: 0,
-      exports: 0,
-      imports: 0,
-      lastExportAt: null,
-      lastImportAt: null,
-    },
-  };
-}
-
-function normalizeItem(raw, fallbackType = "genre") {
-  const type = ["genre", "mood", "style"].includes(raw?.type) ? raw.type : fallbackType;
-  const value = norm(raw?.value ?? raw?.key ?? "");
-  const key = normKey(raw?.key ? raw.key : value);
-  const createdAt = typeof raw?.createdAt === "string" && raw.createdAt ? raw.createdAt : nowIso();
-  const updatedAt = typeof raw?.updatedAt === "string" && raw.updatedAt ? raw.updatedAt : createdAt;
-  return {
-    id: typeof raw?.id === "string" && raw.id ? raw.id : makeId(),
-    type,
-    value,
-    key,
-    favorite: !!raw?.favorite,
-    createdAt,
-    updatedAt,
-  };
-}
-
-function coerceState(maybe) {
-  const fallback = makeDefaultState();
-  if (!maybe || typeof maybe !== "object") return fallback;
-
-  const state = { ...fallback, ...maybe };
-  state.settings = { ...fallback.settings, ...(maybe.settings || {}) };
-  state.settings.generator = { ...fallback.settings.generator, ...((maybe.settings || {}).generator || {}) };
-  state.settings.generator.perType = { ...fallback.settings.generator.perType, ...(((maybe.settings || {}).generator || {}).perType || {}) };
-  state.settings.generator.range = { ...fallback.settings.generator.range, ...(((maybe.settings || {}).generator || {}).range || {}) };
-  state.settings.generator.includeTypes = { ...fallback.settings.generator.includeTypes, ...(((maybe.settings || {}).generator || {}).includeTypes || {}) };
-
-  state.profiles = { ...(maybe.profiles || fallback.profiles) };
-  for (const [p, v] of Object.entries(state.profiles)) {
-    const items = Array.isArray(v?.items) ? v.items : [];
-    state.profiles[p] = {
-      createdAt: v?.createdAt || state.updatedAt || nowIso(),
-      updatedAt: v?.updatedAt || state.updatedAt || nowIso(),
-      items: items.map((it) => normalizeItem(it, it?.type)).filter((it) => it.key && it.value),
-    };
+function ensureTheme(state) {
+  if (!state?.settings) return state;
+  if (!THEMES.some((t) => t.id === state.settings.themeId)) {
+    return { ...state, settings: { ...state.settings, themeId: "nebula" } };
   }
-
-  state.logs = Array.isArray(maybe.logs) ? maybe.logs : [];
-  state.stats = { ...fallback.stats, ...(maybe.stats || {}) };
-  state.version = 1;
-  state.updatedAt = maybe.updatedAt || nowIso();
-
-  if (!state.settings.activeProfile || !state.profiles?.[state.settings.activeProfile]) {
-    const p = Object.keys(state.profiles || {}).sort((a, b) => a.localeCompare(b))[0];
-    state.settings.activeProfile = p || "Standard";
-  }
-  if (!THEMES.some((t) => t.id === state.settings.themeId)) state.settings.themeId = "nebula";
-  if (typeof state.settings.uiScale !== "number") state.settings.uiScale = DEFAULT_SCALE;
-
   return state;
 }
 
-function validateState(st) {
-  const errors = [];
-  if (!st || typeof st !== "object") errors.push("State ist kein Objekt.");
-  if (!st?.profiles || typeof st.profiles !== "object") errors.push("profiles fehlt oder ist ungültig.");
-  if (!st?.settings || typeof st.settings !== "object") errors.push("settings fehlt oder ist ungültig.");
-  if (st?.profiles) {
-    for (const [pname, p] of Object.entries(st.profiles)) {
-      if (!p || typeof p !== "object") errors.push(`Profil ${pname} ist ungültig.`);
-      if (!Array.isArray(p?.items)) errors.push(`Profil ${pname}.items ist nicht Array.`);
-      if (Array.isArray(p?.items)) {
-        for (const it of p.items) {
-          if (!it?.id) errors.push(`Profil ${pname}: item ohne id`);
-          if (!["genre", "mood", "style"].includes(it?.type)) errors.push(`Profil ${pname}: item mit ungültigem type`);
-          if (!it?.value || !it?.key) errors.push(`Profil ${pname}: item mit leerem value/key`);
-        }
-      }
-    }
-  }
-  if (!st?.settings?.activeProfile || !st?.profiles?.[st.settings.activeProfile]) errors.push("activeProfile fehlt oder existiert nicht.");
-  return { ok: errors.length === 0, errors };
-}
+const coerceStateWithTheme = (maybe) => ensureTheme(coerceState(maybe));
 
 function useCtrlWheelZoom(scale, setScale) {
   useEffect(() => {
@@ -514,6 +420,72 @@ function Button({ children, onClick, disabled, tone = "secondary", className = "
     <button type="button" className={`${toneClass} px-3 py-2 text-sm font-medium ${className}`} onClick={onClick} disabled={disabled}>
       {children}
     </button>
+  );
+}
+
+function StartupOverlay({ startup, steps }) {
+  if (!startup || startup.status === "done") return null;
+  const statusLabel = startup.status === "error" ? "Gestoppt" : "Läuft";
+  const progressLabel = `${formatPercent(startup.progress)} %`;
+
+  const stepStatus = (step, index) => {
+    if (startup.error?.stepId === step.id) return "error";
+    if (startup.results?.[step.id]?.ok) return "done";
+    if (startup.status === "running" && startup.currentIndex === index) return "running";
+    return "pending";
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-[rgba(2,6,23,0.85)] p-4">
+      <div className="glass w-full max-w-2xl rounded-2xl p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted2)]">Startroutine</p>
+            <h1 className="text-xl font-semibold">{statusLabel}</h1>
+          </div>
+          <div className="badge">{progressLabel}</div>
+        </div>
+
+        <div className="mt-4" role={startup.status === "error" ? "alert" : "status"} aria-live="polite">
+          <p className="text-sm text-[color:var(--muted)]">{startup.message}</p>
+        </div>
+
+        <div className="mt-4 h-3 w-full overflow-hidden rounded-full border border-[color:var(--border2)] bg-[color:var(--panel2)]">
+          <div
+            className="h-full rounded-full bg-[color:var(--primary)] transition-all"
+            style={{ width: `${formatPercent(startup.progress)}%` }}
+            aria-hidden="true"
+          />
+        </div>
+
+        <ul className="mt-5 space-y-2 text-sm">
+          {steps.map((step, index) => {
+            const status = stepStatus(step, index);
+            const prefix = status === "done" ? "✓" : status === "error" ? "!" : status === "running" ? "…" : "•";
+            const tone = status === "error" ? "text-[color:var(--danger)]" : status === "done" ? "text-[color:var(--accent)]" : "text-[color:var(--muted)]";
+            return (
+              <li key={step.id} className={`flex items-start gap-2 ${tone}`}>
+                <span aria-hidden="true">{prefix}</span>
+                <span>{step.label}</span>
+              </li>
+            );
+          })}
+        </ul>
+
+        {startup.status === "error" ? (
+          <div className="mt-5 rounded-xl border border-[color:var(--dangerBorder)] bg-[rgba(244,63,94,0.08)] p-4 text-sm">
+            <p className="font-semibold text-[color:var(--danger)]">Erklärung (Fehlerursache)</p>
+            <p className="mt-1 text-[color:var(--muted)]">{startup.error?.message}</p>
+            {startup.error?.detail ? <p className="mt-2 text-[color:var(--muted2)]">{startup.error.detail}</p> : null}
+            <p className="mt-3 font-semibold">Was kann ich tun? (Hilfeschritte)</p>
+            <ul className="mt-2 list-disc pl-5 text-[color:var(--muted)]">
+              <li>{startup.error?.hint || "Bitte prüfen Sie Browser-Einstellungen und starten Sie neu (Reload)."}</li>
+              <li>Falls der Fehler bleibt: Administratorin/Administrator informieren.</li>
+            </ul>
+          </div>
+        ) : null}
+      </div>
+    </div>
   );
 }
 
@@ -1446,13 +1418,79 @@ function ArchivView({
 export default function App() {
   const [state, setState] = useState(() => {
     const raw = safeLsGet(LS_KEY);
-    if (!raw) return makeDefaultState();
-    const parsed = safeJsonParse(raw);
-    return parsed.ok ? coerceState(parsed.value) : makeDefaultState();
+    return ensureTheme(initStateFromStorage(raw));
   });
 
   const stateRef = useRef(state);
   useEffect(() => { stateRef.current = state; }, [state]);
+
+  const startupSteps = useMemo(() => ([
+    {
+      id: "check-env",
+      label: "Startumgebung prüfen (Browser)",
+      run: async () => {
+        await waitMs(180);
+        const ok = typeof window !== "undefined" && typeof document !== "undefined";
+        if (!ok) {
+          return {
+            ok: false,
+            message: "Browser-Umgebung fehlt.",
+            hint: "Bitte die Anwendung in einem aktuellen Browser öffnen (z. B. Firefox, Chrome).",
+            detail: "window/document nicht verfügbar.",
+          };
+        }
+        return { ok: true, message: "Browser-Umgebung verfügbar." };
+      },
+    },
+    {
+      id: "check-storage",
+      label: "Abhängigkeiten prüfen (Speicher)",
+      run: async () => {
+        await waitMs(180);
+        const probeKey = `__gms_startup_${Date.now()}`;
+        const okSet = safeLsSet(probeKey, "ok");
+        const okGet = safeLsGet(probeKey) === "ok";
+        const okRemove = safeLsRemove(probeKey);
+        if (!okSet || !okGet || !okRemove) {
+          return {
+            ok: false,
+            message: "Speicher (LocalStorage) ist blockiert.",
+            hint: "Bitte Speicherzugriff in den Browser-Einstellungen erlauben.",
+            detail: "Lesen oder Schreiben im LocalStorage fehlgeschlagen.",
+          };
+        }
+        return { ok: true, message: "Speicherzugriff ok." };
+      },
+    },
+    {
+      id: "check-data",
+      label: "Module und Datenmodell prüfen",
+      run: async ({ stateRef, setState }) => {
+        await waitMs(180);
+        const snapshot = stateRef?.current;
+        const validation = validateState(snapshot);
+        if (!validation.ok) {
+          setState(makeDefaultState());
+          return {
+            ok: true,
+            message: "Daten wurden automatisch repariert (Reset).",
+            hint: "Beschädigte Daten wurden zurückgesetzt, damit der Start klappt.",
+            detail: validation.errors.join(" "),
+          };
+        }
+        return { ok: true, message: "Datenmodell ok." };
+      },
+    },
+  ]), [setState]);
+
+  const [startup, setStartup] = useState(() => ({
+    status: "running",
+    progress: 0,
+    currentIndex: 0,
+    message: "Startroutine wird vorbereitet.",
+    results: {},
+    error: null,
+  }));
 
   const [nav, setNav] = useState("dashboard");
   const [globalSearch, setGlobalSearch] = useState("");
@@ -1474,14 +1512,76 @@ export default function App() {
   };
   useEffect(() => () => { if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current); }, []);
 
-  const pushLog = (type, message, meta = {}) => {
+  const pushLog = useCallback((type, message, meta = {}) => {
     setState((prev) => {
       const maxLogs = prev.settings?.maxLogs ?? 500;
       const entry = { id: makeId(), at: nowIso(), type, message, meta };
       const nextLogs = [entry, ...(prev.logs || [])].slice(0, maxLogs);
       return { ...prev, logs: nextLogs, updatedAt: nowIso() };
     });
-  };
+  }, []);
+
+  useEffect(() => {
+    let alive = true;
+    const run = async () => {
+      setStartup((prev) => ({
+        ...prev,
+        status: "running",
+        progress: 0,
+        currentIndex: 0,
+        message: "Startroutine startet (automatisch).",
+        results: {},
+        error: null,
+      }));
+      await runStartupSequence({
+        steps: startupSteps,
+        context: { stateRef, setState },
+        onProgress: (info) => {
+          if (!alive) return;
+          if (info.stage === "start") {
+            setStartup((prev) => ({
+              ...prev,
+              currentIndex: info.index,
+              progress: info.progress,
+              message: `${info.stepLabel} …`,
+            }));
+          }
+          if (info.stage === "complete") {
+            setStartup((prev) => ({
+              ...prev,
+              currentIndex: info.index,
+              progress: info.progress,
+              message: info.message,
+              results: { ...prev.results, [info.stepId]: info },
+            }));
+          }
+        },
+        onError: (error) => {
+          if (!alive) return;
+          setStartup((prev) => ({
+            ...prev,
+            status: "error",
+            progress: error.progress ?? prev.progress,
+            message: error.message,
+            error,
+          }));
+          pushLog("error", "Startroutine gestoppt", { step: error.stepLabel, detail: error.detail });
+        },
+        onDone: (summary) => {
+          if (!alive) return;
+          setStartup((prev) => ({
+            ...prev,
+            status: "done",
+            progress: summary.progress ?? 100,
+            message: "Start abgeschlossen.",
+          }));
+          pushLog("startup", "Startroutine abgeschlossen", { steps: summary.steps });
+        },
+      });
+    };
+    run();
+    return () => { alive = false; };
+  }, [pushLog, setState, startupSteps]);
 
   const scale = state.settings.uiScale ?? DEFAULT_SCALE;
   useCtrlWheelZoom(scale, (updater) => {
@@ -1866,7 +1966,7 @@ export default function App() {
     const payload = JSON.stringify(payloadObj, null, 2);
 
     const round = safeJsonParse(payload);
-    const v2 = round.ok ? validateState(coerceState(round.value)) : { ok: false, errors: ["Roundtrip Parse fehlgeschlagen"] };
+    const v2 = round.ok ? validateState(coerceStateWithTheme(round.value)) : { ok: false, errors: ["Roundtrip Parse fehlgeschlagen"] };
     if (!v2.ok) {
       pushLog("error", "Export Roundtrip fehlgeschlagen", { errors: v2.errors });
       showToast("Export Roundtrip FAIL");
@@ -1940,7 +2040,7 @@ export default function App() {
     const data = parsed.value;
 
     if (data?.profiles && typeof data.profiles === "object") {
-      const incoming = coerceState(data);
+      const incoming = coerceStateWithTheme(data);
       const vin = validateState(incoming);
       if (!vin.ok) {
         showToast("Import blockiert: Daten invalid");
@@ -1957,7 +2057,7 @@ export default function App() {
       }
 
       setState((prev) => {
-        const next = coerceState(prev);
+        const next = coerceStateWithTheme(prev);
         for (const [pname, p] of Object.entries(incoming.profiles)) {
           if (!next.profiles[pname]) { next.profiles[pname] = p; continue; }
           const existing = next.profiles[pname].items || [];
@@ -1981,7 +2081,7 @@ export default function App() {
       if (!pname) { showToast("Profilname fehlt"); return; }
 
       setState((prev) => {
-        const next = coerceState(prev);
+        const next = coerceStateWithTheme(prev);
         const incomingItems = (Array.isArray(p.items) ? p.items : []).map((x) => normalizeItem(x, x?.type)).filter((x) => x.key && x.value);
 
         if (mode === "replace") {
@@ -2030,7 +2130,7 @@ export default function App() {
     }
     const payload = JSON.stringify({ ...state, exportedAt: nowIso() });
     const parsed = safeJsonParse(payload);
-    const v2 = parsed.ok ? validateState(coerceState(parsed.value)) : { ok: false, errors: ["Parse fail"] };
+    const v2 = parsed.ok ? validateState(coerceStateWithTheme(parsed.value)) : { ok: false, errors: ["Parse fail"] };
     if (!v2.ok) {
       pushLog("diagnose", "Self-Test Roundtrip FAIL", { errors: v2.errors });
       showToast("Roundtrip FAIL");
@@ -2084,6 +2184,7 @@ export default function App() {
         color: "var(--text)",
       }}
     >
+      <StartupOverlay startup={startup} steps={startupSteps} />
       <div
         className="pointer-events-none fixed inset-0 opacity-35"
         style={{
