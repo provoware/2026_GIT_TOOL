@@ -3,6 +3,8 @@
 ## 2026-01-07
 - Doku: Entwickler-Dokumentation strukturiert.
 - Doku: Projekt-Anleitung für Laien erstellt.
+- Launcher: Startroutine prüft Projektstruktur und legt fehlende Ordner an.
+- Launcher: Fehler laienverständlich erklärt.
 - Launcher: Fortschrittsanzeige beim Start ergänzt.
 - Launcher: Fehler werden laienverständlich erklärt und angezeigt.
 - Tests: Basis-Selftest-Modul integriert.

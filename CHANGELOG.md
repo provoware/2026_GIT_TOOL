@@ -1,6 +1,8 @@
 # Changelog
 
 ## [0.1.2] – 2026-01-07
+- Start-Check ergänzt: prüft Projektstruktur und legt fehlende Ordner an
+- Laienverständliche Hinweise und Fehlertexte für die Startroutine ergänzt
 - Startroutine mit Fortschrittsanzeige ergänzt (inkl. Prüfung von Speicher und Datenmodell)
 - Fehlerfall erklärt und sichtbar gestoppt
 - Dokumentation zu Start/Tests aktualisiert
