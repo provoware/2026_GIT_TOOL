@@ -93,6 +93,12 @@ function downloadText(filename, content, mime = "application/json") {
   URL.revokeObjectURL(url);
 }
 
+function makeSafeFilenameStamp(date = new Date()) {
+  const iso = date.toISOString();
+  const base = iso.replace("T", "_").replace(/\..+/, "Z");
+  return base.replace(/[:]/g, "-");
+}
+
 function pickUnique(arr, count) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -1189,6 +1195,7 @@ function DashboardView({
   archiveStats,
   profiles,
   allItemsLen,
+  exportLogs,
   chartAll,
   chartProfile,
   toggleFavorite,
@@ -1307,9 +1314,23 @@ function DashboardView({
           </div>
         </Card>
 
-        <Card title="Letzte Logs" icon={Activity}>
+        <Card
+          title="Letzte Logs"
+          icon={Activity}
+          actions={(
+            <Button
+              tone="secondary"
+              onClick={exportLogs}
+              className="flex items-center gap-2"
+              disabled={!state.logs || state.logs.length === 0}
+            >
+              <Download className="h-4 w-4" />
+              Logs exportieren
+            </Button>
+          )}
+        >
           <div className="space-y-2">
-            {(state.logs || []).slice(0, 8).map((l) => (
+            {(state.logs || []).slice(0, 10).map((l) => (
               <div key={l.id} className="rounded-lg border px-3 py-2" style={{ borderColor: "var(--border2)", background: "var(--panel)" }}>
                 <div className="flex items-center justify-between gap-2">
                   <div className="text-xs" style={{ color: "var(--muted2)" }}>{humanTime(l.at)}</div>
@@ -1879,6 +1900,36 @@ export default function App() {
     showToast("Profil exportiert");
   };
 
+  const exportLogs = () => {
+    const logs = Array.isArray(state.logs) ? state.logs : [];
+    if (logs.length === 0) {
+      showToast("Keine Logs zum Export");
+      return;
+    }
+    const payloadObj = {
+      version: 1,
+      type: "logs",
+      appVersion: APP_VERSION,
+      exportedAt: nowIso(),
+      count: logs.length,
+      logs,
+    };
+    const payload = JSON.stringify(payloadObj, null, 2);
+
+    const round = safeJsonParse(payload);
+    if (!round.ok || !Array.isArray(round.value?.logs)) {
+      pushLog("error", "Log-Export Roundtrip fehlgeschlagen", {});
+      showToast("Log-Export fehlgeschlagen");
+      return;
+    }
+
+    const fn = `gms-archiv-logs_v${APP_VERSION}_${makeSafeFilenameStamp()}.json`;
+    downloadText(fn, payload);
+    pushLog("export", "Log-Export erstellt", { bytes: payload.length, count: logs.length });
+    setState((prev) => ({ ...prev, stats: { ...prev.stats, exports: Number(prev.stats.exports || 0) + 1, lastExportAt: nowIso() }, updatedAt: nowIso() }));
+    showToast("Log-Export bereit");
+  };
+
   const importFromText = (mode) => {
     const parsed = safeJsonParse(importText);
     if (!parsed.ok) {
@@ -2087,6 +2138,7 @@ export default function App() {
                 archiveStats={archiveStats}
                 profiles={profiles}
                 allItemsLen={allItems.length}
+                exportLogs={exportLogs}
                 chartAll={chartAll}
                 chartProfile={chartProfile}
                 toggleFavorite={toggleFavorite}

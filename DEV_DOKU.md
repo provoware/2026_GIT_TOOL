@@ -29,4 +29,15 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
-Aktuell gibt es keine lauffähigen Skripte. Diese Sektion wird ergänzt, sobald Start- und Testscripte existieren.
+### GMS Archiv Tool (Frontend)
+**Voraussetzung:** Node.js (Laufzeitumgebung für JavaScript).
+
+- Start (Entwicklung):
+  - `cd gms-archiv-tool_v1.2.3_2026-01-06`
+  - `npm run dev -- --host 0.0.0.0 --port 4173`
+- Build (Produktions-Build):
+  - `cd gms-archiv-tool_v1.2.3_2026-01-06`
+  - `npm run build`
+
+### Manuelle Checks
+- Log-Export prüfen: Im Dashboard den Button **„Logs exportieren“** klicken → eine `.json`-Datei wird heruntergeladen.
