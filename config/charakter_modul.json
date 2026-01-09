@@ -1,0 +1,82 @@
+{
+  "data_path": "data/charakter_modul.json",
+  "default_theme": "hell",
+  "themes": {
+    "hell": {
+      "primary": "#2b2d42",
+      "accent": "#ef233c",
+      "background": "#f8f8f8",
+      "text": "#0a0a0a"
+    },
+    "hochkontrast": {
+      "primary": "#000000",
+      "accent": "#00b0ff",
+      "background": "#ffffff",
+      "text": "#000000"
+    }
+  },
+  "templates": [
+    {
+      "id": "roman-protagonist",
+      "name": "Roman-Protagonist",
+      "description": "Umfangreiche Hauptfigur mit klaren Motiven.",
+      "sections": [
+        "Grunddaten",
+        "Motivation",
+        "Konflikte",
+        "Beziehungen",
+        "Entwicklung"
+      ],
+      "prompts": [
+        "Was treibt die Figur an?",
+        "Welche innere Wunde prägt sie?",
+        "Wie verändert sie sich bis zum Finale?"
+      ]
+    },
+    {
+      "id": "hoerspiel-nebenrolle",
+      "name": "Hörspiel-Nebenrolle",
+      "description": "Kompakte Nebenfigur mit klarer Stimme.",
+      "sections": ["Rolle", "Stimme", "Schlüsselverhalten"],
+      "prompts": [
+        "Wie klingt die Figur (Tempo, Dialekt)?",
+        "Was ist ihr wichtigster Konfliktpunkt?"
+      ]
+    },
+    {
+      "id": "antagonist",
+      "name": "Antagonist",
+      "description": "Gegenpol mit nachvollziehbarem Ziel.",
+      "sections": ["Ziel", "Moral", "Methoden", "Schwäche"],
+      "prompts": [
+        "Warum glaubt die Figur im Recht zu sein?",
+        "Welche Schwäche macht sie angreifbar?"
+      ]
+    }
+  ],
+  "ui": {
+    "menus": [
+      {
+        "id": "filter",
+        "label": "Filter",
+        "options": ["Alle", "Favoriten", "Nach Rolle", "Nach Tag"]
+      },
+      {
+        "id": "auswahl",
+        "label": "Schnellauswahl",
+        "options": ["Protagonist", "Antagonist", "Nebenrolle"]
+      }
+    ],
+    "actions": [
+      {"id": "neu", "label": "Neuer Charakter"},
+      {"id": "vorlage", "label": "Template auswählen"},
+      {"id": "favorit", "label": "Als Favorit markieren"}
+    ],
+    "dashboard_cards": [
+      {"id": "gesamt", "label": "Gesamt"},
+      {"id": "favoriten", "label": "Favoriten"},
+      {"id": "rollen", "label": "Rollen"}
+    ]
+  },
+  "debug": false
+}

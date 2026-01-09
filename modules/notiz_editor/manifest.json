@@ -1,0 +1,7 @@
+{
+  "id": "notiz_editor",
+  "name": "Notiz-Editor",
+  "version": "1.0.0",
+  "description": "Erstellt, verwaltet und strukturiert Notizen mit Templates, Favoriten und Dashboard-Statistiken.",
+  "entry": "module.py"
+}

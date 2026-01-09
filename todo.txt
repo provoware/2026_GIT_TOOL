@@ -43,3 +43,5 @@
 [x] 2026-01-07 | Architektur | Einheitliche Modul-Schnittstelle festlegen | prüfen: zwei Module vergleichen | fertig wenn: gleiche Init-/Exit-Struktur
 [x] 2026-01-10 | Tests | Pytest als Standard-Testlauf einführen | prüfen: scripts/run_tests.sh ausführen | fertig wenn: pytest läuft
 [x] 2026-01-10 | Qualität | Automatische Codequalität und Formatprüfung ergänzen | prüfen: scripts/run_tests.sh ausführen | fertig wenn: Ruff/Black laufen
+[x] 2026-01-11 | Module | Notiz-Editor-Modul mit Templates, Favoriten und Dashboard integrieren | prüfen: Module laden | fertig wenn: Notiz-Editor liefert Datenstrukturen
+[x] 2026-01-11 | Module | Charakter-Modul mit Templates, Favoriten und Dashboard integrieren | prüfen: Module laden | fertig wenn: Charakter-Modul liefert Datenstrukturen

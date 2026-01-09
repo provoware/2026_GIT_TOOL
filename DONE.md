@@ -35,3 +35,7 @@
 - Launcher: Abhängigkeitsprüfung in der Start-Routine ergänzt.
 - Tests: Pytest als Standard-Testlauf ergänzt und Testskript ergänzt.
 - Qualität: Ruff- und Black-Prüfungen für Codequalität und Format ergänzt.
+
+## 2026-01-11
+- Module: Notiz-Editor-Modul mit Templates, Favoriten und Dashboard ergänzt.
+- Module: Charakter-Modul mit Templates, Favoriten und Dashboard ergänzt.

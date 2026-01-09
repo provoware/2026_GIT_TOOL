@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.13] – 2026-01-11
+- Module: Notiz-Editor-Modul mit Templates, Favoriten und Dashboard-Statistiken ergänzt.
+- Module: Charakter-Modul mit Templates, Favoriten und Dashboard-Statistiken ergänzt.
+- Architektur: Zentrales Datenmodell um Notiz- und Charakterdaten erweitert.
+- Tests: Unit-Tests für neue Datenmodelle und Module ergänzt.
+
 ## [0.1.12] – 2026-01-10
 - Tests: Pytest als Standard-Testlauf ergänzt und in die Test-Sperre integriert.
 - Qualität: Ruff- und Black-Prüfungen als automatischen Prüf-Schritt ergänzt.

@@ -1,0 +1,76 @@
+{
+  "data_path": "data/notiz_editor.json",
+  "default_theme": "hell",
+  "themes": {
+    "hell": {
+      "primary": "#1f3a5f",
+      "accent": "#2d6cdf",
+      "background": "#f5f7fb",
+      "text": "#0b0f14"
+    },
+    "hochkontrast": {
+      "primary": "#000000",
+      "accent": "#ffcc00",
+      "background": "#ffffff",
+      "text": "#000000"
+    }
+  },
+  "templates": [
+    {
+      "id": "roman-idee",
+      "name": "Roman-Idee",
+      "description": "Ideenskizze für Kapitel oder Szenen.",
+      "sections": ["Kernidee", "Konflikt", "Ziel", "Wendepunkt"],
+      "prompts": [
+        "Worum geht es in dieser Szene?",
+        "Welche Figur verändert sich und warum?",
+        "Was ist der zentrale Konflikt?"
+      ]
+    },
+    {
+      "id": "hoerspiel-szene",
+      "name": "Hörspiel-Szene",
+      "description": "Struktur für dialoglastige Hörspiel-Szenen.",
+      "sections": ["Ort & Stimmung", "Dialog", "Geräusche", "Regie"],
+      "prompts": [
+        "Welche Geräusche tragen die Szene?",
+        "Welche emotionale Wendung passiert?"
+      ]
+    },
+    {
+      "id": "recherche",
+      "name": "Recherche-Notiz",
+      "description": "Fakten und Quellen sauber sammeln.",
+      "sections": ["Fakten", "Quelle", "Verlässlichkeit", "Ideen"],
+      "prompts": [
+        "Welche Quelle wurde genutzt?",
+        "Was ist sicher, was ist Annahme?"
+      ]
+    }
+  ],
+  "ui": {
+    "menus": [
+      {
+        "id": "filter",
+        "label": "Filter",
+        "options": ["Alle", "Favoriten", "Nach Tag", "Freitext"]
+      },
+      {
+        "id": "sortierung",
+        "label": "Sortierung",
+        "options": ["Neueste zuerst", "Älteste zuerst", "Titel A-Z"]
+      }
+    ],
+    "actions": [
+      {"id": "neu", "label": "Neue Notiz"},
+      {"id": "vorlage", "label": "Template auswählen"},
+      {"id": "favorit", "label": "Als Favorit markieren"}
+    ],
+    "dashboard_cards": [
+      {"id": "gesamt", "label": "Gesamt"},
+      {"id": "favoriten", "label": "Favoriten"},
+      {"id": "tags", "label": "Tags"}
+    ]
+  },
+  "debug": false
+}
