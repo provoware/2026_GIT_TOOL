@@ -31,6 +31,8 @@
 - UI: Launcher-GUI um zusätzliche barrierefreie Farbschemata ergänzt.
 - Qualität: Requirements mit Inline-Kommentaren robust eingelesen.
 - Module: Modul-Check gegen Pfad-Traversal bei Entry-Pfaden abgesichert.
+- Qualität: Requirements-Parser ignoriert Inline-Kommentare auch bei Tabs/Mehrfach-Leerzeichen.
+- Module: Modul-Check blockiert `..` im Entry-Pfad mit klarer Fehlermeldung.
 
 ## 2026-01-10
 - Setup: Repo-Basis-Check mit Push-Trockenlauf ergänzt.

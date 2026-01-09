@@ -51,3 +51,5 @@
 [x] 2026-01-13 | Tests | Testskript mit Hilfe-Option für Laien ergänzen | prüfen: scripts/run_tests.sh --help | fertig wenn: klare Nutzung erscheint
 [x] 2026-01-09 | Qualität | Requirements mit Inline-Kommentaren robust einlesen | prüfen: requirements.txt mit Inline-Kommentaren | fertig wenn: Kommentare werden ignoriert
 [x] 2026-01-09 | Module | Modul-Check: Entry-Pfad gegen Pfad-Traversal absichern | prüfen: manifest.json mit ../ entry | fertig wenn: Fehler wird erkannt
+[x] 2026-01-09 | Qualität | Requirements-Parser ignoriert Inline-Kommentare mit Tabs/Mehrfach-Leerzeichen | prüfen: requirements.txt mit Tab # Kommentar | fertig wenn: Kommentar wird ignoriert
+[x] 2026-01-09 | Module | Modul-Check blockiert '..' im Entry-Pfad explizit | prüfen: manifest.json mit ../ entry | fertig wenn: klare Fehlermeldung erscheint
