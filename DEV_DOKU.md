@@ -53,6 +53,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Logging-Format: `Zeit | Modul | LEVEL | Nachricht` (ISO-Zeitstempel).
 - Fehler-Logs sind optisch hervorgehoben (Level `ERROR`).
 - Zentrales Datenmodell für To-Dos/Kalender in `src/core/data_model.py`.
+- Einheitliche Modul-Schnittstelle (init/run/exit/validateInput/validateOutput) gemäß `standards.md`.
 
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen (Start erst nach kompletter Runde).
@@ -86,6 +87,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 ### GUI-Launcher (Startübersicht)
 1. `python system/launcher_gui.py`
 2. Optional: `python system/launcher_gui.py --show-all --debug` (Details anzeigen).
+3. Tastatur-Shortcuts: Alt+A (alle Module), Alt+D (Debug), Alt+R (aktualisieren), Alt+T (Theme), Alt+Q (beenden).
 ### Modul-Check (manuell)
 1. `python system/module_checker.py --config config/modules.json`
 2. Bei Fehlern werden klare Hinweise und Lösungsvorschläge ausgegeben.

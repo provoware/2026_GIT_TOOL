@@ -24,7 +24,7 @@
 
 
 [x] 2026-01-07 | UI | Einheitliche Farben und Abstände definieren | prüfen: zwei Module vergleichen | fertig wenn: konsistentes Erscheinungsbild
-[ ] 2026-01-07 | UI | Tastaturbedienung vollständig prüfen | prüfen: ohne Maus bedienen | fertig wenn: alles erreichbar
+[x] 2026-01-07 | UI | Tastaturbedienung vollständig prüfen | prüfen: ohne Maus bedienen | fertig wenn: alles erreichbar
 [x] 2026-01-07 | UI | Kontrast und Lesbarkeit optimieren | prüfen: Darkmode testen | fertig wenn: gut lesbar
 
 [x] 2026-01-07 | Sprache | Alle UI-Texte auf Deutsch prüfen | prüfen: englische Begriffe suchen | fertig wenn: alles deutsch
@@ -37,4 +37,4 @@
 [x] 2026-01-07 | Architektur | Einheitliche Modul-Schnittstelle festlegen | prüfen: zwei Module vergleichen | fertig wenn: gleiche Init-/Exit-Struktur
 [x] 2026-01-07 | Module | Modul-Check beim Start durchführen | prüfen: defektes Modul | fertig wenn: sauber abgefangen
 [ ] 2026-01-07 | Architektur | Zentrale Tool-Standards definieren | prüfen: standards.md öffnen | fertig wenn: Standards-Datei existiert
-[ ] 2026-01-07 | Architektur | Einheitliche Modul-Schnittstelle festlegen | prüfen: zwei Module vergleichen | fertig wenn: gleiche Init-/Exit-Struktur
+[x] 2026-01-07 | Architektur | Einheitliche Modul-Schnittstelle festlegen | prüfen: zwei Module vergleichen | fertig wenn: gleiche Init-/Exit-Struktur
