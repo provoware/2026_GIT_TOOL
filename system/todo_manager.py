@@ -45,6 +45,12 @@ def _ensure_path(path: Path, label: str) -> None:
         raise TodoError(f"{label} ist kein Pfad (Path).")
 
 
+def _format_percent(value: float) -> str:
+    if not isinstance(value, (int, float)):
+        raise TodoError("Prozentwert ist keine Zahl.")
+    return f"{value:.2f}".replace(".", ",")
+
+
 def _load_json(path: Path) -> dict:
     if not path.exists():
         raise TodoError(f"Konfiguration fehlt: {path}")
@@ -98,6 +104,44 @@ def calculate_progress(lines: Iterable[str]) -> Progress:
     return Progress(total=total, done=done)
 
 
+def build_progress_report(progress: Progress, reference_date: str | None = None) -> str:
+    if not isinstance(progress, Progress):
+        raise TodoError("progress ist kein Progress-Objekt.")
+    if reference_date is None:
+        reference_date = datetime.now(timezone.utc).date().isoformat()
+    else:
+        try:
+            datetime.fromisoformat(reference_date)
+        except ValueError as exc:
+            raise TodoError(
+                "Stand-Datum ist ungültig. Erwartet: JJJJ-MM-TT."
+            ) from exc
+
+    open_tasks = max(progress.total - progress.done, 0)
+    percent_text = _format_percent(progress.percent)
+    return "\n".join(
+        [
+            "# PROGRESS",
+            "",
+            f"Stand: {reference_date}",
+            "",
+            f"- Gesamt: {progress.total} Tasks",
+            f"- Erledigt: {progress.done} Tasks",
+            f"- Offen: {open_tasks} Tasks",
+            f"- Fortschritt: {percent_text} %",
+            "",
+        ]
+    )
+
+
+def write_progress_report(progress: Progress, progress_path: Path) -> None:
+    _ensure_path(progress_path, "progress_path")
+    report = build_progress_report(progress)
+    progress_path.write_text(report, encoding="utf-8")
+    if not progress_path.exists():
+        raise TodoError("PROGRESS.md konnte nicht geschrieben werden.")
+
+
 def archive_completed_tasks(todo_path: Path, archive_path: Path) -> Tuple[int, int]:
     _ensure_path(todo_path, "todo_path")
     _ensure_path(archive_path, "archive_path")
@@ -129,7 +173,7 @@ def setup_logging(debug: bool) -> None:
     logging.basicConfig(level=level, format="%(levelname)s: %(message)s")
 
 
-def run_progress(config: TodoConfig) -> int:
+def run_progress(config: TodoConfig, progress_path: Path | None = None) -> int:
     lines = read_todo_lines(config.todo_path)
     progress = calculate_progress(lines)
     logging.info(
@@ -138,6 +182,9 @@ def run_progress(config: TodoConfig) -> int:
         progress.done,
         progress.total,
     )
+    if progress_path is not None:
+        write_progress_report(progress, progress_path)
+        logging.info("PROGRESS.md aktualisiert: %s", progress_path)
     return 0
 
 
@@ -156,6 +203,17 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--config", type=Path, default=None, help="Pfad zur Konfiguration (JSON)")
     parser.add_argument("--debug", action="store_true", help="Debug-Modus aktivieren")
+    parser.add_argument(
+        "--write-progress",
+        action="store_true",
+        help="Schreibt einen PROGRESS-Bericht (PROGRESS.md).",
+    )
+    parser.add_argument(
+        "--progress-path",
+        type=Path,
+        default=None,
+        help="Zielpfad für PROGRESS.md (Standard: PROGRESS.md).",
+    )
 
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("progress", help="Fortschritt aus todo.txt berechnen")
@@ -175,7 +233,10 @@ def main() -> int:
         return 2
 
     if args.command == "progress":
-        return run_progress(config)
+        progress_path = None
+        if args.write_progress:
+            progress_path = args.progress_path or Path("PROGRESS.md")
+        return run_progress(config, progress_path)
     if args.command == "archive":
         return run_archive(config)
 

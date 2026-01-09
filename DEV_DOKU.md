@@ -14,6 +14,11 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
   - `src/records/record_updater.py`: Logik für Archivierung und Changelog.
 - `config/`: Konfiguration (Config = Einstellungen, änderbar ohne Code).
   - `config/records.json`: Regeln für Einträge.
+- `system/`: Tool-Logik (CLI-Tools und Automatisierung).
+  - `system/todo_manager.py`: Fortschritt berechnen und To-Dos archivieren.
+  - `system/log_exporter.py`: Logdateien als ZIP exportieren.
+- `logs/`: Logdateien (Protokolle).
+- `data/log_exports/`: Exporte von Logdateien.
 - `scripts/`: Start- und Prüfskripte.
 - `tests/`: Automatische Tests (Unit-Tests).
 
@@ -35,6 +40,14 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 
 ## Bauen/Starten/Testen
+### Fortschritt aus todo.txt berechnen
+1. `python system/todo_manager.py progress`
+2. Optional: `python system/todo_manager.py progress --write-progress` (schreibt PROGRESS.md)
+
+### Log-Export (ZIP)
+1. `python system/log_exporter.py`
+2. Optional: `python system/log_exporter.py --logs-dir logs --export-dir data/log_exports`
+
 ### Lokaler Start (UI prüfen)
 1. `cd gms-archiv-tool_v1.2.3_2026-01-06`
 2. `npm install`
