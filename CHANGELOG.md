@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.14] – 2026-01-12
+- Module: Download-Ordner-Aufräumen mit Scan, Plan, Undo und Protokoll ergänzt.
+- Module: Datei-Suche mit Filtern, Organisation und Undo ergänzt.
+- Tests: Unit-Tests für Download-Aufräumen und Datei-Suche ergänzt.
+
 ## [0.1.13] – 2026-01-11
 - Module: Notiz-Editor-Modul mit Templates, Favoriten und Dashboard-Statistiken ergänzt.
 - Module: Charakter-Modul mit Templates, Favoriten und Dashboard-Statistiken ergänzt.

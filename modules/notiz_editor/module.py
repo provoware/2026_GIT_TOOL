@@ -67,9 +67,7 @@ def run(input_data: Dict[str, Any]) -> Dict[str, Any]:
 def exit(context: ModuleContext | None = None) -> Dict[str, Any]:
     if isinstance(context, ModuleContext):
         context.logger.debug("Notiz-Editor: Modul wird beendet.")
-    return build_response(
-        status="ok", message="Notiz-Editor sauber beendet.", data={}, ui={}
-    )
+    return build_response(status="ok", message="Notiz-Editor sauber beendet.", data={}, ui={})
 
 
 def validateInput(input_data: Dict[str, Any]) -> None:
@@ -256,9 +254,7 @@ def load_notes(data_path: Path) -> List[NoteEntry]:
 def save_notes(data_path: Path, notes: List[NoteEntry]) -> None:
     ensure_data_file(data_path)
     payload = {"notes": [note.to_dict() for note in notes]}
-    data_path.write_text(
-        json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8"
-    )
+    data_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
     if not data_path.exists():
         raise ModuleError("Daten konnten nicht geschrieben werden.")
 
@@ -268,9 +264,7 @@ def create_note(notes: List[NoteEntry], input_data: Dict[str, Any]) -> NoteEntry
     body = _require_text(input_data.get("body"), "body")
     tags = _require_text_list(input_data.get("tags", []), "tags")
     template_id = _require_optional_text(input_data.get("template_id"), "template_id")
-    custom_fields = _require_text_mapping(
-        input_data.get("custom_fields", {}), "custom_fields"
-    )
+    custom_fields = _require_text_mapping(input_data.get("custom_fields", {}), "custom_fields")
     created_at = datetime.now()
     updated_at = created_at
     note_id = _ensure_unique_id(notes, make_note_id(title, created_at))
@@ -445,9 +439,7 @@ def _require_text_mapping(value: Any, field_name: str) -> Dict[str, str]:
         raise ModuleError(f"{field_name} ist kein Objekt (dict).")
     mapping: Dict[str, str] = {}
     for key, item in value.items():
-        mapping[_require_text(key, f"{field_name}-key")] = _require_text(
-            item, field_name
-        )
+        mapping[_require_text(key, f"{field_name}-key")] = _require_text(item, field_name)
     return mapping
 
 

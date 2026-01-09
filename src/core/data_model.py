@@ -134,9 +134,7 @@ class NoteEntry:
         updated_at = parse_iso_datetime(data.get("updated_at"), "updated_at")
         favorite = _require_bool(data.get("favorite", False), "favorite")
         template_id = _require_optional_text(data.get("template_id"), "template_id")
-        custom_fields = _require_mapping_of_text(
-            data.get("custom_fields", {}), "custom_fields"
-        )
+        custom_fields = _require_mapping_of_text(data.get("custom_fields", {}), "custom_fields")
         entry = NoteEntry(
             note_id=note_id,
             title=title,
@@ -208,15 +206,11 @@ class CharacterProfile:
         goals = _require_list_of_text(data.get("goals", []), "goals")
         conflicts = _require_list_of_text(data.get("conflicts", []), "conflicts")
         relationships = _require_list_of_text(data.get("relationships", []), "relationships")
-        voice_notes = _require_text(
-            data.get("voice_notes", ""), "voice_notes", allow_empty=True
-        )
+        voice_notes = _require_text(data.get("voice_notes", ""), "voice_notes", allow_empty=True)
         tags = _require_list_of_text(data.get("tags", []), "tags")
         favorite = _require_bool(data.get("favorite", False), "favorite")
         template_id = _require_optional_text(data.get("template_id"), "template_id")
-        custom_fields = _require_mapping_of_text(
-            data.get("custom_fields", {}), "custom_fields"
-        )
+        custom_fields = _require_mapping_of_text(data.get("custom_fields", {}), "custom_fields")
         created_at = parse_iso_datetime(data.get("created_at"), "created_at")
         updated_at = parse_iso_datetime(data.get("updated_at"), "updated_at")
         profile = CharacterProfile(

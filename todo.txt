@@ -45,3 +45,5 @@
 [x] 2026-01-10 | Qualität | Automatische Codequalität und Formatprüfung ergänzen | prüfen: scripts/run_tests.sh ausführen | fertig wenn: Ruff/Black laufen
 [x] 2026-01-11 | Module | Notiz-Editor-Modul mit Templates, Favoriten und Dashboard integrieren | prüfen: Module laden | fertig wenn: Notiz-Editor liefert Datenstrukturen
 [x] 2026-01-11 | Module | Charakter-Modul mit Templates, Favoriten und Dashboard integrieren | prüfen: Module laden | fertig wenn: Charakter-Modul liefert Datenstrukturen
+[x] 2026-01-12 | Module | Download-Ordner professionell aufräumen (Plan, Log, Undo) | prüfen: Modul-Scan + Undo | fertig wenn: Dateien werden organisiert und rückgängig gemacht
+[x] 2026-01-12 | Module | Datei-Suche mit Filtern, Organisation und Undo | prüfen: Suche + Organisieren + Undo | fertig wenn: Treffer lassen sich filtern und organisieren

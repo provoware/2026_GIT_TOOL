@@ -35,6 +35,20 @@
       "path": "modules/charakter_modul",
       "enabled": true,
       "description": "Professionelle Charakterprofile mit Templates, Favoriten und Dashboard-Statistiken."
+    },
+    {
+      "id": "download_aufraeumen",
+      "name": "Download-Ordner aufräumen",
+      "path": "modules/download_aufraeumen",
+      "enabled": true,
+      "description": "Interaktives Aufräumen des Download-Ordners mit Vorschlägen, Protokoll und Undo."
+    },
+    {
+      "id": "datei_suche",
+      "name": "Datei-Suche",
+      "path": "modules/datei_suche",
+      "enabled": true,
+      "description": "Dateien nach Name, Inhalt, Größe und Datum finden und direkt organisieren."
     }
   ]
 }

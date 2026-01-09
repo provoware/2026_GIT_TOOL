@@ -1,0 +1,8 @@
+{
+  "id": "datei_suche",
+  "name": "Datei-Suche",
+  "version": "1.0.0",
+  "description": "Professionelles Modul zur Datei-Suche mit Filtern, Vorschau, Organisation und Undo.",
+  "entry": "module.py",
+  "permissions": ["read", "write"]
+}
