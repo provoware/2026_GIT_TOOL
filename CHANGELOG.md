@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.10] – 2026-01-10
+- Start-Routine: Abhängigkeitsprüfung ergänzt, inklusive automatischer Installation über requirements.txt.
+- Setup: Repo-Basis-Check als Skript ergänzt, inklusive Push-Trockenlauf.
+
 ## [0.1.9] – 2026-01-09
 - GUI-Launcher: Modul-Check ergänzt, der Manifest und Entry-Dateien beim Start meldet.
 - Standards: Modul-Check als verpflichtenden Startschritt dokumentiert.

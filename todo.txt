@@ -1,4 +1,4 @@
-[ ] 2026-01-07 | Setup | Repo-Basis steht | fertig wenn: Push erfolgreich
+[x] 2026-01-07 | Setup | Repo-Basis steht | fertig wenn: Push erfolgreich
 [x] 2026-01-09 | Launcher | Klick&Start-Datei für GUI-Startübersicht | prüfen: klick_start.sh ausführen | fertig wenn: GUI öffnet sich
 [x] 2026-01-09 | Launcher | GUI-Startübersicht mit Themes und Debug | prüfen: launcher_gui.py öffnen | fertig wenn: Module sichtbar
 [x] 2026-01-07 | Architektur | Zentrale Tool-Standards definieren | prüfen: standards.md öffnen | fertig wenn: eine verbindliche Standards-Datei existiert
@@ -7,6 +7,7 @@
 
 [x] 2026-01-07 | Launcher | Launcher zeigt alle Tools übersichtlich | prüfen: Start öffnen | fertig wenn: alle Module klickbar erreichbar
 [x] 2026-01-07 | Launcher | Startroutine prüft Projektstruktur | prüfen: Ordner löschen, starten | fertig wenn: Struktur automatisch neu erstellt
+[x] 2026-01-10 | Launcher | Startroutine prüft Abhängigkeiten automatisch | prüfen: requirements.txt anpassen, starten | fertig wenn: fehlende Pakete werden installiert
 [x] 2026-01-07 | Launcher | Fortschrittsanzeige beim Start einbauen | prüfen: Start beobachten | fertig wenn: Prozent sichtbar
 [x] 2026-01-07 | Launcher | Fehler laienverständlich erklären | prüfen: Fehler provozieren | fertig wenn: klare Meldung erscheint
 

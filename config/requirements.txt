@@ -1,0 +1,3 @@
+# Python-Abhängigkeiten (pip-Pakete)
+# Beispiel: requests>=2.32.0
+# Hinweis: Leere Datei bedeutet, dass aktuell keine externen Pakete nötig sind.

@@ -19,9 +19,10 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
   - `src/records/record_updater.py`: Logik für Archivierung und Changelog.
   - `src/core/data_model.py`: Zentrales Datenmodell für To-Dos und Kalender.
 - `config/`: Konfiguration (Config = Einstellungen, änderbar ohne Code).
-  - `config/records.json`: Regeln für Einträge.
+- `config/records.json`: Regeln für Einträge.
   - `config/launcher_gui.json`: GUI-Launcher-Themes und Standard-Theme.
   - `config/modules.json`: Zentrale Modul-Liste für den Launcher.
+  - `config/requirements.txt`: Python-Abhängigkeiten (pip-Pakete).
   - `config/test_gate.json`: Regeln für die Test-Sperre (Schwelle + Befehl).
   - `config/modules.json`: Modul-Liste für den Launcher.
   - `config/todo_kalender.json`: Konfiguration für To-Do-&-Kalender-Modul.
@@ -31,8 +32,9 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
   - `system/log_exporter.py`: Logdateien als ZIP exportieren.
   - `system/launcher.py`: Launcher (Modulübersicht).
   - `system/launcher_gui.py`: GUI-Launcher (Startübersicht mit Themes).
-  - `system/test_gate.py`: Test-Sperre (Tests erst nach kompletter Runde).
+- `system/test_gate.py`: Test-Sperre (Tests erst nach kompletter Runde).
   - `system/module_checker.py`: Modul-Check (Struktur + Manifest + Entry-Datei).
+  - `system/dependency_checker.py`: Abhängigkeiten prüfen und automatisch installieren.
 - `logs/`: Logdateien (Protokolle).
 - `data/log_exports/`: Exporte von Logdateien.
 - `data/test_state.json`: Statusdatei für den Test-Start.
@@ -41,6 +43,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
   - `modules/status/manifest.json`: Metadaten des Beispielmoduls.
 - `data/todo_kalender.json`: Datenablage für To-Do-&-Kalender-Modul.
 - `scripts/`: Start- und Prüfskripte.
+  - `scripts/repo_basis_check.sh`: Repo-Check (Remote + Push-Trockenlauf).
 - `klick_start.sh`: Klick&Start-Skript (führt Start-Routine aus und öffnet die GUI-Startübersicht).
 - `tests/`: Automatische Tests (Unit-Tests).
 - `modules/`: Modul-Ordner (Standard: manifest.json + module.py).
@@ -60,7 +63,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen (Start erst nach kompletter Runde).
 - **Formatierung**: Automatische Codeformatierung (einheitlicher Stil, geplant).
-- **Prüfungen**: Start-Routine prüft Struktur (automatisch) und Abhängigkeiten (geplant).
+- **Prüfungen**: Start-Routine prüft Struktur und Abhängigkeiten automatisch.
 - **Prüfungen**: Modul-Check validiert aktivierte Module und deren Manifest.
 
 ## Dokumentationsregeln
@@ -75,8 +78,16 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 
 ### Start-Routine (Struktur + Fortschritt)
 1. `./scripts/start.sh`
-2. Die Start-Routine erstellt fehlende Ordner automatisch, prüft Module und zeigt den Fortschritt in Prozent.
+2. Die Start-Routine erstellt fehlende Ordner automatisch, prüft Abhängigkeiten, prüft Module und zeigt den Fortschritt in Prozent.
 3. Tests laufen automatisch, sobald eine Runde (3 erledigte Tasks) erreicht ist.
+
+### Abhängigkeiten (manuell prüfen)
+1. `python system/dependency_checker.py --requirements config/requirements.txt`
+2. Optional: `python system/dependency_checker.py --requirements config/requirements.txt --no-auto-install`
+
+### Repo-Basis-Check (Push-Trockenlauf)
+1. `./scripts/repo_basis_check.sh`
+2. Hinweis: Bei fehlendem Remote erscheint eine klare Lösungsmeldung.
 
 ### Klick&Start (für Laien)
 1. `./klick_start.sh`

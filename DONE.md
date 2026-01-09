@@ -27,3 +27,7 @@
 - Architektur: Modul-Check als verpflichtender Startschritt in den Standards festgehalten.
 - Module: Modul-Pfade in `config/modules.json` auf Modulordner umgestellt.
 - Module: Manifest-Pflichtfelder (id/entry) für Status- und To-Do-Kalender-Modul ergänzt.
+
+## 2026-01-10
+- Setup: Repo-Basis-Check mit Push-Trockenlauf ergänzt.
+- Launcher: Abhängigkeitsprüfung in der Start-Routine ergänzt.
