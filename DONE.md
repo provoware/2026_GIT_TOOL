@@ -35,6 +35,9 @@
 - Module: Modul-Check blockiert `..` im Entry-Pfad mit klarer Fehlermeldung.
 - Tests: Testskript robuster gemacht (klare Fehlerhinweise + Log-Hinweis).
 - Tests: Hilfe-Option für den Testlauf als Schritt-für-Schritt-Anleitung ergänzt.
+- Doku: PROJEKT_INFO mit Ordnerstruktur und Tooldateien ergänzt.
+- Analyse: Inkonsistenzen/Redundanzen/Robustheit dokumentiert.
+- Qualität: Unbenutzten Import im Health-Check entfernt.
 
 ## 2026-01-10
 - Setup: Repo-Basis-Check mit Push-Trockenlauf ergänzt.
