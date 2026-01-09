@@ -57,3 +57,7 @@
 - Tests: Testskript mit Hilfe-Option für Laien ergänzt.
 - Start: Health-Check vor dem Start ergänzt (wichtige Dateien/Ordner).
 - Qualität: Gemeinsame Pfad- und JSON-Validierung für Launcher/GUI eingeführt.
+
+## 2026-01-14
+- Qualität: Unbenutzten Import im Health-Check entfernt (Ruff grün).
+- Doku: Doppelte Changelog-Einträge für Version 0.1.16 zusammengeführt.

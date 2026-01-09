@@ -24,6 +24,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Testskript bricht bei Fehlern mit klarer Meldung und Log-Hinweis ab.
 - Health-Check prüft wichtige Dateien/Ordner vor dem Start mit klaren Hinweisen.
 - Launcher/GUI nutzen gemeinsame Pfad- und JSON-Validierung, um Duplikate zu reduzieren.
+- Health-Check ist Ruff-konform (ungenutzte Importe entfernt).
+- Changelog-Einträge für Version 0.1.16 sind zusammengeführt.
 
 ## Struktur (aktuell)
 - `src/`: Systemlogik (stabile Kernlogik).

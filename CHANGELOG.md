@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.19] – 2026-01-14
+- Qualität: Unbenutzten Import im Health-Check entfernt (Ruff sauber).
+- Doku: Doppelte Changelog-Einträge für Version 0.1.16 zusammengeführt.
+
 ## [0.1.18] – 2026-01-09
 - Tests: Testskript robuster gemacht (klare Fehlerhinweise + konsistente Hilfe-Ausgabe).
 - Tests: Hilfe-Option für den Testlauf als geführte Schritt-für-Schritt-Anleitung ergänzt.
@@ -8,12 +12,11 @@
 - Start: Health-Check ergänzt, der wichtige Dateien/Ordner vor dem Start prüft.
 - Qualität: Gemeinsame Pfad- und JSON-Validierung für Launcher/GUI eingeführt (Duplikate reduziert).
 
-## [0.1.16] – 2026-01-09
-- Qualität: Requirements-Parser ignoriert Inline-Kommentare auch bei Tabs/Mehrfach-Leerzeichen.
-- Module: Modul-Check blockiert `..`-Segmente im Entry-Pfad mit klarer Fehlermeldung.
 ## [0.1.16] – 2026-01-13
 - Tests: Fehler-Log-Hinweis im Testskript ergänzt.
 - Tests: Schritt-für-Schritt-Hilfe für den Testlauf ergänzt.
+- Qualität: Requirements-Parser ignoriert Inline-Kommentare auch bei Tabs/Mehrfach-Leerzeichen.
+- Module: Modul-Check blockiert `..`-Segmente im Entry-Pfad mit klarer Fehlermeldung.
 
 ## [0.1.15] – 2026-01-13
 - Tests: Testskript robuster gemacht (Fehlerfalle + klare Hinweise).
