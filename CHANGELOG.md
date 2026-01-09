@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.6] – 2026-01-09
+- Architektur: Zentrales Datenmodell für To-Dos und Kalender eingeführt.
+- Module: To-Do-&-Kalender-Modul nach Standards integriert (Manifest, Konfiguration, Datenablage).
+- Tests: Neue Unit-Tests für Datenmodell und Modul ergänzt.
+
 ## [0.1.5] – 2026-01-09
 - Tests: Test-Sperre ergänzt, damit Tests erst nach kompletter Runde starten.
 - Sprache: Testlauf-Hinweis in der CLI auf Deutsch vereinheitlicht.

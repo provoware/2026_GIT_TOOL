@@ -1,0 +1,9 @@
+[
+  {
+    "id": "todo_kalender",
+    "name": "To-Do & Kalender",
+    "path": "modules/todo_kalender/module.py",
+    "enabled": true,
+    "description": "To-Do-Verwaltung mit Kalenderansicht (Jahr/Monat/Woche) und farblichen Icons."
+  }
+]
