@@ -267,7 +267,7 @@ def run_update(
     logger.info("Entfernte erledigte To-Do-Zeilen: %s", removed_done_lines)
 
     if dry_run:
-        logger.info("Dry-Run aktiv: Dateien werden nicht geändert.")
+        logger.info("Testlauf aktiv: Dateien werden nicht geändert.")
         return UpdateResult(
             archived_tasks=archived_tasks, removed_done_lines=removed_done_lines
         )

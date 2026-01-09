@@ -1,0 +1,6 @@
+{
+  "threshold": 3,
+  "todo_path": "todo.txt",
+  "state_path": "data/test_state.json",
+  "tests_command": ["python", "-m", "unittest", "discover", "-s", "tests"]
+}
