@@ -35,8 +35,9 @@ def _strip_inline_comment(line: str) -> str:
     if not isinstance(line, str):
         raise DependencyError("Requirements-Zeile ist kein Text.")
     cleaned = line.strip()
-    if " #" in cleaned:
-        cleaned = cleaned.split(" #", 1)[0].strip()
+    match = re.search(r"\s+#", cleaned)
+    if match:
+        cleaned = cleaned[: match.start()].strip()
     return cleaned
 
 

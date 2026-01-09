@@ -113,6 +113,11 @@ def resolve_entry_path(module_dir: Path, entry: str) -> Path:
         raise ModuleCheckError("Manifest: entry fehlt oder ist leer.")
 
     entry_path = Path(entry)
+    if ".." in entry_path.parts:
+        raise ModuleCheckError(
+            "Manifest: entry enthält unzulässige Pfadsegmente ('..') "
+            "und liegt damit außerhalb des Modulordners."
+        )
     if entry_path.is_absolute():
         raise ModuleCheckError("Manifest: entry darf kein absoluter Pfad sein.")
 

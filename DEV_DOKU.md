@@ -17,7 +17,9 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Download-Ordner-Aufräum-Modul bietet Scan, Plan, Undo und Protokoll.
 - Datei-Suche-Modul bietet Filter, Organisation und Undo.
 - Abhängigkeitsprüfung ignoriert Inline-Kommentare in requirements.txt.
+- Abhängigkeitsprüfung ignoriert Inline-Kommentare auch bei Tabs/Mehrfach-Leerzeichen.
 - Modul-Check validiert Entry-Pfade gegen Pfad-Traversal.
+- Modul-Check blockiert `..`-Segmente im Entry-Pfad mit klarer Fehlermeldung.
 - Testskript zeigt eine Schritt-für-Schritt-Hilfe und schreibt Logs nach `logs/test_run.log`.
 
 ## Struktur (aktuell)
