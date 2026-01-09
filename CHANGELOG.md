@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.11] – 2026-01-09
+- GUI-Launcher: Fokusrahmen und Menüfarben für bessere Tastaturbedienung ergänzt.
+- GUI-Launcher: Zwei zusätzliche Farbschemata mit hohem Kontrast ergänzt.
+
 ## [0.1.10] – 2026-01-10
 - Start-Routine: Abhängigkeitsprüfung ergänzt, inklusive automatischer Installation über requirements.txt.
 - Setup: Repo-Basis-Check als Skript ergänzt, inklusive Push-Trockenlauf.

@@ -3,6 +3,8 @@
 [x] 2026-01-09 | Launcher | GUI-Startübersicht mit Themes und Debug | prüfen: launcher_gui.py öffnen | fertig wenn: Module sichtbar
 [x] 2026-01-07 | Architektur | Zentrale Tool-Standards definieren | prüfen: standards.md öffnen | fertig wenn: eine verbindliche Standards-Datei existiert
 [x] 2026-01-07 | Architektur | Einheitliche Modul-Schnittstelle festlegen | prüfen: zwei Module vergleichen | fertig wenn: gleiche Init-/Exit-Struktur
+[x] 2026-01-09 | UI | Launcher-GUI: Fokusrahmen und Kontrast für Bedienelemente verbessern | prüfen: launcher_gui.py öffnen | fertig wenn: Fokus klar sichtbar
+[x] 2026-01-09 | UI | Launcher-GUI: zusätzliche barrierefreie Farbschemata ergänzen | prüfen: config/launcher_gui.json öffnen | fertig wenn: mindestens zwei neue Themes auswählbar
 [x] 2026-01-07 | Architektur | Zentrales Datenmodell festlegen | prüfen: Module greifen darauf zu | fertig wenn: ein gemeinsames Schema genutzt wird
 
 [x] 2026-01-07 | Launcher | Launcher zeigt alle Tools übersichtlich | prüfen: Start öffnen | fertig wenn: alle Module klickbar erreichbar

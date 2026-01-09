@@ -30,6 +30,26 @@
         "button_background": "#1a1a1a",
         "button_foreground": "#ffffff"
       }
+    },
+    "klar_blau": {
+      "label": "Klar Blau",
+      "colors": {
+        "background": "#0a1a2b",
+        "foreground": "#f5f9ff",
+        "accent": "#33b7ff",
+        "button_background": "#123a5a",
+        "button_foreground": "#ffffff"
+      }
+    },
+    "warm_sand": {
+      "label": "Warm Sand",
+      "colors": {
+        "background": "#f7f2e8",
+        "foreground": "#2b1e12",
+        "accent": "#a64b00",
+        "button_background": "#f0d9b8",
+        "button_foreground": "#2b1e12"
+      }
     }
   }
 }
