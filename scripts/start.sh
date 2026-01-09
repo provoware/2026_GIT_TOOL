@@ -8,7 +8,7 @@ if ! command -v python >/dev/null 2>&1; then
   exit 1
 fi
 
-TOTAL_STEPS=5
+TOTAL_STEPS=6
 CURRENT_STEP=0
 
 update_progress() {
@@ -45,17 +45,21 @@ update_progress "Projektstruktur wird geprüft"
 create_required_dirs
 
 CURRENT_STEP=2
+update_progress "Abhängigkeiten werden geprüft"
+python "${ROOT_DIR}/system/dependency_checker.py" --requirements "${ROOT_DIR}/config/requirements.txt"
+
+CURRENT_STEP=3
 update_progress "Fortschritt wird aus todo.txt berechnet"
 python "${ROOT_DIR}/system/todo_manager.py" progress --write-progress
 
-CURRENT_STEP=3
+CURRENT_STEP=4
 update_progress "Module werden geprüft"
 python "${ROOT_DIR}/system/module_checker.py" --config "${ROOT_DIR}/config/modules.json"
 
-CURRENT_STEP=4
+CURRENT_STEP=5
 update_progress "Tests werden geprüft (nur nach kompletter Runde)"
 python "${ROOT_DIR}/system/test_gate.py" --config "${ROOT_DIR}/config/test_gate.json"
 
-CURRENT_STEP=5
+CURRENT_STEP=6
 update_progress "Start-Routine abgeschlossen"
 echo "Start-Routine: PROGRESS.md wurde aktualisiert."
