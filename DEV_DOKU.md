@@ -16,6 +16,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - GUI-Launcher nutzt zusätzliche Themes und sichtbare Fokusrahmen für bessere Tastaturbedienung.
 - Download-Ordner-Aufräum-Modul bietet Scan, Plan, Undo und Protokoll.
 - Datei-Suche-Modul bietet Filter, Organisation und Undo.
+- Abhängigkeitsprüfung ignoriert Inline-Kommentare in requirements.txt.
+- Modul-Check validiert Entry-Pfade gegen Pfad-Traversal.
 
 ## Struktur (aktuell)
 - `src/`: Systemlogik (stabile Kernlogik).

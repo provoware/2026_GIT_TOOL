@@ -3,6 +3,9 @@
 ## [0.1.15] – 2026-01-13
 - Tests: Testskript robuster gemacht (Fehlerfalle + klare Hinweise).
 - Tests: Hilfe-Option für das Testskript ergänzt.
+## [0.1.15] – 2026-01-09
+- Qualität: Requirements-Parser ignoriert Inline-Kommentare.
+- Module: Modul-Check validiert Entry-Pfade gegen Pfad-Traversal.
 
 ## [0.1.14] – 2026-01-12
 - Module: Download-Ordner-Aufräumen mit Scan, Plan, Undo und Protokoll ergänzt.

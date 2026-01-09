@@ -29,6 +29,8 @@
 - Module: Manifest-Pflichtfelder (id/entry) für Status- und To-Do-Kalender-Modul ergänzt.
 - UI: Launcher-GUI mit klaren Fokusrahmen für Tastaturbedienung erweitert.
 - UI: Launcher-GUI um zusätzliche barrierefreie Farbschemata ergänzt.
+- Qualität: Requirements mit Inline-Kommentaren robust eingelesen.
+- Module: Modul-Check gegen Pfad-Traversal bei Entry-Pfaden abgesichert.
 
 ## 2026-01-10
 - Setup: Repo-Basis-Check mit Push-Trockenlauf ergänzt.
