@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.8] – 2026-01-09
+- GUI-Launcher: Tastatur-Shortcuts für Theme, Filter, Debug und Aktualisieren ergänzt.
+- Doku: Einheitliche Modul-Schnittstelle in der Entwickler-Doku festgehalten.
+
 ## [0.1.7] – 2026-01-09
 - Launcher: Klick&Start-Skript ergänzt, das die Start-Routine ausführt und die GUI-Startübersicht öffnet.
 - Launcher: GUI-Startübersicht mit Theme-Auswahl, Debug-Anzeige und klarer Modul-Liste ergänzt.

@@ -21,3 +21,5 @@
 - Module: Modul-Check beim Start ergänzt.
 - Launcher: Klick&Start-Skript ergänzt und GUI-Startübersicht erstellt.
 - Steuerung: To-Do-Manager akzeptiert `progress --write-progress` wie dokumentiert.
+- UI: Tastaturbedienung der GUI-Startübersicht ergänzt (Shortcuts + Fokus).
+- Architektur: Einheitliche Modul-Schnittstelle dokumentiert.

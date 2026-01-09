@@ -190,6 +190,10 @@ class LauncherGui:
         self.show_all_var = None
         self.debug_var = None
         self.output_text = None
+        self.theme_menu = None
+        self.show_all_check = None
+        self.debug_check = None
+        self.refresh_button = None
 
         self.root.title("Launcher – Startübersicht")
         self.root.minsize(720, 480)
@@ -211,38 +215,42 @@ class LauncherGui:
 
         tk.Label(controls, text="Farbschema:").grid(row=0, column=0, sticky="w")
         self.theme_var = tk.StringVar(value=self.gui_config.default_theme)
-        theme_menu = tk.OptionMenu(
+        self.theme_menu = tk.OptionMenu(
             controls,
             self.theme_var,
             *self.gui_config.themes.keys(),
             command=lambda _value: self.apply_theme(self.theme_var.get()),
         )
-        theme_menu.grid(row=0, column=1, sticky="w", padx=(8, 16))
+        self.theme_menu.configure(takefocus=1)
+        self.theme_menu.grid(row=0, column=1, sticky="w", padx=(8, 16))
 
         self.show_all_var = tk.BooleanVar(value=show_all)
-        show_all_check = tk.Checkbutton(
+        self.show_all_check = tk.Checkbutton(
             controls,
             text="Alle Module anzeigen (inkl. deaktiviert)",
             variable=self.show_all_var,
             command=self.refresh,
         )
-        show_all_check.grid(row=0, column=2, sticky="w", padx=(0, 16))
+        self.show_all_check.configure(takefocus=1, underline=0)
+        self.show_all_check.grid(row=0, column=2, sticky="w", padx=(0, 16))
 
         self.debug_var = tk.BooleanVar(value=self.debug)
-        debug_check = tk.Checkbutton(
+        self.debug_check = tk.Checkbutton(
             controls,
             text="Debug-Details anzeigen",
             variable=self.debug_var,
             command=self.refresh,
         )
-        debug_check.grid(row=0, column=3, sticky="w")
+        self.debug_check.configure(takefocus=1, underline=0)
+        self.debug_check.grid(row=0, column=3, sticky="w")
 
-        refresh_button = tk.Button(
+        self.refresh_button = tk.Button(
             controls,
             text="Übersicht aktualisieren",
             command=self.refresh,
         )
-        refresh_button.grid(row=0, column=4, sticky="e", padx=(16, 0))
+        self.refresh_button.configure(takefocus=1, underline=0)
+        self.refresh_button.grid(row=0, column=4, sticky="e", padx=(16, 0))
 
         controls.columnconfigure(4, weight=1)
 
@@ -253,19 +261,51 @@ class LauncherGui:
             font=("Arial", 14),
             borderwidth=2,
             relief="groove",
+            takefocus=1,
         )
         self.output_text.pack(fill="both", expand=True, padx=16, pady=(0, 16))
         self.output_text.configure(state="disabled")
 
         footer = tk.Label(
             self.root,
-            text="Tipp: Mit Tabulator kannst du alle Bedienelemente erreichen.",
+            text=(
+                "Tipp: Mit Tabulator erreichst du alle Bedienelemente. "
+                "Shortcuts: Alt+A (alle Module), Alt+D (Debug), "
+                "Alt+R (aktualisieren), Alt+T (Theme), Alt+Q (beenden)."
+            ),
             anchor="w",
         )
         footer.pack(fill="x", padx=16, pady=(0, 12))
 
+        self._bind_accessibility_shortcuts()
         self.apply_theme(self.gui_config.default_theme)
         self.refresh()
+
+    def _bind_accessibility_shortcuts(self) -> None:
+        self.root.bind_all("<Alt-a>", lambda _event: self._toggle_show_all())
+        self.root.bind_all("<Alt-d>", lambda _event: self._toggle_debug())
+        self.root.bind_all("<Alt-r>", lambda _event: self._refresh_from_shortcut())
+        self.root.bind_all("<Alt-t>", lambda _event: self._focus_widget(self.theme_menu))
+        self.root.bind_all("<Alt-q>", lambda _event: self.root.quit())
+        self.root.bind_all("<Control-r>", lambda _event: self._refresh_from_shortcut())
+
+    def _focus_widget(self, widget) -> None:
+        if widget is not None:
+            widget.focus_set()
+
+    def _toggle_show_all(self) -> None:
+        self.show_all_var.set(not bool(self.show_all_var.get()))
+        self.refresh()
+
+    def _toggle_debug(self) -> None:
+        self.debug_var.set(not bool(self.debug_var.get()))
+        self.refresh()
+
+    def _refresh_from_shortcut(self) -> None:
+        if self.refresh_button is not None:
+            self.refresh_button.invoke()
+        else:
+            self.refresh()
 
     def apply_theme(self, theme_name: str) -> None:
         if theme_name not in self.gui_config.themes:
