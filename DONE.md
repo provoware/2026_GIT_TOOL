@@ -68,3 +68,5 @@
 ## 2026-01-15
 - Start: Health-Check um Selbstreparatur ergänzt (fehlende Dateien/Ordner werden erstellt).
 - Qualität: Pfad-Validierung zentralisiert, Duplikate über `config_utils.ensure_path` entfernt.
+- Start: Health-Check um Self-Repair für fehlende Basiselemente ergänzt.
+- Start: Start-Routine nutzt Self-Repair und zeigt klaren Hinweis.
