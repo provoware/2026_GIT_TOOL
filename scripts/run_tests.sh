@@ -26,31 +26,18 @@ Optionen:
 EOF
 }
 
-if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
-  show_help
-  exit 0
-fi
 CONFIG_DIR="${ROOT_DIR}/config"
-
-usage() {
-  cat <<'USAGE'
-Nutzung: ./scripts/run_tests.sh [--help]
-
-Dieses Skript führt automatische Tests (Pytest), Codequalität (Ruff) und
-Formatprüfung (Black) aus. Fehlende Abhängigkeiten werden nach Rückfrage
-über die Start-Routine automatisch installiert.
-USAGE
-}
 
 on_error() {
   local exit_code=$?
   echo "Fehler: Tests oder Prüfungen sind fehlgeschlagen." >&2
-  echo "Hinweis: Bitte die Fehlermeldung oben prüfen und danach erneut starten." >&2
+  echo "Hinweis: Details stehen im Fehlerprotokoll (Log) unter logs/test_run.log." >&2
+  echo "Tipp: Bitte die Fehlermeldung oben prüfen und danach erneut starten." >&2
   exit "${exit_code}"
 }
 
 if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
-  usage
+  show_help
   exit 0
 fi
 
@@ -65,7 +52,6 @@ mkdir -p "${LOG_DIR}"
 touch "${LOG_FILE}"
 exec > >(tee -a "${LOG_FILE}") 2>&1
 
-if [[ ! -f "${ROOT_DIR}/config/requirements.txt" ]]; then
 if [[ ! -f "${CONFIG_DIR}/requirements.txt" ]]; then
   echo "Fehler: requirements.txt fehlt in config/." >&2
   exit 2

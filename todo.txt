@@ -57,3 +57,5 @@
 [x] 2026-01-13 | Qualität | Launcher/GUI: gemeinsame Pfad- und JSON-Validierung nutzen (Duplikate reduzieren) | prüfen: launcher.py/launcher_gui.py öffnen | fertig wenn: Utility genutzt
 [x] 2026-01-13 | Tests | Fehler-Log-Hinweis im Testskript ergänzen | prüfen: scripts/run_tests.sh ausführen | fertig wenn: Log-Hinweis sichtbar
 [x] 2026-01-13 | Tests | Schritt-für-Schritt-Anleitung in run_tests.sh --help ergänzen | prüfen: ./scripts/run_tests.sh --help | fertig wenn: Wizard angezeigt
+[x] 2026-01-09 | Tests | Testskript robuster machen (Fehlerfalle + klare Hinweise) | prüfen: bash -n scripts/run_tests.sh | fertig wenn: klare Fehlermeldungen + Syntax ok
+[x] 2026-01-09 | Tests | Testskript mit Hilfe-Option für Laien ergänzen | prüfen: ./scripts/run_tests.sh --help | fertig wenn: klare Schritt-für-Schritt-Hilfe angezeigt
