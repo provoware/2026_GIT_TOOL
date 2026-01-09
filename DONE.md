@@ -45,3 +45,7 @@
 ## 2026-01-12
 - Module: Download-Ordner-Aufräum-Modul mit Plan, Log und Undo ergänzt.
 - Module: Datei-Suche mit Filtern, Organisation und Undo ergänzt.
+
+## 2026-01-13
+- Tests: Testskript robuster gemacht (Fehlerfalle + klare Hinweise).
+- Tests: Testskript mit Hilfe-Option für Laien ergänzt.
