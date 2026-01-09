@@ -8,6 +8,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Start-Routine, Tests und Modul-Standards werden schrittweise umgesetzt.
 - Start-Check und Modul-Check sind umgesetzt und in der Diagnose sichtbar.
 - Modul-Check wird im Self-Test mit einem defekten Modul automatisch geprüft.
+- Start-Routine prüft die Projektstruktur und erstellt fehlende Ordner automatisch.
+- Start-Routine zeigt Fortschritt in Prozent je Schritt.
 
 ## Struktur (aktuell)
 - `src/`: Systemlogik (stabile Kernlogik).
@@ -32,7 +34,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen.
 - **Formatierung**: Automatische Codeformatierung (einheitlicher Stil, geplant).
-- **Prüfungen**: Start-Routine prüft Struktur und Abhängigkeiten (geplant).
+- **Prüfungen**: Start-Routine prüft Struktur (automatisch) und Abhängigkeiten (geplant).
 
 ## Dokumentationsregeln
 - Änderungen werden im `CHANGELOG.md` beschrieben.
@@ -43,6 +45,10 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 ### Fortschritt aus todo.txt berechnen
 1. `python system/todo_manager.py progress`
 2. Optional: `python system/todo_manager.py progress --write-progress` (schreibt PROGRESS.md)
+
+### Start-Routine (Struktur + Fortschritt)
+1. `./scripts/start.sh`
+2. Die Start-Routine erstellt fehlende Ordner automatisch und zeigt den Fortschritt in Prozent.
 
 ### Log-Export (ZIP)
 1. `python system/log_exporter.py`

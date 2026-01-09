@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.4] – 2026-01-09
+- Launcher: Start-Routine prüft die Projektstruktur und erstellt fehlende Ordner automatisch.
+- Launcher: Fortschrittsanzeige beim Start ergänzt (Prozentanzeige pro Schritt).
+
 ## [0.1.3] – 2026-01-07
 - Steuerung: Fortschrittsbericht aus todo.txt kann PROGRESS.md aktualisieren.
 - Logs: Log-Export als ZIP mit eindeutiger Dateiablage ergänzt.
