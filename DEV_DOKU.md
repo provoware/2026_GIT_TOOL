@@ -11,27 +11,37 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Start-Routine prüft die Projektstruktur und erstellt fehlende Ordner automatisch.
 - Start-Routine zeigt Fortschritt in Prozent je Schritt.
 - Launcher listet Module aus `config/modules.json` übersichtlich auf.
+- Modul-Check prüft registrierte Module über `config/modules.json`.
 
 ## Struktur (aktuell)
 - `src/`: Systemlogik (stabile Kernlogik).
   - `src/records/record_updater.py`: Logik für Archivierung und Changelog.
+  - `src/core/data_model.py`: Zentrales Datenmodell für To-Dos und Kalender.
 - `config/`: Konfiguration (Config = Einstellungen, änderbar ohne Code).
   - `config/records.json`: Regeln für Einträge.
   - `config/modules.json`: Zentrale Modul-Liste für den Launcher.
   - `config/test_gate.json`: Regeln für die Test-Sperre (Schwelle + Befehl).
+  - `config/modules.json`: Modul-Liste für den Launcher.
+  - `config/todo_kalender.json`: Konfiguration für To-Do-&-Kalender-Modul.
+  - `config/modules.json`: Registrierte Module für den Modul-Check.
 - `system/`: Tool-Logik (CLI-Tools und Automatisierung).
   - `system/todo_manager.py`: Fortschritt berechnen und To-Dos archivieren.
   - `system/log_exporter.py`: Logdateien als ZIP exportieren.
   - `system/launcher.py`: Launcher (Modulübersicht).
   - `system/test_gate.py`: Test-Sperre (Tests erst nach kompletter Runde).
+  - `system/module_checker.py`: Modul-Check (Struktur + Manifest + Entry-Datei).
 - `logs/`: Logdateien (Protokolle).
 - `data/log_exports/`: Exporte von Logdateien.
 - `data/test_state.json`: Statusdatei für den Test-Start.
 - `modules/`: Standardisierte Module.
   - `modules/status/module.py`: Beispielmodul mit Standard-Schnittstelle.
   - `modules/status/manifest.json`: Metadaten des Beispielmoduls.
+- `data/todo_kalender.json`: Datenablage für To-Do-&-Kalender-Modul.
 - `scripts/`: Start- und Prüfskripte.
 - `tests/`: Automatische Tests (Unit-Tests).
+- `modules/`: Modul-Ordner (Standard: manifest.json + module.py).
+  - `modules/todo_kalender/`: To-Do-&-Kalender-Modul.
+- `modules/`: Module nach Standard (Manifest + Entry).
 
 ## Standards (aktuell)
 - Einheitliche To-Do-Validierung (Formatprüfung).
@@ -39,11 +49,13 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Barrierefreie UI-Texte (Deutsch, klar, laienverständlich).
 - Logging-Format: `Zeit | Modul | LEVEL | Nachricht` (ISO-Zeitstempel).
 - Fehler-Logs sind optisch hervorgehoben (Level `ERROR`).
+- Zentrales Datenmodell für To-Dos/Kalender in `src/core/data_model.py`.
 
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen (Start erst nach kompletter Runde).
 - **Formatierung**: Automatische Codeformatierung (einheitlicher Stil, geplant).
 - **Prüfungen**: Start-Routine prüft Struktur (automatisch) und Abhängigkeiten (geplant).
+- **Prüfungen**: Modul-Check validiert aktivierte Module und deren Manifest.
 
 ## Dokumentationsregeln
 - Änderungen werden im `CHANGELOG.md` beschrieben.
@@ -57,12 +69,15 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 
 ### Start-Routine (Struktur + Fortschritt)
 1. `./scripts/start.sh`
-2. Die Start-Routine erstellt fehlende Ordner automatisch und zeigt den Fortschritt in Prozent.
+2. Die Start-Routine erstellt fehlende Ordner automatisch, prüft Module und zeigt den Fortschritt in Prozent.
 3. Tests laufen automatisch, sobald eine Runde (3 erledigte Tasks) erreicht ist.
 
 ### Launcher (Modulübersicht)
 1. `python system/launcher.py`
 2. Optional: `python system/launcher.py --show-all` (zeigt auch deaktivierte Module).
+### Modul-Check (manuell)
+1. `python system/module_checker.py --config config/modules.json`
+2. Bei Fehlern werden klare Hinweise und Lösungsvorschläge ausgegeben.
 
 ### Test-Sperre (manuell)
 1. `python system/test_gate.py --config config/test_gate.json`

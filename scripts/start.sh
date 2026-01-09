@@ -8,7 +8,7 @@ if ! command -v node >/dev/null 2>&1; then
   exit 1
 fi
 
-TOTAL_STEPS=4
+TOTAL_STEPS=5
 CURRENT_STEP=0
 
 update_progress() {
@@ -49,9 +49,13 @@ update_progress "Fortschritt wird aus todo.txt berechnet"
 node "${ROOT_DIR}/scripts/progress.js" --update
 
 CURRENT_STEP=3
+update_progress "Module werden geprüft"
+python "${ROOT_DIR}/system/module_checker.py" --config "${ROOT_DIR}/config/modules.json"
+
+CURRENT_STEP=4
 update_progress "Tests werden geprüft (nur nach kompletter Runde)"
 python "${ROOT_DIR}/system/test_gate.py" --config "${ROOT_DIR}/config/test_gate.json"
 
-CURRENT_STEP=4
+CURRENT_STEP=5
 update_progress "Start-Routine abgeschlossen"
 echo "Start-Routine: PROGRESS.md wurde aktualisiert."
