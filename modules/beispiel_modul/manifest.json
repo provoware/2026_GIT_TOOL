@@ -1,0 +1,7 @@
+{
+  "id": "beispiel_modul",
+  "name": "Beispiel-Modul",
+  "version": "1.0.0",
+  "description": "Zeigt eine einfache Beispielausgabe und validiert Ein- und Ausgabe.",
+  "entry": "module.py"
+}

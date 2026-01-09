@@ -13,3 +13,5 @@
 - Launcher: Fortschrittsanzeige beim Start ergänzt.
 - Tests: Tests erst nach kompletter Runde ausführen.
 - Sprache: Alle UI-Texte auf Deutsch geprüft.
+- Module: Beispielmodul nach Standards integriert.
+- Module: Modul-Check beim Start ergänzt.
