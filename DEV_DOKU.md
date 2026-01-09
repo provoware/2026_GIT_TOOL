@@ -28,6 +28,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Changelog-Einträge für Version 0.1.16 sind zusammengeführt.
 
 ## Struktur (aktuell)
+- `PROJEKT_INFO.md`: Übersicht zu Ordnerstruktur und Tooldateien (mit Aktualisierungspflicht).
+- `ANALYSE_BERICHT.md`: Analysebericht zu Inkonsistenzen, Redundanzen und Robustheit.
 - `src/`: Systemlogik (stabile Kernlogik).
   - `src/records/record_updater.py`: Logik für Archivierung und Changelog.
   - `src/core/data_model.py`: Zentrales Datenmodell für To-Dos und Kalender.
@@ -103,6 +105,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Änderungen werden im `CHANGELOG.md` beschrieben.
 - Abgeschlossene Aufgaben kommen nach `DONE.md`.
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
+- `PROJEKT_INFO.md` ist Pflicht und wird bei Struktur- oder Tool-Änderungen aktualisiert.
 
 ## Bauen/Starten/Testen
 ### Fortschritt aus todo.txt berechnen

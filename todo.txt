@@ -61,3 +61,5 @@
 [x] 2026-01-09 | Tests | Testskript mit Hilfe-Option für Laien ergänzen | prüfen: ./scripts/run_tests.sh --help | fertig wenn: klare Schritt-für-Schritt-Hilfe angezeigt
 [x] 2026-01-14 | Qualität | Unbenutzten Import im Health-Check entfernen | prüfen: ./scripts/run_tests.sh | fertig wenn: Ruff grün
 [x] 2026-01-14 | Doku | Doppelte Changelog-Einträge für Version 0.1.16 zusammenführen | prüfen: CHANGELOG.md | fertig wenn: 0.1.16 nur einmal vorhanden
+[x] 2026-01-09 | Doku | Infodatei zu Ordnerstruktur und Tooldateien erstellen | prüfen: PROJEKT_INFO.md öffnen | fertig wenn: Übersicht vorhanden + Aktualisierungshinweis
+[x] 2026-01-09 | Analyse | Inkonsistenzen/Redundanzen/Robustheit dokumentieren | prüfen: ANALYSE_BERICHT.md öffnen | fertig wenn: Befunde + Verbesserungen beschrieben
