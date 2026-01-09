@@ -10,20 +10,26 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Modul-Check wird im Self-Test mit einem defekten Modul automatisch geprüft.
 - Start-Routine prüft die Projektstruktur und erstellt fehlende Ordner automatisch.
 - Start-Routine zeigt Fortschritt in Prozent je Schritt.
+- Launcher listet Module aus `config/modules.json` übersichtlich auf.
 
 ## Struktur (aktuell)
 - `src/`: Systemlogik (stabile Kernlogik).
   - `src/records/record_updater.py`: Logik für Archivierung und Changelog.
 - `config/`: Konfiguration (Config = Einstellungen, änderbar ohne Code).
   - `config/records.json`: Regeln für Einträge.
+  - `config/modules.json`: Zentrale Modul-Liste für den Launcher.
   - `config/test_gate.json`: Regeln für die Test-Sperre (Schwelle + Befehl).
 - `system/`: Tool-Logik (CLI-Tools und Automatisierung).
   - `system/todo_manager.py`: Fortschritt berechnen und To-Dos archivieren.
   - `system/log_exporter.py`: Logdateien als ZIP exportieren.
+  - `system/launcher.py`: Launcher (Modulübersicht).
   - `system/test_gate.py`: Test-Sperre (Tests erst nach kompletter Runde).
 - `logs/`: Logdateien (Protokolle).
 - `data/log_exports/`: Exporte von Logdateien.
 - `data/test_state.json`: Statusdatei für den Test-Start.
+- `modules/`: Standardisierte Module.
+  - `modules/status/module.py`: Beispielmodul mit Standard-Schnittstelle.
+  - `modules/status/manifest.json`: Metadaten des Beispielmoduls.
 - `scripts/`: Start- und Prüfskripte.
 - `tests/`: Automatische Tests (Unit-Tests).
 
@@ -53,6 +59,10 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 1. `./scripts/start.sh`
 2. Die Start-Routine erstellt fehlende Ordner automatisch und zeigt den Fortschritt in Prozent.
 3. Tests laufen automatisch, sobald eine Runde (3 erledigte Tasks) erreicht ist.
+
+### Launcher (Modulübersicht)
+1. `python system/launcher.py`
+2. Optional: `python system/launcher.py --show-all` (zeigt auch deaktivierte Module).
 
 ### Test-Sperre (manuell)
 1. `python system/test_gate.py --config config/test_gate.json`

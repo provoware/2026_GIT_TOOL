@@ -1,0 +1,11 @@
+{
+  "modules": [
+    {
+      "id": "status",
+      "name": "Status-Check",
+      "path": "modules/status/module.py",
+      "enabled": true,
+      "description": "Prüft die Grundfunktion eines Moduls und liefert einen klaren Status zurück."
+    }
+  ]
+}

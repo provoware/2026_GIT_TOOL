@@ -1,0 +1,6 @@
+{
+  "name": "Status-Check",
+  "version": "1.0.0",
+  "description": "Ein einfaches Modul, das Eingabe und Ausgabe validiert und einen Status liefert.",
+  "permissions": ["read"]
+}

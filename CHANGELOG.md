@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.6] – 2026-01-09
+- Launcher: Modulübersicht ergänzt, damit alle Tools klar gelistet werden.
+- Module: Status-Check-Modul nach Standard-Schnittstelle integriert.
+
 ## [0.1.5] – 2026-01-09
 - Tests: Test-Sperre ergänzt, damit Tests erst nach kompletter Runde starten.
 - Sprache: Testlauf-Hinweis in der CLI auf Deutsch vereinheitlicht.
