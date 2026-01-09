@@ -63,3 +63,5 @@
 [x] 2026-01-14 | Doku | Doppelte Changelog-Einträge für Version 0.1.16 zusammenführen | prüfen: CHANGELOG.md | fertig wenn: 0.1.16 nur einmal vorhanden
 [x] 2026-01-09 | Doku | Infodatei zu Ordnerstruktur und Tooldateien erstellen | prüfen: PROJEKT_INFO.md öffnen | fertig wenn: Übersicht vorhanden + Aktualisierungshinweis
 [x] 2026-01-09 | Analyse | Inkonsistenzen/Redundanzen/Robustheit dokumentieren | prüfen: ANALYSE_BERICHT.md öffnen | fertig wenn: Befunde + Verbesserungen beschrieben
+[x] 2026-01-14 | Start | Health-Check: Self-Repair für fehlende Ordner/Dateien ergänzen | prüfen: python system/health_check.py --self-repair | fertig wenn: fehlende Basiselemente werden automatisch erstellt
+[x] 2026-01-14 | Start | Start-Routine: Self-Repair aktivieren und Nutzerhinweis erweitern | prüfen: scripts/start.sh | fertig wenn: Health-Check läuft mit Self-Repair und Hinweis sichtbar

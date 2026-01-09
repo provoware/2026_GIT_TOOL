@@ -23,6 +23,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Testskript zeigt eine Schritt-für-Schritt-Hilfe und schreibt Logs nach `logs/test_run.log`.
 - Testskript bricht bei Fehlern mit klarer Meldung und Log-Hinweis ab.
 - Health-Check prüft wichtige Dateien/Ordner vor dem Start mit klaren Hinweisen.
+- Health-Check kann fehlende Basiselemente automatisch per Self-Repair anlegen.
+- Start-Routine ruft den Health-Check mit aktivem Self-Repair auf.
 - Launcher/GUI nutzen gemeinsame Pfad- und JSON-Validierung, um Duplikate zu reduzieren.
 - Health-Check ist Ruff-konform (ungenutzte Importe entfernt).
 - Changelog-Einträge für Version 0.1.16 sind zusammengeführt.

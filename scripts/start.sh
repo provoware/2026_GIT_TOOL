@@ -45,8 +45,8 @@ update_progress "Projektstruktur wird geprüft"
 create_required_dirs
 
 CURRENT_STEP=2
-update_progress "Health-Check (Sicherheitsprüfung) läuft"
-python "${ROOT_DIR}/system/health_check.py" --root "${ROOT_DIR}"
+update_progress "Health-Check (Sicherheitsprüfung + Self-Repair) läuft"
+python "${ROOT_DIR}/system/health_check.py" --root "${ROOT_DIR}" --self-repair
 
 CURRENT_STEP=3
 update_progress "Abhängigkeiten werden geprüft"

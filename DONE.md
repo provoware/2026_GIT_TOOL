@@ -64,3 +64,5 @@
 ## 2026-01-14
 - Qualität: Unbenutzten Import im Health-Check entfernt (Ruff grün).
 - Doku: Doppelte Changelog-Einträge für Version 0.1.16 zusammengeführt.
+- Start: Health-Check um Self-Repair für fehlende Basiselemente ergänzt.
+- Start: Start-Routine nutzt Self-Repair und zeigt klaren Hinweis.
