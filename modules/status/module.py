@@ -55,5 +55,8 @@ def run(input_data: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def exit(context: ModuleContext | None = None) -> None:
-    logger = context.logger if isinstance(context, ModuleContext) else logging.getLogger("module.status")
+    if isinstance(context, ModuleContext):
+        logger = context.logger
+    else:
+        logger = logging.getLogger("module.status")
     logger.debug("Status-Check: Abschluss durchgeführt.")

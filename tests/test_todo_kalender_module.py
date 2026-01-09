@@ -1,6 +1,6 @@
 import importlib.util
-import sys
 import json
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -71,9 +71,7 @@ class TodoKalenderModuleTests(unittest.TestCase):
             self.assertEqual(calendar_result["status"], "ok")
             self.assertEqual(len(calendar_result["data"]["entries"]), 1)
 
-            complete_result = module.run(
-                {"action": "complete", "id": item_id, "context": context}
-            )
+            complete_result = module.run({"action": "complete", "id": item_id, "context": context})
             self.assertEqual(complete_result["status"], "ok")
             self.assertEqual(complete_result["data"]["status"], "erledigt")
 

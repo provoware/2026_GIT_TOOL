@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.12] – 2026-01-10
+- Tests: Pytest als Standard-Testlauf ergänzt und in die Test-Sperre integriert.
+- Qualität: Ruff- und Black-Prüfungen als automatischen Prüf-Schritt ergänzt.
+- Skript: Zentrales Testskript für Tests, Codequalität und Formatprüfung ergänzt.
+
 ## [0.1.11] – 2026-01-09
 - GUI-Launcher: Fokusrahmen und Menüfarben für bessere Tastaturbedienung ergänzt.
 - GUI-Launcher: Zwei zusätzliche Farbschemata mit hohem Kontrast ergänzt.

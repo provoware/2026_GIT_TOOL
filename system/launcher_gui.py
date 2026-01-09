@@ -64,9 +64,7 @@ def _validate_color(value: str, label: str) -> str:
         raise GuiLauncherError(f"Farbe fehlt: {label}.")
     text = value.strip()
     if not text.startswith("#") or len(text) not in {4, 7}:
-        raise GuiLauncherError(
-            f"Farbe {label} ist ungültig. Erwartet z. B. #fff oder #ffffff."
-        )
+        raise GuiLauncherError(f"Farbe {label} ist ungültig. Erwartet z. B. #fff oder #ffffff.")
     return text
 
 
@@ -369,7 +367,11 @@ class LauncherGui:
         if isinstance(widget, tk.Text):
             widget.configure(highlightbackground=accent, highlightcolor=accent)
         if isinstance(widget, tk.OptionMenu):
-            widget.configure(highlightbackground=accent, highlightcolor=accent, highlightthickness=2)
+            widget.configure(
+                highlightbackground=accent,
+                highlightcolor=accent,
+                highlightthickness=2,
+            )
             menu = widget["menu"]
             menu.configure(
                 bg=button_bg,
@@ -419,9 +421,7 @@ class LauncherGui:
             lines.append("Es wurden Probleme gefunden:")
             lines.extend([f"- {issue}" for issue in issues])
             lines.append("Bitte Konfiguration oder Modulstruktur korrigieren.")
-            self._show_error(
-                "Modul-Check: Es wurden Probleme gefunden. Details siehe Übersicht."
-            )
+            self._show_error("Modul-Check: Es wurden Probleme gefunden. Details siehe Übersicht.")
             logging.error("Modul-Check: %s Problem(e) gefunden.", len(issues))
             for issue in issues:
                 logging.error("Modul-Check: %s", issue)

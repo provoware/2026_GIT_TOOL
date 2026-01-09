@@ -37,9 +37,7 @@ def _load_json(path: Path) -> dict:
     try:
         return json.loads(path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
-        raise LauncherError(
-            f"Konfiguration ist kein gültiges JSON: {path}"
-        ) from exc
+        raise LauncherError(f"Konfiguration ist kein gültiges JSON: {path}") from exc
 
 
 def resolve_module_path(root: Path, module_path: str) -> Path:

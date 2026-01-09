@@ -90,9 +90,7 @@ def parse_todo_lines(lines: Iterable[str]) -> List[TodoTask]:
 def validate_tasks(tasks: Iterable[TodoTask]) -> None:
     for task in tasks:
         if not DATE_PATTERN.match(task.date):
-            raise ValueError(
-                f"Ungültiges Datum im To-Do: {task.date}. Erwartet: JJJJ-MM-TT."
-            )
+            raise ValueError(f"Ungültiges Datum im To-Do: {task.date}. Erwartet: JJJJ-MM-TT.")
         if not task.area:
             raise ValueError("Bereich im To-Do darf nicht leer sein.")
         if not task.title:
@@ -158,9 +156,7 @@ def insert_done_entries(
 
     for task in tasks:
         header = f"## {task.date}"
-        entry = (
-            f"- {config.done_entry_prefix} {task.date} | {task.area} | {task.title}\n"
-        )
+        entry = f"- {config.done_entry_prefix} {task.date} | {task.area} | {task.title}\n"
         if header not in existing_sections:
             if not updated_lines or updated_lines[-1].strip():
                 updated_lines.append("\n")
@@ -169,9 +165,8 @@ def insert_done_entries(
             existing_sections[header] = len(updated_lines) - 2
         else:
             insert_index = existing_sections[header] + 1
-            while (
-                insert_index < len(updated_lines)
-                and updated_lines[insert_index].startswith("- ")
+            while insert_index < len(updated_lines) and updated_lines[insert_index].startswith(
+                "- "
             ):
                 insert_index += 1
             updated_lines.insert(insert_index, entry)
@@ -246,9 +241,7 @@ def run_update(
 
     todo_lines = todo_path.read_text(encoding="utf-8").splitlines(keepends=True)
     done_lines = done_path.read_text(encoding="utf-8").splitlines(keepends=True)
-    changelog_lines = changelog_path.read_text(encoding="utf-8").splitlines(
-        keepends=True
-    )
+    changelog_lines = changelog_path.read_text(encoding="utf-8").splitlines(keepends=True)
 
     tasks = parse_todo_lines(todo_lines)
     validate_tasks(tasks)
@@ -259,33 +252,25 @@ def run_update(
     )
 
     updated_done_lines = insert_done_entries(done_lines, archived_tasks, config)
-    updated_changelog_lines = update_changelog(
-        changelog_lines, archived_tasks, config
-    )
+    updated_changelog_lines = update_changelog(changelog_lines, archived_tasks, config)
 
     logger.info(format_summary(archived_tasks))
     logger.info("Entfernte erledigte To-Do-Zeilen: %s", removed_done_lines)
 
     if dry_run:
         logger.info("Testlauf aktiv: Dateien werden nicht geändert.")
-        return UpdateResult(
-            archived_tasks=archived_tasks, removed_done_lines=removed_done_lines
-        )
+        return UpdateResult(archived_tasks=archived_tasks, removed_done_lines=removed_done_lines)
 
     todo_path.write_text("".join(updated_todo_lines), encoding="utf-8")
     done_path.write_text("".join(updated_done_lines), encoding="utf-8")
     changelog_path.write_text("".join(updated_changelog_lines), encoding="utf-8")
 
-    return UpdateResult(
-        archived_tasks=archived_tasks, removed_done_lines=removed_done_lines
-    )
+    return UpdateResult(archived_tasks=archived_tasks, removed_done_lines=removed_done_lines)
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description=(
-            "Archiviert erledigte To-Dos und ergänzt den Changelog automatisch."
-        )
+        description=("Archiviert erledigte To-Dos und ergänzt den Changelog automatisch.")
     )
     parser.add_argument(
         "--dry-run",

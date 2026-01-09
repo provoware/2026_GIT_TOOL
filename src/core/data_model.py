@@ -100,9 +100,7 @@ def parse_iso_date(value: Any, field_name: str) -> date:
     if not isinstance(value, str) or not value:
         raise DataModelError(f"{field_name} fehlt oder ist kein Text.")
     if not DATE_PATTERN.match(value):
-        raise DataModelError(
-            f"{field_name} ist ungültig. Erwartet: JJJJ-MM-TT."
-        )
+        raise DataModelError(f"{field_name} ist ungültig. Erwartet: JJJJ-MM-TT.")
     try:
         return date.fromisoformat(value)
     except ValueError as exc:
