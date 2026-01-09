@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.9] – 2026-01-09
+- GUI-Launcher: Modul-Check ergänzt, der Manifest und Entry-Dateien beim Start meldet.
+- Standards: Modul-Check als verpflichtenden Startschritt dokumentiert.
+- Module: Modul-Pfade in der Konfiguration auf Modulordner korrigiert.
+- Module: Manifest-Dateien um fehlende Pflichtfelder ergänzt (id/entry).
+
 ## [0.1.8] – 2026-01-09
 - GUI-Launcher: Tastatur-Shortcuts für Theme, Filter, Debug und Aktualisieren ergänzt.
 - Doku: Einheitliche Modul-Schnittstelle in der Entwickler-Doku festgehalten.

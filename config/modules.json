@@ -4,21 +4,21 @@
     {
       "id": "status",
       "name": "Status-Check",
-      "path": "modules/status/module.py",
+      "path": "modules/status",
       "enabled": true,
       "description": "Prüft die Grundfunktion eines Moduls und liefert einen klaren Status zurück."
     },
     {
       "id": "todo_kalender",
       "name": "To-Do & Kalender",
-      "path": "modules/todo_kalender/module.py",
+      "path": "modules/todo_kalender",
       "enabled": true,
       "description": "To-Do-Verwaltung mit Kalenderansicht (Jahr/Monat/Woche) und farblichen Icons."
     },
     {
       "id": "beispiel_modul",
       "name": "Beispiel-Modul",
-      "path": "modules/beispiel_modul/module.py",
+      "path": "modules/beispiel_modul",
       "enabled": true,
       "description": "Ein minimales Beispielmodul für den Modul-Check."
     }

@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List
 
+import module_checker
 from launcher import (
     LauncherError,
     filter_modules,
@@ -141,6 +142,16 @@ def render_module_text(modules: Iterable[object], root: Path, debug: bool) -> st
 def setup_logging(debug: bool) -> None:
     level = logging.DEBUG if debug else logging.INFO
     logging.basicConfig(level=level, format="%(levelname)s: %(message)s")
+
+
+def run_module_check(config_path: Path) -> List[str]:
+    if not isinstance(config_path, Path):
+        raise GuiLauncherError("config_path ist kein Pfad (Path).")
+    try:
+        entries = module_checker.load_modules(config_path)
+    except module_checker.ModuleCheckError as exc:
+        raise GuiLauncherError(f"Modul-Check konnte nicht starten: {exc}") from exc
+    return module_checker.check_modules(entries)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -365,6 +376,8 @@ class LauncherGui:
             modules = filter_modules(modules, show_all)
             root_dir = self.module_config.resolve().parents[1]
             text = render_module_text(modules, root_dir, debug)
+            issues = run_module_check(self.module_config)
+            text = self._append_module_check(text, issues)
         except (LauncherError, GuiLauncherError) as exc:
             text = f"Fehler: {exc}\n"
             logging.error("GUI-Launcher Fehler: %s", exc)
@@ -384,6 +397,24 @@ class LauncherGui:
         import tkinter.messagebox as messagebox
 
         messagebox.showerror("Fehler", message)
+
+    def _append_module_check(self, text: str, issues: List[str]) -> str:
+        if not isinstance(text, str) or not text.strip():
+            raise GuiLauncherError("Ausgabetext ist leer.")
+        lines = [text.rstrip(), "", "Modul-Check:"]
+        if issues:
+            lines.append("Es wurden Probleme gefunden:")
+            lines.extend([f"- {issue}" for issue in issues])
+            lines.append("Bitte Konfiguration oder Modulstruktur korrigieren.")
+            self._show_error(
+                "Modul-Check: Es wurden Probleme gefunden. Details siehe Übersicht."
+            )
+            logging.error("Modul-Check: %s Problem(e) gefunden.", len(issues))
+            for issue in issues:
+                logging.error("Modul-Check: %s", issue)
+        else:
+            lines.append("Alle aktiven Module sind vorhanden und korrekt.")
+        return "\n".join(lines).rstrip() + "\n"
 
 
 def run_gui(module_config: Path, gui_config: GuiConfig, show_all: bool, debug: bool) -> int:
