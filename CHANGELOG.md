@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.7] – 2026-01-09
+- Launcher: Klick&Start-Skript ergänzt, das die Start-Routine ausführt und die GUI-Startübersicht öffnet.
+- Launcher: GUI-Startübersicht mit Theme-Auswahl, Debug-Anzeige und klarer Modul-Liste ergänzt.
+- Launcher: Modul-Konfiguration korrigiert, damit die Modul-Liste gültig geladen wird.
+- Start: Fortschritt wird jetzt direkt über `todo_manager.py` aktualisiert.
+- To-Do-Manager: `progress --write-progress` unterstützt die gewünschte Befehlsreihenfolge.
+
 ## [0.1.6] – 2026-01-09
 - Launcher: Modulübersicht ergänzt, damit alle Tools klar gelistet werden.
 - Module: Status-Check-Modul nach Standard-Schnittstelle integriert.

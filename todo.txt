@@ -1,4 +1,6 @@
 [ ] 2026-01-07 | Setup | Repo-Basis steht | fertig wenn: Push erfolgreich
+[x] 2026-01-09 | Launcher | Klick&Start-Datei für GUI-Startübersicht | prüfen: klick_start.sh ausführen | fertig wenn: GUI öffnet sich
+[x] 2026-01-09 | Launcher | GUI-Startübersicht mit Themes und Debug | prüfen: launcher_gui.py öffnen | fertig wenn: Module sichtbar
 [x] 2026-01-07 | Architektur | Zentrale Tool-Standards definieren | prüfen: standards.md öffnen | fertig wenn: eine verbindliche Standards-Datei existiert
 [x] 2026-01-07 | Architektur | Einheitliche Modul-Schnittstelle festlegen | prüfen: zwei Module vergleichen | fertig wenn: gleiche Init-/Exit-Struktur
 [x] 2026-01-07 | Architektur | Zentrales Datenmodell festlegen | prüfen: Module greifen darauf zu | fertig wenn: ein gemeinsames Schema genutzt wird

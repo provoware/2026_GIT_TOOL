@@ -1,0 +1,35 @@
+{
+  "default_theme": "hell",
+  "themes": {
+    "hell": {
+      "label": "Hell",
+      "colors": {
+        "background": "#ffffff",
+        "foreground": "#1a1a1a",
+        "accent": "#005ea5",
+        "button_background": "#e6f0fb",
+        "button_foreground": "#0b2d4d"
+      }
+    },
+    "dunkel": {
+      "label": "Dunkel",
+      "colors": {
+        "background": "#121212",
+        "foreground": "#f5f5f5",
+        "accent": "#4da3ff",
+        "button_background": "#1f2a36",
+        "button_foreground": "#f5f5f5"
+      }
+    },
+    "kontrast": {
+      "label": "Kontrast",
+      "colors": {
+        "background": "#000000",
+        "foreground": "#ffffff",
+        "accent": "#ffcc00",
+        "button_background": "#1a1a1a",
+        "button_foreground": "#ffffff"
+      }
+    }
+  }
+}

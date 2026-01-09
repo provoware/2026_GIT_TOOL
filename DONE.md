@@ -19,3 +19,5 @@
 - Module: To-Do-&-Kalender-Modul nach Standards integriert.
 - Module: Beispielmodul nach Standards integriert.
 - Module: Modul-Check beim Start ergänzt.
+- Launcher: Klick&Start-Skript ergänzt und GUI-Startübersicht erstellt.
+- Steuerung: To-Do-Manager akzeptiert `progress --write-progress` wie dokumentiert.

@@ -1,4 +1,5 @@
 {
+  "version": "1.0",
   "modules": [
     {
       "id": "status",
@@ -6,22 +7,18 @@
       "path": "modules/status/module.py",
       "enabled": true,
       "description": "Prüft die Grundfunktion eines Moduls und liefert einen klaren Status zurück."
-[
-  {
-    "id": "todo_kalender",
-    "name": "To-Do & Kalender",
-    "path": "modules/todo_kalender/module.py",
-    "enabled": true,
-    "description": "To-Do-Verwaltung mit Kalenderansicht (Jahr/Monat/Woche) und farblichen Icons."
-  }
-]
-{
-  "version": "1.0",
-  "modules": [
+    },
+    {
+      "id": "todo_kalender",
+      "name": "To-Do & Kalender",
+      "path": "modules/todo_kalender/module.py",
+      "enabled": true,
+      "description": "To-Do-Verwaltung mit Kalenderansicht (Jahr/Monat/Woche) und farblichen Icons."
+    },
     {
       "id": "beispiel_modul",
       "name": "Beispiel-Modul",
-      "path": "modules/beispiel_modul",
+      "path": "modules/beispiel_modul/module.py",
       "enabled": true,
       "description": "Ein minimales Beispielmodul für den Modul-Check."
     }
