@@ -49,3 +49,6 @@
 [x] 2026-01-12 | Module | Datei-Suche mit Filtern, Organisation und Undo | prüfen: Suche + Organisieren + Undo | fertig wenn: Treffer lassen sich filtern und organisieren
 [x] 2026-01-09 | Qualität | Requirements mit Inline-Kommentaren robust einlesen | prüfen: requirements.txt mit Inline-Kommentaren | fertig wenn: Kommentare werden ignoriert
 [x] 2026-01-09 | Module | Modul-Check: Entry-Pfad gegen Pfad-Traversal absichern | prüfen: manifest.json mit ../ entry | fertig wenn: Fehler wird erkannt
+[ ] 2026-01-13 | Start | Sicherheits-Prüfung (Health-Check) vor dem Start ergänzen | prüfen: Start ausführen | fertig wenn: wichtige Dateien/Ordner geprüft + klare Hinweise
+[x] 2026-01-13 | Tests | Fehler-Log-Hinweis im Testskript ergänzen | prüfen: scripts/run_tests.sh ausführen | fertig wenn: Log-Hinweis sichtbar
+[x] 2026-01-13 | Tests | Schritt-für-Schritt-Anleitung in run_tests.sh --help ergänzen | prüfen: ./scripts/run_tests.sh --help | fertig wenn: Wizard angezeigt

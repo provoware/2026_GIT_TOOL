@@ -18,6 +18,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Datei-Suche-Modul bietet Filter, Organisation und Undo.
 - Abhängigkeitsprüfung ignoriert Inline-Kommentare in requirements.txt.
 - Modul-Check validiert Entry-Pfade gegen Pfad-Traversal.
+- Testskript zeigt eine Schritt-für-Schritt-Hilfe und schreibt Logs nach `logs/test_run.log`.
 
 ## Struktur (aktuell)
 - `src/`: Systemlogik (stabile Kernlogik).
@@ -107,6 +108,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 ### Tests + Codequalität (manuell)
 1. `./scripts/run_tests.sh`
 2. Führt Pytest, Ruff (Linting) und Black (Formatprüfung) in dieser Reihenfolge aus.
+3. Hinweis: Details zu Fehlern stehen im Fehlerprotokoll (Log) unter `logs/test_run.log`.
+4. Hilfe: `./scripts/run_tests.sh --help` zeigt den geführten Ablauf.
 
 ### Abhängigkeiten (manuell prüfen)
 1. `python system/dependency_checker.py --requirements config/requirements.txt`
