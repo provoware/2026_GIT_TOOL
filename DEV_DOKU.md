@@ -14,6 +14,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Modul-Check prüft registrierte Module über `config/modules.json`.
 - GUI-Launcher führt beim Aktualisieren zusätzlich den Modul-Check aus und meldet Probleme direkt in der Übersicht.
 - GUI-Launcher nutzt zusätzliche Themes und sichtbare Fokusrahmen für bessere Tastaturbedienung.
+- Download-Ordner-Aufräum-Modul bietet Scan, Plan, Undo und Protokoll.
+- Datei-Suche-Modul bietet Filter, Organisation und Undo.
 
 ## Struktur (aktuell)
 - `src/`: Systemlogik (stabile Kernlogik).
@@ -25,6 +27,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
   - `config/modules.json`: Zentrale Modul-Liste für den Launcher.
   - `config/notiz_editor.json`: Konfiguration für den Notiz-Editor (Templates, Themes).
   - `config/charakter_modul.json`: Konfiguration für das Charakter-Modul (Templates, Themes).
+  - `config/download_aufraeumen.json`: Konfiguration für Download-Aufräumen (Regeln, Themes).
+  - `config/datei_suche.json`: Konfiguration für Datei-Suche (Filter, Themes).
   - `config/requirements.txt`: Python-Abhängigkeiten (pip-Pakete).
   - `config/pytest.ini`: Pytest-Konfiguration.
   - `config/ruff.toml`: Ruff-Regeln für Codequalität (Linting).
@@ -46,6 +50,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - `data/test_state.json`: Statusdatei für den Test-Start.
 - `data/notiz_editor.json`: Datenablage für den Notiz-Editor.
 - `data/charakter_modul.json`: Datenablage für das Charakter-Modul.
+- `data/download_aufraeumen_log.json`: Protokoll für Aufräum-Aktionen (Undo).
+- `data/datei_suche_log.json`: Protokoll für Organisationsaktionen (Undo).
 - `modules/`: Standardisierte Module.
   - `modules/status/module.py`: Beispielmodul mit Standard-Schnittstelle.
   - `modules/status/manifest.json`: Metadaten des Beispielmoduls.
@@ -59,6 +65,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
   - `modules/todo_kalender/`: To-Do-&-Kalender-Modul.
 - `modules/notiz_editor/`: Notiz-Editor-Modul mit Templates und Dashboard.
 - `modules/charakter_modul/`: Charakter-Modul für konsistente Profile.
+- `modules/download_aufraeumen/`: Download-Ordner-Aufräumen (Scan/Plan/Undo).
+- `modules/datei_suche/`: Datei-Suche mit Filter und Organisationsfunktionen.
 - `modules/`: Module nach Standard (Manifest + Entry).
 
 ## Standards (aktuell)

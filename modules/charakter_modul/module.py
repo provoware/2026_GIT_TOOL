@@ -67,9 +67,7 @@ def run(input_data: Dict[str, Any]) -> Dict[str, Any]:
 def exit(context: ModuleContext | None = None) -> Dict[str, Any]:
     if isinstance(context, ModuleContext):
         context.logger.debug("Charakter-Modul: Modul wird beendet.")
-    return build_response(
-        status="ok", message="Charakter-Modul sauber beendet.", data={}, ui={}
-    )
+    return build_response(status="ok", message="Charakter-Modul sauber beendet.", data={}, ui={})
 
 
 def validateInput(input_data: Dict[str, Any]) -> None:
@@ -242,9 +240,7 @@ def build_ui(config: ModuleConfig) -> Dict[str, Any]:
 def ensure_data_file(data_path: Path) -> None:
     data_path.parent.mkdir(parents=True, exist_ok=True)
     if not data_path.exists():
-        data_path.write_text(
-            json.dumps({"characters": []}, indent=2), encoding="utf-8"
-        )
+        data_path.write_text(json.dumps({"characters": []}, indent=2), encoding="utf-8")
 
 
 def load_profiles(data_path: Path) -> List[CharacterProfile]:
@@ -259,9 +255,7 @@ def load_profiles(data_path: Path) -> List[CharacterProfile]:
 def save_profiles(data_path: Path, profiles: List[CharacterProfile]) -> None:
     ensure_data_file(data_path)
     payload = {"characters": [profile.to_dict() for profile in profiles]}
-    data_path.write_text(
-        json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8"
-    )
+    data_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
     if not data_path.exists():
         raise ModuleError("Daten konnten nicht geschrieben werden.")
 
@@ -277,17 +271,11 @@ def create_character(
     traits = _require_text_list(input_data.get("traits", []), "traits")
     goals = _require_text_list(input_data.get("goals", []), "goals")
     conflicts = _require_text_list(input_data.get("conflicts", []), "conflicts")
-    relationships = _require_text_list(
-        input_data.get("relationships", []), "relationships"
-    )
-    voice_notes = _require_text(
-        input_data.get("voice_notes", ""), "voice_notes", allow_empty=True
-    )
+    relationships = _require_text_list(input_data.get("relationships", []), "relationships")
+    voice_notes = _require_text(input_data.get("voice_notes", ""), "voice_notes", allow_empty=True)
     tags = _require_text_list(input_data.get("tags", []), "tags")
     template_id = _require_optional_text(input_data.get("template_id"), "template_id")
-    custom_fields = _require_text_mapping(
-        input_data.get("custom_fields", {}), "custom_fields"
-    )
+    custom_fields = _require_text_mapping(input_data.get("custom_fields", {}), "custom_fields")
     created_at = datetime.now()
     updated_at = created_at
     character_id = _ensure_unique_id(profiles, make_character_id(name, created_at))
@@ -324,9 +312,7 @@ def update_character(
         character_id=profile.character_id,
         name=_require_text(input_data.get("name", profile.name), "name"),
         role=_require_text(input_data.get("role", profile.role), "role"),
-        archetype=_require_text(
-            input_data.get("archetype", profile.archetype), "archetype"
-        ),
+        archetype=_require_text(input_data.get("archetype", profile.archetype), "archetype"),
         biography=_require_text(
             input_data.get("biography", profile.biography),
             "biography",
@@ -339,9 +325,7 @@ def update_character(
         ),
         traits=_require_text_list(input_data.get("traits", profile.traits), "traits"),
         goals=_require_text_list(input_data.get("goals", profile.goals), "goals"),
-        conflicts=_require_text_list(
-            input_data.get("conflicts", profile.conflicts), "conflicts"
-        ),
+        conflicts=_require_text_list(input_data.get("conflicts", profile.conflicts), "conflicts"),
         relationships=_require_text_list(
             input_data.get("relationships", profile.relationships), "relationships"
         ),
@@ -393,9 +377,7 @@ def toggle_favorite(
     return updated_profile
 
 
-def find_profile(
-    profiles: List[CharacterProfile], character_id: Optional[str]
-) -> CharacterProfile:
+def find_profile(profiles: List[CharacterProfile], character_id: Optional[str]) -> CharacterProfile:
     character_id = _require_text(character_id, "id")
     for profile in profiles:
         if profile.character_id == character_id:
@@ -445,9 +427,7 @@ def build_dashboard(profiles: List[CharacterProfile]) -> Dict[str, Any]:
     }
 
 
-def _replace_profile(
-    profiles: List[CharacterProfile], updated_profile: CharacterProfile
-) -> None:
+def _replace_profile(profiles: List[CharacterProfile], updated_profile: CharacterProfile) -> None:
     for index, profile in enumerate(profiles):
         if profile.character_id == updated_profile.character_id:
             profiles[index] = updated_profile

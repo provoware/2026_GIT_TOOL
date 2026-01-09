@@ -1,0 +1,83 @@
+{
+  "search_roots": ["~"],
+  "exclude_dirs": [".git", "node_modules", "__pycache__"],
+  "log_path": "data/datei_suche_log.json",
+  "default_theme": "hell",
+  "themes": {
+    "hell": {
+      "background": "#fafafa",
+      "foreground": "#111111",
+      "accent": "#0a66c2",
+      "focus": "#ff9900",
+      "button": "#0a66c2",
+      "button_text": "#ffffff"
+    },
+    "dunkel": {
+      "background": "#1b1b1b",
+      "foreground": "#f0f0f0",
+      "accent": "#4ea1ff",
+      "focus": "#ffd24d",
+      "button": "#4ea1ff",
+      "button_text": "#000000"
+    },
+    "hoher_kontrast": {
+      "background": "#000000",
+      "foreground": "#ffffff",
+      "accent": "#00ffea",
+      "focus": "#ff00ff",
+      "button": "#00ffea",
+      "button_text": "#000000"
+    }
+  },
+  "ui": {
+    "title": "Datei-Suche",
+    "description": "Sucht Dateien nach Name, Inhalt, Größe, Datum und Typ mit klaren Filtern.",
+    "panels": [
+      {
+        "id": "filter",
+        "title": "Filter",
+        "description": "Suchkriterien setzen.",
+        "fields": [
+          {"id": "name_contains", "label": "Name enthält", "type": "text"},
+          {"id": "content_contains", "label": "Text enthält", "type": "text"},
+          {"id": "extensions", "label": "Dateitypen (Endungen)", "type": "multiselect"},
+          {"id": "min_size", "label": "Min. Größe (Bytes)", "type": "number"},
+          {"id": "max_size", "label": "Max. Größe (Bytes)", "type": "number"},
+          {"id": "created_after", "label": "Erstellt nach (ISO)", "type": "date"},
+          {"id": "created_before", "label": "Erstellt vor (ISO)", "type": "date"},
+          {"id": "modified_after", "label": "Geändert nach (ISO)", "type": "date"},
+          {"id": "modified_before", "label": "Geändert vor (ISO)", "type": "date"}
+        ]
+      },
+      {
+        "id": "organize",
+        "title": "Organisieren",
+        "description": "Gefundene Dateien direkt verschieben oder kopieren.",
+        "fields": [
+          {"id": "target_dir", "label": "Zielordner", "type": "path"},
+          {"id": "mode", "label": "Modus", "type": "select", "options": ["move", "copy"]}
+        ]
+      },
+      {
+        "id": "undo",
+        "title": "Rückgängig",
+        "description": "Letzte Organisationsaktion zurücksetzen.",
+        "fields": []
+      }
+    ],
+    "actions": [
+      {"id": "search", "label": "Suchen", "shortcut": "Alt+S"},
+      {"id": "organize", "label": "Organisieren", "shortcut": "Alt+O"},
+      {"id": "undo", "label": "Rückgängig", "shortcut": "Alt+U"},
+      {"id": "history", "label": "Historie", "shortcut": "Alt+H"}
+    ],
+    "accessibility": {
+      "keyboard": true,
+      "high_contrast": true,
+      "screen_reader": "Alle Felder sind beschriftet und tastaturbedienbar."
+    }
+  },
+  "max_results": 500,
+  "text_extensions": ["txt", "md", "csv", "json", "yaml", "yml"],
+  "debug": false
+}

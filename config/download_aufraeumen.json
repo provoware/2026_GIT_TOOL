@@ -1,0 +1,112 @@
+{
+  "download_path": "~/Downloads",
+  "log_path": "data/download_aufraeumen_log.json",
+  "default_theme": "hell",
+  "themes": {
+    "hell": {
+      "background": "#f7f7f7",
+      "foreground": "#111111",
+      "accent": "#005fcc",
+      "focus": "#ff9900",
+      "button": "#005fcc",
+      "button_text": "#ffffff"
+    },
+    "dunkel": {
+      "background": "#1e1e1e",
+      "foreground": "#f5f5f5",
+      "accent": "#4ea1ff",
+      "focus": "#ffd24d",
+      "button": "#4ea1ff",
+      "button_text": "#000000"
+    },
+    "hoher_kontrast": {
+      "background": "#000000",
+      "foreground": "#ffffff",
+      "accent": "#00ffea",
+      "focus": "#ff00ff",
+      "button": "#00ffea",
+      "button_text": "#000000"
+    }
+  },
+  "rules": [
+    {
+      "label": "Bilder",
+      "folder": "Bilder",
+      "extensions": ["jpg", "jpeg", "png", "gif", "webp", "svg"]
+    },
+    {
+      "label": "Dokumente",
+      "folder": "Dokumente",
+      "extensions": ["pdf", "doc", "docx", "odt", "rtf", "txt"]
+    },
+    {
+      "label": "Archive",
+      "folder": "Archive",
+      "extensions": ["zip", "rar", "7z", "tar", "gz"]
+    },
+    {
+      "label": "Audio",
+      "folder": "Audio",
+      "extensions": ["mp3", "wav", "flac", "aac", "ogg"]
+    },
+    {
+      "label": "Video",
+      "folder": "Video",
+      "extensions": ["mp4", "mkv", "mov", "avi", "webm"]
+    },
+    {
+      "label": "Programme",
+      "folder": "Programme",
+      "extensions": ["deb", "rpm", "appimage", "sh", "run"]
+    },
+    {
+      "label": "Sonstiges",
+      "folder": "Sonstiges",
+      "extensions": [],
+      "fallback": true
+    }
+  ],
+  "ui": {
+    "title": "Download-Ordner aufräumen",
+    "description": "Sortiert Downloads nach Typ, zeigt Vorschläge und ermöglicht Rückgängig-Funktionen.",
+    "panels": [
+      {
+        "id": "scan",
+        "title": "Scan",
+        "description": "Dateien prüfen und Vorschläge erzeugen.",
+        "fields": [
+          {"id": "download_path", "label": "Download-Ordner", "type": "path"},
+          {"id": "include_hidden", "label": "Versteckte Dateien einbeziehen", "type": "checkbox"},
+          {"id": "max_files", "label": "Maximale Dateien", "type": "number"}
+        ]
+      },
+      {
+        "id": "plan",
+        "title": "Aufräumplan",
+        "description": "Ausgewählte Dateien automatisch zuordnen.",
+        "fields": [
+          {"id": "selected", "label": "Auswahl", "type": "multiselect"}
+        ]
+      },
+      {
+        "id": "undo",
+        "title": "Rückgängig",
+        "description": "Letzte Aktion sicher zurücksetzen.",
+        "fields": []
+      }
+    ],
+    "actions": [
+      {"id": "scan", "label": "Scannen", "shortcut": "Alt+S"},
+      {"id": "build_plan", "label": "Plan erstellen", "shortcut": "Alt+P"},
+      {"id": "apply_plan", "label": "Aufräumen", "shortcut": "Alt+A"},
+      {"id": "undo", "label": "Rückgängig", "shortcut": "Alt+U"},
+      {"id": "history", "label": "Historie", "shortcut": "Alt+H"}
+    ],
+    "accessibility": {
+      "keyboard": true,
+      "high_contrast": true,
+      "screen_reader": "Alle Aktionen sind beschriftet und fokussierbar."
+    }
+  },
+  "debug": false
+}

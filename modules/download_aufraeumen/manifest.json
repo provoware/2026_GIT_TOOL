@@ -1,0 +1,8 @@
+{
+  "id": "download_aufraeumen",
+  "name": "Download-Ordner aufräumen",
+  "version": "1.0.0",
+  "description": "Interaktives Modul zum Organisieren, Protokollieren und Wiederherstellen von Dateien im Download-Ordner.",
+  "entry": "module.py",
+  "permissions": ["read", "write"]
+}
