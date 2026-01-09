@@ -88,6 +88,45 @@ class ModuleCheckerTests(unittest.TestCase):
             self.assertEqual(len(issues), 1)
             self.assertIn("Modul-Datei fehlt", issues[0])
 
+    def test_check_modules_entry_outside_module(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir)
+            module_dir = root / "modules" / "demo"
+            module_dir.mkdir(parents=True)
+            self._write_json(
+                module_dir / "manifest.json",
+                {
+                    "id": "demo",
+                    "name": "Demo",
+                    "version": "1.0.0",
+                    "description": "Demo-Modul",
+                    "entry": "../outside.py",
+                },
+            )
+            config_path = root / "config" / "modules.json"
+            config_path.parent.mkdir(parents=True)
+            self._write_json(
+                config_path,
+                {
+                    "version": "1.0",
+                    "modules": [
+                        {
+                            "id": "demo",
+                            "name": "Demo",
+                            "path": "modules/demo",
+                            "enabled": True,
+                            "description": "Demo",
+                        }
+                    ],
+                },
+            )
+
+            entries = module_checker.load_modules(config_path)
+            issues = module_checker.check_modules(entries)
+
+            self.assertEqual(len(issues), 1)
+            self.assertIn("außerhalb des Modulordners", issues[0])
+
 
 if __name__ == "__main__":
     unittest.main()

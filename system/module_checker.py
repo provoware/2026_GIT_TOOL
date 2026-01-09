@@ -106,6 +106,23 @@ def load_manifest(module_dir: Path) -> ModuleManifest:
     )
 
 
+def resolve_entry_path(module_dir: Path, entry: str) -> Path:
+    if not isinstance(module_dir, Path):
+        raise ModuleCheckError("module_dir ist kein Pfad (Path).")
+    if not isinstance(entry, str) or not entry.strip():
+        raise ModuleCheckError("Manifest: entry fehlt oder ist leer.")
+
+    entry_path = Path(entry)
+    if entry_path.is_absolute():
+        raise ModuleCheckError("Manifest: entry darf kein absoluter Pfad sein.")
+
+    resolved = (module_dir / entry_path).resolve()
+    module_root = module_dir.resolve()
+    if module_root not in resolved.parents and resolved != module_root:
+        raise ModuleCheckError("Manifest: entry liegt außerhalb des Modulordners.")
+    return resolved
+
+
 def check_modules(entries: Iterable[ModuleEntry]) -> List[str]:
     issues: List[str] = []
     for entry in entries:
@@ -120,7 +137,11 @@ def check_modules(entries: Iterable[ModuleEntry]) -> List[str]:
         except ModuleCheckError as exc:
             issues.append(str(exc))
             continue
-        entry_path = entry.path / manifest.entry
+        try:
+            entry_path = resolve_entry_path(entry.path, manifest.entry)
+        except ModuleCheckError as exc:
+            issues.append(str(exc))
+            continue
         if not entry_path.exists():
             issues.append("Modul-Datei fehlt: " f"{manifest.entry} (Modul: {entry.module_id})")
     return issues

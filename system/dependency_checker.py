@@ -31,13 +31,27 @@ def _ensure_path(path: Path, label: str) -> None:
         raise DependencyError(f"{label} ist kein Pfad (Path).")
 
 
+def _strip_inline_comment(line: str) -> str:
+    if not isinstance(line, str):
+        raise DependencyError("Requirements-Zeile ist kein Text.")
+    cleaned = line.strip()
+    if " #" in cleaned:
+        cleaned = cleaned.split(" #", 1)[0].strip()
+    return cleaned
+
+
 def _read_requirements(path: Path) -> List[str]:
     _ensure_path(path, "requirements")
     if not path.exists():
         raise DependencyError(f"Requirements-Datei fehlt: {path}")
 
-    lines = [line.strip() for line in path.read_text(encoding="utf-8").splitlines()]
-    requirements = [line for line in lines if line and not line.startswith("#")]
+    lines = path.read_text(encoding="utf-8").splitlines()
+    requirements: List[str] = []
+    for line in lines:
+        cleaned = _strip_inline_comment(line)
+        if not cleaned or cleaned.startswith("#"):
+            continue
+        requirements.append(cleaned)
     return requirements
 
 
