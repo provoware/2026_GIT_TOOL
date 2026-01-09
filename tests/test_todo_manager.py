@@ -5,7 +5,12 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parents[1] / "system"))
 
-from todo_manager import archive_completed_tasks, calculate_progress
+from todo_manager import (
+    Progress,
+    archive_completed_tasks,
+    calculate_progress,
+    write_progress_report,
+)
 
 
 class TodoManagerTests(unittest.TestCase):
@@ -31,3 +36,15 @@ class TodoManagerTests(unittest.TestCase):
             archive_content = archive_path.read_text(encoding="utf-8")
             self.assertIn("Fertig", archive_content)
             self.assertIn("archiviert", archive_content)
+
+    def test_write_progress_report_creates_progress_file(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            progress_path = Path(tmpdir) / "PROGRESS.md"
+            progress = Progress(total=5, done=2)
+
+            write_progress_report(progress, progress_path)
+
+            content = progress_path.read_text(encoding="utf-8")
+            self.assertIn("- Gesamt: 5 Tasks", content)
+            self.assertIn("- Erledigt: 2 Tasks", content)
+            self.assertIn("- Offen: 3 Tasks", content)
