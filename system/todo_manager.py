@@ -113,9 +113,7 @@ def build_progress_report(progress: Progress, reference_date: str | None = None)
         try:
             datetime.fromisoformat(reference_date)
         except ValueError as exc:
-            raise TodoError(
-                "Stand-Datum ist ungültig. Erwartet: JJJJ-MM-TT."
-            ) from exc
+            raise TodoError("Stand-Datum ist ungültig. Erwartet: JJJJ-MM-TT.") from exc
 
     open_tasks = max(progress.total - progress.done, 0)
     percent_text = _format_percent(progress.percent)

@@ -67,7 +67,10 @@ def load_config(config_path: Path | None = None) -> TestGateConfig:
 
     todo_path = data.get("todo_path", "todo.txt")
     state_path = data.get("state_path", "data/test_state.json")
-    tests_command = data.get("tests_command", ["python", "-m", "unittest", "discover", "-s", "tests"])
+    tests_command = data.get(
+        "tests_command",
+        ["python", "-m", "unittest", "discover", "-s", "tests"],
+    )
     if not isinstance(tests_command, list) or not tests_command:
         raise TestGateError("tests_command muss eine nicht-leere Liste sein.")
     if not all(isinstance(item, str) and item for item in tests_command):
@@ -110,7 +113,10 @@ def save_state(state_path: Path, last_done: int, result: str) -> None:
         "last_run": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "last_result": result,
     }
-    state_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    state_path.write_text(
+        json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
 
 
 def count_tasks(lines: Iterable[str]) -> tuple[int, int]:

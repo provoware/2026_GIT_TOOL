@@ -36,9 +36,7 @@ def parse_todo_line(line: str) -> TodoItem:
     [ ] 2026-01-07 | Bereich | Beschreibung | fertig wenn: Kriterium
     """
     if not isinstance(line, str) or not line.strip():
-        raise TodoFormatError(
-            "To-Do-Zeile fehlt oder ist leer. Bitte ein gültiges Format nutzen."
-        )
+        raise TodoFormatError("To-Do-Zeile fehlt oder ist leer. Bitte ein gültiges Format nutzen.")
 
     match = TODO_PATTERN.match(line.strip())
     if not match:

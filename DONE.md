@@ -33,3 +33,5 @@
 ## 2026-01-10
 - Setup: Repo-Basis-Check mit Push-Trockenlauf ergänzt.
 - Launcher: Abhängigkeitsprüfung in der Start-Routine ergänzt.
+- Tests: Pytest als Standard-Testlauf ergänzt und Testskript ergänzt.
+- Qualität: Ruff- und Black-Prüfungen für Codequalität und Format ergänzt.

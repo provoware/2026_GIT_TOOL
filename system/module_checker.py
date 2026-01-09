@@ -70,9 +70,7 @@ def load_modules(config_path: Path) -> List[ModuleEntry]:
         enabled = bool(entry.get("enabled", False))
         description = str(entry.get("description", "")).strip()
         if not module_id or not name or not path_value:
-            raise ModuleCheckError(
-                "Modul-Eintrag unvollständig. Bitte id, name und path setzen."
-            )
+            raise ModuleCheckError("Modul-Eintrag unvollständig. Bitte id, name und path setzen.")
         entries.append(
             ModuleEntry(
                 module_id=module_id,
@@ -124,10 +122,7 @@ def check_modules(entries: Iterable[ModuleEntry]) -> List[str]:
             continue
         entry_path = entry.path / manifest.entry
         if not entry_path.exists():
-            issues.append(
-                "Modul-Datei fehlt: "
-                f"{manifest.entry} (Modul: {entry.module_id})"
-            )
+            issues.append("Modul-Datei fehlt: " f"{manifest.entry} (Modul: {entry.module_id})")
     return issues
 
 

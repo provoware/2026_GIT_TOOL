@@ -41,3 +41,5 @@
 [x] 2026-01-07 | Module | Modul-Check beim Start durchführen | prüfen: defektes Modul | fertig wenn: sauber abgefangen
 [x] 2026-01-07 | Architektur | Zentrale Tool-Standards definieren | prüfen: standards.md öffnen | fertig wenn: Standards-Datei existiert
 [x] 2026-01-07 | Architektur | Einheitliche Modul-Schnittstelle festlegen | prüfen: zwei Module vergleichen | fertig wenn: gleiche Init-/Exit-Struktur
+[x] 2026-01-10 | Tests | Pytest als Standard-Testlauf einführen | prüfen: scripts/run_tests.sh ausführen | fertig wenn: pytest läuft
+[x] 2026-01-10 | Qualität | Automatische Codequalität und Formatprüfung ergänzen | prüfen: scripts/run_tests.sh ausführen | fertig wenn: Ruff/Black laufen

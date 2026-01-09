@@ -33,19 +33,13 @@ class AgentAssignmentTests(unittest.TestCase):
         self.assertEqual(rule.agent_id, "agent_steuerung")
 
     def test_assign_agent_conflict(self) -> None:
-        line = (
-            "[ ] 2026-01-07 | UI | UI und Logs verbessern | "
-            "fertig wenn: klare Meldungen"
-        )
+        line = "[ ] 2026-01-07 | UI | UI und Logs verbessern | " "fertig wenn: klare Meldungen"
         item = parse_todo_line(line)
         with self.assertRaises(AgentConflictError):
             assign_agent(item, self.ruleset)
 
     def test_assign_agent_no_match(self) -> None:
-        line = (
-            "[ ] 2026-01-07 | Sonstiges | Ohne Schlüsselwort | "
-            "fertig wenn: passt"
-        )
+        line = "[ ] 2026-01-07 | Sonstiges | Ohne Schlüsselwort | " "fertig wenn: passt"
         item = parse_todo_line(line)
         with self.assertRaises(AgentNotFoundError):
             assign_agent(item, self.ruleset)

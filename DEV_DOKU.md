@@ -24,6 +24,9 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
   - `config/launcher_gui.json`: GUI-Launcher-Themes und Standard-Theme.
   - `config/modules.json`: Zentrale Modul-Liste für den Launcher.
   - `config/requirements.txt`: Python-Abhängigkeiten (pip-Pakete).
+  - `config/pytest.ini`: Pytest-Konfiguration.
+  - `config/ruff.toml`: Ruff-Regeln für Codequalität (Linting).
+  - `config/black.toml`: Black-Regeln für Codeformatierung.
   - `config/test_gate.json`: Regeln für die Test-Sperre (Schwelle + Befehl).
   - `config/modules.json`: Modul-Liste für den Launcher.
   - `config/todo_kalender.json`: Konfiguration für To-Do-&-Kalender-Modul.
@@ -45,6 +48,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - `data/todo_kalender.json`: Datenablage für To-Do-&-Kalender-Modul.
 - `scripts/`: Start- und Prüfskripte.
   - `scripts/repo_basis_check.sh`: Repo-Check (Remote + Push-Trockenlauf).
+  - `scripts/run_tests.sh`: Tests + Codequalität + Formatprüfung.
 - `klick_start.sh`: Klick&Start-Skript (führt Start-Routine aus und öffnet die GUI-Startübersicht).
 - `tests/`: Automatische Tests (Unit-Tests).
 - `modules/`: Modul-Ordner (Standard: manifest.json + module.py).
@@ -63,7 +67,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen (Start erst nach kompletter Runde).
-- **Formatierung**: Automatische Codeformatierung (einheitlicher Stil, geplant).
+- **Codequalität (Linting)**: Ruff prüft Fehler und Stilregeln automatisch.
+- **Formatierung**: Black prüft den Code auf einheitliches Format.
 - **Prüfungen**: Start-Routine prüft Struktur und Abhängigkeiten automatisch.
 - **Prüfungen**: Modul-Check validiert aktivierte Module und deren Manifest.
 
@@ -81,6 +86,10 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 1. `./scripts/start.sh`
 2. Die Start-Routine erstellt fehlende Ordner automatisch, prüft Abhängigkeiten, prüft Module und zeigt den Fortschritt in Prozent.
 3. Tests laufen automatisch, sobald eine Runde (3 erledigte Tasks) erreicht ist.
+
+### Tests + Codequalität (manuell)
+1. `./scripts/run_tests.sh`
+2. Führt Pytest, Ruff (Linting) und Black (Formatprüfung) in dieser Reihenfolge aus.
 
 ### Abhängigkeiten (manuell prüfen)
 1. `python system/dependency_checker.py --requirements config/requirements.txt`

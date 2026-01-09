@@ -1,0 +1,8 @@
+line-length = 100
+extend-exclude = [
+  "data",
+  "logs",
+]
+
+[lint]
+select = ["E", "F", "I", "W"]

@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
 
 from .errors import AgentConflictError, AgentNotFoundError
 from .todo_parser import TodoItem
@@ -38,9 +37,7 @@ def load_agent_rules(config_path: Path) -> AgentRuleset:
     if not isinstance(config_path, Path):
         raise TypeError("config_path muss ein Path-Objekt sein.")
     if not config_path.exists():
-        raise FileNotFoundError(
-            f"Konfigurationsdatei fehlt: {config_path.as_posix()}"
-        )
+        raise FileNotFoundError(f"Konfigurationsdatei fehlt: {config_path.as_posix()}")
 
     data = json.loads(config_path.read_text(encoding="utf-8"))
     version = data.get("version", "1.0")
@@ -54,9 +51,7 @@ def load_agent_rules(config_path: Path) -> AgentRuleset:
         label = str(entry.get("label", "")).strip()
         keywords = tuple(str(word).lower().strip() for word in entry.get("keywords", []))
         if not agent_id or not label or not keywords:
-            raise ValueError(
-                "Agent-Regel unvollständig. Bitte id, label und keywords setzen."
-            )
+            raise ValueError("Agent-Regel unvollständig. Bitte id, label und keywords setzen.")
         rules.append(AgentRule(agent_id=agent_id, label=label, keywords=keywords))
 
     return AgentRuleset(version=version, rules=tuple(rules))
