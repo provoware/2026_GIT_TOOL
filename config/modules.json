@@ -1,0 +1,12 @@
+{
+  "version": "1.0",
+  "modules": [
+    {
+      "id": "beispiel_modul",
+      "name": "Beispiel-Modul",
+      "path": "modules/beispiel_modul",
+      "enabled": true,
+      "description": "Ein minimales Beispielmodul für den Modul-Check."
+    }
+  ]
+}
