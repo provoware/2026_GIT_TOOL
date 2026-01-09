@@ -274,6 +274,7 @@ class LauncherGui:
             relief="groove",
             takefocus=1,
         )
+        self.output_text.configure(spacing1=4, spacing2=2, spacing3=4, highlightthickness=2)
         self.output_text.pack(fill="both", expand=True, padx=16, pady=(0, 16))
         self.output_text.configure(state="disabled")
 
@@ -356,6 +357,9 @@ class LauncherGui:
                 fg=button_fg,
                 activebackground=accent,
                 activeforeground=button_fg,
+                highlightbackground=accent,
+                highlightcolor=accent,
+                highlightthickness=2,
             )
         elif widget_type == "Text":
             widget.configure(bg=background, fg=foreground, insertbackground=foreground)
@@ -364,6 +368,15 @@ class LauncherGui:
 
         if isinstance(widget, tk.Text):
             widget.configure(highlightbackground=accent, highlightcolor=accent)
+        if isinstance(widget, tk.OptionMenu):
+            widget.configure(highlightbackground=accent, highlightcolor=accent, highlightthickness=2)
+            menu = widget["menu"]
+            menu.configure(
+                bg=button_bg,
+                fg=button_fg,
+                activebackground=accent,
+                activeforeground=button_fg,
+            )
 
         for child in widget.winfo_children():
             self._apply_widget_style(child, background, foreground, accent, button_bg, button_fg)

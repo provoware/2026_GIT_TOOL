@@ -13,6 +13,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Launcher listet Module aus `config/modules.json` übersichtlich auf.
 - Modul-Check prüft registrierte Module über `config/modules.json`.
 - GUI-Launcher führt beim Aktualisieren zusätzlich den Modul-Check aus und meldet Probleme direkt in der Übersicht.
+- GUI-Launcher nutzt zusätzliche Themes und sichtbare Fokusrahmen für bessere Tastaturbedienung.
 
 ## Struktur (aktuell)
 - `src/`: Systemlogik (stabile Kernlogik).
@@ -129,3 +130,4 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Kontrast prüfen (Dark/Light-Theme vergleichen, Ziel ≥ 4,5:1).
 - Schriftgröße prüfen (mind. 16px).
 - Darkmode-Lesbarkeit prüfen (Text + Buttons).
+- Fokusrahmen prüfen (Tabulator: deutlich sichtbarer Rahmen).
