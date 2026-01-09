@@ -203,20 +203,19 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--config", type=Path, default=None, help="Pfad zur Konfiguration (JSON)")
     parser.add_argument("--debug", action="store_true", help="Debug-Modus aktivieren")
-    parser.add_argument(
+    sub = parser.add_subparsers(dest="command", required=True)
+    progress_parser = sub.add_parser("progress", help="Fortschritt aus todo.txt berechnen")
+    progress_parser.add_argument(
         "--write-progress",
         action="store_true",
         help="Schreibt einen PROGRESS-Bericht (PROGRESS.md).",
     )
-    parser.add_argument(
+    progress_parser.add_argument(
         "--progress-path",
         type=Path,
         default=None,
         help="Zielpfad für PROGRESS.md (Standard: PROGRESS.md).",
     )
-
-    sub = parser.add_subparsers(dest="command", required=True)
-    sub.add_parser("progress", help="Fortschritt aus todo.txt berechnen")
     sub.add_parser("archive", help="Erledigte Einträge aus todo.txt archivieren")
     return parser
 
@@ -234,7 +233,7 @@ def main() -> int:
 
     if args.command == "progress":
         progress_path = None
-        if args.write_progress:
+        if getattr(args, "write_progress", False):
             progress_path = args.progress_path or Path("PROGRESS.md")
         return run_progress(config, progress_path)
     if args.command == "archive":

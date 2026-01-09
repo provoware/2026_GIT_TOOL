@@ -3,8 +3,8 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-if ! command -v node >/dev/null 2>&1; then
-  echo "Fehler: Node.js ist nicht installiert. Bitte Node.js installieren, damit die Start-Routine läuft."
+if ! command -v python >/dev/null 2>&1; then
+  echo "Fehler: Python ist nicht installiert. Bitte Python installieren, damit die Start-Routine läuft."
   exit 1
 fi
 
@@ -46,7 +46,7 @@ create_required_dirs
 
 CURRENT_STEP=2
 update_progress "Fortschritt wird aus todo.txt berechnet"
-node "${ROOT_DIR}/scripts/progress.js" --update
+python "${ROOT_DIR}/system/todo_manager.py" progress --write-progress
 
 CURRENT_STEP=3
 update_progress "Module werden geprüft"

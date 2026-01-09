@@ -19,6 +19,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
   - `src/core/data_model.py`: Zentrales Datenmodell für To-Dos und Kalender.
 - `config/`: Konfiguration (Config = Einstellungen, änderbar ohne Code).
   - `config/records.json`: Regeln für Einträge.
+  - `config/launcher_gui.json`: GUI-Launcher-Themes und Standard-Theme.
   - `config/modules.json`: Zentrale Modul-Liste für den Launcher.
   - `config/test_gate.json`: Regeln für die Test-Sperre (Schwelle + Befehl).
   - `config/modules.json`: Modul-Liste für den Launcher.
@@ -28,6 +29,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
   - `system/todo_manager.py`: Fortschritt berechnen und To-Dos archivieren.
   - `system/log_exporter.py`: Logdateien als ZIP exportieren.
   - `system/launcher.py`: Launcher (Modulübersicht).
+  - `system/launcher_gui.py`: GUI-Launcher (Startübersicht mit Themes).
   - `system/test_gate.py`: Test-Sperre (Tests erst nach kompletter Runde).
   - `system/module_checker.py`: Modul-Check (Struktur + Manifest + Entry-Datei).
 - `logs/`: Logdateien (Protokolle).
@@ -38,6 +40,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
   - `modules/status/manifest.json`: Metadaten des Beispielmoduls.
 - `data/todo_kalender.json`: Datenablage für To-Do-&-Kalender-Modul.
 - `scripts/`: Start- und Prüfskripte.
+- `klick_start.sh`: Klick&Start-Skript (führt Start-Routine aus und öffnet die GUI-Startübersicht).
 - `tests/`: Automatische Tests (Unit-Tests).
 - `modules/`: Modul-Ordner (Standard: manifest.json + module.py).
   - `modules/todo_kalender/`: To-Do-&-Kalender-Modul.
@@ -72,9 +75,17 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 2. Die Start-Routine erstellt fehlende Ordner automatisch, prüft Module und zeigt den Fortschritt in Prozent.
 3. Tests laufen automatisch, sobald eine Runde (3 erledigte Tasks) erreicht ist.
 
+### Klick&Start (für Laien)
+1. `./klick_start.sh`
+2. Die Start-Routine läuft automatisch, danach öffnet sich die GUI-Startübersicht.
+
 ### Launcher (Modulübersicht)
 1. `python system/launcher.py`
 2. Optional: `python system/launcher.py --show-all` (zeigt auch deaktivierte Module).
+
+### GUI-Launcher (Startübersicht)
+1. `python system/launcher_gui.py`
+2. Optional: `python system/launcher_gui.py --show-all --debug` (Details anzeigen).
 ### Modul-Check (manuell)
 1. `python system/module_checker.py --config config/modules.json`
 2. Bei Fehlern werden klare Hinweise und Lösungsvorschläge ausgegeben.
