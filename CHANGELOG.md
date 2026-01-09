@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.18] – 2026-01-09
+- Tests: Testskript robuster gemacht (klare Fehlerhinweise + konsistente Hilfe-Ausgabe).
+- Tests: Hilfe-Option für den Testlauf als geführte Schritt-für-Schritt-Anleitung ergänzt.
+
 ## [0.1.17] – 2026-01-13
 - Start: Health-Check ergänzt, der wichtige Dateien/Ordner vor dem Start prüft.
 - Qualität: Gemeinsame Pfad- und JSON-Validierung für Launcher/GUI eingeführt (Duplikate reduziert).
