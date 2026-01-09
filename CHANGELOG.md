@@ -1,6 +1,8 @@
 # Changelog
 
 ## [0.1.6] – 2026-01-09
+- Launcher: Modulübersicht ergänzt, damit alle Tools klar gelistet werden.
+- Module: Status-Check-Modul nach Standard-Schnittstelle integriert.
 - Architektur: Zentrales Datenmodell für To-Dos und Kalender eingeführt.
 - Module: To-Do-&-Kalender-Modul nach Standards integriert (Manifest, Konfiguration, Datenablage).
 - Tests: Neue Unit-Tests für Datenmodell und Modul ergänzt.
