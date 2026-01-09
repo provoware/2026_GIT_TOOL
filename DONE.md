@@ -23,3 +23,7 @@
 - Steuerung: To-Do-Manager akzeptiert `progress --write-progress` wie dokumentiert.
 - UI: Tastaturbedienung der GUI-Startübersicht ergänzt (Shortcuts + Fokus).
 - Architektur: Einheitliche Modul-Schnittstelle dokumentiert.
+- Module: Modul-Check in der GUI-Startübersicht ergänzt.
+- Architektur: Modul-Check als verpflichtender Startschritt in den Standards festgehalten.
+- Module: Modul-Pfade in `config/modules.json` auf Modulordner umgestellt.
+- Module: Manifest-Pflichtfelder (id/entry) für Status- und To-Do-Kalender-Modul ergänzt.

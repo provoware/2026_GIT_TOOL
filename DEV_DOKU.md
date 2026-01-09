@@ -12,6 +12,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Start-Routine zeigt Fortschritt in Prozent je Schritt.
 - Launcher listet Module aus `config/modules.json` übersichtlich auf.
 - Modul-Check prüft registrierte Module über `config/modules.json`.
+- GUI-Launcher führt beim Aktualisieren zusätzlich den Modul-Check aus und meldet Probleme direkt in der Übersicht.
 
 ## Struktur (aktuell)
 - `src/`: Systemlogik (stabile Kernlogik).
@@ -54,6 +55,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fehler-Logs sind optisch hervorgehoben (Level `ERROR`).
 - Zentrales Datenmodell für To-Dos/Kalender in `src/core/data_model.py`.
 - Einheitliche Modul-Schnittstelle (init/run/exit/validateInput/validateOutput) gemäß `standards.md`.
+- Modul-Pfade in `config/modules.json` zeigen auf Modulordner (nicht auf einzelne Dateien).
 
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen (Start erst nach kompletter Runde).
@@ -88,6 +90,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 1. `python system/launcher_gui.py`
 2. Optional: `python system/launcher_gui.py --show-all --debug` (Details anzeigen).
 3. Tastatur-Shortcuts: Alt+A (alle Module), Alt+D (Debug), Alt+R (aktualisieren), Alt+T (Theme), Alt+Q (beenden).
+4. Modul-Check: Wird bei jeder Aktualisierung automatisch ausgeführt (Status steht in der Übersicht).
 ### Modul-Check (manuell)
 1. `python system/module_checker.py --config config/modules.json`
 2. Bei Fehlern werden klare Hinweise und Lösungsvorschläge ausgegeben.

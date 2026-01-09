@@ -28,6 +28,7 @@ Fehlertexte sind **Deutsch, klar, laienverständlich**.
 ## Launcher‑Registrierung
 - Zentrale Liste in `config/modules.json`.
 - Einträge enthalten `id`, `name`, `path`, `enabled`, `description`.
+- `path` zeigt auf den Modulordner (z. B. `modules/status`), nicht auf die Datei.
 - Launcher lädt **nur** diese Liste, keine Sonderlogik pro Modul.
 
 ## Start‑Routine (automatisch, autonom)
@@ -36,6 +37,7 @@ Die Startroutine erledigt vollständig und selbstständig:
 2. **Abhängigkeitsprüfung** (Dependencies): Prüft benötigte Pakete und löst sie automatisch.
 3. **Feedback an Nutzende**: Fortschritt in Prozent + klare Meldungen.
 4. **Fehlerbehandlung**: Verständliche Hinweise und Lösungsvorschläge.
+5. **Modul-Check**: Prüft aktivierte Module, Manifest und Entry-Dateien vor dem Start der Übersicht.
 
 ## Logging & Debugging
 - Einheitliches Logformat: Zeitstempel, Modul, Ebene, Nachricht.
