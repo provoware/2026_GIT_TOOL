@@ -20,6 +20,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Abhängigkeitsprüfung ignoriert Inline-Kommentare auch bei Tabs/Mehrfach-Leerzeichen.
 - Modul-Check validiert Entry-Pfade gegen Pfad-Traversal.
 - Modul-Check blockiert `..`-Segmente im Entry-Pfad mit klarer Fehlermeldung.
+- Testskript zeigt eine Schritt-für-Schritt-Hilfe und schreibt Logs nach `logs/test_run.log`.
 
 ## Struktur (aktuell)
 - `src/`: Systemlogik (stabile Kernlogik).
@@ -109,6 +110,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 ### Tests + Codequalität (manuell)
 1. `./scripts/run_tests.sh`
 2. Führt Pytest, Ruff (Linting) und Black (Formatprüfung) in dieser Reihenfolge aus.
+3. Hinweis: Details zu Fehlern stehen im Fehlerprotokoll (Log) unter `logs/test_run.log`.
+4. Hilfe: `./scripts/run_tests.sh --help` zeigt den geführten Ablauf.
 3. Optional: `./scripts/run_tests.sh --help` (kurze Erklärung für Laien).
 
 ### Abhängigkeiten (manuell prüfen)

@@ -53,3 +53,6 @@
 [x] 2026-01-09 | Module | Modul-Check: Entry-Pfad gegen Pfad-Traversal absichern | prüfen: manifest.json mit ../ entry | fertig wenn: Fehler wird erkannt
 [x] 2026-01-09 | Qualität | Requirements-Parser ignoriert Inline-Kommentare mit Tabs/Mehrfach-Leerzeichen | prüfen: requirements.txt mit Tab # Kommentar | fertig wenn: Kommentar wird ignoriert
 [x] 2026-01-09 | Module | Modul-Check blockiert '..' im Entry-Pfad explizit | prüfen: manifest.json mit ../ entry | fertig wenn: klare Fehlermeldung erscheint
+[ ] 2026-01-13 | Start | Sicherheits-Prüfung (Health-Check) vor dem Start ergänzen | prüfen: Start ausführen | fertig wenn: wichtige Dateien/Ordner geprüft + klare Hinweise
+[x] 2026-01-13 | Tests | Fehler-Log-Hinweis im Testskript ergänzen | prüfen: scripts/run_tests.sh ausführen | fertig wenn: Log-Hinweis sichtbar
+[x] 2026-01-13 | Tests | Schritt-für-Schritt-Anleitung in run_tests.sh --help ergänzen | prüfen: ./scripts/run_tests.sh --help | fertig wenn: Wizard angezeigt
