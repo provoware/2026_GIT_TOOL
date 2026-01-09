@@ -13,6 +13,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, List
 
+from config_utils import ensure_path
+
 DEFAULT_REQUIREMENTS = Path(__file__).resolve().parents[1] / "config" / "requirements.txt"
 
 
@@ -26,11 +28,6 @@ class DependencyCheckResult:
     missing: List[str]
 
 
-def _ensure_path(path: Path, label: str) -> None:
-    if not isinstance(path, Path):
-        raise DependencyError(f"{label} ist kein Pfad (Path).")
-
-
 def _strip_inline_comment(line: str) -> str:
     if not isinstance(line, str):
         raise DependencyError("Requirements-Zeile ist kein Text.")
@@ -42,7 +39,7 @@ def _strip_inline_comment(line: str) -> str:
 
 
 def _read_requirements(path: Path) -> List[str]:
-    _ensure_path(path, "requirements")
+    ensure_path(path, "requirements", DependencyError)
     if not path.exists():
         raise DependencyError(f"Requirements-Datei fehlt: {path}")
 

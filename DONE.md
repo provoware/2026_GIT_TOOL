@@ -64,3 +64,7 @@
 ## 2026-01-14
 - Qualität: Unbenutzten Import im Health-Check entfernt (Ruff grün).
 - Doku: Doppelte Changelog-Einträge für Version 0.1.16 zusammengeführt.
+
+## 2026-01-15
+- Start: Health-Check um Selbstreparatur ergänzt (fehlende Dateien/Ordner werden erstellt).
+- Qualität: Pfad-Validierung zentralisiert, Duplikate über `config_utils.ensure_path` entfernt.

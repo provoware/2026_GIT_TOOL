@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.20] – 2026-01-15
+- Start: Health-Check mit Selbstreparatur ergänzt (fehlende Dateien/Ordner werden erstellt).
+- Qualität: Pfad-Validierung in System-Skripten vereinheitlicht (Duplikate reduziert).
+
 ## [0.1.19] – 2026-01-14
 - Qualität: Unbenutzten Import im Health-Check entfernt (Ruff sauber).
 - Doku: Doppelte Changelog-Einträge für Version 0.1.16 zusammengeführt.

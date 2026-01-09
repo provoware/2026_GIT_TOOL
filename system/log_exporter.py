@@ -11,6 +11,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import List
 
+from config_utils import ensure_path
+
 
 @dataclass(frozen=True)
 class LogExportConfig:
@@ -22,17 +24,12 @@ class LogExportError(Exception):
     """Fehler beim Log-Export."""
 
 
-def _ensure_path(path: Path, label: str) -> None:
-    if not isinstance(path, Path):
-        raise LogExportError(f"{label} ist kein Pfad (Path).")
-
-
 def _timestamp() -> str:
     return datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
 
 
 def list_log_files(logs_dir: Path) -> List[Path]:
-    _ensure_path(logs_dir, "logs_dir")
+    ensure_path(logs_dir, "logs_dir", LogExportError)
     if not logs_dir.exists():
         raise LogExportError(f"Log-Ordner fehlt: {logs_dir}")
     if not logs_dir.is_dir():
@@ -45,7 +42,7 @@ def list_log_files(logs_dir: Path) -> List[Path]:
 
 
 def build_export_path(export_dir: Path, base_name: str) -> Path:
-    _ensure_path(export_dir, "export_dir")
+    ensure_path(export_dir, "export_dir", LogExportError)
     export_dir.mkdir(parents=True, exist_ok=True)
     candidate = export_dir / f"{base_name}.zip"
     counter = 1
@@ -56,8 +53,8 @@ def build_export_path(export_dir: Path, base_name: str) -> Path:
 
 
 def export_logs(logs_dir: Path, export_dir: Path) -> Path:
-    _ensure_path(logs_dir, "logs_dir")
-    _ensure_path(export_dir, "export_dir")
+    ensure_path(logs_dir, "logs_dir", LogExportError)
+    ensure_path(export_dir, "export_dir", LogExportError)
     files = list_log_files(logs_dir)
     export_path = build_export_path(export_dir, f"logs_export_{_timestamp()}")
 

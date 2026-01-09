@@ -13,6 +13,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable, List
 
+from config_utils import ensure_path
+
 CONFIG_DEFAULT = Path(__file__).resolve().parents[1] / "config" / "test_gate.json"
 TASK_PATTERN = re.compile(r"^\[(x|X| )\]\s+")
 DONE_PATTERN = re.compile(r"^\[(x|X)\]\s+")
@@ -37,11 +39,6 @@ class TestState:
     last_result: str | None
 
 
-def _ensure_path(path: Path, label: str) -> None:
-    if not isinstance(path, Path):
-        raise TestGateError(f"{label} ist kein Pfad (Path).")
-
-
 def _load_json(path: Path) -> dict:
     if not path.exists():
         raise TestGateError(f"Konfiguration fehlt: {path}")
@@ -58,7 +55,7 @@ def _resolve_path(root: Path, value: str) -> Path:
 
 def load_config(config_path: Path | None = None) -> TestGateConfig:
     config_file = config_path or CONFIG_DEFAULT
-    _ensure_path(config_file, "config_path")
+    ensure_path(config_file, "config_path", TestGateError)
     data = _load_json(config_file)
 
     threshold = data.get("threshold", 3)
@@ -86,7 +83,7 @@ def load_config(config_path: Path | None = None) -> TestGateConfig:
 
 
 def load_state(state_path: Path) -> TestState:
-    _ensure_path(state_path, "state_path")
+    ensure_path(state_path, "state_path", TestGateError)
     if not state_path.exists():
         return TestState(last_done=0, last_run=None, last_result=None)
     try:
@@ -106,7 +103,7 @@ def load_state(state_path: Path) -> TestState:
 
 
 def save_state(state_path: Path, last_done: int, result: str) -> None:
-    _ensure_path(state_path, "state_path")
+    ensure_path(state_path, "state_path", TestGateError)
     state_path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "last_done": last_done,

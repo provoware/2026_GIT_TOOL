@@ -114,8 +114,12 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 
 ### Start-Routine (Struktur + Fortschritt)
 1. `./scripts/start.sh`
-2. Die Start-Routine erstellt fehlende Ordner automatisch, führt den Health-Check aus, prüft Abhängigkeiten, prüft Module und zeigt den Fortschritt in Prozent.
+2. Die Start-Routine erstellt fehlende Ordner automatisch, führt den Health-Check mit Selbstreparatur aus, prüft Abhängigkeiten, prüft Module und zeigt den Fortschritt in Prozent.
 3. Tests laufen automatisch, sobald eine Runde (3 erledigte Tasks) erreicht ist.
+
+### Health-Check (manuell)
+1. `python system/health_check.py --root . --self-repair`
+2. Optional: `python system/health_check.py --root . --self-repair --debug` (Debugging = detaillierte Diagnose-Ausgaben).
 
 ### Tests + Codequalität (manuell)
 1. `./scripts/run_tests.sh`

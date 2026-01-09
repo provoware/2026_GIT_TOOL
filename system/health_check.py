@@ -8,8 +8,11 @@ import json
 import logging
 import os
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable, List
+
+from config_utils import ensure_path
 
 DEFAULT_ROOT = Path(__file__).resolve().parents[1]
 
@@ -22,11 +25,6 @@ class HealthCheckError(Exception):
 class CheckItem:
     path: Path
     label: str
-
-
-def _ensure_path(path: Path, label: str) -> None:
-    if not isinstance(path, Path):
-        raise HealthCheckError(f"{label} ist kein Pfad (Path).")
 
 
 def _ensure_items(items: Iterable[CheckItem], label: str) -> List[CheckItem]:
@@ -76,14 +74,131 @@ def _check_executable(item: CheckItem, issues: List[str]) -> None:
         )
 
 
-def run_health_check(root: Path) -> List[str]:
-    _ensure_path(root, "root")
+def _default_file_content(root: Path, path: Path) -> str | None:
+    if not isinstance(root, Path):
+        raise HealthCheckError("root ist kein Pfad (Path).")
+    if not isinstance(path, Path):
+        raise HealthCheckError("path ist kein Pfad (Path).")
+    relative = path.relative_to(root).as_posix()
+
+    default_modules = {
+        "version": "1.0",
+        "modules": [
+            {
+                "id": "status",
+                "name": "Status-Check",
+                "path": "modules/status",
+                "enabled": True,
+                "description": "Minimaler Status-Check für die Grundprüfung.",
+            }
+        ],
+    }
+    default_launcher = {
+        "default_theme": "kontrast",
+        "themes": {
+            "kontrast": {
+                "label": "Kontrast",
+                "colors": {
+                    "background": "#000000",
+                    "foreground": "#ffffff",
+                    "accent": "#ffcc00",
+                    "button_background": "#1a1a1a",
+                    "button_foreground": "#ffffff",
+                },
+            }
+        },
+    }
+    default_test_gate = {
+        "threshold": 3,
+        "todo_path": "todo.txt",
+        "state_path": "data/test_state.json",
+        "tests_command": ["bash", "scripts/run_tests.sh"],
+    }
+
+    defaults = {
+        "todo.txt": (
+            "# To-Do-Liste\n"
+            "# Format: [ ] JJJJ-MM-TT | Bereich | Aufgabe | prüfen: ... | fertig wenn: ...\n"
+        ),
+        "CHANGELOG.md": (
+            "# Changelog\n\n"
+            "## [0.1.0] – Initial\n"
+            "- Platzhalterdatei (automatisch erstellt).\n"
+        ),
+        "DEV_DOKU.md": (
+            "# DEV_DOKU\n\n"
+            "## Hinweis\n"
+            "Diese Datei wurde automatisch erstellt. Bitte Inhalte ergänzen.\n"
+        ),
+        "DONE.md": (
+            "# DONE\n\n"
+            f"## {datetime.now(timezone.utc).date().isoformat()}\n"
+            "- Selbstreparatur: Datei automatisch erstellt.\n"
+        ),
+        "PROGRESS.md": (
+            "# PROGRESS\n\n"
+            f"Stand: {datetime.now(timezone.utc).date().isoformat()}\n\n"
+            "- Gesamt: 0 Tasks\n"
+            "- Erledigt: 0 Tasks\n"
+            "- Offen: 0 Tasks\n"
+            "- Fortschritt: 0,00 %\n"
+        ),
+        "config/requirements.txt": (
+            "# Python-Abhängigkeiten (pip-Pakete)\n"
+            "# Beispiel: requests>=2.32.0\n"
+            "# Hinweis: Leere Datei bedeutet, dass aktuell keine externen Pakete nötig sind.\n"
+            "pytest>=8.0.0\n"
+            "ruff>=0.5.0\n"
+            "black>=24.0.0\n"
+        ),
+        "config/modules.json": (json.dumps(default_modules, indent=2, ensure_ascii=False) + "\n"),
+        "config/launcher_gui.json": (
+            json.dumps(default_launcher, indent=2, ensure_ascii=False) + "\n"
+        ),
+        "config/test_gate.json": (
+            json.dumps(default_test_gate, indent=2, ensure_ascii=False) + "\n"
+        ),
+    }
+    return defaults.get(relative)
+
+
+def _apply_self_repair(
+    root: Path,
+    dir_items: Iterable[CheckItem],
+    file_items: Iterable[CheckItem],
+) -> List[str]:
+    if not isinstance(root, Path):
+        raise HealthCheckError("root ist kein Pfad (Path).")
+    repairs: List[str] = []
+
+    for item in dir_items:
+        if not item.path.exists():
+            item.path.mkdir(parents=True, exist_ok=True)
+            repairs.append(f"Ordner erstellt: {item.label} ({item.path}).")
+
+    for item in file_items:
+        if item.path.exists():
+            continue
+        content = _default_file_content(root, item.path)
+        if content is None:
+            repairs.append(f"Datei fehlt (kein Standard verfügbar): {item.label} ({item.path}).")
+            continue
+        item.path.parent.mkdir(parents=True, exist_ok=True)
+        item.path.write_text(content, encoding="utf-8")
+        repairs.append(f"Datei erstellt: {item.label} ({item.path}).")
+
+    return repairs
+
+
+def run_health_check(root: Path, self_repair: bool = False) -> tuple[List[str], List[str]]:
+    ensure_path(root, "root", HealthCheckError)
     if not root.exists():
         raise HealthCheckError(f"Root-Verzeichnis fehlt: {root}")
     if not root.is_dir():
         raise HealthCheckError(f"Root ist kein Ordner: {root}")
 
     issues: List[str] = []
+    repairs: List[str] = []
 
     dir_items = _ensure_items(
         [
@@ -140,7 +255,22 @@ def run_health_check(root: Path) -> List[str]:
     for item in script_items:
         _check_executable(item, issues)
 
-    return issues
+    if self_repair:
+        repairs = _apply_self_repair(root, dir_items, file_items)
+        for message in repairs:
+            logging.info("Selbstreparatur: %s", message)
+
+    issues = []
+    for item in dir_items:
+        _check_dir(item, issues)
+    for item in file_items:
+        _check_file(item, issues)
+    for item in json_items:
+        _check_json(item, issues)
+    for item in script_items:
+        _check_executable(item, issues)
+
+    return issues, repairs
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -152,6 +282,11 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=DEFAULT_ROOT,
         help="Projekt-Root (Standard: Repository-Wurzel).",
+    )
+    parser.add_argument(
+        "--self-repair",
+        action="store_true",
+        help="Fehlende Ordner/Dateien automatisch anlegen (Selbstreparatur).",
     )
     parser.add_argument(
         "--debug",
@@ -166,15 +301,28 @@ def setup_logging(debug: bool) -> None:
     logging.basicConfig(level=level, format="%(levelname)s: %(message)s")
 
 
-def _render_output(issues: Iterable[str]) -> str:
+def _render_output(issues: Iterable[str], repairs: Iterable[str]) -> str:
     if not isinstance(issues, Iterable):
         raise HealthCheckError("issues ist keine Liste.")
+    if not isinstance(repairs, Iterable):
+        raise HealthCheckError("repairs ist keine Liste.")
     issues_list = list(issues)
+    repairs_list = list(repairs)
     if not issues_list:
+        if repairs_list:
+            lines = ["Health-Check: Selbstreparatur abgeschlossen.", ""]
+            lines.extend([f"- {repair}" for repair in repairs_list])
+            lines.append("")
+            lines.append("Health-Check: Alle wichtigen Dateien und Ordner sind vorhanden.")
+            return "\n".join(lines)
         return "Health-Check: Alle wichtigen Dateien und Ordner sind vorhanden."
 
     lines = ["Health-Check: Probleme gefunden:", ""]
     lines.extend([f"- {issue}" for issue in issues_list])
+    if repairs_list:
+        lines.append("")
+        lines.append("Hinweis: Selbstreparatur wurde ausgeführt.")
+        lines.extend([f"- {repair}" for repair in repairs_list])
     lines.append("")
     lines.append("Bitte die Hinweise prüfen und die Struktur korrigieren.")
     return "\n".join(lines)
@@ -186,12 +334,12 @@ def main() -> int:
     setup_logging(args.debug)
 
     try:
-        issues = run_health_check(args.root)
+        issues, repairs = run_health_check(args.root, self_repair=args.self_repair)
     except HealthCheckError as exc:
         logging.error("Health-Check konnte nicht starten: %s", exc)
         return 2
 
-    output = _render_output(issues)
+    output = _render_output(issues, repairs)
     print(output)
 
     if issues:
