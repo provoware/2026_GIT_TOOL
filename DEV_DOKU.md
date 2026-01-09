@@ -21,6 +21,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Modul-Check validiert Entry-Pfade gegen Pfad-Traversal.
 - Modul-Check blockiert `..`-Segmente im Entry-Pfad mit klarer Fehlermeldung.
 - Testskript zeigt eine Schritt-für-Schritt-Hilfe und schreibt Logs nach `logs/test_run.log`.
+- Health-Check prüft wichtige Dateien/Ordner vor dem Start mit klaren Hinweisen.
+- Launcher/GUI nutzen gemeinsame Pfad- und JSON-Validierung, um Duplikate zu reduzieren.
 
 ## Struktur (aktuell)
 - `src/`: Systemlogik (stabile Kernlogik).
@@ -45,8 +47,10 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - `system/`: Tool-Logik (CLI-Tools und Automatisierung).
   - `system/todo_manager.py`: Fortschritt berechnen und To-Dos archivieren.
   - `system/log_exporter.py`: Logdateien als ZIP exportieren.
-  - `system/launcher.py`: Launcher (Modulübersicht).
-  - `system/launcher_gui.py`: GUI-Launcher (Startübersicht mit Themes).
+- `system/launcher.py`: Launcher (Modulübersicht).
+- `system/launcher_gui.py`: GUI-Launcher (Startübersicht mit Themes).
+- `system/health_check.py`: Health-Check für wichtige Dateien/Ordner vor dem Start.
+- `system/config_utils.py`: Hilfsfunktionen für Pfad- und JSON-Validierung.
 - `system/test_gate.py`: Test-Sperre (Tests erst nach kompletter Runde).
   - `system/module_checker.py`: Modul-Check (Struktur + Manifest + Entry-Datei).
   - `system/dependency_checker.py`: Abhängigkeiten prüfen und automatisch installieren.
@@ -104,7 +108,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 
 ### Start-Routine (Struktur + Fortschritt)
 1. `./scripts/start.sh`
-2. Die Start-Routine erstellt fehlende Ordner automatisch, prüft Abhängigkeiten, prüft Module und zeigt den Fortschritt in Prozent.
+2. Die Start-Routine erstellt fehlende Ordner automatisch, führt den Health-Check aus, prüft Abhängigkeiten, prüft Module und zeigt den Fortschritt in Prozent.
 3. Tests laufen automatisch, sobald eine Runde (3 erledigte Tasks) erreicht ist.
 
 ### Tests + Codequalität (manuell)

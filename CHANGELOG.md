@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.17] – 2026-01-13
+- Start: Health-Check ergänzt, der wichtige Dateien/Ordner vor dem Start prüft.
+- Qualität: Gemeinsame Pfad- und JSON-Validierung für Launcher/GUI eingeführt (Duplikate reduziert).
+
 ## [0.1.16] – 2026-01-09
 - Qualität: Requirements-Parser ignoriert Inline-Kommentare auch bei Tabs/Mehrfach-Leerzeichen.
 - Module: Modul-Check blockiert `..`-Segmente im Entry-Pfad mit klarer Fehlermeldung.

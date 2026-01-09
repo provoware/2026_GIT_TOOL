@@ -4,11 +4,12 @@
 from __future__ import annotations
 
 import argparse
-import json
 import logging
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, List
+
+import config_utils
 
 DEFAULT_CONFIG = Path(__file__).resolve().parents[1] / "config" / "modules.json"
 
@@ -24,20 +25,6 @@ class ModuleEntry:
     path: str
     enabled: bool
     description: str
-
-
-def _ensure_path(path: Path, label: str) -> None:
-    if not isinstance(path, Path):
-        raise LauncherError(f"{label} ist kein Pfad (Path).")
-
-
-def _load_json(path: Path) -> dict:
-    if not path.exists():
-        raise LauncherError(f"Konfiguration fehlt: {path}")
-    try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:
-        raise LauncherError(f"Konfiguration ist kein gültiges JSON: {path}") from exc
 
 
 def resolve_module_path(root: Path, module_path: str) -> Path:
@@ -83,8 +70,13 @@ def validate_module_paths(modules: Iterable[ModuleEntry], root: Path) -> None:
 
 
 def load_modules(config_path: Path, root: Path | None = None) -> List[ModuleEntry]:
-    _ensure_path(config_path, "config_path")
-    data = _load_json(config_path)
+    config_utils.ensure_path(config_path, "config_path", LauncherError)
+    data = config_utils.load_json(
+        config_path,
+        LauncherError,
+        "Konfiguration fehlt",
+        "Konfiguration ist kein gültiges JSON",
+    )
     raw_modules = data.get("modules")
     if not isinstance(raw_modules, list) or not raw_modules:
         raise LauncherError("Keine Module in der Konfiguration gefunden.")
