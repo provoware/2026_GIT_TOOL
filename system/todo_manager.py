@@ -11,6 +11,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable, List, Tuple
 
+from config_utils import ensure_path
+
 CONFIG_DEFAULT = Path(__file__).resolve().parents[1] / "config" / "todo_config.json"
 
 
@@ -40,11 +42,6 @@ def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
-def _ensure_path(path: Path, label: str) -> None:
-    if not isinstance(path, Path):
-        raise TodoError(f"{label} ist kein Pfad (Path).")
-
-
 def _format_percent(value: float) -> str:
     if not isinstance(value, (int, float)):
         raise TodoError("Prozentwert ist keine Zahl.")
@@ -62,7 +59,7 @@ def _load_json(path: Path) -> dict:
 
 def load_config(config_path: Path | None = None) -> TodoConfig:
     config_file = config_path or CONFIG_DEFAULT
-    _ensure_path(config_file, "config_path")
+    ensure_path(config_file, "config_path", TodoError)
     data = _load_json(config_file)
     todo_path = Path(data.get("todo_path", "todo.txt"))
     archive_path = Path(data.get("archive_path", "data/todo_archive.txt"))
@@ -70,14 +67,14 @@ def load_config(config_path: Path | None = None) -> TodoConfig:
 
 
 def read_todo_lines(todo_path: Path) -> List[str]:
-    _ensure_path(todo_path, "todo_path")
+    ensure_path(todo_path, "todo_path", TodoError)
     if not todo_path.exists():
         raise TodoError(f"To-Do-Datei nicht gefunden: {todo_path}")
     return todo_path.read_text(encoding="utf-8").splitlines(keepends=True)
 
 
 def write_todo_lines(todo_path: Path, lines: Iterable[str]) -> None:
-    _ensure_path(todo_path, "todo_path")
+    ensure_path(todo_path, "todo_path", TodoError)
     todo_path.write_text("".join(lines), encoding="utf-8")
 
 
@@ -133,7 +130,7 @@ def build_progress_report(progress: Progress, reference_date: str | None = None)
 
 
 def write_progress_report(progress: Progress, progress_path: Path) -> None:
-    _ensure_path(progress_path, "progress_path")
+    ensure_path(progress_path, "progress_path", TodoError)
     report = build_progress_report(progress)
     progress_path.write_text(report, encoding="utf-8")
     if not progress_path.exists():
@@ -141,8 +138,8 @@ def write_progress_report(progress: Progress, progress_path: Path) -> None:
 
 
 def archive_completed_tasks(todo_path: Path, archive_path: Path) -> Tuple[int, int]:
-    _ensure_path(todo_path, "todo_path")
-    _ensure_path(archive_path, "archive_path")
+    ensure_path(todo_path, "todo_path", TodoError)
+    ensure_path(archive_path, "archive_path", TodoError)
 
     lines = read_todo_lines(todo_path)
     remaining: List[str] = []

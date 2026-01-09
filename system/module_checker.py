@@ -10,6 +10,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, List
 
+from config_utils import ensure_path
+
 CONFIG_DEFAULT = Path(__file__).resolve().parents[1] / "config" / "modules.json"
 
 
@@ -35,11 +37,6 @@ class ModuleManifest:
     entry: str
 
 
-def _ensure_path(path: Path, label: str) -> None:
-    if not isinstance(path, Path):
-        raise ModuleCheckError(f"{label} ist kein Pfad (Path).")
-
-
 def _load_json(path: Path) -> dict:
     if not path.exists():
         raise ModuleCheckError(f"Konfiguration fehlt: {path}")
@@ -55,7 +52,7 @@ def _resolve_path(root: Path, value: str) -> Path:
 
 
 def load_modules(config_path: Path) -> List[ModuleEntry]:
-    _ensure_path(config_path, "config_path")
+    ensure_path(config_path, "config_path", ModuleCheckError)
     data = _load_json(config_path)
     raw_modules = data.get("modules", [])
     if not isinstance(raw_modules, list) or not raw_modules:
