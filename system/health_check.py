@@ -9,7 +9,7 @@ import logging
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List
+from typing import Iterable, List
 
 DEFAULT_ROOT = Path(__file__).resolve().parents[1]
 
@@ -72,8 +72,7 @@ def _check_executable(item: CheckItem, issues: List[str]) -> None:
         return
     if not os.access(item.path, os.X_OK):
         issues.append(
-            f"Skript ist nicht ausführbar: {item.label} ({item.path})."
-            " Tipp: chmod +x ausführen."
+            f"Skript ist nicht ausführbar: {item.label} ({item.path})." " Tipp: chmod +x ausführen."
         )
 
 
