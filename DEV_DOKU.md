@@ -16,11 +16,14 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
   - `src/records/record_updater.py`: Logik für Archivierung und Changelog.
 - `config/`: Konfiguration (Config = Einstellungen, änderbar ohne Code).
   - `config/records.json`: Regeln für Einträge.
+  - `config/test_gate.json`: Regeln für die Test-Sperre (Schwelle + Befehl).
 - `system/`: Tool-Logik (CLI-Tools und Automatisierung).
   - `system/todo_manager.py`: Fortschritt berechnen und To-Dos archivieren.
   - `system/log_exporter.py`: Logdateien als ZIP exportieren.
+  - `system/test_gate.py`: Test-Sperre (Tests erst nach kompletter Runde).
 - `logs/`: Logdateien (Protokolle).
 - `data/log_exports/`: Exporte von Logdateien.
+- `data/test_state.json`: Statusdatei für den Test-Start.
 - `scripts/`: Start- und Prüfskripte.
 - `tests/`: Automatische Tests (Unit-Tests).
 
@@ -32,7 +35,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fehler-Logs sind optisch hervorgehoben (Level `ERROR`).
 
 ## Qualitätssicherung
-- **Tests**: Automatische Tests für Kernfunktionen.
+- **Tests**: Automatische Tests für Kernfunktionen (Start erst nach kompletter Runde).
 - **Formatierung**: Automatische Codeformatierung (einheitlicher Stil, geplant).
 - **Prüfungen**: Start-Routine prüft Struktur (automatisch) und Abhängigkeiten (geplant).
 
@@ -49,6 +52,11 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 ### Start-Routine (Struktur + Fortschritt)
 1. `./scripts/start.sh`
 2. Die Start-Routine erstellt fehlende Ordner automatisch und zeigt den Fortschritt in Prozent.
+3. Tests laufen automatisch, sobald eine Runde (3 erledigte Tasks) erreicht ist.
+
+### Test-Sperre (manuell)
+1. `python system/test_gate.py --config config/test_gate.json`
+2. Tests starten erst nach kompletter Runde, sonst erscheint ein Hinweis.
 
 ### Log-Export (ZIP)
 1. `python system/log_exporter.py`

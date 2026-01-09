@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.5] – 2026-01-09
+- Tests: Test-Sperre ergänzt, damit Tests erst nach kompletter Runde starten.
+- Sprache: Testlauf-Hinweis in der CLI auf Deutsch vereinheitlicht.
+
 ## [0.1.4] – 2026-01-09
 - Launcher: Start-Routine prüft die Projektstruktur und erstellt fehlende Ordner automatisch.
 - Launcher: Fortschrittsanzeige beim Start ergänzt (Prozentanzeige pro Schritt).

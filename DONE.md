@@ -11,3 +11,5 @@
 ## 2026-01-09
 - Launcher: Start-Routine prüft Projektstruktur und erstellt fehlende Ordner.
 - Launcher: Fortschrittsanzeige beim Start ergänzt.
+- Tests: Tests erst nach kompletter Runde ausführen.
+- Sprache: Alle UI-Texte auf Deutsch geprüft.
