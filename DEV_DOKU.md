@@ -105,6 +105,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 ### Tests + Codequalität (manuell)
 1. `./scripts/run_tests.sh`
 2. Führt Pytest, Ruff (Linting) und Black (Formatprüfung) in dieser Reihenfolge aus.
+3. Optional: `./scripts/run_tests.sh --help` (kurze Erklärung für Laien).
 
 ### Abhängigkeiten (manuell prüfen)
 1. `python system/dependency_checker.py --requirements config/requirements.txt`

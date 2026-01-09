@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.15] – 2026-01-13
+- Tests: Testskript robuster gemacht (Fehlerfalle + klare Hinweise).
+- Tests: Hilfe-Option für das Testskript ergänzt.
+
 ## [0.1.14] – 2026-01-12
 - Module: Download-Ordner-Aufräumen mit Scan, Plan, Undo und Protokoll ergänzt.
 - Module: Datei-Suche mit Filtern, Organisation und Undo ergänzt.
