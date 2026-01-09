@@ -23,6 +23,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - `config/records.json`: Regeln für Einträge.
   - `config/launcher_gui.json`: GUI-Launcher-Themes und Standard-Theme.
   - `config/modules.json`: Zentrale Modul-Liste für den Launcher.
+  - `config/notiz_editor.json`: Konfiguration für den Notiz-Editor (Templates, Themes).
+  - `config/charakter_modul.json`: Konfiguration für das Charakter-Modul (Templates, Themes).
   - `config/requirements.txt`: Python-Abhängigkeiten (pip-Pakete).
   - `config/pytest.ini`: Pytest-Konfiguration.
   - `config/ruff.toml`: Ruff-Regeln für Codequalität (Linting).
@@ -42,6 +44,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - `logs/`: Logdateien (Protokolle).
 - `data/log_exports/`: Exporte von Logdateien.
 - `data/test_state.json`: Statusdatei für den Test-Start.
+- `data/notiz_editor.json`: Datenablage für den Notiz-Editor.
+- `data/charakter_modul.json`: Datenablage für das Charakter-Modul.
 - `modules/`: Standardisierte Module.
   - `modules/status/module.py`: Beispielmodul mit Standard-Schnittstelle.
   - `modules/status/manifest.json`: Metadaten des Beispielmoduls.
@@ -53,6 +57,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - `tests/`: Automatische Tests (Unit-Tests).
 - `modules/`: Modul-Ordner (Standard: manifest.json + module.py).
   - `modules/todo_kalender/`: To-Do-&-Kalender-Modul.
+- `modules/notiz_editor/`: Notiz-Editor-Modul mit Templates und Dashboard.
+- `modules/charakter_modul/`: Charakter-Modul für konsistente Profile.
 - `modules/`: Module nach Standard (Manifest + Entry).
 
 ## Standards (aktuell)
@@ -64,6 +70,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Zentrales Datenmodell für To-Dos/Kalender in `src/core/data_model.py`.
 - Einheitliche Modul-Schnittstelle (init/run/exit/validateInput/validateOutput) gemäß `standards.md`.
 - Modul-Pfade in `config/modules.json` zeigen auf Modulordner (nicht auf einzelne Dateien).
+- Notiz-Editor und Charakter-Modul nutzen Templates, Themes und Dashboard-Statistiken.
 
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen (Start erst nach kompletter Runde).

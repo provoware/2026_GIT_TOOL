@@ -21,6 +21,20 @@
       "path": "modules/beispiel_modul",
       "enabled": true,
       "description": "Ein minimales Beispielmodul für den Modul-Check."
+    },
+    {
+      "id": "notiz_editor",
+      "name": "Notiz-Editor",
+      "path": "modules/notiz_editor",
+      "enabled": true,
+      "description": "Notizen mit Templates, Favoriten, Auswahllisten und Dashboard-Statistiken."
+    },
+    {
+      "id": "charakter_modul",
+      "name": "Charakter-Modul",
+      "path": "modules/charakter_modul",
+      "enabled": true,
+      "description": "Professionelle Charakterprofile mit Templates, Favoriten und Dashboard-Statistiken."
     }
   ]
 }
