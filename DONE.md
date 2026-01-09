@@ -49,3 +49,5 @@
 ## 2026-01-13
 - Tests: Fehler-Log-Hinweis im Testskript ergänzt.
 - Tests: Schritt-für-Schritt-Hilfe in `run_tests.sh --help` ergänzt.
+- Tests: Testskript robuster gemacht (Fehlerfalle + klare Hinweise).
+- Tests: Testskript mit Hilfe-Option für Laien ergänzt.

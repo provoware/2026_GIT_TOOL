@@ -47,6 +47,8 @@
 [x] 2026-01-11 | Module | Charakter-Modul mit Templates, Favoriten und Dashboard integrieren | prüfen: Module laden | fertig wenn: Charakter-Modul liefert Datenstrukturen
 [x] 2026-01-12 | Module | Download-Ordner professionell aufräumen (Plan, Log, Undo) | prüfen: Modul-Scan + Undo | fertig wenn: Dateien werden organisiert und rückgängig gemacht
 [x] 2026-01-12 | Module | Datei-Suche mit Filtern, Organisation und Undo | prüfen: Suche + Organisieren + Undo | fertig wenn: Treffer lassen sich filtern und organisieren
+[x] 2026-01-13 | Tests | Testskript robuster machen (Fehlerfalle + klare Hinweise) | prüfen: scripts/run_tests.sh | fertig wenn: Fehler werden erklärt
+[x] 2026-01-13 | Tests | Testskript mit Hilfe-Option für Laien ergänzen | prüfen: scripts/run_tests.sh --help | fertig wenn: klare Nutzung erscheint
 [x] 2026-01-09 | Qualität | Requirements mit Inline-Kommentaren robust einlesen | prüfen: requirements.txt mit Inline-Kommentaren | fertig wenn: Kommentare werden ignoriert
 [x] 2026-01-09 | Module | Modul-Check: Entry-Pfad gegen Pfad-Traversal absichern | prüfen: manifest.json mit ../ entry | fertig wenn: Fehler wird erkannt
 [ ] 2026-01-13 | Start | Sicherheits-Prüfung (Health-Check) vor dem Start ergänzen | prüfen: Start ausführen | fertig wenn: wichtige Dateien/Ordner geprüft + klare Hinweise

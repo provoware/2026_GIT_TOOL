@@ -110,6 +110,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 2. Führt Pytest, Ruff (Linting) und Black (Formatprüfung) in dieser Reihenfolge aus.
 3. Hinweis: Details zu Fehlern stehen im Fehlerprotokoll (Log) unter `logs/test_run.log`.
 4. Hilfe: `./scripts/run_tests.sh --help` zeigt den geführten Ablauf.
+3. Optional: `./scripts/run_tests.sh --help` (kurze Erklärung für Laien).
 
 ### Abhängigkeiten (manuell prüfen)
 1. `python system/dependency_checker.py --requirements config/requirements.txt`
