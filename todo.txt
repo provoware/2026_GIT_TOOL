@@ -4,8 +4,8 @@
 [ ] 2026-01-07 | Architektur | Zentrales Datenmodell festlegen | prüfen: Module greifen darauf zu | fertig wenn: ein gemeinsames Schema genutzt wird
 
 [ ] 2026-01-07 | Launcher | Launcher zeigt alle Tools übersichtlich | prüfen: Start öffnen | fertig wenn: alle Module klickbar erreichbar
-[ ] 2026-01-07 | Launcher | Startroutine prüft Projektstruktur | prüfen: Ordner löschen, starten | fertig wenn: Struktur automatisch neu erstellt
-[ ] 2026-01-07 | Launcher | Fortschrittsanzeige beim Start einbauen | prüfen: Start beobachten | fertig wenn: Prozent sichtbar
+[x] 2026-01-07 | Launcher | Startroutine prüft Projektstruktur | prüfen: Ordner löschen, starten | fertig wenn: Struktur automatisch neu erstellt
+[x] 2026-01-07 | Launcher | Fortschrittsanzeige beim Start einbauen | prüfen: Start beobachten | fertig wenn: Prozent sichtbar
 [x] 2026-01-07 | Launcher | Fehler laienverständlich erklären | prüfen: Fehler provozieren | fertig wenn: klare Meldung erscheint
 
 [x] 2026-01-07 | Steuerung | Einheitliches To-Do-Format erzwingen | prüfen: falsches Format eingeben | fertig wenn: Fehler erkannt wird
