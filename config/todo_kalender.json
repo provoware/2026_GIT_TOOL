@@ -1,0 +1,30 @@
+{
+  "data_path": "data/todo_kalender.json",
+  "default_theme": "hell",
+  "themes": {
+    "hell": {
+      "planned": {
+        "icon": "○",
+        "color": "blau",
+        "label": "Geplant"
+      },
+      "done": {
+        "icon": "●",
+        "color": "grün",
+        "label": "Erledigt"
+      }
+    },
+    "kontrast": {
+      "planned": {
+        "icon": "◇",
+        "color": "schwarz-auf-gelb",
+        "label": "Geplant (Kontrast)"
+      },
+      "done": {
+        "icon": "◆",
+        "color": "schwarz-auf-grün",
+        "label": "Erledigt (Kontrast)"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "id": "todo_kalender",
+  "name": "To-Do & Kalender",
+  "version": "0.1.0",
+  "description": "Verwaltet To-Dos mit Datum und zeigt Jahres-, Monats- und Wochenansichten mit farblichen Icons.",
+  "permissions": [
+    "read:data",
+    "write:data",
+    "read:config"
+  ]
+}

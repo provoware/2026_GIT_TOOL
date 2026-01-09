@@ -13,5 +13,7 @@
 - Launcher: Fortschrittsanzeige beim Start ergänzt.
 - Tests: Tests erst nach kompletter Runde ausführen.
 - Sprache: Alle UI-Texte auf Deutsch geprüft.
+- Architektur: Zentrales Datenmodell für To-Dos und Kalender eingeführt.
+- Module: To-Do-&-Kalender-Modul nach Standards integriert.
 - Module: Beispielmodul nach Standards integriert.
 - Module: Modul-Check beim Start ergänzt.

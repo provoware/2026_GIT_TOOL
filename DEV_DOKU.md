@@ -15,9 +15,12 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 ## Struktur (aktuell)
 - `src/`: Systemlogik (stabile Kernlogik).
   - `src/records/record_updater.py`: Logik für Archivierung und Changelog.
+  - `src/core/data_model.py`: Zentrales Datenmodell für To-Dos und Kalender.
 - `config/`: Konfiguration (Config = Einstellungen, änderbar ohne Code).
   - `config/records.json`: Regeln für Einträge.
   - `config/test_gate.json`: Regeln für die Test-Sperre (Schwelle + Befehl).
+  - `config/modules.json`: Modul-Liste für den Launcher.
+  - `config/todo_kalender.json`: Konfiguration für To-Do-&-Kalender-Modul.
   - `config/modules.json`: Registrierte Module für den Modul-Check.
 - `system/`: Tool-Logik (CLI-Tools und Automatisierung).
   - `system/todo_manager.py`: Fortschritt berechnen und To-Dos archivieren.
@@ -27,8 +30,11 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - `logs/`: Logdateien (Protokolle).
 - `data/log_exports/`: Exporte von Logdateien.
 - `data/test_state.json`: Statusdatei für den Test-Start.
+- `data/todo_kalender.json`: Datenablage für To-Do-&-Kalender-Modul.
 - `scripts/`: Start- und Prüfskripte.
 - `tests/`: Automatische Tests (Unit-Tests).
+- `modules/`: Modul-Ordner (Standard: manifest.json + module.py).
+  - `modules/todo_kalender/`: To-Do-&-Kalender-Modul.
 - `modules/`: Module nach Standard (Manifest + Entry).
 
 ## Standards (aktuell)
@@ -37,6 +43,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Barrierefreie UI-Texte (Deutsch, klar, laienverständlich).
 - Logging-Format: `Zeit | Modul | LEVEL | Nachricht` (ISO-Zeitstempel).
 - Fehler-Logs sind optisch hervorgehoben (Level `ERROR`).
+- Zentrales Datenmodell für To-Dos/Kalender in `src/core/data_model.py`.
 
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen (Start erst nach kompletter Runde).
