@@ -53,3 +53,5 @@
 - Tests: Schritt-für-Schritt-Hilfe in `run_tests.sh --help` ergänzt.
 - Tests: Testskript robuster gemacht (Fehlerfalle + klare Hinweise).
 - Tests: Testskript mit Hilfe-Option für Laien ergänzt.
+- Start: Health-Check vor dem Start ergänzt (wichtige Dateien/Ordner).
+- Qualität: Gemeinsame Pfad- und JSON-Validierung für Launcher/GUI eingeführt.

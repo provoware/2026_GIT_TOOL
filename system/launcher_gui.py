@@ -4,12 +4,12 @@
 from __future__ import annotations
 
 import argparse
-import json
 import logging
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List
 
+import config_utils
 import module_checker
 from launcher import (
     LauncherError,
@@ -39,20 +39,6 @@ class GuiConfig:
     themes: Dict[str, Theme]
 
 
-def _ensure_path(path: Path, label: str) -> None:
-    if not isinstance(path, Path):
-        raise GuiLauncherError(f"{label} ist kein Pfad (Path).")
-
-
-def _load_json(path: Path) -> dict:
-    if not path.exists():
-        raise GuiLauncherError(f"GUI-Konfiguration fehlt: {path}")
-    try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:
-        raise GuiLauncherError(f"GUI-Konfiguration ist kein gültiges JSON: {path}") from exc
-
-
 def _require_text(value: object, label: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise GuiLauncherError(f"{label} fehlt oder ist leer.")
@@ -69,8 +55,13 @@ def _validate_color(value: str, label: str) -> str:
 
 
 def load_gui_config(config_path: Path) -> GuiConfig:
-    _ensure_path(config_path, "config_path")
-    data = _load_json(config_path)
+    config_utils.ensure_path(config_path, "config_path", GuiLauncherError)
+    data = config_utils.load_json(
+        config_path,
+        GuiLauncherError,
+        "GUI-Konfiguration fehlt",
+        "GUI-Konfiguration ist kein gültiges JSON",
+    )
     default_theme = _require_text(data.get("default_theme"), "default_theme")
     themes_raw = data.get("themes")
     if not isinstance(themes_raw, dict) or not themes_raw:
