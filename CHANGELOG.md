@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.16] – 2026-01-13
+- Tests: Fehler-Log-Hinweis im Testskript ergänzt.
+- Tests: Schritt-für-Schritt-Hilfe für den Testlauf ergänzt.
+
 ## [0.1.15] – 2026-01-13
 - Tests: Testskript robuster gemacht (Fehlerfalle + klare Hinweise).
 - Tests: Hilfe-Option für das Testskript ergänzt.
