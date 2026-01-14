@@ -154,7 +154,5 @@ def _require_text(value: object, field: str) -> str:
 def _require_module_id(value: object, field: str) -> str:
     module_id = _require_text(value, field)
     if not re.fullmatch(r"[a-z0-9]+(?:_[a-z0-9]+)*", module_id):
-        raise ModuleRegistryError(
-            f"{field} muss snake_case sein (z. B. modul_name_1)."
-        )
+        raise ModuleRegistryError(f"{field} muss snake_case sein (z. B. modul_name_1).")
     return module_id

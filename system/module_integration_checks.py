@@ -72,7 +72,17 @@ def run_integration_checks(
         try:
             manifest = module_checker.load_manifest(entry.path)
         except module_checker.ModuleCheckError as exc:
-            issues.append(str(exc))
+            message = str(exc)
+            if "Manifest: id muss dem Modulordner entsprechen" in message:
+                found = ""
+                if "gefunden:" in message:
+                    found = message.split("gefunden:", 1)[1].strip().rstrip(").")
+                detail = f"{entry.module_id} erwartet"
+                if found:
+                    detail = f"{detail}, aber {found} gefunden"
+                issues.append(f"Manifest-ID passt nicht zur Modul-Konfiguration: {detail}.")
+            else:
+                issues.append(message)
             continue
         if manifest.module_id != entry.module_id:
             issues.append(

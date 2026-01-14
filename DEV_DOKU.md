@@ -71,12 +71,16 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - GUI-Launcher bietet eine One-Click-Diagnose (Tests + Codequalität) mit Ergebnisanzeige.
 - Doku-Autoupdater aktualisiert Statusblöcke in README/DEV_DOKU.
 - Modul-API-Typen (TypedDicts) sind zentral dokumentiert.
+- Dashboard-Tool bietet globale Suche über Module, Einträge und Notizen.
+- Dashboard-Tool bietet Favoritenleiste für oft genutzte Module (umschaltbar).
+- Dashboard-Tool enthält Mini-Panels für Export, Backup und Schnellnotizen.
+- Dashboard-Tool unterstützt Auto-Theming (Tag/Nacht-Erkennung) sowie manuelle Auswahl.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-01-28)**
+**Auto-Status (aktualisiert: 2026-01-30)**
 
-- Gesamt: 81 Tasks
-- Erledigt: 81 Tasks
+- Gesamt: 89 Tasks
+- Erledigt: 89 Tasks
 - Offen: 0 Tasks
 - Fortschritt: 100,00 %
 <!-- AUTO-STATUS:END -->

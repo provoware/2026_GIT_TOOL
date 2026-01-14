@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.39] – 2026-01-30
+- Dashboard: Globale Suche für Module, Einträge, Aktionen und Notizen ergänzt.
+- Dashboard: Favoritenleiste für Module inkl. Umschalten ergänzt.
+- Dashboard: Mini-Panels für Export/Backup/Schnellnotizen ergänzt.
+- Dashboard: Auto-Theming (Tag/Nacht) inkl. manueller Umschaltung ergänzt.
+- Qualität: Ruff- und Black-Hinweise in GUI- und Modul-API-Dateien bereinigt.
+
 ## [0.1.38] – 2026-01-29
 - Standards: Modulnamen-Validierung (snake_case + Pfadregel) ergänzt.
 - GUI: Einheitliche Abstände über Layout-Tokens in der GUI-Konfiguration eingeführt.

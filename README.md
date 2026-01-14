@@ -9,13 +9,13 @@ Dieses Projekt ist ein sauberer Neuaufbau mit Fokus auf Robustheit, Nachvollzieh
 - Wichtige Qualitätsziele (Barrierefreiheit, Logging, automatische Prüfungen) sind implementiert und testbar.
 - Zentrale Architektur-Bausteine sind vorhanden: Plugin-Registry (Registry = zentrale Modul-Liste), Modul-API und gemeinsamer Store (Store = Zustands-Speicher).
 - Performance- und Stabilitätsmaßnahmen (Lazy Loading, asynchrones Logging, JSON-Validierung) sind umgesetzt.
-- Komfortfunktionen wie globale Suche, Favoriten und Mini-Panels sind noch offen.
+- Komfortfunktionen wie globale Suche, Favoritenleiste, Mini-Panels und Auto-Theming sind umgesetzt.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-01-28)**
+**Auto-Status (aktualisiert: 2026-01-30)**
 
-- Gesamt: 81 Tasks
-- Erledigt: 81 Tasks
+- Gesamt: 89 Tasks
+- Erledigt: 89 Tasks
 - Offen: 0 Tasks
 - Fortschritt: 100,00 %
 <!-- AUTO-STATUS:END -->
@@ -70,7 +70,7 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 - Standard-Typen stehen in `system/module_api_types.py` (TypedDicts = typisierte Wörterbücher).
 - Der Entry-Contract (Entry = Startdatei des Moduls) ist in `docs/MODUL_API.md` beschrieben.
 
-## Bedienbarkeit (geplant)
+## Bedienbarkeit (umgesetzt)
 - Globales Suchfeld im Dashboard (Dateien, Module, Texte).
 - Favoritenleiste für oft genutzte Module.
 - Mini-Panels für Schnellaktionen (Export, Backup, Notes).

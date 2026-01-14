@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Typen für die Modul-API (Input/Output/GUI-Daten)."""
+
+from __future__ import annotations
 
 from typing import Any, Dict, NotRequired, TypedDict
 
