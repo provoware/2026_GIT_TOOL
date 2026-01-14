@@ -75,3 +75,154 @@
 [ ] 2026-01-16 | Release | GUI: Fehler- und Statusmeldungen in einfacher Sprache + Lösungsschritt | prüfen: Fehler provozieren | fertig wenn: verständliche Meldungen
 [ ] 2026-01-16 | Release | GUI: Ladezustände/Busy-Indikator barrierefrei ausgeben | prüfen: lange Aktion | fertig wenn: Status sichtbar
 [ ] 2026-01-16 | Release | GUI: Responsive Layout für kleine Auflösung prüfen | prüfen: Fenster klein | fertig wenn: Bedienung bleibt möglich
+1. Start & Launcher
+GUI-Launcher erstellen (Fenster, Theme, Layout).
+
+PIN-Login implementieren.
+
+Automatische Projektordner-Prüfung + Erzeugung.
+
+Vollständige Self-Repair-Routine integrieren.
+
+Visuelle Fortschrittsanzeige beim Start.
+
+Fehleralternativen statt Abbruch integrieren.
+
+2. Hauptfenster & Module
+Zentrales Hauptfenster bauen (Grid/9 Module).
+
+Modulmanager implementieren (laden, aktivieren, deaktivieren).
+
+Verschiebbare, skalierbare Modulfenster realisieren.
+
+Kollisionserkennung für Module implementieren.
+
+Standardgrößen + Auto-Layout definieren.
+
+3. Profil- & Datenstruktur
+Profil-System mit getrennten Projektordnern erstellen.
+
+Globale Settings als zentrale Datei implementieren.
+
+Versionierung pro Modul + Änderungsverläufe bauen.
+
+Automatische Pflege von:
+
+baumstruktur.txt
+
+manifest.json
+
+dummy_register.json
+
+Dateinamen-Suffix-Standards implementieren.
+
+4. UX & Barrierefreiheit
+Barrierefreiheits-Set ergänzen (Kontraste, ARIA, Tastatur).
+
+Großbutton-UI realisieren.
+
+Hilfetexte direkt in der GUI integrieren.
+
+Farbiges Sofort-Feedbacksystem (Erfolg/Fehler) bauen.
+
+Modulstatus (grün/gelb/rot) visuell anzeigen.
+
+5. Workflow-Logik
+Globales Drag-and-Drop einbauen (Dateien/Module).
+
+Undo-/Redo-System implementieren (global).
+
+Autosave alle 10 Minuten.
+
+Globales Event-/Signal-System erstellen.
+
+Rechte- und Schreibschutzsystem integrieren.
+
+6. Kernmodule
+Dateimanager-Modul finalisieren.
+
+Bildvorschau-Modul einbauen.
+
+Audio-Player-Modul integrieren.
+
+FFmpeg-basierte Slideshow-Funktion erstellen.
+
+Wavesurfer-Modul implementieren (Wellenform, Regionen, Export).
+
+To-Do-Modul mit Kalenderverknüpfung bauen.
+
+Konsolen-Modul (sicher) einbauen.
+
+Wiki/Info-Modul mit 3 Ebenen: Thema – Quelle – Detail.
+
+Persona-Modul entwickeln.
+
+Story-Sampler bauen.
+
+Projektorganizer erstellen.
+
+Asset-Finder integrieren.
+
+Quote/Line-Manager erstellen.
+
+Songtext- und Genre-Archive ins System integrieren.
+
+7. Speicherung & Export
+Exportcenter (JSON, TXT, PDF, ZIP) implementieren.
+
+Backup-System vollständig integrieren.
+
+Testmodus (schreibgeschützt) einbauen.
+
+Autosave-in-Logs protokollieren.
+
+8. Fehler- & Strukturprüfung
+JSON-Validator einbauen.
+
+Automatische Dateinamenkorrektur.
+
+Fehlerklassifizierung (leicht/mittel/schwer) implementieren.
+
+Ampelsystem für Dateifehler.
+
+Modul-Selbsttests mit GUI-Ausgabe.
+
+9. Timeline & Visualisierung
+Timeline-Tool responsiv überarbeiten.
+
+Hover-Details, Zoom + flexible Abstände integrieren.
+
+Bessere Lesbarkeit + skalierende Elemente.
+
+10. Dokumentation & Systempflege
+CHANGELOG-Automatik einbauen.
+
+README-/Doku-Autoupdater erstellen.
+
+Developer-Panel im Dashboard integrieren.
+
+interne Standards im Tool anzeigen (konfig, rules, tests).
+
+11. Tests & Stabilität
+Automatisierte GUI-Tests einbinden.
+
+Fehler-Simulation (Laienfehler) integrieren.
+
+Robustheitstest für fehlende Rechte, beschädigte Dateien etc.
+
+Modulübergreifende Funktionschecks implementieren.
+
+12. Release-Build
+.deb-Paket bauen.
+
+Offizielles Icon-Set (Provoware-Look) integrieren.
+
+One-File-Distribution (AppImage oder PyInstaller) erzeugen.
+
+ZIP-Auto-Export alle fünf Entwicklungsschritte.
+
+13. Abschlusslogik
+Logout: Save-All + sauberes Schließen.
+
+End-Audit-Check (Release-Status) integrieren.
+
