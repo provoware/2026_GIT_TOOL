@@ -104,3 +104,10 @@
 - Start: Debug- und Logging-Modus für die Start-Routine ergänzt.
 - Tooling: Standards-Viewer für interne Standards und Styleguide ergänzt.
 - Doku: Responsivitäts-Check der Launcher-GUI dokumentiert.
+
+## 2026-01-20
+- UI: Kontrastmodus per Hotkey (Alt+K) im GUI-Launcher ergänzt.
+- UI: Zoom per Strg+Mausrad im GUI-Launcher ergänzt.
+- UI: Screenreader-freundliche Bereichsstruktur im GUI-Launcher ergänzt.
+- UI: Hilfetexte direkt in der GUI integriert (Kurzinfo).
+- Qualität: Eingabe-/Ausgabe-Validierung im GUI-Launcher erweitert.

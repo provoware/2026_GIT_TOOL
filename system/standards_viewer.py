@@ -8,7 +8,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, List
 
-
 DEFAULT_ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -102,9 +101,7 @@ def main() -> int:
             return 0
 
     available = ", ".join(section.key for section in sections)
-    raise StandardsViewerError(
-        f"Unbekannter Bereich: {selection}. Verfügbar: {available}."
-    )
+    raise StandardsViewerError(f"Unbekannter Bereich: {selection}. Verfügbar: {available}.")
 
 
 if __name__ == "__main__":
