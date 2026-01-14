@@ -7,6 +7,11 @@
 - Start: Recovery-Modus als Notfallstart-Skript ergänzt.
 - Health-Check: Standarddatei für Modulstruktur-Config ergänzt.
 - Doku: Recovery-Modus und Modulstruktur-Regeln dokumentiert.
+- Dashboard: Globale Suche für Module, Einträge, Aktionen und Notizen ergänzt.
+- Dashboard: Favoritenleiste für Module inkl. Umschalten ergänzt.
+- Dashboard: Mini-Panels für Export/Backup/Schnellnotizen ergänzt.
+- Dashboard: Auto-Theming (Tag/Nacht) inkl. manueller Auswahl ergänzt.
+- Qualität: Ruff- und Black-Hinweise in GUI- und Modul-API-Dateien bereinigt.
 
 ## 2026-01-28
 - UI: One-Click-Diagnose im GUI-Launcher ergänzt (Tests + Codequalität).

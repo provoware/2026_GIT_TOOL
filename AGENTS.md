@@ -15,6 +15,7 @@
    - DEV_DOKU.md (wie gebaut/getestet)
    - DONE.md (Task abgeschlossen + Datum)
    - PROGRESS.md (Prozent + Zähler)
+   - README.md + DEV_DOKU.md Auto-Status per `./scripts/update_docs.sh` aktualisieren
 
 ## Qualitätsregeln
 - Stabilität vor neuen Features.

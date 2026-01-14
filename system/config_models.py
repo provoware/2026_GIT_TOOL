@@ -185,9 +185,7 @@ def _require_text(value: object, field: str) -> str:
 def _require_module_id(value: object, field: str) -> str:
     module_id = _require_text(value, field)
     if not re.fullmatch(r"[a-z0-9]+(?:_[a-z0-9]+)*", module_id):
-        raise ConfigModelError(
-            f"{field} muss snake_case sein (z. B. modul_name_1)."
-        )
+        raise ConfigModelError(f"{field} muss snake_case sein (z. B. modul_name_1).")
     return module_id
 
 
@@ -198,9 +196,7 @@ def _require_module_path(value: object, module_id: str, field: str) -> str:
         raise ConfigModelError(f"{field} darf nicht absolut sein.")
     parts = path.parts
     if len(parts) != 2 or parts[0] != "modules" or parts[1] != module_id:
-        raise ConfigModelError(
-            f"{field} muss 'modules/{module_id}' entsprechen."
-        )
+        raise ConfigModelError(f"{field} muss 'modules/{module_id}' entsprechen.")
     return module_path
 
 

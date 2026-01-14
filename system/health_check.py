@@ -136,7 +136,9 @@ def _check_executable(
                 mode = item.path.stat().st_mode
                 item.path.chmod(mode | stat.S_IXUSR)
                 logging.info(
-                    "Self-Repair: Ausführrechte gesetzt: %s (%s).", item.label, item.path
+                    "Self-Repair: Ausführrechte gesetzt: %s (%s).",
+                    item.label,
+                    item.path,
                 )
                 repairs.append(f"Ausführrechte repariert: {item.label} ({item.path}).")
                 return

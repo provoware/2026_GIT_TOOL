@@ -78,6 +78,13 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 
 <!-- AUTO-STATUS:START -->
 **Auto-Status (aktualisiert: 2026-01-14)**
+- Dashboard-Tool bietet globale Suche über Module, Einträge und Notizen.
+- Dashboard-Tool bietet Favoritenleiste für oft genutzte Module (umschaltbar).
+- Dashboard-Tool enthält Mini-Panels für Export, Backup und Schnellnotizen.
+- Dashboard-Tool unterstützt Auto-Theming (Tag/Nacht-Erkennung) sowie manuelle Auswahl.
+
+<!-- AUTO-STATUS:START -->
+**Auto-Status (aktualisiert: 2026-01-30)**
 
 - Gesamt: 89 Tasks
 - Erledigt: 89 Tasks
