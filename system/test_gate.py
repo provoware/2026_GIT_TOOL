@@ -60,7 +60,7 @@ def load_config(config_path: Path | None = None) -> TestGateConfig:
     ensure_path(config_file, "config_path", TestGateError)
     data = _load_json(config_file)
 
-    threshold = data.get("threshold", 9)
+    threshold = data.get("threshold", 4)
     if not isinstance(threshold, int) or threshold <= 0:
         raise TestGateError("Schwelle (threshold) muss eine positive Zahl sein.")
 

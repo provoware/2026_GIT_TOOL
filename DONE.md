@@ -1,5 +1,11 @@
 # DONE
 
+## 2026-01-26
+- Doku: Info-Dateien und README bereinigt/aktualisiert.
+- Doku: STRUKTUR.md mit vollständigem Verzeichnisbaum ergänzt.
+- Doku: Dummy-Platzhalter für Pflichtdateien angelegt.
+- Tests: Test-Sperre auf 4 Tasks pro Runde umgestellt.
+
 ## 2026-01-24
 - Architektur: Struktur-Check zur Trennung von System/Config/Daten ergänzt.
 - Start: Safe-Mode (schreibgeschützt) und Ghost-Mode (Alias) ergänzt.

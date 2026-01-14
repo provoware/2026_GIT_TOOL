@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.35] – 2026-01-26
+- Doku: Info-Dateien und README bereinigt/aktualisiert, STRUKTUR.md ergänzt.
+- Doku: Dummy-Platzhalter für Pflichtdateien dokumentiert und angelegt.
+- Tests: Test-Sperre auf 4 Tasks pro Runde umgestellt (Config + Doku).
+
 ## [0.1.34] – 2026-01-25
 - Architektur: Zentrale Modul-Registry (Plugin-System) und Store eingeführt.
 - Architektur: Modul-API dokumentiert (Schnittstellen, Events, States) mit Beispiel.

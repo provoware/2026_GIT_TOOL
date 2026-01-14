@@ -96,3 +96,5 @@
   - **Tipp:** Notiere dir die erste Fehlermeldung, sie ist meist die wichtigste.
 - **Ordnung halten:** Logs und Daten in `logs/` und `data/` lassen.
   - **Tipp:** So bleiben Systemdateien sauber getrennt.
+- **Struktur prüfen:** `STRUKTUR.md` lesen (Struktur = Verzeichnisbaum).
+  - **Tipp:** Dort siehst du alle Pflichtdateien und Platzhalter (Dummy-Dateien).

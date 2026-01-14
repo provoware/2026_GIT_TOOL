@@ -1,0 +1,4 @@
+DUMMY – Platzhalterdatei.
+
+Diese Datei wird später automatisch mit dem aktuellen Verzeichnisbaum gefüllt.
+Bitte nicht löschen.
