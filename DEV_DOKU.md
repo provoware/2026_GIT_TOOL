@@ -32,6 +32,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Abhängigkeitsprüfung ignoriert Inline-Kommentare auch bei Tabs/Mehrfach-Leerzeichen.
 - Modul-Check validiert Entry-Pfade gegen Pfad-Traversal.
 - Modul-Check blockiert `..`-Segmente im Entry-Pfad mit klarer Fehlermeldung.
+- Modul-API-Validator prüft `run`, `validateInput`, `validateOutput` ohne Modul-Import.
 - Testskript zeigt eine Schritt-für-Schritt-Hilfe und schreibt Logs nach `logs/test_run.log`.
 - Testskript bricht bei Fehlern mit klarer Meldung und Log-Hinweis ab.
 - Test-Automatik startet nach abgeschlossenen 4 Tasks (Runden-Logik).
@@ -105,6 +106,7 @@ Hier nur die wichtigsten Bereiche:
 - **Prüfungen**: Struktur-Check stellt Trennung von System/Config/Daten/Logs sicher.
 - **Prüfungen**: System-Scan bietet eine Vorabprüfung ohne Schreibzugriff.
 - **Prüfungen**: Modul-Check validiert aktivierte Module und deren Manifest.
+- **Prüfungen**: Modul-API-Validator prüft Pflichtfunktionen ohne Modul-Import.
 - **Prüfungen**: Modul-Selbsttests melden Status pro Modul (GUI und CLI).
 - **Prüfungen**: Modulverbund-Checks prüfen Selftests, IDs und Manifest-Konsistenz.
 - **Prüfungen**: Fehler-Simulation zeigt typische Laienfehler mit Lösungshinweis.

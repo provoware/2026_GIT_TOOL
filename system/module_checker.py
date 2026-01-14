@@ -11,6 +11,7 @@ from typing import Iterable, List
 from config_utils import ensure_path
 from logging_center import get_logger
 from logging_center import setup_logging as setup_logging_center
+from module_api_validator import validate_module_api
 from module_registry import (
     ModuleEntry,
     ModuleManifest,
@@ -75,6 +76,8 @@ def check_modules(entries: Iterable[ModuleEntry]) -> List[str]:
             continue
         if not entry_path.exists():
             issues.append("Modul-Datei fehlt: " f"{manifest.entry} (Modul: {entry.module_id})")
+            continue
+        issues.extend(validate_module_api(entry_path))
     return issues
 
 
