@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.26] – 2026-01-17
+- GUI-Launcher: Statusanzeige mit Busy-Modus ergänzt, inkl. klarer Fehlerhinweise.
+- GUI-Launcher: Ausgabe mit zusätzlichem Label für Screenreader ergänzt.
+- Tests: Kontrasttest für Launcher-Themes ergänzt.
+- Doku: Kontrastbericht für Launcher-Themes ergänzt.
+- Tooling: Berichtsskript und Farb-Kontrast-Utils ergänzt.
+
 ## [0.1.25] – 2026-01-17
 - Doku: todo.txt in TODO.md als synchronisierte Kurzliste integriert.
 - Doku: todo.txt mit IDs und Hinweis auf TODO.md vereinheitlicht.

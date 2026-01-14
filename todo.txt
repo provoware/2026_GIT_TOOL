@@ -3,12 +3,19 @@ TODO – Kurzliste (synchron zu TODO.md)
 Hinweis: Die vollständige Aufgabenstruktur steht in TODO.md.
 
 Release-Checkliste GUI (Barrierefreiheit)
-[ ] REL-GUI-01: Kontrast prüfen (Kontrast = Helligkeitsunterschied; Ziel ≥ 4,5:1).
-[ ] REL-GUI-02: Fokusreihenfolge prüfen (Fokus = aktuelles Element bei Tab).
-[ ] REL-GUI-03: Screenreader-Labels ergänzen (Screenreader = Vorlese-Programm).
-[ ] REL-GUI-04: Fehler-/Statusmeldungen in einfacher Sprache + Lösungsschritt.
-[ ] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
+[x] REL-GUI-01: Kontrast prüfen (Kontrast = Helligkeitsunterschied; Ziel ≥ 4,5:1).
+[x] REL-GUI-02: Fokusreihenfolge prüfen (Fokus = aktuelles Element bei Tab).
+[x] REL-GUI-03: Screenreader-Labels ergänzen (Screenreader = Vorlese-Programm).
+[x] REL-GUI-04: Fehler-/Statusmeldungen in einfacher Sprache + Lösungsschritt.
+[x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [ ] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
+
+Nächste 5 kleinste Aufgaben (Runde 2026-01-17) – erledigt
+[x] REL-GUI-01: Kontrast prüfen (Kontrast = Helligkeitsunterschied; Ziel ≥ 4,5:1).
+[x] REL-GUI-02: Fokusreihenfolge prüfen (Fokus = aktuelles Element bei Tab).
+[x] REL-GUI-03: Screenreader-Labels ergänzen (Screenreader = Vorlese-Programm).
+[x] REL-GUI-04: Fehler-/Statusmeldungen in einfacher Sprache + Lösungsschritt.
+[x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 
 Nächste 5 kleinste Aufgaben (Runde 2026-01-17) – erledigt
 [x] TODO-DOK-01: todo.txt-Kurzliste in TODO.md integriert (Release-Checkliste + IDs).
