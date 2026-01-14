@@ -39,6 +39,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Health-Check prüft wichtige Dateien/Ordner vor dem Start mit klaren Hinweisen.
 - Health-Check kann fehlende Basiselemente automatisch per Self-Repair anlegen.
 - Start-Routine ruft den Health-Check mit aktivem Self-Repair auf.
+- Health-Check repariert Leserechte und Ausführrechte automatisch (Self-Repair aktiv).
 - Launcher/GUI nutzen gemeinsame Pfad- und JSON-Validierung, um Duplikate zu reduzieren.
 - Health-Check ist lauffähig, Ruff-konform und nutzt konsistente Datumswerte (Self-Repair aktiv).
 - Changelog-Abschnitte mit doppelten Versionsnummern sind zusammengeführt (0.1.20/0.1.19/0.1.15).
@@ -67,6 +68,18 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - GUI-Launcher nutzt Debounce für Aktualisierung, um Mehrfachklicks abzufangen.
 - Modul-Loader cached Modulimporte (Lazy Loading) für schnellere Abläufe.
 - Laien-Tool-Anleitung ist als eigenständige Schritt-für-Schritt-Doku ergänzt.
+- GUI-Launcher bietet eine One-Click-Diagnose (Tests + Codequalität) mit Ergebnisanzeige.
+- Doku-Autoupdater aktualisiert Statusblöcke in README/DEV_DOKU.
+- Modul-API-Typen (TypedDicts) sind zentral dokumentiert.
+
+<!-- AUTO-STATUS:START -->
+**Auto-Status (aktualisiert: 2026-01-28)**
+
+- Gesamt: 81 Tasks
+- Erledigt: 81 Tasks
+- Offen: 0 Tasks
+- Fortschritt: 100,00 %
+<!-- AUTO-STATUS:END -->
 
 ## Struktur (aktuell)
 Die **vollständige** Struktur steht in `STRUKTUR.md` (Single Source of Truth).
@@ -154,6 +167,15 @@ Hier nur die wichtigsten Bereiche:
 5. Hilfe: `./scripts/run_tests.sh --help` zeigt den geführten Ablauf.
 6. Optional: `./scripts/run_tests.sh --help` (kurze Erklärung für Laien).
 
+### Diagnose (One-Click)
+1. GUI-Launcher: Button „Diagnose starten“ ausführen.
+2. CLI: `python system/diagnostics_runner.py` (Diagnose = Tests + Codequalität).
+3. Ergebnis: Zusammenfassung + Ausgabe im Textbereich/Terminal.
+
+### Doku-Update (Auto-Status)
+1. `./scripts/update_docs.sh`
+2. Aktualisiert die Auto-Status-Blöcke in `README.md` und `DEV_DOKU.md`.
+
 ### Modul-Selbsttests (manuell)
 1. `python system/module_selftests.py`
 2. Zeigt pro Modul einen Status (ok/fehler/übersprungen) an.
@@ -201,7 +223,7 @@ Hier nur die wichtigsten Bereiche:
 ### GUI-Launcher (Startübersicht)
 1. `python system/launcher_gui.py`
 2. Optional: `python system/launcher_gui.py --show-all --debug` (Details anzeigen).
-3. Tastatur-Shortcuts: Alt+A (alle Module), Alt+D (Debug), Alt+R (aktualisieren), Alt+T (Theme), Alt+K (Kontrast), Alt+Q (beenden).
+3. Tastatur-Shortcuts: Alt+A (alle Module), Alt+D (Debug), Alt+R (aktualisieren), Alt+G (Diagnose), Alt+T (Theme), Alt+K (Kontrast), Alt+Q (beenden).
 4. Zoom: Strg + Mausrad (Zoom = Schriftgröße vergrößern/verkleinern).
 5. Modul-Check: Wird bei jeder Aktualisierung automatisch ausgeführt (Status steht in der Übersicht).
 ### Modul-Check (manuell)

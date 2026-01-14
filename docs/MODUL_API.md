@@ -8,6 +8,12 @@ Alle Begriffe sind in einfacher Sprache erklärt (Fachbegriff in Klammern).
 - `manifest.json` (Manifest = Steckbrief des Moduls)
 - `module.py` (Entry = Startdatei des Moduls)
 
+## Typen & Entry-Contract (klarer Moduleinstieg)
+- Standard-Typen stehen in `system/module_api_types.py` (TypedDicts = typisierte Wörterbücher).
+- **Entry-Contract**: Die Datei aus `manifest.json -> entry` muss `run`, `validateInput` und `validateOutput` bereitstellen.
+- **Input-Typ**: `ModuleInput` ist ein Dictionary (dict) mit klaren Schlüsseln.
+- **Output-Typ**: `ModuleOutput` liefert `status`, `message` und optional `data`/`ui`.
+
 ### Beispiel: manifest.json
 ```json
 {

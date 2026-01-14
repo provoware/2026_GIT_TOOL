@@ -4,9 +4,11 @@
 from __future__ import annotations
 
 import argparse
+import threading
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
+import diagnostics_runner
 import error_simulation
 import module_checker
 import module_selftests
@@ -150,6 +152,8 @@ class LauncherGui:
         self.show_all_check = None
         self.debug_check = None
         self.refresh_button = None
+        self.diagnostics_button = None
+        self.diagnostics_running = False
         self.refresh_job = None
         self.refresh_debounce_ms = gui_config.refresh_debounce_ms
         self.logger = get_logger("launcher_gui")
@@ -244,6 +248,17 @@ class LauncherGui:
         self.refresh_button.configure(takefocus=1, underline=0)
         self.refresh_button.grid(row=1, column=2, sticky="e", padx=(0, 0), pady=(8, 0))
 
+        self.diagnostics_button = tk.Button(
+            controls,
+            text="Diagnose starten",
+            command=self.start_diagnostics,
+        )
+        if self.button_font is not None:
+            self.diagnostics_button.configure(font=self.button_font)
+        self.diagnostics_button.configure(padx=12, pady=6)
+        self.diagnostics_button.configure(takefocus=1, underline=0)
+        self.diagnostics_button.grid(row=1, column=1, sticky="w", padx=(8, 12), pady=(8, 0))
+
         controls.columnconfigure(2, weight=1)
 
         help_section = tk.LabelFrame(self.root, text="Hilfe (Kurzinfo)")
@@ -253,9 +268,10 @@ class LauncherGui:
             text=(
                 "So geht's: Farbschema wählen, Module einblenden und mit "
                 "„Übersicht aktualisieren“ prüfen. "
+                "Diagnose: „Diagnose starten“ führt Tests und Codeprüfungen aus. "
                 "Kontrastmodus: Alt+K. Zoom: Strg + Mausrad. "
                 "Tastatur: Tab für Fokus, Alt+A (alle Module), Alt+D (Debug), "
-                "Alt+R (aktualisieren), Alt+T (Theme), Alt+Q (beenden)."
+                "Alt+R (aktualisieren), Alt+G (Diagnose), Alt+T (Theme), Alt+Q (beenden)."
             ),
             anchor="w",
             justify="left",
@@ -292,7 +308,7 @@ class LauncherGui:
             text=(
                 "Tipp: Mit Tabulator erreichst du alle Bedienelemente. "
                 "Kurzbefehle: Alt+A (alle Module), Alt+D (Debug), Alt+R "
-                "(aktualisieren), Alt+T (Theme), Alt+K (Kontrast), "
+                "(aktualisieren), Alt+G (Diagnose), Alt+T (Theme), Alt+K (Kontrast), "
                 "Strg + Mausrad (Zoom), Alt+Q (beenden)."
             ),
             anchor="w",
@@ -327,6 +343,7 @@ class LauncherGui:
         self.root.bind_all("<Alt-r>", lambda _event: self._refresh_from_shortcut())
         self.root.bind_all("<Alt-t>", lambda _event: self._focus_widget(self.theme_menu))
         self.root.bind_all("<Alt-k>", lambda _event: self._toggle_contrast_theme())
+        self.root.bind_all("<Alt-g>", lambda _event: self.start_diagnostics())
         self.root.bind_all("<Alt-q>", lambda _event: self.root.quit())
         self.root.bind_all("<Control-r>", lambda _event: self._refresh_from_shortcut())
 
@@ -556,6 +573,62 @@ class LauncherGui:
             self._set_status("Bereit.", state="success")
 
         self._set_output(text)
+
+    def start_diagnostics(self) -> None:
+        if self.diagnostics_running:
+            self._set_status("Diagnose läuft bereits…", state="busy")
+            return
+        self.diagnostics_running = True
+        if self.diagnostics_button is not None:
+            self.diagnostics_button.configure(state="disabled")
+        self._set_status("Diagnose wird gestartet…", state="busy")
+        thread = threading.Thread(target=self._run_diagnostics, daemon=True)
+        thread.start()
+
+    def _run_diagnostics(self) -> None:
+        script_path = self.module_config.resolve().parents[1] / "scripts" / "run_tests.sh"
+        try:
+            result = diagnostics_runner.run_diagnostics(script_path)
+        except diagnostics_runner.DiagnosticsError as exc:
+            result = diagnostics_runner.DiagnosticsResult(
+                status="error",
+                output=f"Diagnose fehlgeschlagen: {exc}",
+                exit_code=2,
+                duration_seconds=0.0,
+                command=["bash", str(script_path)],
+            )
+        self.root.after(0, lambda: self._finish_diagnostics(result))
+
+    def _finish_diagnostics(self, result: diagnostics_runner.DiagnosticsResult) -> None:
+        if not isinstance(result, diagnostics_runner.DiagnosticsResult):
+            raise GuiLauncherError("Diagnose-Ergebnis ist ungültig.")
+        self.diagnostics_running = False
+        if self.diagnostics_button is not None:
+            self.diagnostics_button.configure(state="normal")
+        report = self._format_diagnostics_report(result)
+        current = ""
+        if self.output_text is not None:
+            current = self.output_text.get("1.0", "end").strip()
+        combined = f"{current}\n\n{report}" if current else report
+        self._set_output(combined)
+        if result.status == "ok":
+            self._set_status("Diagnose abgeschlossen.", state="success")
+        else:
+            self._set_status("Diagnose mit Problemen abgeschlossen.", state="error")
+
+    def _format_diagnostics_report(self, result: diagnostics_runner.DiagnosticsResult) -> str:
+        duration = f"{result.duration_seconds:.1f}"
+        lines = [
+            "Diagnose (Tests + Codequalität):",
+            f"Status: {result.status}",
+            f"Dauer: {duration} Sekunden",
+            f"Exit-Code: {result.exit_code}",
+            f"Kommando: {' '.join(result.command)}",
+            "",
+            "Ausgabe:",
+            result.output or "Keine Ausgabe erhalten.",
+        ]
+        return "\n".join(lines).rstrip() + "\n"
 
     def _set_output(self, text: str) -> None:
         clean_text = _require_text(text, "output_text")

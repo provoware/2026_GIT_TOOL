@@ -35,6 +35,12 @@ Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
 - [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 - [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Runde 2026-01-28 (4 kleinste Aufgaben dieser Runde) – erledigt
+- [x] COM-01: One-Click-Diag (Tests + Ergebnisse in Fenster). | fertig wenn: Diagnosen sichtbar.
+- [x] SEC-01: Rechteprobleme beim Start automatisch korrigieren. | fertig wenn: Self-Repair behebt Rechte.
+- [x] CODE-03: Starke Typisierung + klare Moduleingänge definieren. | fertig wenn: Typen + Entry-Contracts dokumentiert.
+- [x] DOC-02: README-/Doku-Autoupdater erstellen. | fertig wenn: Doku aktualisiert.
+
 Runde 2026-01-27 (4 kleinste Aufgaben dieser Runde) – erledigt
 - [x] ARCH-07: Modul-API-Validator ergänzen (Validator = automatische Prüfung). | fertig wenn: `run`, `validateInput`, `validateOutput` werden geprüft.
 - [x] ARCH-08: Modul-Check um Modul-API-Check erweitern (Check = Prüfung). | fertig wenn: klare Fehlermeldungen im Modul-Check erscheinen.
@@ -190,11 +196,11 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 ### E. Code-Sauberkeit
 - [ ] CODE-01: Einheitliche Modulstruktur erzwingen (`module.json`, `main.py`, `ui/`). | fertig wenn: Validator blockiert Abweichung.
 - [x] CODE-02: Setup-Skripte trennen (check_env.sh, bootstrap.sh, start.sh). | fertig wenn: Skripte getrennt vorhanden.
-- [ ] CODE-03: Starke Typisierung + klare Moduleingänge definieren. | fertig wenn: Typen + Entry-Contracts dokumentiert.
+- [x] CODE-03: Starke Typisierung + klare Moduleingänge definieren. | fertig wenn: Typen + Entry-Contracts dokumentiert.
 - [x] CODE-04: Styleguide (PEP8 + Projektregeln) als Markdown beilegen. | fertig wenn: Styleguide vorhanden.
 
 ### F. Sicherheit
-- [ ] SEC-01: Rechteprobleme beim Start automatisch korrigieren. | fertig wenn: Self-Repair behebt Rechte.
+- [x] SEC-01: Rechteprobleme beim Start automatisch korrigieren. | fertig wenn: Self-Repair behebt Rechte.
 - [ ] SEC-02: PIN-Prozess mit Zufallssperre bei Fehleingabe. | fertig wenn: Sperre greift.
 - [ ] SEC-03: Modul-Tests vor dem Laden erzwingen. | fertig wenn: defekte Module blockiert.
 - [ ] SEC-04: Self-Repair-Bibliothek programmieren (Dateinamen/JSON/Rechte). | fertig wenn: Fehler automatisch reparierbar.
@@ -216,7 +222,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 
 ### K. Dokumentation
 - [x] DOC-14: MODUL_API.md um Modul-API-Check ergänzen. | fertig wenn: Hinweis auf automatische Prüfung dokumentiert ist.
-- [ ] COM-01: One-Click-Diag (Tests + Ergebnisse in Fenster). | fertig wenn: Diagnosen sichtbar.
+- [x] COM-01: One-Click-Diag (Tests + Ergebnisse in Fenster). | fertig wenn: Diagnosen sichtbar.
 - [x] COM-02: Systemscanner vor Start (Rechte/JSON/Ordner). | fertig wenn: Scanner blockiert Fehler.
 - [ ] COM-03: Recovery-Modus starten können. | fertig wenn: Start im Notfall.
 - [x] COM-04: Ghost-Mode (Testmodus ohne Schreiben). | fertig wenn: keine Writes.
@@ -306,7 +312,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 
 ### Dokumentation & Systempflege
 - [ ] DOC-01: CHANGELOG-Automatik einbauen. | fertig wenn: Changelog automatisch.
-- [ ] DOC-02: README-/Doku-Autoupdater erstellen. | fertig wenn: Doku aktualisiert.
+- [x] DOC-02: README-/Doku-Autoupdater erstellen. | fertig wenn: Doku aktualisiert.
 - [ ] DOC-03: Developer-Panel im Dashboard integrieren. | fertig wenn: Panel sichtbar.
 - [x] DOC-04: Interne Standards im Tool anzeigen (Konfig, Regeln, Tests). | fertig wenn: Standards sichtbar.
 - [x] DOC-05: Weiterführende Laienvorschläge ergänzen (Tipps für Neulinge). | fertig wenn: Tipps vorhanden.

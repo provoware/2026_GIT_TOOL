@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.37] – 2026-01-28
+- GUI: One-Click-Diagnose im Launcher ergänzt (Tests + Codequalität im Fenster).
+- Qualität: Health-Check repariert Leserechte/Ausführrechte im Self-Repair.
+- Architektur: Modul-API-Typen (TypedDicts) ergänzt und dokumentiert.
+- Doku: Auto-Status-Blöcke mit Doc-Updater für README/DEV_DOKU ergänzt.
+- Tests: Diagnoserunner und Doku-Updater mit Unit-Tests abgesichert.
+
 ## [0.1.36] – 2026-01-27
 - Architektur: Modul-API-Validator ergänzt (prüft `run`, `validateInput`, `validateOutput`).
 - Architektur: Modul-Check um Modul-API-Check erweitert (klare Fehlermeldungen).

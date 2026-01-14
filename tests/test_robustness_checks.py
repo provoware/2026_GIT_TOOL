@@ -60,6 +60,36 @@ class RobustnessChecksTests(unittest.TestCase):
 
             self.assertTrue(any("Datei nicht lesbar" in issue for issue in issues))
 
+    def test_health_check_repairs_unreadable_file(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            self._build_health_root(root)
+            target = root / "config" / "requirements.txt"
+            target.chmod(0o644)
+
+            def fake_access(path, mode):
+                if Path(path) == target:
+                    return False
+                return True
+
+            with patch("os.access", side_effect=fake_access):
+                issues, repairs = run_health_check(root, self_repair=True)
+
+            self.assertFalse(any("Datei nicht lesbar" in issue for issue in issues))
+            self.assertTrue(any("Leserechte repariert" in repair for repair in repairs))
+
+    def test_health_check_repairs_unexecutable_script(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            self._build_health_root(root)
+            script_path = root / "scripts" / "run_tests.sh"
+            script_path.chmod(0o644)
+
+            issues, repairs = run_health_check(root, self_repair=True)
+
+            self.assertFalse(any("nicht ausführbar" in issue for issue in issues))
+            self.assertTrue(any("Ausführrechte repariert" in repair for repair in repairs))
+
     def test_json_validator_handles_invalid_json(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             path = Path(tmpdir) / "broken.json"

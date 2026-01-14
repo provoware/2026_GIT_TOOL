@@ -1,6 +1,6 @@
 # STRUKTUR (Verzeichnisbaum + Pflichtdateien)
 
-Stand: 2026-01-26
+Stand: 2026-01-28
 
 ## Zweck
 Diese Datei ist die **Single Source of Truth** für den Projektaufbau.
@@ -119,6 +119,7 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 │   ├── show_standards.sh
 │   ├── start.sh
 │   ├── system_scan.sh
+│   ├── update_docs.sh
 │   └── update_records.py
 ├── src
 │   ├── core
@@ -136,6 +137,8 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 │   ├── config_models.py
 │   ├── config_utils.py
 │   ├── dependency_checker.py
+│   ├── diagnostics_runner.py
+│   ├── doc_updater.py
 │   ├── error_simulation.py
 │   ├── filename_fixer.py
 │   ├── health_check.py
@@ -144,6 +147,7 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 │   ├── launcher_gui.py
 │   ├── log_exporter.py
 │   ├── logging_center.py
+│   ├── module_api_types.py
 │   ├── module_checker.py
 │   ├── module_integration_checks.py
 │   ├── module_loader.py
@@ -161,6 +165,8 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 │   ├── test_data_model.py
 │   ├── test_datei_suche_module.py
 │   ├── test_dependency_checker.py
+│   ├── test_diagnostics_runner.py
+│   ├── test_doc_updater.py
 │   ├── test_download_aufraeumen_module.py
 │   ├── test_error_simulation.py
 │   ├── test_filename_fixer.py
