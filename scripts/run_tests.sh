@@ -76,6 +76,11 @@ echo "Hinweis: Details stehen im Fehlerprotokoll (Log) unter logs/test_run.log."
 echo "Tests: Abhängigkeiten prüfen und ggf. installieren."
 python "${ROOT_DIR}/system/dependency_checker.py" --requirements "${CONFIG_DIR}/requirements.txt"
 
+echo "Tests: Modulverbund-Checks werden gestartet."
+python "${ROOT_DIR}/system/module_integration_checks.py" \
+  --config "${CONFIG_DIR}/modules.json" \
+  --selftests "${CONFIG_DIR}/module_selftests.json"
+
 echo "Tests: Pytest wird gestartet."
 python -m pytest -c "${CONFIG_DIR}/pytest.ini"
 

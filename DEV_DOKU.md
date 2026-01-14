@@ -12,6 +12,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Start-Routine zeigt Fortschritt in Prozent je Schritt.
 - Launcher listet Module aus `config/modules.json` übersichtlich auf.
 - Modul-Check prüft registrierte Module über `config/modules.json`.
+- Modulverbund-Checks prüfen Selftests, Manifest-IDs und Modul-Konsistenz.
 - GUI-Launcher führt beim Aktualisieren zusätzlich den Modul-Check aus und meldet Probleme direkt in der Übersicht.
 - GUI-Launcher nutzt zusätzliche Themes und sichtbare Fokusrahmen für bessere Tastaturbedienung.
 - GUI-Launcher zeigt eine Statuszeile inkl. Busy-Hinweis bei längeren Aktionen.
@@ -33,6 +34,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Modul-Check blockiert `..`-Segmente im Entry-Pfad mit klarer Fehlermeldung.
 - Testskript zeigt eine Schritt-für-Schritt-Hilfe und schreibt Logs nach `logs/test_run.log`.
 - Testskript bricht bei Fehlern mit klarer Meldung und Log-Hinweis ab.
+- Test-Automatik startet nach abgeschlossenen 5 Tasks (Runden-Logik).
 - Health-Check prüft wichtige Dateien/Ordner vor dem Start mit klaren Hinweisen.
 - Health-Check kann fehlende Basiselemente automatisch per Self-Repair anlegen.
 - Start-Routine ruft den Health-Check mit aktivem Self-Repair auf.
@@ -90,7 +92,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - `system/test_gate.py`: Test-Sperre (Tests erst nach kompletter Runde).
   - `system/json_validator.py`: JSON-Validator für Konfigurationen und Manifeste.
   - `system/filename_fixer.py`: Automatische Dateinamenkorrektur (data/, logs/).
-  - `system/module_checker.py`: Modul-Check (Struktur + Manifest + Entry-Datei).
+- `system/module_checker.py`: Modul-Check (Struktur + Manifest + Entry-Datei).
+- `system/module_integration_checks.py`: Modulverbund-Checks (Selftests + Manifest-ID + Konsistenz).
   - `system/dependency_checker.py`: Abhängigkeiten prüfen und automatisch installieren.
   - `system/color_utils.py`: Farb- und Kontrastberechnung für UI-Checks.
 - `system/standards_viewer.py`: Standards-Viewer (interne Standards + Styleguide).
@@ -144,6 +147,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - **Prüfungen**: Start-Routine prüft Struktur und Abhängigkeiten automatisch.
 - **Prüfungen**: Modul-Check validiert aktivierte Module und deren Manifest.
 - **Prüfungen**: Modul-Selbsttests melden Status pro Modul (GUI und CLI).
+- **Prüfungen**: Modulverbund-Checks prüfen Selftests, IDs und Manifest-Konsistenz.
 - **Prüfungen**: Fehler-Simulation zeigt typische Laienfehler mit Lösungshinweis.
 
 ## Dokumentationsregeln
@@ -162,7 +166,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 ### Start-Routine (Struktur + Fortschritt)
 1. `./scripts/start.sh`
 2. Die Start-Routine erstellt fehlende Ordner automatisch, führt den Health-Check mit Selbstreparatur aus, prüft JSONs, korrigiert Dateinamen, prüft Abhängigkeiten, prüft Module und zeigt den Fortschritt in Prozent.
-3. Tests laufen automatisch, sobald eine Runde (3 erledigte Tasks) erreicht ist.
+3. Tests laufen automatisch, sobald eine Runde (5 erledigte Tasks) erreicht ist.
 4. Optional: `./scripts/start.sh --debug` (Debugging = detaillierte Diagnoseausgaben).
 5. Optional: `./scripts/start.sh --log-file logs/start_run.log` (Logdatei festlegen).
 
@@ -177,9 +181,10 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 ### Tests + Codequalität (manuell)
 1. `./scripts/run_tests.sh`
 2. Führt Pytest, Ruff (Linting) und Black (Formatprüfung) in dieser Reihenfolge aus.
-3. Hinweis: Details zu Fehlern stehen im Fehlerprotokoll (Log) unter `logs/test_run.log`.
-4. Hilfe: `./scripts/run_tests.sh --help` zeigt den geführten Ablauf.
-5. Optional: `./scripts/run_tests.sh --help` (kurze Erklärung für Laien).
+3. Vor den Tests laufen Modulverbund-Checks (Selftests + Manifest-IDs).
+4. Hinweis: Details zu Fehlern stehen im Fehlerprotokoll (Log) unter `logs/test_run.log`.
+5. Hilfe: `./scripts/run_tests.sh --help` zeigt den geführten Ablauf.
+6. Optional: `./scripts/run_tests.sh --help` (kurze Erklärung für Laien).
 
 ### Modul-Selbsttests (manuell)
 1. `python system/module_selftests.py`

@@ -125,3 +125,10 @@
 - Qualität: Modul-Selbsttests mit GUI- und CLI-Ausgabe ergänzt.
 - Tests: Fehler-Simulation für typische Laienfehler ergänzt.
 - Tests: Automatisierte Tests für Qualität, Selbsttests und Simulation ergänzt.
+
+## 2026-01-23
+- Analyse: Sandbox-Risiken dokumentiert und Schutzmaßnahmen ergänzt.
+- Tests: Modulverbund-Checks eingeführt (Selftests, Manifest-IDs, Konsistenz).
+- Tests: Robustheit gegen beschädigte JSONs und fehlende Leserechte ergänzt.
+- Tests: Test-Automatik auf 5 Tasks pro Runde angepasst.
+- Tooling: Testskript ergänzt Modulverbund-Checks vor dem Testlauf.

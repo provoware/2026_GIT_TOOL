@@ -11,6 +11,24 @@ Die Struktur ist insgesamt stabil. Die größten Risiken liegen in **Doppelnennu
 - **Wartbarkeit**: Ohne klare Trennung von System-Logik und variablen Daten steigt die Fehlergefahr.
 - **Barrierefreiheit**: Theme- und Kontrast-Standards müssen durchgängig dokumentiert bleiben.
 - **Qualitätssicherung**: Automatische Tests laufen, aber Hinweise für Laien sollten noch deutlicher sein.
+- **Sandbox-Risiken**: Ohne definierte Sandbox-Regeln können Module zu viele Rechte erhalten (Risiko: unerwünschte Zugriffe).
+
+## Sandbox-Analyse (erweitert)
+**Ziel**: Risiken in einer Sandbox (Testumgebung) sichtbar machen, bevor ein Sandbox-Modus umgesetzt wird.
+
+**Risiken**
+- **Dateizugriff**: Module könnten außerhalb des Projektordners schreiben/lesen (Risiko: Datenverlust).
+- **Abhängigkeiten**: Automatische Installationen könnten ungewollt globale Pakete ändern.
+- **Netzwerkzugriff**: Ungeprüfte Module könnten Daten senden/empfangen.
+- **Berechtigungen**: Start mit zu hohen Rechten (z. B. Admin) erhöht Risiko von Fehlschäden.
+- **Logs**: Debug-Logs könnten sensible Daten enthalten (Risiko: unbeabsichtigte Weitergabe).
+
+**Empfohlene Schutzmaßnahmen (Best Practices)**
+- **Nur Nutzerrechte**: Start immer ohne Administratorrechte.
+- **Pfad-Grenzen**: Modul-Pfade auf Projektordner beschränken (keine „..“-Segmente).
+- **Schreibschutz-Option**: Safe-Mode (schreibgeschützt) als Startoption vorsehen.
+- **Netzwerk-Hinweis**: Beim Start klar anzeigen, wenn Module Netzwerkkontakt benötigen.
+- **Log-Filter**: Sensible Daten in Logs maskieren (Maskierung = unkenntlich machen).
 
 ## Inkonsistenzen und Redundanzen (Befunde)
 - **CHANGELOG.md** enthält doppelte Versionsblöcke.

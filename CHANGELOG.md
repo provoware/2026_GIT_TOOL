@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.32] – 2026-01-23
+- Analyse: Sandbox-Risiken dokumentiert und Schutzmaßnahmen ergänzt.
+- Tests: Modulverbund-Checks ergänzt (Selftests, Manifest-IDs, Konsistenz).
+- Tests: Robustheit für beschädigte JSONs und fehlende Leserechte abgesichert.
+- Tests: Test-Automatik auf 5 Tasks pro Runde angepasst.
+- Tooling: Testskript ergänzt Modulverbund-Checks vor dem Testlauf.
+
 ## [0.1.31] – 2026-01-22
 - Qualität: Fehlerklassifizierung (leicht/mittel/schwer) für Modul-Checks ergänzt.
 - Qualität: Datei-Ampelsystem mit klaren Problemhinweisen ergänzt.
