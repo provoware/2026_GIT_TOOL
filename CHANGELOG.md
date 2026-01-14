@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.29] – 2026-01-20
+- GUI-Launcher: Kontrastmodus per Hotkey (Alt+K) ergänzt.
+- GUI-Launcher: Zoom per Strg+Mausrad für bessere Lesbarkeit ergänzt.
+- GUI-Launcher: Hilfe-Kurzinfo und Bereichsstruktur für Screenreader ergänzt.
+- Qualität: Eingabe-/Ausgabe-Validierung im GUI-Launcher erweitert.
+- Doku: TODO-Listen mit neuer Rundeliste und Roadmap-Lücken ergänzt.
+
 ## [0.1.28] – 2026-01-19
 - GUI-Launcher: Steuerleiste zweizeilig gemacht, Footer-Text responsiv umbrochen.
 - GUI-Launcher: Mindestgröße reduziert, damit kleine Fenster besser nutzbar sind.

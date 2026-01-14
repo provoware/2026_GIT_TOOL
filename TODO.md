@@ -21,9 +21,10 @@
 - **Lücke**: Asynchrones Logging (nicht blockierend) fehlt.
 - **Lücke**: JSON-Validierung ist nicht zentral durch ein geprüftes Modell abgesichert (z. B. Pydantic).
 - **Lücke**: Komfortfunktionen wie globale Suche, Favoritenleiste, Mini-Panels und Auto-Theming fehlen.
-- **Lücke**: Zusätzliche Barrierefreiheit (Kontrast-Hotkey, Zoom per STRG+Mausrad, Screenreader-Struktur) ist nicht umgesetzt.
+- **Hinweis**: Zusätzliche Barrierefreiheit (Kontrast-Hotkey, Zoom per STRG+Mausrad, Screenreader-Struktur) ist umgesetzt, Gesamtprüfung bleibt offen.
 - **Lücke**: Build/Release-Automatisierung (deb/AppImage/Build-All) fehlt.
 - **Lücke**: Sicherheitsfeatures (PIN-Sperre, Modultests vor dem Laden) sind noch offen.
+- **Lücke**: Roadmap-Elemente (Grundtheme/Branding, Safe-Mode, Sandbox-Modus, Logging-Modul) sind noch nicht vollständig in den Aufgaben erfasst.
 
 ## Kurzliste (aus todo.txt, synchron)
 Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
@@ -34,12 +35,12 @@ Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
 - [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 - [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
-Nächste 5 kleinste Aufgaben (Runde 2026-01-20) – offen
-- [ ] ACC-01: Kontrastmodus per Hotkey umschaltbar. | fertig wenn: Hotkey aktiv.
-- [ ] ACC-02: Zoom per STRG + Mausrad global aktivieren. | fertig wenn: Zoom überall funktioniert.
-- [ ] ACC-03: Screenreader-freundliche Bereichsstruktur. | fertig wenn: Bereiche semantisch benannt.
-- [ ] UX-03: Hilfetexte direkt in der GUI integrieren. | fertig wenn: Hilfe pro Ansicht.
-- [ ] QA-06: Jede Funktion validiert Eingabe und Ausgabe (Input/Output = Ein-/Ausgabe). | fertig wenn: Validierung vorhanden.
+Nächste 5 kleinste Aufgaben (Runde 2026-01-21) – offen
+- [ ] START-06: Fehleralternativen statt Abbruch. | fertig wenn: Vorschläge statt Stop.
+- [ ] UX-02: Großbutton-UI realisieren (Großbutton = große Schaltflächen). | fertig wenn: große Buttons nutzbar.
+- [ ] UX-04: Farbiges Sofort-Feedbacksystem (Erfolg/Fehler). | fertig wenn: klare Farben.
+- [ ] QA-01: JSON-Validator einbauen. | fertig wenn: JSON geprüft.
+- [ ] QA-02: Automatische Dateinamenkorrektur. | fertig wenn: falsche Namen korrigiert.
 
 ## Laien-Tipps (aus todo.txt, erweitert)
 - Starte zuerst den GUI-Launcher (Startübersicht) und teste mit der Tab-Taste (Tastaturbedienung).
@@ -53,6 +54,13 @@ Nächste 5 kleinste Aufgaben (Runde 2026-01-20) – offen
 - Standards lesen: `./scripts/show_standards.sh --list` (Standards = interne Regeln).
 - Start mit Debugging: `./scripts/start.sh --debug` (Debugging = detaillierte Fehlersuche).
 - Start-Log speichern: `./scripts/start.sh --log-file logs/start_run.log` (Log = Protokoll).
+
+## Runde 2026-01-20 (5 kleinste Aufgaben dieser Runde) – erledigt
+- [x] ACC-01: Kontrastmodus per Hotkey umschaltbar. | fertig wenn: Hotkey aktiv.
+- [x] ACC-02: Zoom per STRG + Mausrad global aktivieren. | fertig wenn: Zoom überall funktioniert.
+- [x] ACC-03: Screenreader-freundliche Bereichsstruktur. | fertig wenn: Bereiche semantisch benannt.
+- [x] UX-03: Hilfetexte direkt in der GUI integrieren. | fertig wenn: Hilfe pro Ansicht.
+- [x] QA-06: Jede Funktion validiert Eingabe und Ausgabe (Input/Output = Ein-/Ausgabe). | fertig wenn: Validierung vorhanden.
 
 ## Runde 2026-01-19 (5 kleinste Aufgaben dieser Runde) – erledigt
 - [x] REL-GUI-06: Responsive Layout für kleine Auflösungen prüfen. | fertig wenn: Bedienung bleibt möglich.
@@ -91,11 +99,11 @@ Nächste 5 kleinste Aufgaben (Runde 2026-01-20) – offen
 
 ## Offene Aufgaben (kleinste zuerst)
 Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
-- [ ] ACC-01: Kontrastmodus per Hotkey umschaltbar. | fertig wenn: Hotkey aktiv.
-- [ ] ACC-02: Zoom per STRG + Mausrad global aktivieren. | fertig wenn: Zoom überall funktioniert.
-- [ ] ACC-03: Screenreader-freundliche Bereichsstruktur. | fertig wenn: Bereiche semantisch benannt.
-- [ ] UX-03: Hilfetexte direkt in der GUI integrieren. | fertig wenn: Hilfe pro Ansicht.
-- [ ] QA-06: Jede Funktion validiert Eingabe und Ausgabe (Input/Output = Ein-/Ausgabe). | fertig wenn: Validierung vorhanden.
+- [ ] START-06: Fehleralternativen statt Abbruch. | fertig wenn: Vorschläge statt Stop.
+- [ ] UX-02: Großbutton-UI realisieren (Großbutton = große Schaltflächen). | fertig wenn: große Buttons nutzbar.
+- [ ] UX-04: Farbiges Sofort-Feedbacksystem (Erfolg/Fehler). | fertig wenn: klare Farben.
+- [ ] QA-01: JSON-Validator einbauen. | fertig wenn: JSON geprüft.
+- [ ] QA-02: Automatische Dateinamenkorrektur. | fertig wenn: falsche Namen korrigiert.
 
 ## Backlog (nach Bereichen, noch zu priorisieren)
 
@@ -104,6 +112,8 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
 - [ ] ARCH-02: Modul-API definieren (Schnittstellen, Events, States). | fertig wenn: API-Dokument + Beispiel vorhanden.
 - [ ] ARCH-03: Zentralen Store einführen (Store = gemeinsamer Zustands-Speicher). | fertig wenn: Module lesen/schreiben zentral.
 - [ ] ARCH-04: Single Source of Truth für Theme/Settings/Logging. | fertig wenn: doppelte Logik entfernt.
+- [ ] ARCH-05: Projektstruktur final definieren und standardisieren. | fertig wenn: Struktur-Standard dokumentiert.
+- [ ] ARCH-06: Zentrales Logging-Modul implementieren (Logging = Protokoll). | fertig wenn: ein Logging-Modul genutzt.
 
 ### B. Performance & Stabilität
 - [ ] PERF-01: Lazy Loading für Module (spätes Laden) implementieren. | fertig wenn: Startzeit sinkt.
@@ -118,9 +128,9 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
 - [ ] UX-09: Auto-Theming (Tag/Nacht-Erkennung) integrieren. | fertig wenn: Theme passt sich an.
 
 ### D. Barrierefreiheit (zusätzlich)
-- [ ] ACC-01: Kontrastmodus per Hotkey umschaltbar. | fertig wenn: Hotkey aktiv.
-- [ ] ACC-02: Zoom per STRG + Mausrad global aktivieren. | fertig wenn: Zoom überall funktioniert.
-- [ ] ACC-03: Screenreader-freundliche Bereichsstruktur. | fertig wenn: Bereiche semantisch benannt.
+- [x] ACC-01: Kontrastmodus per Hotkey umschaltbar. | fertig wenn: Hotkey aktiv.
+- [x] ACC-02: Zoom per STRG + Mausrad global aktivieren. | fertig wenn: Zoom überall funktioniert.
+- [x] ACC-03: Screenreader-freundliche Bereichsstruktur. | fertig wenn: Bereiche semantisch benannt.
 
 ### E. Code-Sauberkeit
 - [ ] CODE-01: Einheitliche Modulstruktur erzwingen (`module.json`, `main.py`, `ui/`). | fertig wenn: Validator blockiert Abweichung.
@@ -132,6 +142,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
 - [ ] SEC-01: Rechteprobleme beim Start automatisch korrigieren. | fertig wenn: Self-Repair behebt Rechte.
 - [ ] SEC-02: PIN-Prozess mit Zufallssperre bei Fehleingabe. | fertig wenn: Sperre greift.
 - [ ] SEC-03: Modul-Tests vor dem Laden erzwingen. | fertig wenn: defekte Module blockiert.
+- [ ] SEC-04: Self-Repair-Bibliothek programmieren (Dateinamen/JSON/Rechte). | fertig wenn: Fehler automatisch reparierbar.
 
 ### G. Medienmodule
 - [ ] MEDIA-01: Wavesurfer erweitern (Markers/Regions/Minimap/Exportprofil). | fertig wenn: Funktionen sichtbar.
@@ -158,6 +169,9 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
 - [ ] START-06: Fehleralternativen statt Abbruch. | fertig wenn: Vorschläge statt Stop.
 - [ ] START-07: Gesundheitsprüfung vor Start (Health-Check = Systemprüfung). | fertig wenn: wichtige Dateien geprüft.
 - [ ] START-08: Start-Routine mit Nutzerfeedback für Abhängigkeiten (Dependencies = Abhängigkeiten). | fertig wenn: klare Hinweise + automatische Installation.
+- [ ] START-09: Safe-Mode (schreibgeschützt) beim Start. | fertig wenn: Start ohne Schreibzugriffe möglich.
+- [ ] START-10: Sandbox-Modus (virtuelle Umgebung) implementieren. | fertig wenn: Start in isolierter Umgebung.
+- [ ] START-11: Ampelstatus + Fortschrittsanzeige beim Start. | fertig wenn: Ampel/Fortschritt sichtbar.
 
 ### Hauptfenster & Module
 - [ ] MOD-01: Zentrales Hauptfenster bauen (Grid/9 Module = Raster mit 9 Bereichen). | fertig wenn: Module sichtbar.
@@ -178,9 +192,11 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
 ### UX & Barrierefreiheit
 - [ ] UX-01: Barrierefreiheits-Set ergänzen (Kontrast, ARIA, Tastatur). | fertig wenn: Checkliste erfüllt.
 - [ ] UX-02: Großbutton-UI realisieren (Großbutton = große Schaltflächen). | fertig wenn: große Buttons nutzbar.
-- [ ] UX-03: Hilfetexte direkt in der GUI integrieren. | fertig wenn: Hilfe pro Ansicht.
+- [x] UX-03: Hilfetexte direkt in der GUI integrieren. | fertig wenn: Hilfe pro Ansicht.
 - [ ] UX-04: Farbiges Sofort-Feedbacksystem (Erfolg/Fehler). | fertig wenn: klare Farben.
 - [ ] UX-05: Perfektes Farb- und Kontrastverhalten mit mehreren Themes. | fertig wenn: Themes dokumentiert.
+- [ ] UX-10: Grundtheme + Trash-Design implementieren. | fertig wenn: Basis-Theme + Papierkorb-Design vorhanden.
+- [ ] UX-11: Basis-Iconset und Branding einfügen. | fertig wenn: Icons + Branding konsistent.
 
 ### Workflow-Logik
 - [ ] FLOW-01: Globales Drag-and-Drop (Dateien/Module). | fertig wenn: Ziehen funktioniert.
@@ -210,6 +226,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
 - [ ] IO-02: Backup-System vollständig integrieren. | fertig wenn: Sicherungen laufen.
 - [ ] IO-03: Testmodus (schreibgeschützt) einbauen. | fertig wenn: keine Schreibzugriffe.
 - [ ] IO-04: Autosave in Logs protokollieren. | fertig wenn: Logs enthalten Autosave.
+- [ ] IO-05: Selektive Exporte aktivieren. | fertig wenn: Teil-Exporte möglich.
 
 ### Fehler- & Strukturprüfung
 - [ ] QA-01: JSON-Validator einbauen. | fertig wenn: JSON geprüft.
@@ -217,8 +234,9 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
 - [ ] QA-03: Fehlerklassifizierung (leicht/mittel/schwer). | fertig wenn: Fehlerstufe angezeigt.
 - [ ] QA-04: Ampelsystem für Dateifehler. | fertig wenn: Ampelstatus sichtbar.
 - [ ] QA-05: Modul-Selbsttests mit GUI-Ausgabe. | fertig wenn: Teststatus sichtbar.
-- [ ] QA-06: Jede Funktion validiert Eingabe und Ausgabe (Input/Output = Ein-/Ausgabe). | fertig wenn: Validierung vorhanden.
+- [x] QA-06: Jede Funktion validiert Eingabe und Ausgabe (Input/Output = Ein-/Ausgabe). | fertig wenn: Validierung vorhanden.
 - [x] QA-07: Debugging- und Logging-Modus (Debugging = Fehlersuche). | fertig wenn: Modus schaltbar.
+- [ ] QA-08: Sandbox-Analyse erweitern (Sandbox = Testumgebung). | fertig wenn: Analyse deckt Sandbox-Risiken ab.
 
 ### Timeline & Visualisierung
 - [ ] VIS-01: Timeline-Tool responsiv überarbeiten. | fertig wenn: passt sich an.
@@ -245,6 +263,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
 - [ ] REL-02: Offizielles Icon-Set (Provoware-Look) integrieren. | fertig wenn: Icons vorhanden.
 - [ ] REL-03: One-File-Distribution (AppImage/PyInstaller). | fertig wenn: Ein-Datei-Build.
 - [ ] REL-04: ZIP-Auto-Export alle fünf Entwicklungsschritte. | fertig wenn: ZIP-Automatik läuft.
+- [ ] REL-08: Desktop-File + Icon-Integration für Linux. | fertig wenn: Desktop-Startdatei vorhanden.
 
 ### Abschlusslogik
 - [ ] END-01: Logout: Save-All + sauberes Schließen. | fertig wenn: Daten gespeichert.

@@ -15,6 +15,9 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - GUI-Launcher führt beim Aktualisieren zusätzlich den Modul-Check aus und meldet Probleme direkt in der Übersicht.
 - GUI-Launcher nutzt zusätzliche Themes und sichtbare Fokusrahmen für bessere Tastaturbedienung.
 - GUI-Launcher zeigt eine Statuszeile inkl. Busy-Hinweis bei längeren Aktionen.
+- GUI-Launcher bietet Kontrastmodus per Hotkey (Alt+K) und Zoom per Strg+Mausrad.
+- GUI-Launcher hat Hilfe-Kurzinfo und klar benannte Bereiche (Einstellungen, Status, Modulübersicht).
+- GUI-Launcher validiert Eingaben und Ausgaben mit klaren Fehlermeldungen.
 - Kontrastprüfung für Launcher-Themes ist dokumentiert und automatisch testbar.
 - Download-Ordner-Aufräum-Modul bietet Scan, Plan, Undo und Protokoll.
 - Datei-Suche-Modul bietet Filter, Organisation und Undo.
@@ -187,8 +190,9 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 ### GUI-Launcher (Startübersicht)
 1. `python system/launcher_gui.py`
 2. Optional: `python system/launcher_gui.py --show-all --debug` (Details anzeigen).
-3. Tastatur-Shortcuts: Alt+A (alle Module), Alt+D (Debug), Alt+R (aktualisieren), Alt+T (Theme), Alt+Q (beenden).
-4. Modul-Check: Wird bei jeder Aktualisierung automatisch ausgeführt (Status steht in der Übersicht).
+3. Tastatur-Shortcuts: Alt+A (alle Module), Alt+D (Debug), Alt+R (aktualisieren), Alt+T (Theme), Alt+K (Kontrast), Alt+Q (beenden).
+4. Zoom: Strg + Mausrad (Zoom = Schriftgröße vergrößern/verkleinern).
+5. Modul-Check: Wird bei jeder Aktualisierung automatisch ausgeführt (Status steht in der Übersicht).
 ### Modul-Check (manuell)
 1. `python system/module_checker.py --config config/modules.json`
 2. Bei Fehlern werden klare Hinweise und Lösungsvorschläge ausgegeben.

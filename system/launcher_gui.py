@@ -7,7 +7,7 @@ import argparse
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List
+from typing import Dict, Iterable, List, Optional
 
 import config_utils
 import module_checker
@@ -43,6 +43,18 @@ def _require_text(value: object, label: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise GuiLauncherError(f"{label} fehlt oder ist leer.")
     return value.strip()
+
+
+def _require_bool(value: object, label: str) -> bool:
+    if not isinstance(value, bool):
+        raise GuiLauncherError(f"{label} ist kein boolescher Wert.")
+    return value
+
+
+def _require_list_of_strings(value: object, label: str) -> List[str]:
+    if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
+        raise GuiLauncherError(f"{label} ist keine Liste von Texten.")
+    return value
 
 
 def _validate_color(value: str, label: str) -> str:
@@ -117,7 +129,7 @@ def build_module_lines(
 
     if not lines:
         return ["Keine Module gefunden."]
-    return lines
+    return _require_list_of_strings(lines, "module_lines")
 
 
 def render_module_text(modules: Iterable[object], root: Path, debug: bool) -> str:
@@ -140,7 +152,8 @@ def run_module_check(config_path: Path) -> List[str]:
         entries = module_checker.load_modules(config_path)
     except module_checker.ModuleCheckError as exc:
         raise GuiLauncherError(f"Modul-Check konnte nicht starten: {exc}") from exc
-    return module_checker.check_modules(entries)
+    issues = module_checker.check_modules(entries)
+    return _require_list_of_strings(issues, "module_check")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -169,6 +182,8 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Debug-Modus aktivieren.",
     )
+    if not isinstance(parser, argparse.ArgumentParser):
+        raise GuiLauncherError("Parser ist ungültig.")
     return parser
 
 
@@ -197,6 +212,15 @@ class LauncherGui:
         self.status_var = None
         self.status_label = None
         self.footer_label = None
+        self.help_label = None
+        self.header_font = None
+        self.output_font = None
+        self.base_font_sizes: Dict[str, int] = {}
+        self.base_header_size = 18
+        self.base_output_size = 14
+        self.zoom_level = 1.0
+        self.last_non_contrast_theme = self.gui_config.default_theme
+        self.contrast_theme = self._resolve_contrast_theme()
 
         self.root.title("Launcher – Startübersicht")
         self.root.minsize(640, 420)
@@ -204,17 +228,23 @@ class LauncherGui:
 
     def _build_ui(self, show_all: bool) -> None:
         import tkinter as tk
+        import tkinter.font as tkfont
+
+        _require_bool(show_all, "show_all")
+        self._init_fonts(tkfont)
 
         header = tk.Label(
             self.root,
             text="Startübersicht: Module",
-            font=("Arial", 18, "bold"),
+            font=self.header_font,
             anchor="w",
         )
         header.pack(fill="x", padx=16, pady=(16, 8))
 
-        controls = tk.Frame(self.root)
-        controls.pack(fill="x", padx=16, pady=(0, 12))
+        controls_section = tk.LabelFrame(self.root, text="Einstellungen und Filter")
+        controls_section.pack(fill="x", padx=16, pady=(0, 12))
+        controls = tk.Frame(controls_section)
+        controls.pack(fill="x", padx=12, pady=8)
 
         tk.Label(controls, text="Farbschema:").grid(row=0, column=0, sticky="w")
         self.theme_var = tk.StringVar(value=self.gui_config.default_theme)
@@ -257,40 +287,54 @@ class LauncherGui:
 
         controls.columnconfigure(2, weight=1)
 
+        help_section = tk.LabelFrame(self.root, text="Hilfe (Kurzinfo)")
+        help_section.pack(fill="x", padx=16, pady=(0, 12))
+        self.help_label = tk.Label(
+            help_section,
+            text=(
+                "So geht's: Farbschema wählen, Module einblenden und mit "
+                "„Übersicht aktualisieren“ prüfen. "
+                "Kontrastmodus: Alt+K. Zoom: Strg + Mausrad. "
+                "Tastatur: Tab für Fokus, Alt+A (alle Module), Alt+D (Debug), "
+                "Alt+R (aktualisieren), Alt+T (Theme), Alt+Q (beenden)."
+            ),
+            anchor="w",
+            justify="left",
+        )
+        self.help_label.pack(fill="x", padx=12, pady=8)
+
         self.status_var = tk.StringVar(value="Status: Bereit.")
+        status_section = tk.LabelFrame(self.root, text="Status")
+        status_section.pack(fill="x", padx=16, pady=(0, 8))
         self.status_label = tk.Label(
-            self.root,
+            status_section,
             textvariable=self.status_var,
             anchor="w",
         )
-        self.status_label.pack(fill="x", padx=16, pady=(0, 8))
+        self.status_label.pack(fill="x", padx=12, pady=6)
 
-        output_label = tk.Label(
-            self.root,
-            text="Modulübersicht (Ausgabe)",
-            anchor="w",
-        )
-        output_label.pack(fill="x", padx=16, pady=(0, 4))
-
+        output_section = tk.LabelFrame(self.root, text="Modulübersicht")
+        output_section.pack(fill="both", expand=True, padx=16, pady=(0, 16))
         self.output_text = tk.Text(
-            self.root,
+            output_section,
             wrap="word",
             height=16,
-            font=("Arial", 14),
+            font=self.output_font,
             borderwidth=2,
             relief="groove",
             takefocus=1,
         )
         self.output_text.configure(spacing1=4, spacing2=2, spacing3=4, highlightthickness=2)
-        self.output_text.pack(fill="both", expand=True, padx=16, pady=(0, 16))
+        self.output_text.pack(fill="both", expand=True, padx=12, pady=12)
         self.output_text.configure(state="disabled")
 
         self.footer_label = tk.Label(
             self.root,
             text=(
                 "Tipp: Mit Tabulator erreichst du alle Bedienelemente. "
-                "Shortcuts: Alt+A (alle Module), Alt+D (Debug), "
-                "Alt+R (aktualisieren), Alt+T (Theme), Alt+Q (beenden)."
+                "Kurzbefehle: Alt+A (alle Module), Alt+D (Debug), Alt+R "
+                "(aktualisieren), Alt+T (Theme), Alt+K (Kontrast), "
+                "Strg + Mausrad (Zoom), Alt+Q (beenden)."
             ),
             anchor="w",
         )
@@ -298,17 +342,75 @@ class LauncherGui:
 
         self._bind_accessibility_shortcuts()
         self._bind_responsive_layout()
+        self._bind_zoom_controls()
         self.apply_theme(self.gui_config.default_theme)
         self.refresh()
         self.root.after(100, lambda: self._focus_widget(self.theme_menu))
+
+    def _init_fonts(self, tkfont) -> None:
+        if tkfont is None:
+            raise GuiLauncherError("tkfont ist nicht verfügbar.")
+        named_fonts = ["TkDefaultFont", "TkTextFont", "TkMenuFont", "TkHeadingFont"]
+        for name in named_fonts:
+            try:
+                font_obj = tkfont.nametofont(name)
+            except Exception as exc:
+                raise GuiLauncherError(f"Standardfont {name} fehlt: {exc}") from exc
+            self.base_font_sizes[name] = int(font_obj.cget("size"))
+        self.header_font = tkfont.Font(family="Arial", size=self.base_header_size, weight="bold")
+        self.output_font = tkfont.Font(family="Arial", size=self.base_output_size)
+        self._apply_zoom()
 
     def _bind_accessibility_shortcuts(self) -> None:
         self.root.bind_all("<Alt-a>", lambda _event: self._toggle_show_all())
         self.root.bind_all("<Alt-d>", lambda _event: self._toggle_debug())
         self.root.bind_all("<Alt-r>", lambda _event: self._refresh_from_shortcut())
         self.root.bind_all("<Alt-t>", lambda _event: self._focus_widget(self.theme_menu))
+        self.root.bind_all("<Alt-k>", lambda _event: self._toggle_contrast_theme())
         self.root.bind_all("<Alt-q>", lambda _event: self.root.quit())
         self.root.bind_all("<Control-r>", lambda _event: self._refresh_from_shortcut())
+
+    def _bind_zoom_controls(self) -> None:
+        self.root.bind_all("<Control-MouseWheel>", self._on_zoom_mousewheel)
+        self.root.bind_all("<Control-Button-4>", lambda _event: self._adjust_zoom(1))
+        self.root.bind_all("<Control-Button-5>", lambda _event: self._adjust_zoom(-1))
+
+    def _on_zoom_mousewheel(self, event) -> None:
+        if not hasattr(event, "delta"):
+            raise GuiLauncherError("Zoom-Event ist ungültig.")
+        direction = 1 if event.delta > 0 else -1
+        self._adjust_zoom(direction)
+
+    def _adjust_zoom(self, direction: int) -> None:
+        if not isinstance(direction, int):
+            raise GuiLauncherError("Zoom-Richtung ist ungültig.")
+        step = 0.1
+        new_level = min(max(self.zoom_level + step * direction, 0.8), 1.6)
+        if abs(new_level - self.zoom_level) < 0.001:
+            return
+        self.zoom_level = new_level
+        self._apply_zoom()
+        percent = int(round(self.zoom_level * 100))
+        self._set_status(f"Zoom: {percent} %", busy=False)
+
+    def _apply_zoom(self) -> None:
+        if not isinstance(self.zoom_level, (int, float)):
+            raise GuiLauncherError("Zoom-Level ist keine Zahl.")
+        for name, base_size in self.base_font_sizes.items():
+            if not isinstance(base_size, int):
+                raise GuiLauncherError("Basis-Fontgröße ist ungültig.")
+            base_abs = abs(base_size)
+            new_abs = max(9, int(round(base_abs * self.zoom_level)))
+            new_size = -new_abs if base_size < 0 else new_abs
+            import tkinter.font as tkfont
+
+            tkfont.nametofont(name).configure(size=new_size)
+        if self.header_font is not None:
+            header_size = max(12, int(round(self.base_header_size * self.zoom_level)))
+            self.header_font.configure(size=header_size)
+        if self.output_font is not None:
+            output_size = max(11, int(round(self.base_output_size * self.zoom_level)))
+            self.output_font.configure(size=output_size)
 
     def _bind_responsive_layout(self) -> None:
         self.root.bind("<Configure>", lambda _event: self._update_wrap_length())
@@ -338,10 +440,44 @@ class LauncherGui:
         else:
             self.refresh()
 
-    def apply_theme(self, theme_name: str) -> None:
-        if theme_name not in self.gui_config.themes:
+    def _resolve_contrast_theme(self) -> Optional[str]:
+        if not isinstance(self.gui_config, GuiConfig):
+            raise GuiLauncherError("gui_config ist ungültig.")
+        if "kontrast" in self.gui_config.themes:
+            return "kontrast"
+        for name, theme in self.gui_config.themes.items():
+            if "kontrast" in theme.label.lower():
+                return name
+        return None
+
+    def _toggle_contrast_theme(self) -> None:
+        if self.theme_var is None:
+            raise GuiLauncherError("Theme-Auswahl ist nicht verfügbar.")
+        if self.contrast_theme is None:
+            self._set_status("Kein Kontrast-Theme vorhanden.", busy=False)
+            return
+        current = self.theme_var.get()
+        if current == self.contrast_theme:
+            target = self.last_non_contrast_theme or self.gui_config.default_theme
+        else:
+            self.last_non_contrast_theme = current
+            target = self.contrast_theme
+        self._set_theme(target)
+        label = self.gui_config.themes[target].label
+        self._set_status(f"Farbschema aktiv: {label}", busy=False)
+
+    def _set_theme(self, theme_name: str) -> None:
+        clean_name = _require_text(theme_name, "theme_name")
+        if clean_name not in self.gui_config.themes:
             raise GuiLauncherError("Unbekanntes Farbschema.")
-        theme = self.gui_config.themes[theme_name]
+        self.theme_var.set(clean_name)
+        self.apply_theme(clean_name)
+
+    def apply_theme(self, theme_name: str) -> None:
+        clean_name = _require_text(theme_name, "theme_name")
+        if clean_name not in self.gui_config.themes:
+            raise GuiLauncherError("Unbekanntes Farbschema.")
+        theme = self.gui_config.themes[clean_name]
 
         bg = theme.colors["background"]
         fg = theme.colors["foreground"]
@@ -370,6 +506,13 @@ class LauncherGui:
             widget.configure(bg=background)
         elif widget_type == "Label":
             widget.configure(bg=background, fg=foreground)
+        elif widget_type == "Labelframe":
+            widget.configure(
+                bg=background,
+                fg=foreground,
+                highlightbackground=accent,
+                highlightcolor=accent,
+            )
         elif widget_type in {"Checkbutton", "Button", "Menubutton"}:
             widget.configure(
                 bg=button_bg,
@@ -431,11 +574,12 @@ class LauncherGui:
         self._set_output(text)
 
     def _set_output(self, text: str) -> None:
-        if not isinstance(text, str) or not text.strip():
+        clean_text = _require_text(text, "output_text")
+        if not clean_text.strip():
             raise GuiLauncherError("Ausgabetext ist leer.")
         self.output_text.configure(state="normal")
         self.output_text.delete("1.0", "end")
-        self.output_text.insert("end", text)
+        self.output_text.insert("end", clean_text)
         self.output_text.configure(state="disabled")
 
     def _set_status(self, message: str, busy: bool) -> None:
@@ -481,6 +625,8 @@ def run_gui(module_config: Path, gui_config: GuiConfig, show_all: bool, debug: b
 
     import tkinter as tk
 
+    _require_bool(show_all, "show_all")
+    _require_bool(debug, "debug")
     root = tk.Tk()
     app = LauncherGui(
         root=root,
@@ -491,7 +637,10 @@ def run_gui(module_config: Path, gui_config: GuiConfig, show_all: bool, debug: b
     )
     app.apply_theme(app.theme_var.get())
     root.mainloop()
-    return 0
+    return_code = 0
+    if not isinstance(return_code, int):
+        raise GuiLauncherError("Rückgabewert ist ungültig.")
+    return return_code
 
 
 def main() -> int:
