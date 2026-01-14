@@ -10,6 +10,13 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [ ] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Nächste 5 kleinste Aufgaben (Runde 2026-01-18) – erledigt
+[x] DOC-06: Aufgaben A–I strukturiert in TODO.md ergänzt (mit IDs + Kriterien).
+[x] DOC-07: README um Architektur, Start-Routine, Tests, Struktur und Barrierefreiheit erweitert.
+[x] DOC-08: Styleguide (PEP8 + Projektregeln) als Markdown ergänzt.
+[x] DOC-09: Weiterführende Laienvorschläge ergänzt (einfach erklärt).
+[x] DOC-10: todo.txt mit neuer Rundeliste synchronisiert.
+
 Nächste 5 kleinste Aufgaben (Runde 2026-01-17) – erledigt
 [x] REL-GUI-01: Kontrast prüfen (Kontrast = Helligkeitsunterschied; Ziel ≥ 4,5:1).
 [x] REL-GUI-02: Fokusreihenfolge prüfen (Fokus = aktuelles Element bei Tab).
@@ -37,3 +44,6 @@ Laien-Tipps (hilfreich, optional)
 - Lies die Fehlermeldung bis zum Ende – dort steht der nächste Schritt.
 - Wenn etwas nicht klappt: erst neu starten, dann Logdatei prüfen (logs/test_run.log).
 - Tipp für Einsteiger: Beginne mit einem kleinen Test-Projektordner, damit Änderungen übersichtlich bleiben.
+- Tests starten: `./scripts/run_tests.sh` (Tests = automatische Prüfroutinen).
+- Fehler suchen: `logs/test_run.log` öffnen (Log = Protokoll) und letzten Eintrag lesen.
+- Selbstreparatur: `python system/health_check.py --root . --self-repair` (Self-Repair = Selbstreparatur).

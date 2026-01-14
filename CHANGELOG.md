@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.27] – 2026-01-18
+- Doku: A–I-Backlog (Architektur bis Komfortfunktionen) strukturiert in TODO.md ergänzt.
+- Doku: README um Architektur, Start-Routine, Tests und Barrierefreiheit erweitert.
+- Doku: Styleguide (PEP8 + Projektregeln) ergänzt.
+- Doku: todo.txt mit neuer Rundeliste synchronisiert.
+
 ## [0.1.26] – 2026-01-17
 - GUI-Launcher: Statusanzeige mit Busy-Modus ergänzt, inkl. klarer Fehlerhinweise.
 - GUI-Launcher: Ausgabe mit zusätzlichem Label für Screenreader ergänzt.

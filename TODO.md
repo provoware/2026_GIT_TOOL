@@ -13,6 +13,17 @@
 - **Best Practice**: Aufgaben sollten eindeutige IDs haben und pro Bereich gruppiert sein.
 - **Lücke**: todo.txt und TODO.md waren nicht 1:1 synchron → Risiko: widersprüchlicher Fortschritt.
 - **Best Practice**: Eine Kurzliste (todo.txt) soll die gleiche ID-Struktur wie TODO.md nutzen.
+- **Lücke**: Es fehlt noch ein Plugin-System mit Registry (Registry = zentrale Liste der Module).
+- **Lücke**: Modul-API (Schnittstellen, Events, States) ist noch nicht final definiert.
+- **Lücke**: Zentraler Store (Store = gemeinsamer Zustands-Speicher) fehlt, ebenso Single Source of Truth (einzige Quelle) für Theme/Settings/Logging.
+- **Risiko**: Startzeit kann ohne Lazy Loading (spätes Laden) langsam werden.
+- **Risiko**: GUI kann ohne Debounce/Throttle (gebremstes Auslösen) ruckeln.
+- **Lücke**: Asynchrones Logging (nicht blockierend) fehlt.
+- **Lücke**: JSON-Validierung ist nicht zentral durch ein geprüftes Modell abgesichert (z. B. Pydantic).
+- **Lücke**: Komfortfunktionen wie globale Suche, Favoritenleiste, Mini-Panels und Auto-Theming fehlen.
+- **Lücke**: Zusätzliche Barrierefreiheit (Kontrast-Hotkey, Zoom per STRG+Mausrad, Screenreader-Struktur) ist nicht umgesetzt.
+- **Lücke**: Build/Release-Automatisierung (deb/AppImage/Build-All) fehlt.
+- **Lücke**: Sicherheitsfeatures (PIN-Sperre, Modultests vor dem Laden) sind noch offen.
 
 ## Kurzliste (aus todo.txt, synchron)
 Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
@@ -29,6 +40,16 @@ Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
 - Lies die Fehlermeldung bis zum Ende – dort steht der nächste Schritt.
 - Wenn etwas nicht klappt: erst neu starten, dann Logdatei prüfen (logs/test_run.log).
 - Tipp für Einsteiger: Beginne mit einem kleinen Test-Projektordner, damit Änderungen übersichtlich bleiben.
+- Tests starten: `./scripts/run_tests.sh` (Tests = automatische Prüfroutinen).
+- Fehler suchen: `logs/test_run.log` öffnen (Log = Protokoll) und letzten Eintrag lesen.
+- Selbstreparatur: `python system/health_check.py --root . --self-repair` (Self-Repair = Selbstreparatur).
+
+## Runde 2026-01-18 (5 kleinste Aufgaben dieser Runde) – erledigt
+- [x] DOC-06: Aufgaben A–I strukturiert in TODO.md ergänzt (mit IDs + Kriterien). | fertig wenn: A–I-Backlog vorhanden.
+- [x] DOC-07: README um Architektur, Start-Routine, Tests, Struktur und Barrierefreiheit erweitert. | fertig wenn: README enthält klare Abschnitte.
+- [x] DOC-08: Styleguide (PEP8 + Projektregeln) als Markdown ergänzt. | fertig wenn: Styleguide-Datei vorhanden.
+- [x] DOC-09: Weiterführende Laienvorschläge ergänzt (einfach erklärt). | fertig wenn: neue Tipps vorhanden.
+- [x] DOC-10: todo.txt mit neuer Rundeliste synchronisiert. | fertig wenn: todo.txt deckungsgleich.
 
 ## Runde 2026-01-17 (5 kleinste Aufgaben dieser Runde) – erledigt
 - [x] TODO-DOK-01: todo.txt-Kurzliste in TODO.md integriert (Release-Checkliste + IDs). | fertig wenn: Abschnitt deckungsgleich.
@@ -56,6 +77,56 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
 - [ ] REL-GUI-06: Responsive Layout für kleine Auflösungen prüfen. | fertig wenn: Bedienung bleibt möglich.
 
 ## Backlog (nach Bereichen, noch zu priorisieren)
+
+### A. Architektur & Struktur
+- [ ] ARCH-01: Plugin-System mit zentraler Registry einführen (Registry = Modul-Liste). | fertig wenn: Module nur über Registry geladen werden.
+- [ ] ARCH-02: Modul-API definieren (Schnittstellen, Events, States). | fertig wenn: API-Dokument + Beispiel vorhanden.
+- [ ] ARCH-03: Zentralen Store einführen (Store = gemeinsamer Zustands-Speicher). | fertig wenn: Module lesen/schreiben zentral.
+- [ ] ARCH-04: Single Source of Truth für Theme/Settings/Logging. | fertig wenn: doppelte Logik entfernt.
+
+### B. Performance & Stabilität
+- [ ] PERF-01: Lazy Loading für Module (spätes Laden) implementieren. | fertig wenn: Startzeit sinkt.
+- [ ] PERF-02: Debounce/Throttle für teure Aktionen (gebremstes Auslösen). | fertig wenn: UI bleibt flüssig.
+- [ ] PERF-03: Asynchrones Logging statt blockierend. | fertig wenn: Log schreibt ohne UI-Block.
+- [ ] PERF-04: JSON-Handling mit geprüftem Modell absichern (z. B. Pydantic). | fertig wenn: Validierung zentral.
+
+### C. Bedienbarkeit
+- [ ] UX-06: Globales Suchfeld im Dashboard (Dateien/Module/Texte). | fertig wenn: zentrale Suche nutzbar.
+- [ ] UX-07: Favoritenleiste für oft genutzte Module. | fertig wenn: Favoriten sichtbar/umschaltbar.
+- [ ] UX-08: Mini-Panels für Schnellaktionen (Export/Backup/Notes). | fertig wenn: Quick-Actions sichtbar.
+- [ ] UX-09: Auto-Theming (Tag/Nacht-Erkennung) integrieren. | fertig wenn: Theme passt sich an.
+
+### D. Barrierefreiheit (zusätzlich)
+- [ ] ACC-01: Kontrastmodus per Hotkey umschaltbar. | fertig wenn: Hotkey aktiv.
+- [ ] ACC-02: Zoom per STRG + Mausrad global aktivieren. | fertig wenn: Zoom überall funktioniert.
+- [ ] ACC-03: Screenreader-freundliche Bereichsstruktur. | fertig wenn: Bereiche semantisch benannt.
+
+### E. Code-Sauberkeit
+- [ ] CODE-01: Einheitliche Modulstruktur erzwingen (`module.json`, `main.py`, `ui/`). | fertig wenn: Validator blockiert Abweichung.
+- [ ] CODE-02: Setup-Skripte trennen (check_env.sh, bootstrap.sh, start.sh). | fertig wenn: Skripte getrennt vorhanden.
+- [ ] CODE-03: Starke Typisierung + klare Moduleingänge definieren. | fertig wenn: Typen + Entry-Contracts dokumentiert.
+- [ ] CODE-04: Styleguide (PEP8 + Projektregeln) als Markdown beilegen. | fertig wenn: Styleguide vorhanden.
+
+### F. Sicherheit
+- [ ] SEC-01: Rechteprobleme beim Start automatisch korrigieren. | fertig wenn: Self-Repair behebt Rechte.
+- [ ] SEC-02: PIN-Prozess mit Zufallssperre bei Fehleingabe. | fertig wenn: Sperre greift.
+- [ ] SEC-03: Modul-Tests vor dem Laden erzwingen. | fertig wenn: defekte Module blockiert.
+
+### G. Medienmodule
+- [ ] MEDIA-01: Wavesurfer erweitern (Markers/Regions/Minimap/Exportprofil). | fertig wenn: Funktionen sichtbar.
+- [ ] MEDIA-02: FFmpeg-Wrapper verbessern (Presets/Auto-Name/Fortschritt). | fertig wenn: Komfortfunktionen aktiv.
+- [ ] MEDIA-03: Dateimanager erweitern (Quick-Rename/Tagging/Favoriten). | fertig wenn: Features vorhanden.
+
+### H. Build & Release
+- [ ] REL-05: .deb-Paket mit postinst-Initialisierung. | fertig wenn: postinst läuft.
+- [ ] REL-06: AppImage mit integriertem Self-Check. | fertig wenn: Self-Check startet.
+- [ ] REL-07: Build-Skripte automatisieren (`./build_all.sh`). | fertig wenn: Ein-Befehl-Build.
+
+### I. Zentrale Komfortfunktionen
+- [ ] COM-01: One-Click-Diag (Tests + Ergebnisse in Fenster). | fertig wenn: Diagnosen sichtbar.
+- [ ] COM-02: Systemscanner vor Start (Rechte/JSON/Ordner). | fertig wenn: Scanner blockiert Fehler.
+- [ ] COM-03: Recovery-Modus starten können. | fertig wenn: Start im Notfall.
+- [ ] COM-04: Ghost-Mode (Testmodus ohne Schreiben). | fertig wenn: keine Writes.
 
 ### Start & Launcher
 - [ ] START-01: GUI-Launcher erstellen (Fenster, Theme, Layout). | fertig wenn: Startfenster stabil geöffnet.

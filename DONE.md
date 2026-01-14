@@ -90,3 +90,10 @@
 - UI: Zusatz-Label für Screenreader in der Modulübersicht ergänzt.
 - UI: Fokus-Start auf Theme-Auswahl gesetzt.
 - Tests: Kontrasttest für Launcher-Themes ergänzt.
+
+## 2026-01-18
+- Doku: A–I-Backlog mit strukturierten Aufgaben in TODO.md ergänzt.
+- Doku: README um Architektur, Start-Routine, Tests und Barrierefreiheit erweitert.
+- Doku: Styleguide (PEP8 + Projektregeln) ergänzt.
+- Doku: Weiterführende Laienvorschläge erweitert.
+- Doku: todo.txt mit neuer Rundeliste synchronisiert.
