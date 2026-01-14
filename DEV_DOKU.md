@@ -34,7 +34,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Modul-Check blockiert `..`-Segmente im Entry-Pfad mit klarer Fehlermeldung.
 - Testskript zeigt eine Schritt-für-Schritt-Hilfe und schreibt Logs nach `logs/test_run.log`.
 - Testskript bricht bei Fehlern mit klarer Meldung und Log-Hinweis ab.
-- Test-Automatik startet nach abgeschlossenen 9 Tasks (Runden-Logik).
+- Test-Automatik startet nach abgeschlossenen 4 Tasks (Runden-Logik).
 - Health-Check prüft wichtige Dateien/Ordner vor dem Start mit klaren Hinweisen.
 - Health-Check kann fehlende Basiselemente automatisch per Self-Repair anlegen.
 - Start-Routine ruft den Health-Check mit aktivem Self-Repair auf.
@@ -42,6 +42,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Health-Check ist lauffähig, Ruff-konform und nutzt konsistente Datumswerte (Self-Repair aktiv).
 - Changelog-Abschnitte mit doppelten Versionsnummern sind zusammengeführt (0.1.20/0.1.19/0.1.15).
 - Info-Dateien (PROJEKT_INFO/ANALYSE_BERICHT) sind aktualisiert und laienfreundlich erläutert.
+- STRUKTUR.md dokumentiert den vollständigen Verzeichnisbaum inkl. Pflicht- und Dummy-Dateien.
 - Standards enthalten einen Benennungsstandard für Dateien/Module und eine Datenmodell-Referenz.
 - TODO.md ist strukturiert (IDs, Bereiche, klare Offen/Erledigt-Abschnitte).
 - todo.txt ist als laienfreundliche Kurzliste gepflegt und mit TODO.md synchronisiert.
@@ -67,77 +68,20 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Laien-Tool-Anleitung ist als eigenständige Schritt-für-Schritt-Doku ergänzt.
 
 ## Struktur (aktuell)
-- `PROJEKT_INFO.md`: Übersicht zu Ordnerstruktur und Tooldateien (mit Aktualisierungspflicht).
-- `ANALYSE_BERICHT.md`: Analysebericht zu Inkonsistenzen, Redundanzen und Robustheit.
-- `STYLEGUIDE.md`: Styleguide (PEP8 + Projektregeln).
-- `src/`: Systemlogik (stabile Kernlogik).
-  - `src/records/record_updater.py`: Logik für Archivierung und Changelog.
-  - `src/core/data_model.py`: Zentrales Datenmodell für To-Dos und Kalender.
-- `config/`: Konfiguration (Config = Einstellungen, änderbar ohne Code).
-- `config/records.json`: Regeln für Einträge.
-  - `config/launcher_gui.json`: GUI-Launcher-Themes und Standard-Theme.
-  - `config/modules.json`: Zentrale Modul-Liste für den Launcher.
-  - `config/notiz_editor.json`: Konfiguration für den Notiz-Editor (Templates, Themes).
-  - `config/charakter_modul.json`: Konfiguration für das Charakter-Modul (Templates, Themes).
-  - `config/download_aufraeumen.json`: Konfiguration für Download-Aufräumen (Regeln, Themes).
-  - `config/datei_suche.json`: Konfiguration für Datei-Suche (Filter, Themes).
-  - `config/requirements.txt`: Python-Abhängigkeiten (pip-Pakete).
-  - `config/pytest.ini`: Pytest-Konfiguration.
-  - `config/ruff.toml`: Ruff-Regeln für Codequalität (Linting).
-  - `config/black.toml`: Black-Regeln für Codeformatierung.
-  - `config/test_gate.json`: Regeln für die Test-Sperre (Schwelle + Befehl).
-  - `config/module_selftests.json`: Testfälle für Modul-Selbsttests.
-  - `config/modules.json`: Modul-Liste für den Launcher.
-  - `config/todo_kalender.json`: Konfiguration für To-Do-&-Kalender-Modul.
-  - `config/modules.json`: Registrierte Module für den Modul-Check.
-- `system/`: Tool-Logik (CLI-Tools und Automatisierung).
-  - `system/todo_manager.py`: Fortschritt berechnen und To-Dos archivieren.
-  - `system/log_exporter.py`: Logdateien als ZIP exportieren.
-- `system/launcher.py`: Launcher (Modulübersicht).
-- `system/launcher_gui.py`: GUI-Launcher (Startübersicht mit Themes).
-- `system/module_selftests.py`: Modul-Selbsttests (Status pro Modul).
-- `system/qa_checks.py`: Qualitäts-Checks (Fehlerklassen + Ampel).
-- `system/error_simulation.py`: Fehler-Simulation (typische Laienfehler).
-- `system/health_check.py`: Health-Check für wichtige Dateien/Ordner vor dem Start.
-- `system/structure_checker.py`: Struktur-Check (Trennung von System/Config/Daten/Logs).
-- `system/config_utils.py`: Hilfsfunktionen für Pfad- und JSON-Validierung.
-- `system/test_gate.py`: Test-Sperre (Tests erst nach kompletter Runde).
-  - `system/json_validator.py`: JSON-Validator für Konfigurationen und Manifeste.
-  - `system/filename_fixer.py`: Automatische Dateinamenkorrektur (data/, logs/).
-- `system/module_checker.py`: Modul-Check (Struktur + Manifest + Entry-Datei).
-- `system/module_integration_checks.py`: Modulverbund-Checks (Selftests + Manifest-ID + Konsistenz).
-  - `system/dependency_checker.py`: Abhängigkeiten prüfen und automatisch installieren.
-  - `system/color_utils.py`: Farb- und Kontrastberechnung für UI-Checks.
-- `system/standards_viewer.py`: Standards-Viewer (interne Standards + Styleguide).
-- `logs/`: Logdateien (Protokolle).
-- `reports/`: Prüfberichte (z. B. Kontrast).
-  - `reports/kontrastpruefung_launcher_gui.md`: Kontrastwerte der Launcher-Themes.
-  - `reports/responsivitaet_launcher_gui.md`: Responsivitäts-Check der Launcher-GUI.
-- `data/log_exports/`: Exporte von Logdateien.
-- `data/test_state.json`: Statusdatei für den Test-Start.
-- `data/notiz_editor.json`: Datenablage für den Notiz-Editor.
-- `data/charakter_modul.json`: Datenablage für das Charakter-Modul.
-- `data/download_aufraeumen_log.json`: Protokoll für Aufräum-Aktionen (Undo).
-- `data/datei_suche_log.json`: Protokoll für Organisationsaktionen (Undo).
-- `modules/`: Standardisierte Module.
-  - `modules/status/module.py`: Beispielmodul mit Standard-Schnittstelle.
-  - `modules/status/manifest.json`: Metadaten des Beispielmoduls.
-- `data/todo_kalender.json`: Datenablage für To-Do-&-Kalender-Modul.
-- `scripts/`: Start- und Prüfskripte.
-  - `scripts/repo_basis_check.sh`: Repo-Check (Remote + Push-Trockenlauf).
-  - `scripts/run_tests.sh`: Tests + Codequalität + Formatprüfung.
-  - `scripts/generate_launcher_gui_contrast_report.py`: Kontrastbericht für Launcher-Themes.
-- `scripts/check_env.sh`: Umgebungs-Check (Python + Start-Routine).
-- `scripts/bootstrap.sh`: Bootstrap (Basis-Ordner erstellen).
-- `scripts/show_standards.sh`: Standards + Styleguide anzeigen.
-- `scripts/system_scan.sh`: System-Scan (Vorabprüfung ohne Schreiben).
-- `klick_start.sh`: Klick&Start-Skript (führt Start-Routine aus und öffnet die GUI-Startübersicht).
-- `tests/`: Automatische Tests (Unit-Tests).
-- `modules/`: Modul-Ordner (Standard: manifest.json + module.py).
-  - `modules/todo_kalender/`: To-Do-&-Kalender-Modul.
-- `modules/notiz_editor/`: Notiz-Editor-Modul mit Templates und Dashboard.
-- `modules/charakter_modul/`: Charakter-Modul für konsistente Profile.
-- `modules/download_aufraeumen/`: Download-Ordner-Aufräumen (Scan/Plan/Undo).
+Die **vollständige** Struktur steht in `STRUKTUR.md` (Single Source of Truth).
+Hier nur die wichtigsten Bereiche:
+- `PROJEKT_INFO.md`: Übersicht zu Ordnerstruktur und Tooldateien.
+- `ANALYSE_BERICHT.md`: Analysebericht zu Risiken, Lücken und Best Practices.
+- `STRUKTUR.md`: Verzeichnisbaum inkl. Pflicht- und Dummy-Dateien.
+- `README.md`: Schnellstart, Ziele und Hinweise.
+- `config/`: Konfiguration (z. B. Themes, Module, Test-Gate).
+- `data/`: Variable Daten (z. B. Logs, Zustände, Platzhalterdateien).
+- `logs/`: Laufzeit-Logs (Test- und Startprotokolle).
+- `modules/`: Module mit `manifest.json` + `module.py`.
+- `reports/`: Prüfberichte (z. B. Kontrastprüfung).
+- `scripts/`: Start-, Test- und Diagnose-Skripte.
+- `src/` und `system/`: Kernlogik und System-Tools.
+- `tests/`: Automatisierte Tests.
 - `modules/datei_suche/`: Datei-Suche mit Filter und Organisationsfunktionen.
 - `modules/`: Module nach Standard (Manifest + Entry).
 
@@ -181,7 +125,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 ### Start-Routine (Struktur + Fortschritt)
 1. `./scripts/start.sh`
 2. Die Start-Routine erstellt fehlende Ordner automatisch, führt den Health-Check mit Selbstreparatur aus, prüft JSONs, korrigiert Dateinamen, prüft Abhängigkeiten, prüft Module und zeigt den Fortschritt in Prozent.
-3. Tests laufen automatisch, sobald eine Runde (9 erledigte Tasks) erreicht ist.
+3. Tests laufen automatisch, sobald eine Runde (4 erledigte Tasks) erreicht ist.
 4. Optional: `./scripts/start.sh --debug` (Debugging = detaillierte Diagnoseausgaben).
 5. Optional: `./scripts/start.sh --log-file logs/start_run.log` (Logdatei festlegen).
 6. Optional: `./scripts/start.sh --safe-mode` (schreibgeschützt, keine Änderungen).
@@ -264,7 +208,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 
 ### Test-Sperre (manuell)
 1. `python system/test_gate.py --config config/test_gate.json`
-2. Tests starten erst nach kompletter Runde (9 Tasks), sonst erscheint ein Hinweis.
+2. Tests starten erst nach kompletter Runde (4 Tasks), sonst erscheint ein Hinweis.
 
 ### Log-Export (ZIP)
 1. `python system/log_exporter.py`

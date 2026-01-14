@@ -10,6 +10,12 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Nächste 4 kleinste Aufgaben (Runde 2026-01-26) – erledigt
+[x] DOC-11: Info-Dateien + README bereinigen und aktualisieren. | fertig wenn: alle Info-Dateien konsistent.
+[x] DOC-12: STRUKTUR.md mit vollständigem Verzeichnisbaum erstellen/pflegen. | fertig wenn: Baum + Pflichtdateien dokumentiert.
+[x] DOC-13: Dummy-Dateien für klar benötigte Dateien anlegen. | fertig wenn: Platzhalter klar gekennzeichnet.
+[x] OPS-01: Rundenlogik auf 4 Tasks umstellen (Test-Gate + Doku). | fertig wenn: Schwelle + Doku aktualisiert.
+
 Nächste 9 kleinste Aufgaben (Runde 2026-01-24) – erledigt
 [x] DATA-06: Trennung von Systemlogik und variablen Daten/Configs (Config = Konfiguration). | fertig wenn: klare Ordnertrennung umgesetzt.
 [x] UX-05: Perfektes Farb- und Kontrastverhalten mit mehreren Themes. | fertig wenn: Themes dokumentiert.

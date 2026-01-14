@@ -3,6 +3,7 @@
 ## Zweck
 Diese Datei gibt eine **kurze Übersicht** zur Ordnerstruktur und zu wichtigen Tooldateien.
 Bitte **bei jeder Struktur- oder Tool-Änderung** mit aktualisieren.
+Die vollständige Struktur steht in `STRUKTUR.md`.
 
 ## Ordnerstruktur (Top-Level)
 - `config/`: Konfigurationen (Einstellungen, Regeln, Themes). Änderbar ohne Code.
@@ -38,6 +39,7 @@ Bitte **bei jeder Struktur- oder Tool-Änderung** mit aktualisieren.
 - `system/log_exporter.py`: Logdateien als ZIP exportieren.
 - `ANLEITUNG_TOOL.md`: Laienfreundliche Tool-Anleitung (Schritte, Tipps, FAQ).
 - `docs/MODUL_API.md`: Modul-API (Schnittstellen, Events, States) mit Beispiel.
+- `STRUKTUR.md`: Verzeichnisbaum + Pflichtdateien (inkl. Dummy-Platzhalter).
 
 ## Automatik: Was beim Start geprüft wird
 Die Start-Routine führt eine **vollautomatische Prüfung (Check)** aus und gibt **klare Rückmeldungen (Feedback)**:

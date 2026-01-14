@@ -28,7 +28,7 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 
 ## Release-Checks & Test-Automatik
 - **Start-Routine** prüft automatisch Struktur, Abhängigkeiten und Module mit klaren Hinweisen (Feedback).
-- **Test-Automatik** startet Tests automatisch nach einer abgeschlossenen Runde (9 erledigte Tasks).
+- **Test-Automatik** startet Tests automatisch nach einer abgeschlossenen Runde (4 erledigte Tasks).
 - **Modulverbund-Checks** prüfen konsistente Moduleinträge, Selftests und Manifest-IDs.
 - **Codequalität & Formatierung** laufen automatisch über Ruff (Linting = Regelprüfung) und Black (Formatierung).
 
@@ -87,6 +87,7 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 - `STYLEGUIDE.md`: Styleguide (PEP8 + Projektregeln).
 - `DEV_DOKU.md`: Entwickler-Dokumentation und Standards.
 - `todo.txt`: Offene Aufgaben im Überblick.
+- `STRUKTUR.md`: Verzeichnisbaum + Pflichtdateien (inkl. Dummy-Platzhalter).
 - `CHANGELOG.md`: Änderungen je Version.
 
 ## Lizenz

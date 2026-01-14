@@ -1,7 +1,7 @@
 # TODO (strukturiert, barrierefrei, laienverständlich)
 
 ## Regeln (verbindlich)
-- Pro Runde werden **genau 9 kleine Aufgaben** erledigt.
+- Pro Runde werden **genau 4 kleine Aufgaben** erledigt.
 - Erst **kurz analysieren**, dann **umsetzen**, dann **testen**, dann **dokumentieren**.
 - Fachwörter werden **einfach erklärt** (Fachbegriff in Klammern mit kurzer Erklärung).
 
@@ -34,6 +34,12 @@ Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
 - [x] REL-GUI-04: Fehler-/Statusmeldungen in einfacher Sprache + Lösungsschritt.
 - [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 - [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
+
+Runde 2026-01-26 (4 kleinste Aufgaben dieser Runde) – erledigt
+- [x] DOC-11: Info-Dateien + README bereinigen und aktualisieren. | fertig wenn: alle Info-Dateien konsistent.
+- [x] DOC-12: STRUKTUR.md mit vollständigem Verzeichnisbaum erstellen/pflegen. | fertig wenn: Baum + Pflichtdateien dokumentiert.
+- [x] DOC-13: Dummy-Dateien für klar benötigte Dateien anlegen. | fertig wenn: Platzhalter klar gekennzeichnet.
+- [x] OPS-01: Rundenlogik auf 4 Tasks umstellen (Test-Gate + Doku). | fertig wenn: Schwelle + Doku aktualisiert.
 
 Nächste 9 kleinste Aufgaben (Runde 2026-01-24) – erledigt
 - [x] DATA-06: Trennung von Systemlogik und variablen Daten/Configs (Config = Konfiguration). | fertig wenn: klare Ordnertrennung umgesetzt.
@@ -136,16 +142,11 @@ Runde 2026-01-21 (5 kleinste Aufgaben dieser Runde) – erledigt
 - [x] TODO-STR-05: Laienhinweise ergänzt (einfacher Text, Fachbegriffe erklärt). | fertig wenn: neue Aufgaben sind laienverständlich.
 
 ## Offene Aufgaben (kleinste zuerst)
-Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
-- [x] ARCH-01: Plugin-System mit zentraler Registry einführen (Registry = Modul-Liste). | fertig wenn: Module nur über Registry geladen werden.
-- [x] ARCH-02: Modul-API definieren (Schnittstellen, Events, States). | fertig wenn: API-Dokument + Beispiel vorhanden.
-- [x] ARCH-03: Zentralen Store einführen (Store = gemeinsamer Zustands-Speicher). | fertig wenn: Module lesen/schreiben zentral.
-- [x] ARCH-04: Single Source of Truth für Theme/Settings/Logging. | fertig wenn: doppelte Logik entfernt.
-- [x] ARCH-06: Zentrales Logging-Modul implementieren (Logging = Protokoll). | fertig wenn: ein Logging-Modul genutzt.
-- [x] PERF-01: Lazy Loading für Module (spätes Laden) implementieren. | fertig wenn: Startzeit sinkt.
-- [x] PERF-02: Debounce/Throttle für teure Aktionen (gebremstes Auslösen). | fertig wenn: UI bleibt flüssig.
-- [x] PERF-03: Asynchrones Logging statt blockierend. | fertig wenn: Log schreibt ohne UI-Block.
-- [x] PERF-04: JSON-Handling mit geprüftem Modell absichern (z. B. Pydantic). | fertig wenn: Validierung zentral.
+Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
+- [x] DOC-11: Info-Dateien + README bereinigen und aktualisieren. | fertig wenn: alle Info-Dateien konsistent.
+- [x] DOC-12: STRUKTUR.md mit vollständigem Verzeichnisbaum erstellen/pflegen. | fertig wenn: Baum + Pflichtdateien dokumentiert.
+- [x] DOC-13: Dummy-Dateien für klar benötigte Dateien anlegen. | fertig wenn: Platzhalter klar gekennzeichnet.
+- [x] OPS-01: Rundenlogik auf 4 Tasks umstellen (Test-Gate + Doku). | fertig wenn: Schwelle + Doku aktualisiert.
 
 ## Backlog (nach Bereichen, noch zu priorisieren)
 
@@ -291,6 +292,10 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
 - [ ] DOC-03: Developer-Panel im Dashboard integrieren. | fertig wenn: Panel sichtbar.
 - [x] DOC-04: Interne Standards im Tool anzeigen (Konfig, Regeln, Tests). | fertig wenn: Standards sichtbar.
 - [x] DOC-05: Weiterführende Laienvorschläge ergänzen (Tipps für Neulinge). | fertig wenn: Tipps vorhanden.
+- [x] DOC-11: Info-Dateien + README bereinigen und aktualisieren. | fertig wenn: alle Info-Dateien konsistent.
+- [x] DOC-12: STRUKTUR.md mit vollständigem Verzeichnisbaum erstellen/pflegen. | fertig wenn: Baum + Pflichtdateien dokumentiert.
+- [x] DOC-13: Dummy-Dateien für klar benötigte Dateien anlegen. | fertig wenn: Platzhalter klar gekennzeichnet.
+- [x] OPS-01: Rundenlogik auf 4 Tasks umstellen (Test-Gate + Doku). | fertig wenn: Schwelle + Doku aktualisiert.
 
 ### Tests & Stabilität
 - [x] TEST-01: Automatisierte GUI-Tests einbinden. | fertig wenn: GUI-Tests laufen.

@@ -8,9 +8,10 @@ __pycache__/
 
 # Logs
 *.log
+!logs/test_run.log
+!logs/start_run.log
 
-# Runtime state
-data/test_state.json
+# Runtime state (Dummy wird versioniert)
 
 # OS
 .DS_Store
