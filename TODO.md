@@ -35,6 +35,12 @@ Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
 - [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 - [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Runde 2026-01-27 (4 kleinste Aufgaben dieser Runde) – erledigt
+- [x] ARCH-07: Modul-API-Validator ergänzen (Validator = automatische Prüfung). | fertig wenn: `run`, `validateInput`, `validateOutput` werden geprüft.
+- [x] ARCH-08: Modul-Check um Modul-API-Check erweitern (Check = Prüfung). | fertig wenn: klare Fehlermeldungen im Modul-Check erscheinen.
+- [x] TEST-07: Tests für Modul-API-Validator ergänzen (Tests = automatische Prüfungen). | fertig wenn: Testfälle für Pflichtfunktionen grün sind.
+- [x] DOC-14: MODUL_API.md um Modul-API-Check ergänzen. | fertig wenn: Hinweis auf automatische Prüfung dokumentiert ist.
+
 Runde 2026-01-26 (4 kleinste Aufgaben dieser Runde) – erledigt
 - [x] DOC-11: Info-Dateien + README bereinigen und aktualisieren. | fertig wenn: alle Info-Dateien konsistent.
 - [x] DOC-12: STRUKTUR.md mit vollständigem Verzeichnisbaum erstellen/pflegen. | fertig wenn: Baum + Pflichtdateien dokumentiert.
@@ -143,6 +149,10 @@ Runde 2026-01-21 (5 kleinste Aufgaben dieser Runde) – erledigt
 
 ## Offene Aufgaben (kleinste zuerst)
 Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
+- [x] ARCH-07: Modul-API-Validator ergänzen (Validator = automatische Prüfung). | fertig wenn: `run`, `validateInput`, `validateOutput` werden geprüft.
+- [x] ARCH-08: Modul-Check um Modul-API-Check erweitern (Check = Prüfung). | fertig wenn: klare Fehlermeldungen im Modul-Check erscheinen.
+- [x] TEST-07: Tests für Modul-API-Validator ergänzen (Tests = automatische Prüfungen). | fertig wenn: Testfälle für Pflichtfunktionen grün sind.
+- [x] DOC-14: MODUL_API.md um Modul-API-Check ergänzen. | fertig wenn: Hinweis auf automatische Prüfung dokumentiert ist.
 - [x] DOC-11: Info-Dateien + README bereinigen und aktualisieren. | fertig wenn: alle Info-Dateien konsistent.
 - [x] DOC-12: STRUKTUR.md mit vollständigem Verzeichnisbaum erstellen/pflegen. | fertig wenn: Baum + Pflichtdateien dokumentiert.
 - [x] DOC-13: Dummy-Dateien für klar benötigte Dateien anlegen. | fertig wenn: Platzhalter klar gekennzeichnet.
@@ -155,8 +165,10 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [x] ARCH-02: Modul-API definieren (Schnittstellen, Events, States). | fertig wenn: API-Dokument + Beispiel vorhanden.
 - [x] ARCH-03: Zentralen Store einführen (Store = gemeinsamer Zustands-Speicher). | fertig wenn: Module lesen/schreiben zentral.
 - [x] ARCH-04: Single Source of Truth für Theme/Settings/Logging. | fertig wenn: doppelte Logik entfernt.
-- [ ] ARCH-05: Projektstruktur final definieren und standardisieren. | fertig wenn: Struktur-Standard dokumentiert.
+- [x] ARCH-05: Projektstruktur final definieren und standardisieren. | fertig wenn: Struktur-Standard dokumentiert.
 - [x] ARCH-06: Zentrales Logging-Modul implementieren (Logging = Protokoll). | fertig wenn: ein Logging-Modul genutzt.
+- [x] ARCH-07: Modul-API-Validator ergänzen (Validator = automatische Prüfung). | fertig wenn: `run`, `validateInput`, `validateOutput` werden geprüft.
+- [x] ARCH-08: Modul-Check um Modul-API-Check erweitern (Check = Prüfung). | fertig wenn: klare Fehlermeldungen im Modul-Check erscheinen.
 
 ### B. Performance & Stabilität
 - [x] PERF-01: Lazy Loading für Module (spätes Laden) implementieren. | fertig wenn: Startzeit sinkt.
@@ -198,6 +210,12 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [ ] REL-07: Build-Skripte automatisieren (`./build_all.sh`). | fertig wenn: Ein-Befehl-Build.
 
 ### I. Zentrale Komfortfunktionen
+
+### J. Tests
+- [x] TEST-07: Tests für Modul-API-Validator ergänzen (Tests = automatische Prüfungen). | fertig wenn: Testfälle für Pflichtfunktionen grün sind.
+
+### K. Dokumentation
+- [x] DOC-14: MODUL_API.md um Modul-API-Check ergänzen. | fertig wenn: Hinweis auf automatische Prüfung dokumentiert ist.
 - [ ] COM-01: One-Click-Diag (Tests + Ergebnisse in Fenster). | fertig wenn: Diagnosen sichtbar.
 - [x] COM-02: Systemscanner vor Start (Rechte/JSON/Ordner). | fertig wenn: Scanner blockiert Fehler.
 - [ ] COM-03: Recovery-Modus starten können. | fertig wenn: Start im Notfall.

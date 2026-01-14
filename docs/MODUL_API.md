@@ -76,6 +76,15 @@ Standard-Zustände (States = Status):
 
 **Tipp:** Fehlertexte **immer** in einfacher Sprache schreiben und einen nächsten Schritt nennen.
 
+## Automatische Modul-API-Prüfung (Validator = automatische Prüfung)
+Der Modul-Check prüft die API automatisch, ohne das Modul zu starten.
+Geprüft wird:
+- `run` vorhanden und hat **mindestens ein Argument** (input_data = Eingabe).
+- `validateInput` vorhanden (Input-Check = Eingabeprüfung).
+- `validateOutput` vorhanden (Output-Check = Ausgabeprüfung).
+
+**Tipp:** Wenn der Check fehlschlägt, melde die fehlende Funktion und ergänze sie im Modul.
+
 ## Beispiel-Modul (minimal, laienfreundlich)
 ```python
 # module.py

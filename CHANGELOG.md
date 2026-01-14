@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.36] – 2026-01-27
+- Architektur: Modul-API-Validator ergänzt (prüft `run`, `validateInput`, `validateOutput`).
+- Architektur: Modul-Check um Modul-API-Check erweitert (klare Fehlermeldungen).
+- Tests: Unit-Tests für den Modul-API-Validator ergänzt.
+- Doku: MODUL_API.md um automatische Modul-API-Prüfung ergänzt.
+
 ## [0.1.35] – 2026-01-26
 - Doku: Info-Dateien und README bereinigt/aktualisiert, STRUKTUR.md ergänzt.
 - Doku: Dummy-Platzhalter für Pflichtdateien dokumentiert und angelegt.

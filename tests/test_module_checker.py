@@ -1,9 +1,12 @@
 import json
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
-from system import module_checker
+sys.path.append(str(Path(__file__).resolve().parents[1] / "system"))
+
+import module_checker
 
 
 class ModuleCheckerTests(unittest.TestCase):
@@ -15,7 +18,22 @@ class ModuleCheckerTests(unittest.TestCase):
             root = Path(tmp_dir)
             module_dir = root / "modules" / "demo"
             module_dir.mkdir(parents=True)
-            (module_dir / "module.py").write_text("# demo", encoding="utf-8")
+            (module_dir / "module.py").write_text(
+                "\n".join(
+                    [
+                        "def validateInput(input_data):",
+                        "    return input_data",
+                        "",
+                        "def validateOutput(output):",
+                        "    return output",
+                        "",
+                        "def run(input_data):",
+                        "    return {'status': 'ok'}",
+                        "",
+                    ]
+                ),
+                encoding="utf-8",
+            )
             self._write_json(
                 module_dir / "manifest.json",
                 {

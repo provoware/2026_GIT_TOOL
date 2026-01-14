@@ -1,5 +1,11 @@
 # DONE
 
+## 2026-01-27
+- Architektur: Modul-API-Validator ergänzt (Pflichtfunktionen `run`, `validateInput`, `validateOutput`).
+- Architektur: Modul-Check um Modul-API-Check erweitert (klare Fehlermeldungen).
+- Tests: Modul-API-Validator mit Unit-Tests abgesichert.
+- Doku: MODUL_API.md um automatische Modul-API-Prüfung ergänzt.
+
 ## 2026-01-26
 - Doku: Info-Dateien und README bereinigt/aktualisiert.
 - Doku: STRUKTUR.md mit vollständigem Verzeichnisbaum ergänzt.

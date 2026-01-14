@@ -29,7 +29,22 @@ class ModuleIntegrationChecksTests(unittest.TestCase):
             json.dumps(manifest),
             encoding="utf-8",
         )
-        (module_dir / "module.py").write_text("def run(data):\n    return data\n", encoding="utf-8")
+        (module_dir / "module.py").write_text(
+            "\n".join(
+                [
+                    "def validateInput(input_data):",
+                    "    return input_data",
+                    "",
+                    "def validateOutput(output):",
+                    "    return output",
+                    "",
+                    "def run(input_data):",
+                    "    return input_data",
+                    "",
+                ]
+            ),
+            encoding="utf-8",
+        )
         return module_dir
 
     def _write_configs(self, root: Path, modules: list[dict], testcases: dict) -> None:
