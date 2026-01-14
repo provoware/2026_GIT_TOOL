@@ -37,6 +37,10 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - A–I-Backlog (Architektur bis Komfortfunktionen) ist strukturiert dokumentiert.
 - README ist um Architektur/Start/Tests/Barrierefreiheit ergänzt.
 - Styleguide (PEP8 + Projektregeln) liegt als Markdown-Datei vor.
+- Start-Routine nutzt jetzt getrennte Setup-Skripte (check_env.sh, bootstrap.sh).
+- Start-Routine unterstützt Debug- und Logging-Modus (Logdatei start_run.log).
+- Standards-Viewer zeigt interne Standards und Styleguide per CLI an.
+- Launcher-GUI ist für kleine Fenstergrößen optimiert (zweizeilige Steuerleiste + Umbruch im Footer).
 
 ## Struktur (aktuell)
 - `PROJEKT_INFO.md`: Übersicht zu Ordnerstruktur und Tooldateien (mit Aktualisierungspflicht).
@@ -72,9 +76,11 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
   - `system/module_checker.py`: Modul-Check (Struktur + Manifest + Entry-Datei).
   - `system/dependency_checker.py`: Abhängigkeiten prüfen und automatisch installieren.
   - `system/color_utils.py`: Farb- und Kontrastberechnung für UI-Checks.
+- `system/standards_viewer.py`: Standards-Viewer (interne Standards + Styleguide).
 - `logs/`: Logdateien (Protokolle).
 - `reports/`: Prüfberichte (z. B. Kontrast).
   - `reports/kontrastpruefung_launcher_gui.md`: Kontrastwerte der Launcher-Themes.
+  - `reports/responsivitaet_launcher_gui.md`: Responsivitäts-Check der Launcher-GUI.
 - `data/log_exports/`: Exporte von Logdateien.
 - `data/test_state.json`: Statusdatei für den Test-Start.
 - `data/notiz_editor.json`: Datenablage für den Notiz-Editor.
@@ -89,6 +95,9 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
   - `scripts/repo_basis_check.sh`: Repo-Check (Remote + Push-Trockenlauf).
   - `scripts/run_tests.sh`: Tests + Codequalität + Formatprüfung.
   - `scripts/generate_launcher_gui_contrast_report.py`: Kontrastbericht für Launcher-Themes.
+  - `scripts/check_env.sh`: Umgebungs-Check (Python + Start-Routine).
+  - `scripts/bootstrap.sh`: Bootstrap (Basis-Ordner erstellen).
+  - `scripts/show_standards.sh`: Standards + Styleguide anzeigen.
 - `klick_start.sh`: Klick&Start-Skript (führt Start-Routine aus und öffnet die GUI-Startübersicht).
 - `tests/`: Automatische Tests (Unit-Tests).
 - `modules/`: Modul-Ordner (Standard: manifest.json + module.py).
@@ -135,6 +144,12 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 1. `./scripts/start.sh`
 2. Die Start-Routine erstellt fehlende Ordner automatisch, führt den Health-Check mit Selbstreparatur aus, prüft Abhängigkeiten, prüft Module und zeigt den Fortschritt in Prozent.
 3. Tests laufen automatisch, sobald eine Runde (3 erledigte Tasks) erreicht ist.
+4. Optional: `./scripts/start.sh --debug` (Debugging = detaillierte Diagnoseausgaben).
+5. Optional: `./scripts/start.sh --log-file logs/start_run.log` (Logdatei festlegen).
+
+### Setup-Skripte (separat ausführbar)
+1. `./scripts/check_env.sh` (Voraussetzungen prüfen)
+2. `./scripts/bootstrap.sh` (Basis-Ordner anlegen)
 
 ### Health-Check (manuell)
 1. `python system/health_check.py --root . --self-repair`
@@ -162,6 +177,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 ### Klick&Start (für Laien)
 1. `./klick_start.sh`
 2. Die Start-Routine läuft automatisch, danach öffnet sich die GUI-Startübersicht.
+3. Optional: `./klick_start.sh --debug` (Debugging = detaillierte Diagnoseausgaben).
+4. Optional: `./klick_start.sh --log-file logs/start_run.log` (Logdatei festlegen).
 
 ### Launcher (Modulübersicht)
 1. `python system/launcher.py`
@@ -183,6 +200,11 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 ### Log-Export (ZIP)
 1. `python system/log_exporter.py`
 2. Optional: `python system/log_exporter.py --logs-dir logs --export-dir data/log_exports`
+
+### Standards anzeigen (im Tool)
+1. `./scripts/show_standards.sh --list`
+2. `./scripts/show_standards.sh --section standards`
+3. `./scripts/show_standards.sh --section styleguide`
 
 ### Lokaler Start (UI prüfen)
 1. `cd gms-archiv-tool_v1.2.3_2026-01-06`
