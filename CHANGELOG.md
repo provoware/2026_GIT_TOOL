@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.24] – 2026-01-16
+- Doku: TODO.md strukturiert, Dubletten entfernt und Backlog gruppiert.
+- Doku: todo.txt als laienfreundliche Kurzliste ergänzt.
+
 ## [0.1.23] – 2026-01-16
 - Doku: Standards um Benennungsstandard und Datenmodell-Referenz ergänzt.
 - Doku: Release-Checkliste für die GUI in todo.txt ergänzt.
