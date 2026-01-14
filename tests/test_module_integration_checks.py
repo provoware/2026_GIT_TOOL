@@ -125,7 +125,52 @@ class ModuleIntegrationChecksTests(unittest.TestCase):
                 root / "config" / "module_selftests.json",
             )
 
-            self.assertTrue(any("Manifest-ID passt nicht" in issue for issue in result.issues))
+            self.assertTrue(
+                any(
+                    "Manifest-ID passt nicht" in issue
+                    or "Manifest: id muss dem Modulordner entsprechen" in issue
+                    for issue in result.issues
+                )
+            )
+
+    def test_reports_selftest_failure(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            module_dir = self._write_module(root, "mod_a")
+            (module_dir / "module.py").write_text(
+                "\n".join(
+                    [
+                        "def validateInput(input_data):",
+                        "    return input_data",
+                        "",
+                        "def validateOutput(output):",
+                        "    return output",
+                        "",
+                        "def run(input_data):",
+                        "    return None",
+                        "",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            modules = [
+                {
+                    "id": "mod_a",
+                    "name": "Modul A",
+                    "path": "modules/mod_a",
+                    "enabled": True,
+                    "description": "Test",
+                }
+            ]
+            testcases = {"mod_a": {"text": "ok"}}
+            self._write_configs(root, modules, testcases)
+
+            result = run_integration_checks(
+                root / "config" / "modules.json",
+                root / "config" / "module_selftests.json",
+            )
+
+            self.assertTrue(any("Selftest fehlgeschlagen" in issue for issue in result.issues))
 
 
 if __name__ == "__main__":

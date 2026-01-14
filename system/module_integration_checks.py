@@ -34,9 +34,28 @@ def _render_issues(issues: Iterable[str]) -> str:
     return "\n".join(lines)
 
 
+def _append_selftest_issues(
+    modules_config: Path,
+    selftests_config: Path,
+    issues: List[str],
+) -> None:
+    try:
+        results = module_selftests.run_selftests(modules_config, selftests_config)
+    except module_selftests.ModuleSelftestError as exc:
+        issues.append(f"Selftests konnten nicht ausgeführt werden: {exc}")
+        return
+    for result in results:
+        if result.status == "fehler":
+            issues.append(
+                "Selftest fehlgeschlagen: "
+                f"{result.module_id} ({result.name}). Ursache: {result.message}"
+            )
+
+
 def run_integration_checks(
     modules_config: Path,
     selftests_config: Path,
+    run_selftests: bool = True,
 ) -> IntegrationResult:
     ensure_path(modules_config, "modules_config", ModuleIntegrationError)
     ensure_path(selftests_config, "selftests_config", ModuleIntegrationError)
@@ -81,6 +100,8 @@ def run_integration_checks(
             )
 
     issues.extend(module_checker.check_modules(entries))
+    if run_selftests:
+        _append_selftest_issues(modules_config, selftests_config, issues)
     return IntegrationResult(issues=issues)
 
 
@@ -100,6 +121,11 @@ def build_parser() -> argparse.ArgumentParser:
         default=module_selftests.SELFTEST_DEFAULT,
         help="Pfad zur Selftest-Konfiguration (module_selftests.json).",
     )
+    parser.add_argument(
+        "--skip-selftests",
+        action="store_true",
+        help="Selftests überspringen (nur Struktur/Konsistenz prüfen).",
+    )
     parser.add_argument("--debug", action="store_true", help="Debug-Modus aktivieren.")
     return parser
 
@@ -110,7 +136,11 @@ def main() -> int:
     setup_logging_center(args.debug)
     logger = get_logger("module_integration_checks")
     try:
-        result = run_integration_checks(args.config, args.selftests)
+        result = run_integration_checks(
+            args.config,
+            args.selftests,
+            run_selftests=not args.skip_selftests,
+        )
     except ModuleIntegrationError as exc:
         logger.error("Modulverbund-Checks konnten nicht starten: %s", exc)
         return 2

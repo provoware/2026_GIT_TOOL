@@ -1,0 +1,8 @@
+{
+  "required_entry": "module.py",
+  "entry_exceptions": [],
+  "required_files": [
+    "manifest.json",
+    "module.py"
+  ]
+}

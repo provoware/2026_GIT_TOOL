@@ -103,8 +103,9 @@ class ModuleCheckerTests(unittest.TestCase):
             entries = module_checker.load_modules(config_path)
             issues = module_checker.check_modules(entries)
 
-            self.assertEqual(len(issues), 1)
-            self.assertIn("Modul-Datei fehlt", issues[0])
+            self.assertGreaterEqual(len(issues), 1)
+            self.assertTrue(any("Modulstruktur unvollständig" in issue for issue in issues))
+            self.assertTrue(any("Modul-Datei fehlt" in issue for issue in issues))
 
     def test_check_modules_entry_outside_module(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
@@ -142,8 +143,9 @@ class ModuleCheckerTests(unittest.TestCase):
             entries = module_checker.load_modules(config_path)
             issues = module_checker.check_modules(entries)
 
-            self.assertEqual(len(issues), 1)
-            self.assertIn("außerhalb des Modulordners", issues[0])
+            self.assertGreaterEqual(len(issues), 1)
+            self.assertTrue(any("außerhalb des Modulordners" in issue for issue in issues))
+            self.assertTrue(any("Modulstruktur unzulässig" in issue for issue in issues))
 
 
 if __name__ == "__main__":

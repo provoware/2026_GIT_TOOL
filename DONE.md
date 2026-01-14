@@ -1,5 +1,13 @@
 # DONE
 
+## 2026-01-30
+- Qualität: Modulstruktur-Validator mit Pflicht-Entry und Ausnahmen ergänzt.
+- Sicherheit: Modulverbund-Checks führen Selftests aus und blockieren Fehler.
+- Start: Ampelstatus in der Start-Routine ergänzt.
+- Start: Recovery-Modus als Notfallstart-Skript ergänzt.
+- Health-Check: Standarddatei für Modulstruktur-Config ergänzt.
+- Doku: Recovery-Modus und Modulstruktur-Regeln dokumentiert.
+
 ## 2026-01-28
 - UI: One-Click-Diagnose im GUI-Launcher ergänzt (Tests + Codequalität).
 - Qualität: Health-Check repariert Leserechte und Ausführrechte automatisch.

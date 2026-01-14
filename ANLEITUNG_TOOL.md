@@ -79,6 +79,9 @@
 - **Problem:** „GUI startet, zeigt aber Fehler.“
   - **Lösung:** `python system/json_validator.py --root .` ausführen.
   - **Tipp:** JSON-Dateien müssen gültig sein – fehlende Kommas sind häufige Fehler.
+- **Problem:** „Start klappt gar nicht mehr (Notfall).“
+  - **Lösung:** `./scripts/recovery.sh` ausführen (Recovery-Modus = Notfallstart).
+  - **Tipp:** Danach den normalen Start mit `./scripts/start.sh` wiederholen.
 - **Problem:** „Tests schlagen fehl.“
   - **Lösung:** `./scripts/run_tests.sh` ausführen und `logs/test_run.log` lesen.
   - **Tipp:** Im Log steht meist der nächste sinnvolle Schritt.

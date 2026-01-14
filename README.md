@@ -12,10 +12,10 @@ Dieses Projekt ist ein sauberer Neuaufbau mit Fokus auf Robustheit, Nachvollzieh
 - Komfortfunktionen wie globale Suche, Favoriten und Mini-Panels sind noch offen.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-01-28)**
+**Auto-Status (aktualisiert: 2026-01-14)**
 
-- Gesamt: 81 Tasks
-- Erledigt: 81 Tasks
+- Gesamt: 89 Tasks
+- Erledigt: 89 Tasks
 - Offen: 0 Tasks
 - Fortschritt: 100,00 %
 <!-- AUTO-STATUS:END -->

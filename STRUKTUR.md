@@ -1,6 +1,6 @@
 # STRUKTUR (Verzeichnisbaum + Pflichtdateien)
 
-Stand: 2026-01-28
+Stand: 2026-01-30
 
 ## Zweck
 Diese Datei ist die **Single Source of Truth** für den Projektaufbau.
@@ -17,6 +17,7 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 - `data/test_state.json` (DUMMY)
 - `logs/start_run.log` (DUMMY)
 - `logs/test_run.log` (DUMMY)
+- `logs/recovery_run.log` (DUMMY)
 
 ## Verzeichnisbaum
 ```
@@ -31,6 +32,7 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 │   ├── datei_suche.json
 │   ├── download_aufraeumen.json
 │   ├── launcher_gui.json
+│   ├── module_structure.json
 │   ├── module_selftests.json
 │   ├── modules.json
 │   ├── notiz_editor.json
@@ -81,6 +83,7 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 │   └── vite.config.js
 ├── logs
 │   ├── .gitkeep
+│   ├── recovery_run.log
 │   ├── start_run.log
 │   └── test_run.log
 ├── modules
@@ -115,6 +118,7 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 │   ├── generate_launcher_gui_contrast_report.py
 │   ├── progress.js
 │   ├── repo_basis_check.sh
+│   ├── recovery.sh
 │   ├── run_tests.sh
 │   ├── show_standards.sh
 │   ├── start.sh

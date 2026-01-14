@@ -260,6 +260,7 @@ if [[ ${#ERRORS[@]} -gt 0 ]]; then
   else
     echo "Start-Routine: PROGRESS.md wurde nicht geschrieben (Safe-Mode)."
   fi
+  echo "Start-Routine: Ampelstatus: rot (mindestens ein Fehler)."
   exit 2
 fi
 
@@ -269,3 +270,4 @@ if [[ "${PROGRESS_WRITE}" -eq 1 ]]; then
 else
   echo "Start-Routine: PROGRESS.md wurde nicht geschrieben (Safe-Mode)."
 fi
+echo "Start-Routine: Ampelstatus: grün (keine Fehler)."
