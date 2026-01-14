@@ -1,5 +1,12 @@
 # DONE
 
+## 2026-01-30
+- Dashboard: Globale Suche für Module, Einträge, Aktionen und Notizen ergänzt.
+- Dashboard: Favoritenleiste für Module inkl. Umschalten ergänzt.
+- Dashboard: Mini-Panels für Export/Backup/Schnellnotizen ergänzt.
+- Dashboard: Auto-Theming (Tag/Nacht) inkl. manueller Auswahl ergänzt.
+- Qualität: Ruff- und Black-Hinweise in GUI- und Modul-API-Dateien bereinigt.
+
 ## 2026-01-28
 - UI: One-Click-Diagnose im GUI-Launcher ergänzt (Tests + Codequalität).
 - Qualität: Health-Check repariert Leserechte und Ausführrechte automatisch.

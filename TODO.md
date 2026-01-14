@@ -20,7 +20,7 @@
 - **Erledigt**: Debounce/Throttle (gebremstes Auslösen) für GUI-Aktualisierung umgesetzt.
 - **Erledigt**: Asynchrones Logging (nicht blockierend) eingeführt.
 - **Erledigt**: JSON-Validierung ist über geprüfte Modelle abgesichert.
-- **Lücke**: Komfortfunktionen wie globale Suche, Favoritenleiste, Mini-Panels und Auto-Theming fehlen.
+- **Erledigt**: Komfortfunktionen wie globale Suche, Favoritenleiste, Mini-Panels und Auto-Theming sind umgesetzt.
 - **Hinweis**: Zusätzliche Barrierefreiheit (Kontrast-Hotkey, Zoom per STRG+Mausrad, Screenreader-Struktur) ist umgesetzt, Gesamtprüfung bleibt offen.
 - **Lücke**: Build/Release-Automatisierung (deb/AppImage/Build-All) fehlt.
 - **Lücke**: Sicherheitsfeatures (PIN-Sperre, Modultests vor dem Laden) sind noch offen.
@@ -34,6 +34,12 @@ Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
 - [x] REL-GUI-04: Fehler-/Statusmeldungen in einfacher Sprache + Lösungsschritt.
 - [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 - [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
+
+Runde 2026-01-30 (4 kleinste Aufgaben dieser Runde) – erledigt
+- [x] UX-06: Globales Suchfeld im Dashboard (Dateien/Module/Texte). | fertig wenn: zentrale Suche nutzbar.
+- [x] UX-07: Favoritenleiste für oft genutzte Module. | fertig wenn: Favoriten sichtbar/umschaltbar.
+- [x] UX-08: Mini-Panels für Schnellaktionen (Export/Backup/Notes). | fertig wenn: Quick-Actions sichtbar.
+- [x] UX-09: Auto-Theming (Tag/Nacht-Erkennung) integrieren. | fertig wenn: Theme passt sich an.
 
 Runde 2026-01-29 (4 kleinste Aufgaben dieser Runde) – erledigt
 - [x] STD-01: Modulnamen-Standard (snake_case + Pfad) validieren. | fertig wenn: Validator blockiert Abweichungen.
@@ -189,10 +195,10 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [x] PERF-04: JSON-Handling mit geprüftem Modell absichern (z. B. Pydantic). | fertig wenn: Validierung zentral.
 
 ### C. Bedienbarkeit
-- [ ] UX-06: Globales Suchfeld im Dashboard (Dateien/Module/Texte). | fertig wenn: zentrale Suche nutzbar.
-- [ ] UX-07: Favoritenleiste für oft genutzte Module. | fertig wenn: Favoriten sichtbar/umschaltbar.
-- [ ] UX-08: Mini-Panels für Schnellaktionen (Export/Backup/Notes). | fertig wenn: Quick-Actions sichtbar.
-- [ ] UX-09: Auto-Theming (Tag/Nacht-Erkennung) integrieren. | fertig wenn: Theme passt sich an.
+- [x] UX-06: Globales Suchfeld im Dashboard (Dateien/Module/Texte). | fertig wenn: zentrale Suche nutzbar.
+- [x] UX-07: Favoritenleiste für oft genutzte Module. | fertig wenn: Favoriten sichtbar/umschaltbar.
+- [x] UX-08: Mini-Panels für Schnellaktionen (Export/Backup/Notes). | fertig wenn: Quick-Actions sichtbar.
+- [x] UX-09: Auto-Theming (Tag/Nacht-Erkennung) integrieren. | fertig wenn: Theme passt sich an.
 
 ### D. Barrierefreiheit (zusätzlich)
 - [x] ACC-01: Kontrastmodus per Hotkey umschaltbar. | fertig wenn: Hotkey aktiv.

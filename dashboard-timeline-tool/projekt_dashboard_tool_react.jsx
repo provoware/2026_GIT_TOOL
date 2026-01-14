@@ -19,6 +19,12 @@ import {
   Trash2,
   Info,
   X,
+  Star,
+  StarOff,
+  Sun,
+  Moon,
+  Sparkles,
+  StickyNote,
 } from "lucide-react";
 
 /**
@@ -41,12 +47,25 @@ type Entry = {
   type: EntryType;
 };
 
+type ThemeMode = "auto" | "hell" | "dunkel";
+
+type ResolvedTheme = "hell" | "dunkel";
+
+type QuickNote = {
+  id: string;
+  text: string;
+  createdAt: number;
+};
+
 type AppStateV1 = {
   v: 1;
   entries: Entry[];
   selectedTypes: EntryType[];
   tagMode: "Alle" | EntryType;
   monthKey: string; // YYYY-MM
+  favoriteModules: string[];
+  quickNotes: QuickNote[];
+  themeMode: ThemeMode;
 };
 
 type TypeMeta = {
@@ -62,6 +81,21 @@ type UiError = {
   title: string;
   explanation: string;
   solution: string;
+};
+
+type ModuleItem = {
+  id: string;
+  label: string;
+  description: string;
+  keywords: string[];
+  target: "dashboard" | "extensions" | "plugins" | "data" | "help";
+};
+
+type QuickAction = {
+  id: string;
+  label: string;
+  description: string;
+  keywords: string[];
 };
 
 const STORAGE_KEY = "provoware.projekt-dashboard.v1";
@@ -105,6 +139,68 @@ const TYPE_META: Record<EntryType, TypeMeta> = {
     icon: <span aria-hidden className="inline-block size-2.5 rounded-sm bg-rose-400/90" />,
   },
 };
+
+const MODULE_ITEMS: ModuleItem[] = [
+  {
+    id: "dashboard",
+    label: "Übersicht",
+    description: "Projekt-Dashboard mit Einträgen, Timeline und Filtern.",
+    keywords: ["dashboard", "übersicht", "einträge", "timeline"],
+    target: "dashboard",
+  },
+  {
+    id: "extensions",
+    label: "Erweiterungen",
+    description: "Zusatzfunktionen und optionale Features im Überblick.",
+    keywords: ["erweiterung", "zusatz", "funktionen"],
+    target: "extensions",
+  },
+  {
+    id: "plugins",
+    label: "Zusatzmodule",
+    description: "Module verwalten und starten.",
+    keywords: ["modul", "plugin", "zusatzmodul"],
+    target: "plugins",
+  },
+  {
+    id: "data",
+    label: "Daten & Export",
+    description: "Export, Import und Backup-Optionen.",
+    keywords: ["daten", "export", "import", "backup"],
+    target: "data",
+  },
+  {
+    id: "help",
+    label: "Hilfe",
+    description: "Kurze Hilfe mit Tipps und Erklärungen.",
+    keywords: ["hilfe", "faq", "tipps"],
+    target: "help",
+  },
+];
+
+const QUICK_ACTIONS: QuickAction[] = [
+  {
+    id: "action-export",
+    label: "Export öffnen",
+    description: "Öffnet den Export/Import-Dialog.",
+    keywords: ["export", "download", "daten"],
+  },
+  {
+    id: "action-backup",
+    label: "Backup herunterladen",
+    description: "Speichert ein Backup als JSON-Datei.",
+    keywords: ["backup", "sicherung", "download"],
+  },
+  {
+    id: "action-new-entry",
+    label: "Neuen Eintrag anlegen",
+    description: "Springt zum Formular für einen neuen Eintrag.",
+    keywords: ["neu", "eintrag", "formular"],
+  },
+];
+
+const DEFAULT_FAVORITE_MODULES = ["dashboard", "data"];
+const DEFAULT_THEME_MODE: ThemeMode = "auto";
 
 const uid = () =>
   typeof crypto !== "undefined" && "randomUUID" in crypto
@@ -295,6 +391,15 @@ function safeLocalStorageRemove(key: string) {
   }
 }
 
+function resolveTheme(mode: ThemeMode, prefersDark: boolean): ResolvedTheme {
+  if (mode === "auto") return prefersDark ? "dunkel" : "hell";
+  return mode === "dunkel" ? "dunkel" : "hell";
+}
+
+function normalizeNoteText(input: string) {
+  return input.replace(/\s+/g, " ").trim();
+}
+
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(false);
   useEffect(() => {
@@ -306,6 +411,19 @@ function usePrefersReducedMotion() {
     return () => mq.removeEventListener?.("change", onChange);
   }, []);
   return reduced;
+}
+
+function usePrefersDarkMode() {
+  const [prefersDark, setPrefersDark] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia?.("(prefers-color-scheme: dark)");
+    if (!mq) return;
+    const onChange = () => setPrefersDark(!!mq.matches);
+    onChange();
+    mq.addEventListener?.("change", onChange);
+    return () => mq.removeEventListener?.("change", onChange);
+  }, []);
+  return prefersDark;
 }
 
 function useIntervalAutosave<T>(
@@ -861,6 +979,406 @@ function TopBar({
         </div>
       </div>
     </header>
+  );
+}
+
+function FavoritesPanel({
+  favorites,
+  onSelectModule,
+  onToggleFavorite,
+}: {
+  favorites: Set<string>;
+  onSelectModule: (target: ModuleItem["target"]) => void;
+  onToggleFavorite: (id: string) => void;
+}) {
+  const favoriteItems = MODULE_ITEMS.filter((item) => favorites.has(item.id));
+
+  return (
+    <GlassCard title="Favoriten & Module" ariaLabel="Favoritenleiste">
+      <div className="space-y-4">
+        <div>
+          <p className="text-xs text-white/55">Schnellzugriff auf oft genutzte Module.</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {favoriteItems.length ? (
+              favoriteItems.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => onSelectModule(item.target)}
+                  className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/85 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+                >
+                  <Star className="h-4 w-4 text-amber-200" aria-hidden />
+                  {item.label}
+                </button>
+              ))
+            ) : (
+              <p className="text-xs text-white/55">
+                Noch keine Favoriten. Bitte unten Module markieren.
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+          <p className="text-xs font-semibold text-white/80">Module</p>
+          <div className="mt-3 space-y-2">
+            {MODULE_ITEMS.map((item) => {
+              const isFavorite = favorites.has(item.id);
+              return (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-3 py-2"
+                >
+                  <button
+                    type="button"
+                    onClick={() => onSelectModule(item.target)}
+                    className="text-left"
+                  >
+                    <div className="text-sm font-semibold text-white/90">{item.label}</div>
+                    <div className="text-xs text-white/55">{item.description}</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onToggleFavorite(item.id)}
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+                    aria-pressed={isFavorite}
+                    aria-label={
+                      isFavorite
+                        ? `Favorit entfernen: ${item.label}`
+                        : `Als Favorit markieren: ${item.label}`
+                    }
+                  >
+                    {isFavorite ? (
+                      <Star className="h-4 w-4 text-amber-200" aria-hidden />
+                    ) : (
+                      <StarOff className="h-4 w-4" aria-hidden />
+                    )}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </GlassCard>
+  );
+}
+
+function GlobalSearchPanel({
+  value,
+  onChange,
+  results,
+  onSelectEntry,
+  onSelectModule,
+  onSelectAction,
+  onSelectNote,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  results: {
+    entries: Entry[];
+    modules: ModuleItem[];
+    actions: QuickAction[];
+    notes: QuickNote[];
+  };
+  onSelectEntry: (entry: Entry) => void;
+  onSelectModule: (target: ModuleItem["target"]) => void;
+  onSelectAction: (actionId: QuickAction["id"]) => void;
+  onSelectNote: (note: QuickNote) => void;
+}) {
+  const searchId = useId();
+  const hasQuery = value.trim().length > 0;
+  const empty =
+    hasQuery &&
+    !results.entries.length &&
+    !results.modules.length &&
+    !results.actions.length &&
+    !results.notes.length;
+
+  return (
+    <GlassCard
+      title="Globale Suche"
+      ariaLabel="Globale Suche"
+      actions={
+        <button
+          type="button"
+          onClick={() => onChange("")}
+          className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-1 text-xs text-white/70 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+        >
+          <X className="h-3 w-3" aria-hidden />
+          Zurücksetzen
+        </button>
+      }
+    >
+      <div className="space-y-4">
+        <div className="relative">
+          <label htmlFor={searchId} className="sr-only">
+            Globale Suche
+          </label>
+          <Search
+            aria-hidden
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/55"
+          />
+          <input
+            id={searchId}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="Suche: Module, Einträge, Aktionen, Notizen"
+            className="w-full rounded-xl border border-white/12 bg-black/25 py-2 pl-10 pr-3 text-sm text-white/92 placeholder:text-white/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+          />
+        </div>
+
+        {empty ? <p className="text-xs text-white/55">Keine Treffer gefunden.</p> : null}
+
+        {!hasQuery ? (
+          <p className="text-xs text-white/55">
+            Tipp: Suche nach „Export“, „Module“, „Fund“ oder „Notiz“.
+          </p>
+        ) : null}
+
+        {results.modules.length ? (
+          <div>
+            <p className="text-xs font-semibold text-white/80">Module</p>
+            <div className="mt-2 space-y-2">
+              {results.modules.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => onSelectModule(item.target)}
+                  className="flex w-full items-start justify-between rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-left text-sm text-white/85 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+                >
+                  <span>
+                    <span className="block font-semibold">{item.label}</span>
+                    <span className="block text-xs text-white/55">{item.description}</span>
+                  </span>
+                  <Sparkles className="mt-1 h-4 w-4 text-amber-200" aria-hidden />
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {results.actions.length ? (
+          <div>
+            <p className="text-xs font-semibold text-white/80">Aktionen</p>
+            <div className="mt-2 space-y-2">
+              {results.actions.map((action) => (
+                <button
+                  key={action.id}
+                  type="button"
+                  onClick={() => onSelectAction(action.id)}
+                  className="flex w-full items-start justify-between rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-left text-sm text-white/85 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+                >
+                  <span>
+                    <span className="block font-semibold">{action.label}</span>
+                    <span className="block text-xs text-white/55">{action.description}</span>
+                  </span>
+                  <Sparkles className="mt-1 h-4 w-4 text-amber-200" aria-hidden />
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {results.entries.length ? (
+          <div>
+            <p className="text-xs font-semibold text-white/80">Einträge</p>
+            <div className="mt-2 space-y-2">
+              {results.entries.map((entry) => (
+                <button
+                  key={entry.id}
+                  type="button"
+                  onClick={() => onSelectEntry(entry)}
+                  className="flex w-full items-start justify-between rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-left text-sm text-white/85 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+                >
+                  <span>
+                    <span className="block font-semibold">{entry.title}</span>
+                    <span className="block text-xs text-white/55">
+                      {formatDE(entry.date)} · {entry.type}
+                    </span>
+                  </span>
+                  <span className="text-xs text-white/55">Öffnen</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {results.notes.length ? (
+          <div>
+            <p className="text-xs font-semibold text-white/80">Notizen</p>
+            <div className="mt-2 space-y-2">
+              {results.notes.map((note) => (
+                <button
+                  key={note.id}
+                  type="button"
+                  onClick={() => onSelectNote(note)}
+                  className="flex w-full items-start justify-between rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-left text-sm text-white/85 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+                >
+                  <span>
+                    <span className="block font-semibold">Notiz</span>
+                    <span className="block text-xs text-white/55">{note.text}</span>
+                  </span>
+                  <StickyNote className="mt-1 h-4 w-4 text-amber-200" aria-hidden />
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </GlassCard>
+  );
+}
+
+function QuickActionsPanel({
+  onOpenData,
+  onBackup,
+  noteDraft,
+  onNoteDraft,
+  notes,
+  onAddNote,
+  onRemoveNote,
+  themeMode,
+  onThemeMode,
+}: {
+  onOpenData: () => void;
+  onBackup: () => void;
+  noteDraft: string;
+  onNoteDraft: (v: string) => void;
+  notes: QuickNote[];
+  onAddNote: () => void;
+  onRemoveNote: (id: string) => void;
+  themeMode: ThemeMode;
+  onThemeMode: (mode: ThemeMode) => void;
+}) {
+  const noteInputId = useId();
+  return (
+    <GlassCard title="Schnellaktionen" ariaLabel="Schnellaktionen">
+      <div className="space-y-4">
+        <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+          <p className="text-xs font-semibold text-white/80">Export & Backup</p>
+          <p className="mt-1 text-xs text-white/55">
+            Für schnelle Sicherungen und Datentransfer.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={onOpenData}
+              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/85 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+            >
+              <Download className="h-4 w-4" aria-hidden />
+              Export öffnen
+            </button>
+            <button
+              type="button"
+              onClick={onBackup}
+              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/85 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+            >
+              <Download className="h-4 w-4" aria-hidden />
+              Backup speichern
+            </button>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+          <p className="text-xs font-semibold text-white/80">Theme</p>
+          <p className="mt-1 text-xs text-white/55">
+            Auto passt sich an Tag/Nacht an.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => onThemeMode("auto")}
+              className={classNames(
+                "inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm",
+                themeMode === "auto"
+                  ? "border-amber-200/60 bg-amber-500/15 text-amber-100"
+                  : "border-white/10 bg-white/5 text-white/80 hover:bg-white/10"
+              )}
+            >
+              <Sparkles className="h-4 w-4" aria-hidden />
+              Auto
+            </button>
+            <button
+              type="button"
+              onClick={() => onThemeMode("hell")}
+              className={classNames(
+                "inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm",
+                themeMode === "hell"
+                  ? "border-amber-200/60 bg-amber-500/15 text-amber-100"
+                  : "border-white/10 bg-white/5 text-white/80 hover:bg-white/10"
+              )}
+            >
+              <Sun className="h-4 w-4" aria-hidden />
+              Hell
+            </button>
+            <button
+              type="button"
+              onClick={() => onThemeMode("dunkel")}
+              className={classNames(
+                "inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm",
+                themeMode === "dunkel"
+                  ? "border-amber-200/60 bg-amber-500/15 text-amber-100"
+                  : "border-white/10 bg-white/5 text-white/80 hover:bg-white/10"
+              )}
+            >
+              <Moon className="h-4 w-4" aria-hidden />
+              Dunkel
+            </button>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+          <p className="text-xs font-semibold text-white/80">Notizen</p>
+          <label htmlFor={noteInputId} className="sr-only">
+            Schnellnotiz
+          </label>
+          <TextArea
+            id={noteInputId}
+            rows={3}
+            value={noteDraft}
+            onChange={(e) => onNoteDraft(e.target.value)}
+            placeholder="Kurze Notiz (max. 200 Zeichen)"
+            aria-label="Schnellnotiz"
+          />
+          <div className="mt-2 flex items-center justify-between gap-2">
+            <span className="text-xs text-white/55">
+              {noteDraft.trim().length}/200 Zeichen
+            </span>
+            <button
+              type="button"
+              onClick={onAddNote}
+              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/85 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+            >
+              <StickyNote className="h-4 w-4" aria-hidden />
+              Notiz speichern
+            </button>
+          </div>
+          {notes.length ? (
+            <ul className="mt-3 space-y-2">
+              {notes.slice(0, 3).map((note) => (
+                <li
+                  key={note.id}
+                  className="flex items-start justify-between gap-3 rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-white/85"
+                >
+                  <span>{note.text}</span>
+                  <button
+                    type="button"
+                    onClick={() => onRemoveNote(note.id)}
+                    className="text-xs text-white/55 hover:text-white"
+                    aria-label="Notiz entfernen"
+                  >
+                    Entfernen
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-3 text-xs text-white/55">Noch keine Notizen gespeichert.</p>
+          )}
+        </div>
+      </div>
+    </GlassCard>
   );
 }
 
@@ -1910,6 +2428,10 @@ function runSelfTests() {
   assert(!isMonthKey("2026-1"), "isMonthKey reject");
   assert(addMonths("2026-01", 1) === "2026-02", "addMonths +1");
   assert(addMonths("2026-01", -1) === "2025-12", "addMonths -1");
+  assert(resolveTheme("auto", true) === "dunkel", "resolveTheme auto dark");
+  assert(resolveTheme("auto", false) === "hell", "resolveTheme auto light");
+  assert(resolveTheme("dunkel", false) === "dunkel", "resolveTheme explicit dark");
+  assert(normalizeNoteText("  Hallo   Welt ") === "Hallo Welt", "normalizeNoteText");
   const ok = safeJsonParse<{ a: number }>("{\"a\":1}");
   assert(ok.ok && ok.value.a === 1, "safeJsonParse ok");
   const bad = safeJsonParse("{");
@@ -1942,12 +2464,32 @@ if (typeof window !== "undefined") {
 export default function ProjektDashboardTool() {
   const mainId = useId();
 
+  const prefersDark = usePrefersDarkMode();
+  const [themeMode, setThemeMode] = useState<ThemeMode>(DEFAULT_THEME_MODE);
+  const resolvedTheme = resolveTheme(themeMode, prefersDark);
+  const themeStyle = useMemo(
+    () =>
+      ({
+        "--page-bg":
+          resolvedTheme === "dunkel"
+            ? "radial-gradient(1200px 800px at 20% 10%, rgba(96,165,250,0.18), transparent 55%), radial-gradient(900px 700px at 80% 70%, rgba(244,63,94,0.16), transparent 55%), radial-gradient(1000px 800px at 55% 40%, rgba(16,185,129,0.10), transparent 60%), linear-gradient(180deg, rgba(9,9,11,1), rgba(2,6,23,1))"
+            : "radial-gradient(1000px 700px at 15% 15%, rgba(191,219,254,0.45), transparent 60%), radial-gradient(900px 600px at 85% 65%, rgba(252,231,243,0.35), transparent 55%), linear-gradient(180deg, rgba(15,23,42,1), rgba(2,6,23,1))",
+      }) as React.CSSProperties,
+    [resolvedTheme]
+  );
+
   const [sidebar, setSidebar] = useState<"dashboard" | "extensions" | "plugins">("dashboard");
   const [view, setView] = useState<"Alle Einträge" | "Filter">("Alle Einträge");
   const [search, setSearch] = useState("");
+  const [globalSearch, setGlobalSearch] = useState("");
   const [activeEntry, setActiveEntry] = useState<Entry | null>(null);
   const [openHelp, setOpenHelp] = useState(false);
   const [openData, setOpenData] = useState(false);
+  const [favoriteModules, setFavoriteModules] = useState<Set<string>>(
+    () => new Set(DEFAULT_FAVORITE_MODULES)
+  );
+  const [quickNotes, setQuickNotes] = useState<QuickNote[]>([]);
+  const [noteDraft, setNoteDraft] = useState("");
 
   const liveRegionId = useId();
   const [liveMsg, setLiveMsg] = useState("");
@@ -2004,6 +2546,7 @@ export default function ProjektDashboardTool() {
   );
   const [tagMode, setTagMode] = useState<"Alle" | EntryType>("Alle");
   const [monthKey, setMonthKey] = useState<string>(() => monthKeyFromYMD("2024-01-16"));
+  const moduleIdSet = useMemo(() => new Set(MODULE_ITEMS.map((item) => item.id)), []);
 
   useEffect(() => {
     const raw = safeLocalStorageGet(STORAGE_KEY);
@@ -2051,6 +2594,28 @@ export default function ProjektDashboardTool() {
           : monthKeyFromYMD(loadedEntries[0]?.date || toYMD(new Date()));
       setMonthKey(mk);
 
+      const favorites = Array.isArray(candidate.favoriteModules)
+        ? candidate.favoriteModules.filter((id: any) => moduleIdSet.has(id))
+        : DEFAULT_FAVORITE_MODULES;
+      setFavoriteModules(new Set(favorites.length ? favorites : DEFAULT_FAVORITE_MODULES));
+
+      const notes = Array.isArray(candidate.quickNotes)
+        ? candidate.quickNotes
+            .map((note: any) => ({
+              id: typeof note?.id === "string" && note.id ? note.id : uid(),
+              text: normalizeNoteText(typeof note?.text === "string" ? note.text : ""),
+              createdAt: typeof note?.createdAt === "number" ? note.createdAt : Date.now(),
+            }))
+            .filter((note: QuickNote) => note.text.length > 0)
+        : [];
+      setQuickNotes(notes);
+
+      const tm: ThemeMode =
+        candidate.themeMode === "hell" || candidate.themeMode === "dunkel" || candidate.themeMode === "auto"
+          ? candidate.themeMode
+          : DEFAULT_THEME_MODE;
+      setThemeMode(tm);
+
       announce("Daten geladen.");
     } catch {
       // ignore
@@ -2084,6 +2649,66 @@ export default function ProjektDashboardTool() {
     [announce]
   );
 
+  const selectModule = useCallback(
+    (target: ModuleItem["target"]) => {
+      if (target === "data") {
+        setOpenData(true);
+        return;
+      }
+      if (target === "help") {
+        setOpenHelp(true);
+        return;
+      }
+      setSidebar(target);
+      if (target === "dashboard") setView("Alle Einträge");
+    },
+    [setSidebar, setView]
+  );
+
+  const toggleFavoriteModule = useCallback(
+    (id: string) => {
+      if (!moduleIdSet.has(id)) {
+        announce("Unbekanntes Modul. Favorit konnte nicht gesetzt werden.");
+        return;
+      }
+      setFavoriteModules((prev) => {
+        const next = new Set(prev);
+        if (next.has(id)) next.delete(id);
+        else next.add(id);
+        return next;
+      });
+    },
+    [announce, moduleIdSet]
+  );
+
+  const handleNoteDraft = useCallback((value: string) => {
+    setNoteDraft(value.slice(0, 200));
+  }, []);
+
+  const addQuickNote = useCallback(() => {
+    const normalized = normalizeNoteText(noteDraft);
+    if (!normalized) {
+      announce("Notiz ist leer. Bitte Text eingeben.");
+      return;
+    }
+    if (normalized.length > 200) {
+      announce("Notiz ist zu lang. Bitte auf 200 Zeichen kürzen.");
+      return;
+    }
+    const note: QuickNote = { id: uid(), text: normalized, createdAt: Date.now() };
+    setQuickNotes((prev) => [note, ...prev].slice(0, 20));
+    setNoteDraft("");
+    announce("Notiz gespeichert.");
+  }, [announce, noteDraft]);
+
+  const removeQuickNote = useCallback(
+    (id: string) => {
+      setQuickNotes((prev) => prev.filter((note) => note.id !== id));
+      announce("Notiz entfernt.");
+    },
+    [announce]
+  );
+
   const searchIndex = useMemo(() => {
     const map = new Map<string, string>();
     for (const e of entries) {
@@ -2103,6 +2728,31 @@ export default function ProjektDashboardTool() {
     });
   }, [entries, selectedTypes, tagMode, search, searchIndex]);
 
+  const globalResults = useMemo(() => {
+    const q = normalizeText(globalSearch);
+    if (!q) {
+      return { entries: [], modules: [], actions: [], notes: [] };
+    }
+    const entriesMatch = entries
+      .filter((entry) => (searchIndex.get(entry.id) || "").includes(q))
+      .slice(0, 5);
+    const moduleMatches = MODULE_ITEMS.filter((item) =>
+      normalizeText(`${item.label} ${item.description} ${item.keywords.join(" ")}`).includes(q)
+    ).slice(0, 4);
+    const actionMatches = QUICK_ACTIONS.filter((action) =>
+      normalizeText(`${action.label} ${action.description} ${action.keywords.join(" ")}`).includes(q)
+    ).slice(0, 4);
+    const noteMatches = quickNotes
+      .filter((note) => normalizeText(note.text).includes(q))
+      .slice(0, 3);
+    return {
+      entries: entriesMatch,
+      modules: moduleMatches,
+      actions: actionMatches,
+      notes: noteMatches,
+    };
+  }, [entries, globalSearch, quickNotes, searchIndex]);
+
   useEffect(() => {
     const hasMonth = filtered.some((e) => monthKeyFromYMD(e.date) === monthKey);
     if (!hasMonth && filtered.length) setMonthKey(monthKeyFromYMD(filtered[0].date));
@@ -2117,8 +2767,11 @@ export default function ProjektDashboardTool() {
       selectedTypes: Array.from(selectedTypes),
       tagMode,
       monthKey: isMonthKey(monthKey) ? monthKey : toYMD(new Date()).slice(0, 7),
+      favoriteModules: Array.from(favoriteModules),
+      quickNotes,
+      themeMode,
     }),
-    [entries, selectedTypes, tagMode, monthKey]
+    [entries, favoriteModules, monthKey, quickNotes, selectedTypes, tagMode, themeMode]
   );
 
   const saveState = useCallback(
@@ -2129,6 +2782,16 @@ export default function ProjektDashboardTool() {
     [announce]
   );
 
+  const backupNow = useCallback(() => {
+    try {
+      const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-");
+      downloadText(`projekt-dashboard_backup_${stamp}.json`, JSON.stringify(appState, null, 2));
+      announce("Backup gespeichert.");
+    } catch {
+      announce("Backup fehlgeschlagen. Bitte Export nutzen.");
+    }
+  }, [announce, appState]);
+
   const getState = useCallback(() => appState, [appState]);
   const { saving, lastSavedAt } = useIntervalAutosave<AppStateV1>(getState, saveState, AUTOSAVE_EVERY_MS);
 
@@ -2137,7 +2800,13 @@ export default function ProjektDashboardTool() {
     setSelectedTypes(new Set(s.selectedTypes));
     setTagMode(s.tagMode);
     setMonthKey(s.monthKey);
-  }, []);
+    const favorites = Array.isArray(s.favoriteModules)
+      ? s.favoriteModules.filter((id) => moduleIdSet.has(id))
+      : DEFAULT_FAVORITE_MODULES;
+    setFavoriteModules(new Set(favorites.length ? favorites : DEFAULT_FAVORITE_MODULES));
+    setQuickNotes(Array.isArray(s.quickNotes) ? s.quickNotes : []);
+    setThemeMode(s.themeMode || DEFAULT_THEME_MODE);
+  }, [moduleIdSet]);
 
   const resetAll = useCallback(() => {
     safeLocalStorageRemove(STORAGE_KEY);
@@ -2145,16 +2814,37 @@ export default function ProjektDashboardTool() {
     setSelectedTypes(new Set(Object.keys(TYPE_META) as EntryType[]));
     setTagMode("Alle");
     setMonthKey(monthKeyFromYMD(initialEntries[0]?.date || toYMD(new Date())));
+    setFavoriteModules(new Set(DEFAULT_FAVORITE_MODULES));
+    setQuickNotes([]);
+    setNoteDraft("");
+    setThemeMode(DEFAULT_THEME_MODE);
     setOpenData(false);
     announce("Zurückgesetzt.");
   }, [initialEntries, announce]);
 
+  const handleGlobalAction = useCallback(
+    (actionId: QuickAction["id"]) => {
+      if (actionId === "action-export") {
+        setOpenData(true);
+        return;
+      }
+      if (actionId === "action-backup") {
+        backupNow();
+        return;
+      }
+      if (actionId === "action-new-entry") {
+        setSidebar("dashboard");
+        setView("Alle Einträge");
+        announce("Formular für neuen Eintrag ist links bereit.");
+      }
+    },
+    [announce, backupNow, setSidebar, setView]
+  );
+
   return (
     <div
-      className={classNames(
-        "min-h-screen w-full text-white",
-        "bg-[radial-gradient(1200px_800px_at_20%_10%,rgba(96,165,250,0.18),transparent_55%),radial-gradient(900px_700px_at_80%_70%,rgba(244,63,94,0.16),transparent_55%),radial-gradient(1000px_800px_at_55%_40%,rgba(16,185,129,0.10),transparent_60%),linear-gradient(180deg,rgba(9,9,11,1),rgba(2,6,23,1))]"
-      )}
+      className="min-h-screen w-full text-white"
+      style={{ ...themeStyle, backgroundImage: "var(--page-bg)" }}
     >
       <div
         aria-hidden
@@ -2211,6 +2901,52 @@ export default function ProjektDashboardTool() {
                     onTagMode={setTagMode}
                     search={search}
                     onSearch={setSearch}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-12 gap-4">
+                <div className="col-span-12 lg:col-span-4">
+                  <FavoritesPanel
+                    favorites={favoriteModules}
+                    onSelectModule={selectModule}
+                    onToggleFavorite={toggleFavoriteModule}
+                  />
+                </div>
+                <div className="col-span-12 lg:col-span-4">
+                  <GlobalSearchPanel
+                    value={globalSearch}
+                    onChange={setGlobalSearch}
+                    results={globalResults}
+                    onSelectEntry={(entry) => {
+                      setActiveEntry(entry);
+                      setGlobalSearch("");
+                    }}
+                    onSelectModule={(target) => {
+                      selectModule(target);
+                      setGlobalSearch("");
+                    }}
+                    onSelectAction={(actionId) => {
+                      handleGlobalAction(actionId);
+                      setGlobalSearch("");
+                    }}
+                    onSelectNote={(note) => {
+                      announce(`Notiz: ${note.text}`);
+                      setGlobalSearch("");
+                    }}
+                  />
+                </div>
+                <div className="col-span-12 lg:col-span-4">
+                  <QuickActionsPanel
+                    onOpenData={() => setOpenData(true)}
+                    onBackup={backupNow}
+                    noteDraft={noteDraft}
+                    onNoteDraft={handleNoteDraft}
+                    notes={quickNotes}
+                    onAddNote={addQuickNote}
+                    onRemoveNote={removeQuickNote}
+                    themeMode={themeMode}
+                    onThemeMode={setThemeMode}
                   />
                 </div>
               </div>

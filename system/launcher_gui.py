@@ -191,12 +191,14 @@ class LauncherGui:
             font=self.header_font,
             anchor="w",
         )
-        header.pack(fill="x", padx=self.layout.gap_lg, pady=(self.layout.gap_lg, self.layout.gap_sm))
+        header.pack(
+            fill="x",
+            padx=self.layout.gap_lg,
+            pady=(self.layout.gap_lg, self.layout.gap_sm),
+        )
 
         controls_section = tk.LabelFrame(self.root, text="Einstellungen und Filter")
-        controls_section.pack(
-            fill="x", padx=self.layout.gap_lg, pady=(0, self.layout.gap_md)
-        )
+        controls_section.pack(fill="x", padx=self.layout.gap_lg, pady=(0, self.layout.gap_md))
         controls = tk.Frame(controls_section)
         controls.pack(fill="x", padx=self.layout.gap_md, pady=self.layout.gap_sm)
 
@@ -210,9 +212,7 @@ class LauncherGui:
         )
         if self.button_font is not None:
             self.theme_menu.configure(font=self.button_font)
-        self.theme_menu.configure(
-            padx=self.layout.field_padx, pady=self.layout.field_pady
-        )
+        self.theme_menu.configure(padx=self.layout.field_padx, pady=self.layout.field_pady)
         self.theme_menu.configure(takefocus=1)
         self.theme_menu.grid(
             row=0,
@@ -230,9 +230,7 @@ class LauncherGui:
         )
         if self.button_font is not None:
             self.show_all_check.configure(font=self.button_font)
-        self.show_all_check.configure(
-            padx=self.layout.field_padx, pady=self.layout.field_pady
-        )
+        self.show_all_check.configure(padx=self.layout.field_padx, pady=self.layout.field_pady)
         self.show_all_check.configure(takefocus=1, underline=0)
         self.show_all_check.grid(
             row=0,
@@ -251,9 +249,7 @@ class LauncherGui:
         )
         if self.button_font is not None:
             self.debug_check.configure(font=self.button_font)
-        self.debug_check.configure(
-            padx=self.layout.field_padx, pady=self.layout.field_pady
-        )
+        self.debug_check.configure(padx=self.layout.field_padx, pady=self.layout.field_pady)
         self.debug_check.configure(takefocus=1, underline=0)
         self.debug_check.grid(
             row=1,
@@ -270,9 +266,7 @@ class LauncherGui:
         )
         if self.button_font is not None:
             self.refresh_button.configure(font=self.button_font)
-        self.refresh_button.configure(
-            padx=self.layout.button_padx, pady=self.layout.button_pady
-        )
+        self.refresh_button.configure(padx=self.layout.button_padx, pady=self.layout.button_pady)
         self.refresh_button.configure(takefocus=1, underline=0)
         self.refresh_button.grid(
             row=1,
@@ -328,9 +322,7 @@ class LauncherGui:
             textvariable=self.status_var,
             anchor="w",
         )
-        self.status_label.pack(
-            fill="x", padx=self.layout.gap_md, pady=self.layout.field_pady
-        )
+        self.status_label.pack(fill="x", padx=self.layout.gap_md, pady=self.layout.field_pady)
 
         output_section = tk.LabelFrame(self.root, text="Modulübersicht")
         output_section.pack(
@@ -369,9 +361,7 @@ class LauncherGui:
             ),
             anchor="w",
         )
-        self.footer_label.pack(
-            fill="x", padx=self.layout.gap_lg, pady=(0, self.layout.gap_md)
-        )
+        self.footer_label.pack(fill="x", padx=self.layout.gap_lg, pady=(0, self.layout.gap_md))
 
         self._bind_accessibility_shortcuts()
         self._bind_responsive_layout()

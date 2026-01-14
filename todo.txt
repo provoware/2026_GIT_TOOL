@@ -10,6 +10,12 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Nächste 4 kleinste Aufgaben (Runde 2026-01-30) – erledigt
+[x] UX-06: Globales Suchfeld im Dashboard (Dateien/Module/Texte). | fertig wenn: zentrale Suche nutzbar.
+[x] UX-07: Favoritenleiste für oft genutzte Module. | fertig wenn: Favoriten sichtbar/umschaltbar.
+[x] UX-08: Mini-Panels für Schnellaktionen (Export/Backup/Notes). | fertig wenn: Quick-Actions sichtbar.
+[x] UX-09: Auto-Theming (Tag/Nacht-Erkennung) integrieren. | fertig wenn: Theme passt sich an.
+
 Nächste 4 kleinste Aufgaben (Runde 2026-01-29) – erledigt
 [x] STD-01: Modulnamen-Standard (snake_case + Pfad) validieren. | fertig wenn: Validator blockiert Abweichungen.
 [x] UX-12: UI-Abstände/Spacing-Tokens in GUI-Konfig + Launcher nutzen. | fertig wenn: Layout nutzt config-Token.

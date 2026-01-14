@@ -27,10 +27,7 @@ def validate_module_api(entry_path: Path) -> List[str]:
     if not entry_path.exists():
         return [f"Modul-API-Check: Modul-Datei fehlt: {entry_path}."]
     if entry_path.suffix.lower() != ".py":
-        return [
-            "Modul-API-Check: Entry-Datei ist keine Python-Datei: "
-            f"{entry_path.name}."
-        ]
+        return ["Modul-API-Check: Entry-Datei ist keine Python-Datei: " f"{entry_path.name}."]
     try:
         source = entry_path.read_text(encoding="utf-8")
     except OSError:
@@ -40,9 +37,7 @@ def validate_module_api(entry_path: Path) -> List[str]:
     except SyntaxError:
         return [f"Modul-API-Check: Syntaxfehler in {entry_path}. Bitte Datei prüfen."]
 
-    functions = {
-        node.name: node for node in tree.body if isinstance(node, ast.FunctionDef)
-    }
+    functions = {node.name: node for node in tree.body if isinstance(node, ast.FunctionDef)}
     issues: List[str] = []
     for name, message in REQUIRED_FUNCTIONS.items():
         if name not in functions:
