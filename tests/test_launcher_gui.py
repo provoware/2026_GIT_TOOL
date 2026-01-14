@@ -27,6 +27,10 @@ class LauncherGuiTests(unittest.TestCase):
                                     "accent": "#005ea5",
                                     "button_background": "#e6f0fb",
                                     "button_foreground": "#0b2d4d",
+                                    "status_success": "#1b5e20",
+                                    "status_error": "#b00020",
+                                    "status_busy": "#005ea5",
+                                    "status_foreground": "#ffffff",
                                 },
                             }
                         },
@@ -56,6 +60,10 @@ class LauncherGuiTests(unittest.TestCase):
                                     "accent": "#005ea5",
                                     "button_background": "#e6f0fb",
                                     "button_foreground": "#0b2d4d",
+                                    "status_success": "#1b5e20",
+                                    "status_error": "#b00020",
+                                    "status_busy": "#005ea5",
+                                    "status_foreground": "#ffffff",
                                 },
                             }
                         },

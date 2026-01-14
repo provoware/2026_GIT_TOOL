@@ -8,7 +8,11 @@
         "foreground": "#1a1a1a",
         "accent": "#005ea5",
         "button_background": "#e6f0fb",
-        "button_foreground": "#0b2d4d"
+        "button_foreground": "#0b2d4d",
+        "status_success": "#1b5e20",
+        "status_error": "#b00020",
+        "status_busy": "#005ea5",
+        "status_foreground": "#ffffff"
       }
     },
     "dunkel": {
@@ -18,7 +22,11 @@
         "foreground": "#f5f5f5",
         "accent": "#4da3ff",
         "button_background": "#1f2a36",
-        "button_foreground": "#f5f5f5"
+        "button_foreground": "#f5f5f5",
+        "status_success": "#2e7d32",
+        "status_error": "#cf6679",
+        "status_busy": "#4da3ff",
+        "status_foreground": "#0b0b0b"
       }
     },
     "kontrast": {
@@ -28,7 +36,11 @@
         "foreground": "#ffffff",
         "accent": "#ffcc00",
         "button_background": "#1a1a1a",
-        "button_foreground": "#ffffff"
+        "button_foreground": "#ffffff",
+        "status_success": "#00ff00",
+        "status_error": "#ff0033",
+        "status_busy": "#ffcc00",
+        "status_foreground": "#000000"
       }
     },
     "klar_blau": {
@@ -38,7 +50,11 @@
         "foreground": "#f5f9ff",
         "accent": "#33b7ff",
         "button_background": "#123a5a",
-        "button_foreground": "#ffffff"
+        "button_foreground": "#ffffff",
+        "status_success": "#1f8a5b",
+        "status_error": "#d84a4a",
+        "status_busy": "#33b7ff",
+        "status_foreground": "#0a1a2b"
       }
     },
     "warm_sand": {
@@ -48,7 +64,11 @@
         "foreground": "#2b1e12",
         "accent": "#a64b00",
         "button_background": "#f0d9b8",
-        "button_foreground": "#2b1e12"
+        "button_foreground": "#2b1e12",
+        "status_success": "#2f6b2f",
+        "status_error": "#9b1c1c",
+        "status_busy": "#a64b00",
+        "status_foreground": "#ffffff"
       }
     }
   }

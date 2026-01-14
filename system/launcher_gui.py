@@ -98,6 +98,12 @@ def load_gui_config(config_path: Path) -> GuiConfig:
             "button_foreground": _validate_color(
                 colors_raw.get("button_foreground"), "button_foreground"
             ),
+            "status_success": _validate_color(colors_raw.get("status_success"), "status_success"),
+            "status_error": _validate_color(colors_raw.get("status_error"), "status_error"),
+            "status_busy": _validate_color(colors_raw.get("status_busy"), "status_busy"),
+            "status_foreground": _validate_color(
+                colors_raw.get("status_foreground"), "status_foreground"
+            ),
         }
         themes[theme_name] = Theme(name=theme_name, label=label, colors=colors)
 
@@ -215,12 +221,15 @@ class LauncherGui:
         self.help_label = None
         self.header_font = None
         self.output_font = None
+        self.button_font = None
         self.base_font_sizes: Dict[str, int] = {}
         self.base_header_size = 18
         self.base_output_size = 14
+        self.base_button_size = 14
         self.zoom_level = 1.0
         self.last_non_contrast_theme = self.gui_config.default_theme
         self.contrast_theme = self._resolve_contrast_theme()
+        self.status_palette: Dict[str, str] = {}
 
         self.root.title("Launcher – Startübersicht")
         self.root.minsize(640, 420)
@@ -254,6 +263,9 @@ class LauncherGui:
             *self.gui_config.themes.keys(),
             command=lambda _value: self.apply_theme(self.theme_var.get()),
         )
+        if self.button_font is not None:
+            self.theme_menu.configure(font=self.button_font)
+        self.theme_menu.configure(padx=8, pady=4)
         self.theme_menu.configure(takefocus=1)
         self.theme_menu.grid(row=0, column=1, sticky="w", padx=(8, 24))
 
@@ -264,8 +276,11 @@ class LauncherGui:
             variable=self.show_all_var,
             command=self.refresh,
         )
+        if self.button_font is not None:
+            self.show_all_check.configure(font=self.button_font)
+        self.show_all_check.configure(padx=6, pady=4)
         self.show_all_check.configure(takefocus=1, underline=0)
-        self.show_all_check.grid(row=0, column=2, sticky="w")
+        self.show_all_check.grid(row=0, column=2, sticky="w", padx=(8, 0), pady=4)
 
         self.debug_var = tk.BooleanVar(value=self.debug)
         self.debug_check = tk.Checkbutton(
@@ -274,14 +289,20 @@ class LauncherGui:
             variable=self.debug_var,
             command=self.refresh,
         )
+        if self.button_font is not None:
+            self.debug_check.configure(font=self.button_font)
+        self.debug_check.configure(padx=6, pady=4)
         self.debug_check.configure(takefocus=1, underline=0)
-        self.debug_check.grid(row=1, column=0, sticky="w", pady=(8, 0))
+        self.debug_check.grid(row=1, column=0, sticky="w", pady=(8, 0), padx=(0, 12))
 
         self.refresh_button = tk.Button(
             controls,
             text="Übersicht aktualisieren",
             command=self.refresh,
         )
+        if self.button_font is not None:
+            self.refresh_button.configure(font=self.button_font)
+        self.refresh_button.configure(padx=12, pady=6)
         self.refresh_button.configure(takefocus=1, underline=0)
         self.refresh_button.grid(row=1, column=2, sticky="e", padx=(0, 0), pady=(8, 0))
 
@@ -359,6 +380,7 @@ class LauncherGui:
             self.base_font_sizes[name] = int(font_obj.cget("size"))
         self.header_font = tkfont.Font(family="Arial", size=self.base_header_size, weight="bold")
         self.output_font = tkfont.Font(family="Arial", size=self.base_output_size)
+        self.button_font = tkfont.Font(family="Arial", size=self.base_button_size, weight="bold")
         self._apply_zoom()
 
     def _bind_accessibility_shortcuts(self) -> None:
@@ -391,7 +413,7 @@ class LauncherGui:
         self.zoom_level = new_level
         self._apply_zoom()
         percent = int(round(self.zoom_level * 100))
-        self._set_status(f"Zoom: {percent} %", busy=False)
+        self._set_status(f"Zoom: {percent} %", state="success")
 
     def _apply_zoom(self) -> None:
         if not isinstance(self.zoom_level, (int, float)):
@@ -411,6 +433,9 @@ class LauncherGui:
         if self.output_font is not None:
             output_size = max(11, int(round(self.base_output_size * self.zoom_level)))
             self.output_font.configure(size=output_size)
+        if self.button_font is not None:
+            button_size = max(12, int(round(self.base_button_size * self.zoom_level)))
+            self.button_font.configure(size=button_size)
 
     def _bind_responsive_layout(self) -> None:
         self.root.bind("<Configure>", lambda _event: self._update_wrap_length())
@@ -454,7 +479,7 @@ class LauncherGui:
         if self.theme_var is None:
             raise GuiLauncherError("Theme-Auswahl ist nicht verfügbar.")
         if self.contrast_theme is None:
-            self._set_status("Kein Kontrast-Theme vorhanden.", busy=False)
+            self._set_status("Kein Kontrast-Theme vorhanden.", state="error")
             return
         current = self.theme_var.get()
         if current == self.contrast_theme:
@@ -464,7 +489,7 @@ class LauncherGui:
             target = self.contrast_theme
         self._set_theme(target)
         label = self.gui_config.themes[target].label
-        self._set_status(f"Farbschema aktiv: {label}", busy=False)
+        self._set_status(f"Farbschema aktiv: {label}", state="success")
 
     def _set_theme(self, theme_name: str) -> None:
         clean_name = _require_text(theme_name, "theme_name")
@@ -484,11 +509,18 @@ class LauncherGui:
         accent = theme.colors["accent"]
         button_bg = theme.colors["button_background"]
         button_fg = theme.colors["button_foreground"]
+        self.status_palette = {
+            "success": theme.colors["status_success"],
+            "error": theme.colors["status_error"],
+            "busy": theme.colors["status_busy"],
+            "foreground": theme.colors["status_foreground"],
+        }
 
         widgets = self.root.winfo_children()
         self.root.configure(background=bg)
         for widget in widgets:
             self._apply_widget_style(widget, bg, fg, accent, button_bg, button_fg)
+        self._apply_status_style("success")
 
     def _apply_widget_style(
         self,
@@ -531,6 +563,8 @@ class LauncherGui:
         if isinstance(widget, tk.Text):
             widget.configure(highlightbackground=accent, highlightcolor=accent)
         if isinstance(widget, tk.OptionMenu):
+            if self.button_font is not None:
+                widget.configure(font=self.button_font)
             widget.configure(
                 highlightbackground=accent,
                 highlightcolor=accent,
@@ -543,6 +577,8 @@ class LauncherGui:
                 activebackground=accent,
                 activeforeground=button_fg,
             )
+            if self.button_font is not None:
+                menu.configure(font=self.button_font)
 
         for child in widget.winfo_children():
             self._apply_widget_style(child, background, foreground, accent, button_bg, button_fg)
@@ -551,7 +587,7 @@ class LauncherGui:
         show_all = bool(self.show_all_var.get())
         debug = bool(self.debug_var.get())
         try:
-            self._set_status("Prüfe Module…", busy=True)
+            self._set_status("Prüfe Module…", state="busy")
             modules = load_modules(self.module_config)
             modules = filter_modules(modules, show_all)
             root_dir = self.module_config.resolve().parents[1]
@@ -567,9 +603,9 @@ class LauncherGui:
             )
             logging.error("GUI-Launcher Fehler: %s", exc)
             self._show_error(str(exc))
-            self._set_status("Fehler aufgetreten. Bitte Hinweise lesen.", busy=False)
+            self._set_status("Fehler aufgetreten. Bitte Hinweise lesen.", state="error")
         else:
-            self._set_status("Bereit.", busy=False)
+            self._set_status("Bereit.", state="success")
 
         self._set_output(text)
 
@@ -582,13 +618,27 @@ class LauncherGui:
         self.output_text.insert("end", clean_text)
         self.output_text.configure(state="disabled")
 
-    def _set_status(self, message: str, busy: bool) -> None:
+    def _set_status(self, message: str, state: str = "success") -> None:
         if not isinstance(message, str) or not message.strip():
             raise GuiLauncherError("Statusmeldung ist leer.")
+        clean_state = _require_text(state, "status_state")
+        if clean_state not in {"success", "error", "busy"}:
+            raise GuiLauncherError("Status-State ist ungültig.")
         if self.status_var is not None:
             self.status_var.set(f"Status: {message}")
-        self.root.configure(cursor="watch" if busy else "")
+        self._apply_status_style(clean_state)
+        self.root.configure(cursor="watch" if clean_state == "busy" else "")
         self.root.update_idletasks()
+
+    def _apply_status_style(self, state: str) -> None:
+        if self.status_label is None or not self.status_palette:
+            return
+        bg = self.status_palette.get(state, self.status_palette.get("success", ""))
+        fg = self.status_palette.get("foreground", "")
+        if bg:
+            self.status_label.configure(bg=bg)
+        if fg:
+            self.status_label.configure(fg=fg)
 
     def _show_error(self, message: str) -> None:
         import tkinter.messagebox as messagebox

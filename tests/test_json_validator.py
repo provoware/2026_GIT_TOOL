@@ -1,0 +1,63 @@
+import json
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parents[1] / "system"))
+
+from json_validator import validate_json_file
+
+
+class JsonValidatorTests(unittest.TestCase):
+    def test_launcher_gui_config_validates(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            config_dir = Path(tmpdir) / "config"
+            config_dir.mkdir(parents=True)
+            config_path = config_dir / "launcher_gui.json"
+            config_path.write_text(
+                json.dumps(
+                    {
+                        "default_theme": "hell",
+                        "themes": {
+                            "hell": {
+                                "label": "Hell",
+                                "colors": {
+                                    "background": "#ffffff",
+                                    "foreground": "#111111",
+                                    "accent": "#005ea5",
+                                    "button_background": "#e6f0fb",
+                                    "button_foreground": "#0b2d4d",
+                                    "status_success": "#1b5e20",
+                                    "status_error": "#b00020",
+                                    "status_busy": "#005ea5",
+                                    "status_foreground": "#ffffff",
+                                },
+                            }
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            result = validate_json_file(config_path)
+
+            self.assertEqual([], result.issues)
+
+    def test_modules_config_rejects_empty_modules(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            config_dir = Path(tmpdir) / "config"
+            config_dir.mkdir(parents=True)
+            config_path = config_dir / "modules.json"
+            config_path.write_text(
+                json.dumps({"version": "1.0", "modules": []}),
+                encoding="utf-8",
+            )
+
+            result = validate_json_file(config_path)
+
+            self.assertTrue(result.issues)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.30] – 2026-01-21
+- Start-Routine: Fehleralternativen statt Abbruch ergänzt (Hinweise + Sammelreport).
+- Start-Routine: JSON-Validierung und Dateinamenkorrektur integriert.
+- GUI-Launcher: Großbutton-UI (größere Buttons/Schriften) umgesetzt.
+- GUI-Launcher: Farbiges Sofort-Feedback im Statusbereich ergänzt.
+- Qualität: JSON-Validator und Dateinamen-Fixer inklusive Tests ergänzt.
+
 ## [0.1.29] – 2026-01-20
 - GUI-Launcher: Kontrastmodus per Hotkey (Alt+K) ergänzt.
 - GUI-Launcher: Zoom per Strg+Mausrad für bessere Lesbarkeit ergänzt.
