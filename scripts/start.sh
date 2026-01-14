@@ -139,10 +139,13 @@ run_step "Fortschritt berechnen" \
   python "${ROOT_DIR}/system/todo_manager.py" progress --write-progress "${DEBUG_ARGS[@]}"
 
 CURRENT_STEP=8
-update_progress "Module werden geprüft"
-run_step "Module prüfen" \
-  "Bitte config/modules.json und Module prüfen (id, path, manifest)." \
-  python "${ROOT_DIR}/system/module_checker.py" --config "${ROOT_DIR}/config/modules.json" "${DEBUG_ARGS[@]}"
+update_progress "Module werden geprüft (inkl. Verbund-Checks)"
+run_step "Module prüfen (Verbund-Checks)" \
+  "Bitte config/modules.json und module_selftests.json prüfen (id, path, manifest, tests)." \
+  python "${ROOT_DIR}/system/module_integration_checks.py" \
+  --config "${ROOT_DIR}/config/modules.json" \
+  --selftests "${ROOT_DIR}/config/module_selftests.json" \
+  "${DEBUG_ARGS[@]}"
 
 CURRENT_STEP=9
 update_progress "Tests werden geprüft (nur nach kompletter Runde)"

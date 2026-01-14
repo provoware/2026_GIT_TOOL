@@ -96,6 +96,10 @@ def _check_file(
 def _check_json(item: CheckItem, issues: List[str]) -> None:
     try:
         json.loads(item.path.read_text(encoding="utf-8"))
+    except PermissionError:
+        issues.append(f"JSON nicht lesbar: {item.label} ({item.path}).")
+    except OSError as exc:
+        issues.append(f"JSON nicht lesbar: {item.label} ({item.path}). Grund: {exc}")
     except FileNotFoundError:
         issues.append(f"JSON fehlt: {item.label} ({item.path}).")
     except json.JSONDecodeError:
@@ -151,7 +155,7 @@ def _build_default_files(root: Path) -> dict[Path, str]:
         },
     }
     test_gate_payload = {
-        "threshold": 3,
+        "threshold": 5,
         "todo_path": "todo.txt",
         "state_path": "data/test_state.json",
         "tests_command": ["bash", "scripts/run_tests.sh"],

@@ -50,6 +50,8 @@ def _require_dict(value: object, label: str) -> dict:
 def _load_json(path: Path) -> dict:
     try:
         return json.loads(path.read_text(encoding="utf-8"))
+    except OSError as exc:
+        raise JsonValidationError(f"JSON ist nicht lesbar: {path}") from exc
     except json.JSONDecodeError as exc:
         raise JsonValidationError(f"JSON ist ungültig: {path}") from exc
 
@@ -138,7 +140,10 @@ def iter_json_files(root: Path) -> Iterable[Path]:
 
 def validate_json_file(path: Path) -> ValidationResult:
     ensure_path(path, "json_path", JsonValidationError)
-    data = _load_json(path)
+    try:
+        data = _load_json(path)
+    except JsonValidationError as exc:
+        return ValidationResult(path=path, issues=[str(exc)])
     issues: List[str] = []
     validator = VALIDATORS.get(path.name)
     try:

@@ -10,12 +10,19 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
-Nächste 5 kleinste Aufgaben (Runde 2026-01-23) – offen
-[ ] QA-08: Sandbox-Analyse erweitern (Sandbox = Testumgebung). | fertig wenn: Analyse deckt Sandbox-Risiken ab.
-[ ] TEST-03: Robustheitstest für fehlende Rechte/beschädigte Dateien. | fertig wenn: System bleibt stabil.
-[ ] TEST-04: Modulübergreifende Funktionschecks implementieren. | fertig wenn: Checks laufen.
-[ ] TEST-05: Vollautomatische Codequalität- und Formatprüfung (Linting/Formatting = Code-Check). | fertig wenn: Checks laufen automatisch.
-[ ] TEST-06: Vollautomatische Testausführung über Startroutine (Test-Automatik). | fertig wenn: Tests starten selbst.
+Nächste 5 kleinste Aufgaben (Runde 2026-01-24) – offen
+[ ] DATA-06: Trennung von Systemlogik und variablen Daten/Configs (Config = Konfiguration). | fertig wenn: klare Ordnertrennung umgesetzt.
+[ ] UX-05: Perfektes Farb- und Kontrastverhalten mit mehreren Themes. | fertig wenn: Themes dokumentiert.
+[ ] START-09: Safe-Mode (schreibgeschützt) beim Start. | fertig wenn: Start ohne Schreibzugriffe möglich.
+[ ] START-10: Sandbox-Modus (virtuelle Umgebung) implementieren. | fertig wenn: Start in isolierter Umgebung.
+[ ] ARCH-05: Projektstruktur final definieren und standardisieren. | fertig wenn: Struktur-Standard dokumentiert.
+
+Nächste 5 kleinste Aufgaben (Runde 2026-01-23) – erledigt
+[x] QA-08: Sandbox-Analyse erweitern (Sandbox = Testumgebung). | fertig wenn: Analyse deckt Sandbox-Risiken ab.
+[x] TEST-03: Robustheitstest für fehlende Rechte/beschädigte Dateien. | fertig wenn: System bleibt stabil.
+[x] TEST-04: Modulübergreifende Funktionschecks implementieren. | fertig wenn: Checks laufen.
+[x] TEST-05: Vollautomatische Codequalität- und Formatprüfung (Linting/Formatting = Code-Check). | fertig wenn: Checks laufen automatisch.
+[x] TEST-06: Vollautomatische Testausführung über Startroutine (Test-Automatik). | fertig wenn: Tests starten selbst.
 
 Nächste 5 kleinste Aufgaben (Runde 2026-01-22) – erledigt
 [x] QA-03: Fehlerklassifizierung (leicht/mittel/schwer). | fertig wenn: Fehlerstufe angezeigt.

@@ -23,6 +23,12 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 - `./scripts/run_tests.sh` (Tests + Codequalität = automatische Prüfung von Funktionen und Stil)
 - `./scripts/repo_basis_check.sh` (Repo-Check = Basisprüfung für Git-Remote)
 
+## Release-Checks & Test-Automatik
+- **Start-Routine** prüft automatisch Struktur, Abhängigkeiten und Module mit klaren Hinweisen (Feedback).
+- **Test-Automatik** startet Tests automatisch nach einer abgeschlossenen Runde (5 erledigte Tasks).
+- **Modulverbund-Checks** prüfen konsistente Moduleinträge, Selftests und Manifest-IDs.
+- **Codequalität & Formatierung** laufen automatisch über Ruff (Linting = Regelprüfung) und Black (Formatierung).
+
 ## Architektur & Struktur (geplant)
 - **Plugin-System** mit Registry (Registry = zentrale Modul-Liste).
 - **Modul-API** mit klaren Schnittstellen, Events und States (State = Zustand).
@@ -60,6 +66,10 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 ## Logging und Debugging
 - **Logging (Protokollierung)**: Jede Aktion soll protokolliert werden.
 - **Debugging (Fehlersuche)**: Optionaler Modus mit mehr Details.
+
+## Sandbox-Analyse (Kurzfassung)
+- **Risiko**: Ohne Sandbox-Regeln können Module zu viele Rechte erhalten.
+- **Schutz**: Start ohne Adminrechte, Pfadgrenzen, Safe-Mode (schreibgeschützt) und klare Netzwerkhinweise.
 
 ## Weiterführende Vorschläge für Laien
 - Lies die Datei `todo.txt`, um die nächsten kleinen Schritte zu sehen.

@@ -2,7 +2,7 @@
 
 Stand: 2026-01-14
 
-- Gesamt: 51 Tasks
-- Erledigt: 46 Tasks
+- Gesamt: 56 Tasks
+- Erledigt: 51 Tasks
 - Offen: 5 Tasks
-- Fortschritt: 90,20 %
+- Fortschritt: 91,07 %
