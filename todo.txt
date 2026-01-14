@@ -8,7 +8,21 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-03: Screenreader-Labels ergänzen (Screenreader = Vorlese-Programm).
 [x] REL-GUI-04: Fehler-/Statusmeldungen in einfacher Sprache + Lösungsschritt.
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
-[ ] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
+[x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
+
+Nächste 5 kleinste Aufgaben (Runde 2026-01-20) – offen
+[ ] ACC-01: Kontrastmodus per Hotkey umschaltbar. | fertig wenn: Hotkey aktiv.
+[ ] ACC-02: Zoom per STRG + Mausrad global aktivieren. | fertig wenn: Zoom überall funktioniert.
+[ ] ACC-03: Screenreader-freundliche Bereichsstruktur. | fertig wenn: Bereiche semantisch benannt.
+[ ] UX-03: Hilfetexte direkt in der GUI integrieren. | fertig wenn: Hilfe pro Ansicht.
+[ ] QA-06: Jede Funktion validiert Eingabe und Ausgabe (Input/Output = Ein-/Ausgabe). | fertig wenn: Validierung vorhanden.
+
+Nächste 5 kleinste Aufgaben (Runde 2026-01-19) – erledigt
+[x] REL-GUI-06: Responsive Layout für kleine Auflösungen prüfen.
+[x] CODE-02: Setup-Skripte trennen (check_env.sh, bootstrap.sh, start.sh).
+[x] QA-07: Debugging- und Logging-Modus (Debugging = Fehlersuche).
+[x] DOC-04: Interne Standards im Tool anzeigen (Konfig, Regeln, Tests).
+[x] DOC-05: Weiterführende Laienvorschläge ergänzen (Tipps für Neulinge).
 
 Nächste 5 kleinste Aufgaben (Runde 2026-01-18) – erledigt
 [x] DOC-06: Aufgaben A–I strukturiert in TODO.md ergänzt (mit IDs + Kriterien).
@@ -47,3 +61,6 @@ Laien-Tipps (hilfreich, optional)
 - Tests starten: `./scripts/run_tests.sh` (Tests = automatische Prüfroutinen).
 - Fehler suchen: `logs/test_run.log` öffnen (Log = Protokoll) und letzten Eintrag lesen.
 - Selbstreparatur: `python system/health_check.py --root . --self-repair` (Self-Repair = Selbstreparatur).
+- Standards lesen: `./scripts/show_standards.sh --list` (Standards = interne Regeln).
+- Start mit Debugging: `./scripts/start.sh --debug` (Debugging = detaillierte Fehlersuche).
+- Start-Log speichern: `./scripts/start.sh --log-file logs/start_run.log` (Log = Protokoll).

@@ -97,3 +97,10 @@
 - Doku: Styleguide (PEP8 + Projektregeln) ergänzt.
 - Doku: Weiterführende Laienvorschläge erweitert.
 - Doku: todo.txt mit neuer Rundeliste synchronisiert.
+
+## 2026-01-19
+- UI: Launcher-GUI für kleine Fenster optimiert (zweizeilige Steuerleiste, Footer-Umbruch).
+- Start: Setup-Skripte getrennt (check_env.sh, bootstrap.sh).
+- Start: Debug- und Logging-Modus für die Start-Routine ergänzt.
+- Tooling: Standards-Viewer für interne Standards und Styleguide ergänzt.
+- Doku: Responsivitäts-Check der Launcher-GUI dokumentiert.

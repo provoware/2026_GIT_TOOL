@@ -32,7 +32,14 @@ Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
 - [x] REL-GUI-03: Screenreader-Labels ergänzen (Screenreader = Vorlese-Programm).
 - [x] REL-GUI-04: Fehler-/Statusmeldungen in einfacher Sprache + Lösungsschritt.
 - [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
-- [ ] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
+- [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
+
+Nächste 5 kleinste Aufgaben (Runde 2026-01-20) – offen
+- [ ] ACC-01: Kontrastmodus per Hotkey umschaltbar. | fertig wenn: Hotkey aktiv.
+- [ ] ACC-02: Zoom per STRG + Mausrad global aktivieren. | fertig wenn: Zoom überall funktioniert.
+- [ ] ACC-03: Screenreader-freundliche Bereichsstruktur. | fertig wenn: Bereiche semantisch benannt.
+- [ ] UX-03: Hilfetexte direkt in der GUI integrieren. | fertig wenn: Hilfe pro Ansicht.
+- [ ] QA-06: Jede Funktion validiert Eingabe und Ausgabe (Input/Output = Ein-/Ausgabe). | fertig wenn: Validierung vorhanden.
 
 ## Laien-Tipps (aus todo.txt, erweitert)
 - Starte zuerst den GUI-Launcher (Startübersicht) und teste mit der Tab-Taste (Tastaturbedienung).
@@ -43,6 +50,16 @@ Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
 - Tests starten: `./scripts/run_tests.sh` (Tests = automatische Prüfroutinen).
 - Fehler suchen: `logs/test_run.log` öffnen (Log = Protokoll) und letzten Eintrag lesen.
 - Selbstreparatur: `python system/health_check.py --root . --self-repair` (Self-Repair = Selbstreparatur).
+- Standards lesen: `./scripts/show_standards.sh --list` (Standards = interne Regeln).
+- Start mit Debugging: `./scripts/start.sh --debug` (Debugging = detaillierte Fehlersuche).
+- Start-Log speichern: `./scripts/start.sh --log-file logs/start_run.log` (Log = Protokoll).
+
+## Runde 2026-01-19 (5 kleinste Aufgaben dieser Runde) – erledigt
+- [x] REL-GUI-06: Responsive Layout für kleine Auflösungen prüfen. | fertig wenn: Bedienung bleibt möglich.
+- [x] CODE-02: Setup-Skripte trennen (check_env.sh, bootstrap.sh, start.sh). | fertig wenn: Skripte getrennt vorhanden.
+- [x] QA-07: Debugging- und Logging-Modus (Debugging = Fehlersuche). | fertig wenn: Modus schaltbar.
+- [x] DOC-04: Interne Standards im Tool anzeigen (Konfig, Regeln, Tests). | fertig wenn: Standards sichtbar.
+- [x] DOC-05: Weiterführende Laienvorschläge ergänzen (Tipps für Neulinge). | fertig wenn: Tipps vorhanden.
 
 ## Runde 2026-01-18 (5 kleinste Aufgaben dieser Runde) – erledigt
 - [x] DOC-06: Aufgaben A–I strukturiert in TODO.md ergänzt (mit IDs + Kriterien). | fertig wenn: A–I-Backlog vorhanden.
@@ -74,7 +91,11 @@ Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
 
 ## Offene Aufgaben (kleinste zuerst)
 Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
-- [ ] REL-GUI-06: Responsive Layout für kleine Auflösungen prüfen. | fertig wenn: Bedienung bleibt möglich.
+- [ ] ACC-01: Kontrastmodus per Hotkey umschaltbar. | fertig wenn: Hotkey aktiv.
+- [ ] ACC-02: Zoom per STRG + Mausrad global aktivieren. | fertig wenn: Zoom überall funktioniert.
+- [ ] ACC-03: Screenreader-freundliche Bereichsstruktur. | fertig wenn: Bereiche semantisch benannt.
+- [ ] UX-03: Hilfetexte direkt in der GUI integrieren. | fertig wenn: Hilfe pro Ansicht.
+- [ ] QA-06: Jede Funktion validiert Eingabe und Ausgabe (Input/Output = Ein-/Ausgabe). | fertig wenn: Validierung vorhanden.
 
 ## Backlog (nach Bereichen, noch zu priorisieren)
 
@@ -103,7 +124,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
 
 ### E. Code-Sauberkeit
 - [ ] CODE-01: Einheitliche Modulstruktur erzwingen (`module.json`, `main.py`, `ui/`). | fertig wenn: Validator blockiert Abweichung.
-- [ ] CODE-02: Setup-Skripte trennen (check_env.sh, bootstrap.sh, start.sh). | fertig wenn: Skripte getrennt vorhanden.
+- [x] CODE-02: Setup-Skripte trennen (check_env.sh, bootstrap.sh, start.sh). | fertig wenn: Skripte getrennt vorhanden.
 - [ ] CODE-03: Starke Typisierung + klare Moduleingänge definieren. | fertig wenn: Typen + Entry-Contracts dokumentiert.
 - [ ] CODE-04: Styleguide (PEP8 + Projektregeln) als Markdown beilegen. | fertig wenn: Styleguide vorhanden.
 
@@ -197,7 +218,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
 - [ ] QA-04: Ampelsystem für Dateifehler. | fertig wenn: Ampelstatus sichtbar.
 - [ ] QA-05: Modul-Selbsttests mit GUI-Ausgabe. | fertig wenn: Teststatus sichtbar.
 - [ ] QA-06: Jede Funktion validiert Eingabe und Ausgabe (Input/Output = Ein-/Ausgabe). | fertig wenn: Validierung vorhanden.
-- [ ] QA-07: Debugging- und Logging-Modus (Debugging = Fehlersuche). | fertig wenn: Modus schaltbar.
+- [x] QA-07: Debugging- und Logging-Modus (Debugging = Fehlersuche). | fertig wenn: Modus schaltbar.
 
 ### Timeline & Visualisierung
 - [ ] VIS-01: Timeline-Tool responsiv überarbeiten. | fertig wenn: passt sich an.
@@ -208,8 +229,8 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
 - [ ] DOC-01: CHANGELOG-Automatik einbauen. | fertig wenn: Changelog automatisch.
 - [ ] DOC-02: README-/Doku-Autoupdater erstellen. | fertig wenn: Doku aktualisiert.
 - [ ] DOC-03: Developer-Panel im Dashboard integrieren. | fertig wenn: Panel sichtbar.
-- [ ] DOC-04: Interne Standards im Tool anzeigen (Konfig, Regeln, Tests). | fertig wenn: Standards sichtbar.
-- [ ] DOC-05: Weiterführende Laienvorschläge ergänzen (Tipps für Neulinge). | fertig wenn: Tipps vorhanden.
+- [x] DOC-04: Interne Standards im Tool anzeigen (Konfig, Regeln, Tests). | fertig wenn: Standards sichtbar.
+- [x] DOC-05: Weiterführende Laienvorschläge ergänzen (Tipps für Neulinge). | fertig wenn: Tipps vorhanden.
 
 ### Tests & Stabilität
 - [ ] TEST-01: Automatisierte GUI-Tests einbinden. | fertig wenn: GUI-Tests laufen.
