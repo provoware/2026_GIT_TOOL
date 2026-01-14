@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.22] – 2026-01-14
+- Qualität: Health-Check bereinigt und wieder lauffähig gemacht (Syntax + Self-Repair).
+- Doku: Doppelte Versionsabschnitte im Changelog zusammengeführt.
+
 ## [0.1.21] – 2026-01-16
 - Doku: PROJEKT_INFO um Automatik, Barrierefreiheit und Laienhinweise ergänzt.
 - Doku: ANALYSE_BERICHT mit Ist-Analyse, Best Practices und Laienvorschlägen aktualisiert.
@@ -7,14 +11,12 @@
 ## [0.1.20] – 2026-01-15
 - Start: Health-Check mit Selbstreparatur ergänzt (fehlende Dateien/Ordner werden erstellt).
 - Qualität: Pfad-Validierung in System-Skripten vereinheitlicht (Duplikate reduziert).
-## [0.1.20] – 2026-01-14
 - Start: Health-Check mit Self-Repair ergänzt, der fehlende Basiselemente automatisch anlegt.
 - Start: Start-Routine ruft den Health-Check jetzt mit Self-Repair und klarer Meldung auf.
 
 ## [0.1.19] – 2026-01-14
 - Qualität: Unbenutzten Import im Health-Check entfernt (Ruff sauber).
 - Doku: Doppelte Changelog-Einträge für Version 0.1.16 zusammengeführt.
-## [0.1.19] – 2026-01-09
 - Doku: PROJEKT_INFO mit Ordnerstruktur und Tooldateien ergänzt (Pflegepflicht).
 - Doku: Analysebericht zu Inkonsistenzen, Redundanzen und Robustheit ergänzt.
 - Qualität: Unbenutzten Import im Health-Check entfernt (Linting/Formatierung grün).
@@ -36,7 +38,6 @@
 ## [0.1.15] – 2026-01-13
 - Tests: Testskript robuster gemacht (Fehlerfalle + klare Hinweise).
 - Tests: Hilfe-Option für das Testskript ergänzt.
-## [0.1.15] – 2026-01-09
 - Qualität: Requirements-Parser ignoriert Inline-Kommentare.
 - Module: Modul-Check validiert Entry-Pfade gegen Pfad-Traversal.
 

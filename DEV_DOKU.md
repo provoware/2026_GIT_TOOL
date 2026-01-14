@@ -26,8 +26,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Health-Check kann fehlende Basiselemente automatisch per Self-Repair anlegen.
 - Start-Routine ruft den Health-Check mit aktivem Self-Repair auf.
 - Launcher/GUI nutzen gemeinsame Pfad- und JSON-Validierung, um Duplikate zu reduzieren.
-- Health-Check ist Ruff-konform (ungenutzte Importe entfernt).
-- Changelog-Einträge für Version 0.1.16 sind zusammengeführt.
+- Health-Check ist lauffähig, Ruff-konform und nutzt konsistente Datumswerte (Self-Repair aktiv).
+- Changelog-Abschnitte mit doppelten Versionsnummern sind zusammengeführt (0.1.20/0.1.19/0.1.15).
 - Info-Dateien (PROJEKT_INFO/ANALYSE_BERICHT) sind aktualisiert und laienfreundlich erläutert.
 
 ## Struktur (aktuell)
