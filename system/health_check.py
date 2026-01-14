@@ -7,6 +7,7 @@ import argparse
 import json
 import logging
 import os
+import stat
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -91,6 +92,19 @@ def _check_file(
         issues.append(f"Pfad ist keine Datei: {item.label} ({item.path}).")
         return
     if not os.access(item.path, os.R_OK):
+        if self_repair:
+            try:
+                mode = item.path.stat().st_mode
+                item.path.chmod(mode | stat.S_IRUSR)
+                logging.info("Self-Repair: Leserechte gesetzt: %s (%s).", item.label, item.path)
+                repairs.append(f"Leserechte repariert: {item.label} ({item.path}).")
+                return
+            except OSError as exc:
+                issues.append(
+                    f"Self-Repair fehlgeschlagen: Leserechte {item.label} ({item.path}). "
+                    f"Grund: {exc}"
+                )
+                return
         issues.append(f"Datei nicht lesbar: {item.label} ({item.path}).")
 
 
@@ -107,13 +121,33 @@ def _check_json(item: CheckItem, issues: List[str]) -> None:
         issues.append(f"JSON ungültig: {item.label} ({item.path}).")
 
 
-def _check_executable(item: CheckItem, issues: List[str]) -> None:
+def _check_executable(
+    item: CheckItem,
+    issues: List[str],
+    repairs: List[str],
+    self_repair: bool,
+) -> None:
     if not item.path.exists():
         issues.append(f"Skript fehlt: {item.label} ({item.path}).")
         return
     if not os.access(item.path, os.X_OK):
+        if self_repair:
+            try:
+                mode = item.path.stat().st_mode
+                item.path.chmod(mode | stat.S_IXUSR)
+                logging.info(
+                    "Self-Repair: Ausführrechte gesetzt: %s (%s).", item.label, item.path
+                )
+                repairs.append(f"Ausführrechte repariert: {item.label} ({item.path}).")
+                return
+            except OSError as exc:
+                issues.append(
+                    f"Self-Repair fehlgeschlagen: Ausführrechte {item.label} ({item.path}). "
+                    f"Grund: {exc}"
+                )
+                return
         issues.append(
-            f"Skript ist nicht ausführbar: {item.label} ({item.path})." " Tipp: chmod +x ausführen."
+            f"Skript ist nicht ausführbar: {item.label} ({item.path}). Tipp: chmod +x ausführen."
         )
 
 
@@ -278,7 +312,7 @@ def run_health_check(root: Path, self_repair: bool = False) -> tuple[List[str], 
         "Skriptliste",
     )
     for item in script_items:
-        _check_executable(item, issues)
+        _check_executable(item, issues, repairs, self_repair)
 
     return issues, repairs
 

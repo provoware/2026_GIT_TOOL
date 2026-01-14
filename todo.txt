@@ -10,6 +10,12 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Nächste 4 kleinste Aufgaben (Runde 2026-01-28) – erledigt
+[x] COM-01: One-Click-Diag (Tests + Ergebnisse in Fenster). | fertig wenn: Diagnosen sichtbar.
+[x] SEC-01: Rechteprobleme beim Start automatisch korrigieren. | fertig wenn: Self-Repair behebt Rechte.
+[x] CODE-03: Starke Typisierung + klare Moduleingänge definieren. | fertig wenn: Typen + Entry-Contracts dokumentiert.
+[x] DOC-02: README-/Doku-Autoupdater erstellen. | fertig wenn: Doku aktualisiert.
+
 Nächste 4 kleinste Aufgaben (Runde 2026-01-27) – erledigt
 [x] ARCH-07: Modul-API-Validator ergänzen (Validator = automatische Prüfung). | fertig wenn: `run`, `validateInput`, `validateOutput` werden geprüft.
 [x] ARCH-08: Modul-Check um Modul-API-Check erweitern (Check = Prüfung). | fertig wenn: klare Fehlermeldungen im Modul-Check erscheinen.

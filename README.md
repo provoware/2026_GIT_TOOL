@@ -4,11 +4,21 @@
 Dieses Projekt ist ein sauberer Neuaufbau mit Fokus auf Robustheit, Nachvollziehbarkeit und Linux. Ziel ist ein barrierefreies Tool, das verständlich bleibt und klare Standards nutzt.
 
 ## Ist-Analyse (aktueller Stand)
-- Es gibt noch keine vollständige Anwendung mit allen geplanten Modulen; die Start-Routine liegt als Skript vor.
-- Die Ordnertrennung ist umgesetzt und wird per Struktur-Check geprüft.
-- Wichtige Qualitätsziele (Barrierefreiheit, Logging, automatische Prüfungen) sind dokumentiert und teilweise umgesetzt.
-- Es fehlen zentrale Architektur-Bausteine wie Plugin-Registry (Registry = zentrale Modul-Liste), Modul-API und ein gemeinsamer Store (Store = Zustands-Speicher).
-- Performance- und Stabilitätsmaßnahmen (Lazy Loading, asynchrones Logging) sind noch nicht umgesetzt.
+- Die Start-Routine ist als Skript verfügbar und führt automatische Prüfungen mit Nutzer-Feedback aus.
+- Die Ordnertrennung (System/Config/Daten) ist umgesetzt und wird per Struktur-Check geprüft.
+- Wichtige Qualitätsziele (Barrierefreiheit, Logging, automatische Prüfungen) sind implementiert und testbar.
+- Zentrale Architektur-Bausteine sind vorhanden: Plugin-Registry (Registry = zentrale Modul-Liste), Modul-API und gemeinsamer Store (Store = Zustands-Speicher).
+- Performance- und Stabilitätsmaßnahmen (Lazy Loading, asynchrones Logging, JSON-Validierung) sind umgesetzt.
+- Komfortfunktionen wie globale Suche, Favoriten und Mini-Panels sind noch offen.
+
+<!-- AUTO-STATUS:START -->
+**Auto-Status (aktualisiert: 2026-01-28)**
+
+- Gesamt: 81 Tasks
+- Erledigt: 81 Tasks
+- Offen: 0 Tasks
+- Fortschritt: 100,00 %
+<!-- AUTO-STATUS:END -->
 
 ## Ziele (in Arbeit)
 - **Barrierefreiheit**: Tastaturbedienung, hoher Kontrast und verständliche Meldungen.
@@ -24,6 +34,8 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 - `./scripts/start.sh --sandbox` (Sandbox = isolierte Kopie für Testläufe)
 - `./scripts/system_scan.sh` (System-Scan = Vorabprüfung ohne Schreiben)
 - `./scripts/run_tests.sh` (Tests + Codequalität = automatische Prüfung von Funktionen und Stil)
+- `python system/diagnostics_runner.py` (Diagnose = Tests und Codequalität mit Zusammenfassung)
+- `./scripts/update_docs.sh` (Doku-Update = Auto-Status in README/DEV_DOKU aktualisieren)
 - `./scripts/repo_basis_check.sh` (Repo-Check = Basisprüfung für Git-Remote)
 
 ## Release-Checks & Test-Automatik
@@ -32,17 +44,31 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 - **Modulverbund-Checks** prüfen konsistente Moduleinträge, Selftests und Manifest-IDs.
 - **Codequalität & Formatierung** laufen automatisch über Ruff (Linting = Regelprüfung) und Black (Formatierung).
 
-## Architektur & Struktur (geplant)
-- **Plugin-System** mit Registry (Registry = zentrale Modul-Liste).
-- **Modul-API** mit klaren Schnittstellen, Events und States (State = Zustand).
+## Architektur & Struktur (umgesetzt)
+- **Plugin-System** mit Registry (Registry = zentrale Modul-Liste) ist aktiv.
+- **Modul-API** mit klaren Schnittstellen, Events und States (State = Zustand) ist dokumentiert.
 - **Zentraler Store** (Store = gemeinsamer Zustands-Speicher) als Single Source of Truth (einzige Quelle) für Theme, Settings und Logging.
 - **Trennung von System/Config/Daten**: Code in `src/` und `system/`, Konfiguration in `config/`, variable Daten in `data/`.
 
-## Performance & Stabilität (geplant)
+## Performance & Stabilität (umgesetzt)
 - **Lazy Loading** (spätes Laden) für Module, um die Startzeit zu verkürzen.
 - **Debounce/Throttle** (gebremstes Auslösen) für teure Aktionen, damit die GUI flüssig bleibt.
 - **Asynchrones Logging** (nicht blockierend), damit Logs die Oberfläche nicht bremsen.
-- **JSON-Validierung** über geprüftes Modell (z. B. Pydantic) für sichere Daten.
+- **JSON-Validierung** über geprüftes Modell für sichere Daten.
+
+## Diagnose (One-Click)
+- Im GUI-Launcher gibt es einen Button „Diagnose starten“.
+- Die Diagnose führt Tests, Modulverbund-Checks und Codequalität aus.
+- Ergebnisse werden direkt in der Übersicht angezeigt und zusätzlich im Log gespeichert.
+
+## Robustheit & Self-Repair
+- Der Health-Check kann fehlende Dateien/Ordner automatisch anlegen.
+- Rechteprobleme (Lesen/Ausführen) werden bei Self-Repair automatisch korrigiert.
+- Tipp: `python system/health_check.py --root . --self-repair` (Self-Repair = Selbstreparatur).
+
+## Modul-API (Typen/Verträge)
+- Standard-Typen stehen in `system/module_api_types.py` (TypedDicts = typisierte Wörterbücher).
+- Der Entry-Contract (Entry = Startdatei des Moduls) ist in `docs/MODUL_API.md` beschrieben.
 
 ## Bedienbarkeit (geplant)
 - Globales Suchfeld im Dashboard (Dateien, Module, Texte).
@@ -81,6 +107,8 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 - Starte die Tests mit `./scripts/run_tests.sh` (Tests = automatische Prüfroutinen).
 - Bei Fehlern: `logs/test_run.log` öffnen (Log = Protokoll) und den letzten Eintrag lesen.
 - Nutze `python system/health_check.py --root . --self-repair` (Self-Repair = Selbstreparatur), wenn Ordner fehlen.
+- Diagnose für Einsteiger: `python system/diagnostics_runner.py` (Diagnose = Tests + Codequalität).
+- Doku-Aktualisierung: `./scripts/update_docs.sh` (Auto-Status = automatisch erzeugter Statusblock).
 
 ## Dateiübersicht
 - `README.md`: Einfache Projekt-Anleitung.

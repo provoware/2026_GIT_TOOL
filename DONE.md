@@ -1,5 +1,12 @@
 # DONE
 
+## 2026-01-28
+- UI: One-Click-Diagnose im GUI-Launcher ergänzt (Tests + Codequalität).
+- Qualität: Health-Check repariert Leserechte und Ausführrechte automatisch.
+- Architektur: Modul-API-Typen (TypedDicts) ergänzt und Entry-Contracts dokumentiert.
+- Doku: Auto-Status-Updater für README/DEV_DOKU ergänzt.
+- Tests: Diagnoserunner und Doku-Updater mit Unit-Tests ergänzt.
+
 ## 2026-01-27
 - Architektur: Modul-API-Validator ergänzt (Pflichtfunktionen `run`, `validateInput`, `validateOutput`).
 - Architektur: Modul-Check um Modul-API-Check erweitert (klare Fehlermeldungen).

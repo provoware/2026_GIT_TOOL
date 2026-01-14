@@ -22,6 +22,7 @@ Die vollständige Struktur steht in `STRUKTUR.md`.
 - `scripts/start.sh`: Führt die Start-Routine (Health-Check, Struktur, Abhängigkeiten) aus.
 - `scripts/system_scan.sh`: System-Scan (Vorabprüfung ohne Schreiben).
 - `scripts/run_tests.sh`: Führt Tests, Codequalität (Linting) und Formatprüfung aus.
+- `scripts/update_docs.sh`: Aktualisiert Auto-Status in README und DEV_DOKU.
 - `scripts/repo_basis_check.sh`: Prüft Git-Setup (Remote + Push-Trockenlauf).
 - `scripts/generate_launcher_gui_contrast_report.py`: Erstellt den Kontrastbericht für den GUI-Launcher.
 - `system/launcher.py`: CLI-Launcher (Modulübersicht).
@@ -29,12 +30,15 @@ Die vollständige Struktur steht in `STRUKTUR.md`.
 - `system/health_check.py`: Health-Check (Pflichtdateien/Ordner prüfen).
 - `system/structure_checker.py`: Struktur-Check (Trennung von System/Config/Daten/Logs).
 - `system/dependency_checker.py`: Abhängigkeiten (Dependencies) prüfen und installieren.
+- `system/diagnostics_runner.py`: One-Click-Diagnose (Tests + Codequalität mit Zusammenfassung).
 - `system/module_checker.py`: Modul-Check (Manifest + Entry-Datei validieren).
 - `system/module_registry.py`: Modul-Registry (Plugin-System) für zentrales Laden.
 - `system/store.py`: Zentraler Store für gemeinsame Zustände.
 - `system/config_models.py`: Geprüfte Konfigurationsmodelle (GUI/Module).
 - `system/logging_center.py`: Zentrales asynchrones Logging.
 - `system/module_loader.py`: Lazy Loader für Modul-Imports (Caching).
+- `system/module_api_types.py`: Standard-Typen für Modul-Input/Output.
+- `system/doc_updater.py`: Doku-Autoupdater für Auto-Status-Blöcke.
 - `system/todo_manager.py`: Fortschritt berechnen und To-Dos archivieren.
 - `system/log_exporter.py`: Logdateien als ZIP exportieren.
 - `ANLEITUNG_TOOL.md`: Laienfreundliche Tool-Anleitung (Schritte, Tipps, FAQ).
