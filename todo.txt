@@ -10,12 +10,19 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
-Nächste 5 kleinste Aufgaben (Runde 2026-01-22) – offen
-[ ] QA-03: Fehlerklassifizierung (leicht/mittel/schwer). | fertig wenn: Fehlerstufe angezeigt.
-[ ] QA-04: Ampelsystem für Dateifehler. | fertig wenn: Ampelstatus sichtbar.
-[ ] QA-05: Modul-Selbsttests mit GUI-Ausgabe. | fertig wenn: Teststatus sichtbar.
-[ ] TEST-01: Automatisierte GUI-Tests einbinden. | fertig wenn: GUI-Tests laufen.
-[ ] TEST-02: Fehler-Simulation (Laienfehler) integrieren. | fertig wenn: klare Fehlerfälle.
+Nächste 5 kleinste Aufgaben (Runde 2026-01-23) – offen
+[ ] QA-08: Sandbox-Analyse erweitern (Sandbox = Testumgebung). | fertig wenn: Analyse deckt Sandbox-Risiken ab.
+[ ] TEST-03: Robustheitstest für fehlende Rechte/beschädigte Dateien. | fertig wenn: System bleibt stabil.
+[ ] TEST-04: Modulübergreifende Funktionschecks implementieren. | fertig wenn: Checks laufen.
+[ ] TEST-05: Vollautomatische Codequalität- und Formatprüfung (Linting/Formatting = Code-Check). | fertig wenn: Checks laufen automatisch.
+[ ] TEST-06: Vollautomatische Testausführung über Startroutine (Test-Automatik). | fertig wenn: Tests starten selbst.
+
+Nächste 5 kleinste Aufgaben (Runde 2026-01-22) – erledigt
+[x] QA-03: Fehlerklassifizierung (leicht/mittel/schwer). | fertig wenn: Fehlerstufe angezeigt.
+[x] QA-04: Ampelsystem für Dateifehler. | fertig wenn: Ampelstatus sichtbar.
+[x] QA-05: Modul-Selbsttests mit GUI-Ausgabe. | fertig wenn: Teststatus sichtbar.
+[x] TEST-01: Automatisierte GUI-Tests einbinden. | fertig wenn: GUI-Tests laufen.
+[x] TEST-02: Fehler-Simulation (Laienfehler) integrieren. | fertig wenn: klare Fehlerfälle.
 
 Nächste 5 kleinste Aufgaben (Runde 2026-01-21) – erledigt
 [x] START-06: Fehleralternativen statt Abbruch. | fertig wenn: Vorschläge statt Stop.

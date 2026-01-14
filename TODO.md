@@ -35,12 +35,19 @@ Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
 - [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 - [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
-Nächste 5 kleinste Aufgaben (Runde 2026-01-22) – offen
-- [ ] QA-03: Fehlerklassifizierung (leicht/mittel/schwer). | fertig wenn: Fehlerstufe angezeigt.
-- [ ] QA-04: Ampelsystem für Dateifehler. | fertig wenn: Ampelstatus sichtbar.
-- [ ] QA-05: Modul-Selbsttests mit GUI-Ausgabe. | fertig wenn: Teststatus sichtbar.
-- [ ] TEST-01: Automatisierte GUI-Tests einbinden. | fertig wenn: GUI-Tests laufen.
-- [ ] TEST-02: Fehler-Simulation (Laienfehler) integrieren. | fertig wenn: klare Fehlerfälle.
+Nächste 5 kleinste Aufgaben (Runde 2026-01-23) – offen
+- [ ] QA-08: Sandbox-Analyse erweitern (Sandbox = Testumgebung). | fertig wenn: Analyse deckt Sandbox-Risiken ab.
+- [ ] TEST-03: Robustheitstest für fehlende Rechte/beschädigte Dateien. | fertig wenn: System bleibt stabil.
+- [ ] TEST-04: Modulübergreifende Funktionschecks implementieren. | fertig wenn: Checks laufen.
+- [ ] TEST-05: Vollautomatische Codequalität- und Formatprüfung (Linting/Formatting = Code-Check). | fertig wenn: Checks laufen automatisch.
+- [ ] TEST-06: Vollautomatische Testausführung über Startroutine (Test-Automatik). | fertig wenn: Tests starten selbst.
+
+Runde 2026-01-22 (5 kleinste Aufgaben dieser Runde) – erledigt
+- [x] QA-03: Fehlerklassifizierung (leicht/mittel/schwer). | fertig wenn: Fehlerstufe angezeigt.
+- [x] QA-04: Ampelsystem für Dateifehler. | fertig wenn: Ampelstatus sichtbar.
+- [x] QA-05: Modul-Selbsttests mit GUI-Ausgabe. | fertig wenn: Teststatus sichtbar.
+- [x] TEST-01: Automatisierte GUI-Tests einbinden. | fertig wenn: GUI-Tests laufen.
+- [x] TEST-02: Fehler-Simulation (Laienfehler) integrieren. | fertig wenn: klare Fehlerfälle.
 
 Runde 2026-01-21 (5 kleinste Aufgaben dieser Runde) – erledigt
 - [x] START-06: Fehleralternativen statt Abbruch. | fertig wenn: Vorschläge statt Stop.
@@ -106,11 +113,11 @@ Runde 2026-01-21 (5 kleinste Aufgaben dieser Runde) – erledigt
 
 ## Offene Aufgaben (kleinste zuerst)
 Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
-- [ ] QA-03: Fehlerklassifizierung (leicht/mittel/schwer). | fertig wenn: Fehlerstufe angezeigt.
-- [ ] QA-04: Ampelsystem für Dateifehler. | fertig wenn: Ampelstatus sichtbar.
-- [ ] QA-05: Modul-Selbsttests mit GUI-Ausgabe. | fertig wenn: Teststatus sichtbar.
-- [ ] TEST-01: Automatisierte GUI-Tests einbinden. | fertig wenn: GUI-Tests laufen.
-- [ ] TEST-02: Fehler-Simulation (Laienfehler) integrieren. | fertig wenn: klare Fehlerfälle.
+- [ ] QA-08: Sandbox-Analyse erweitern (Sandbox = Testumgebung). | fertig wenn: Analyse deckt Sandbox-Risiken ab.
+- [ ] TEST-03: Robustheitstest für fehlende Rechte/beschädigte Dateien. | fertig wenn: System bleibt stabil.
+- [ ] TEST-04: Modulübergreifende Funktionschecks implementieren. | fertig wenn: Checks laufen.
+- [ ] TEST-05: Vollautomatische Codequalität- und Formatprüfung (Linting/Formatting = Code-Check). | fertig wenn: Checks laufen automatisch.
+- [ ] TEST-06: Vollautomatische Testausführung über Startroutine (Test-Automatik). | fertig wenn: Tests starten selbst.
 
 ## Backlog (nach Bereichen, noch zu priorisieren)
 
@@ -238,9 +245,9 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
 ### Fehler- & Strukturprüfung
 - [ ] QA-01: JSON-Validator einbauen. | fertig wenn: JSON geprüft.
 - [ ] QA-02: Automatische Dateinamenkorrektur. | fertig wenn: falsche Namen korrigiert.
-- [ ] QA-03: Fehlerklassifizierung (leicht/mittel/schwer). | fertig wenn: Fehlerstufe angezeigt.
-- [ ] QA-04: Ampelsystem für Dateifehler. | fertig wenn: Ampelstatus sichtbar.
-- [ ] QA-05: Modul-Selbsttests mit GUI-Ausgabe. | fertig wenn: Teststatus sichtbar.
+- [x] QA-03: Fehlerklassifizierung (leicht/mittel/schwer). | fertig wenn: Fehlerstufe angezeigt.
+- [x] QA-04: Ampelsystem für Dateifehler. | fertig wenn: Ampelstatus sichtbar.
+- [x] QA-05: Modul-Selbsttests mit GUI-Ausgabe. | fertig wenn: Teststatus sichtbar.
 - [x] QA-06: Jede Funktion validiert Eingabe und Ausgabe (Input/Output = Ein-/Ausgabe). | fertig wenn: Validierung vorhanden.
 - [x] QA-07: Debugging- und Logging-Modus (Debugging = Fehlersuche). | fertig wenn: Modus schaltbar.
 - [ ] QA-08: Sandbox-Analyse erweitern (Sandbox = Testumgebung). | fertig wenn: Analyse deckt Sandbox-Risiken ab.
@@ -258,8 +265,8 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
 - [x] DOC-05: Weiterführende Laienvorschläge ergänzen (Tipps für Neulinge). | fertig wenn: Tipps vorhanden.
 
 ### Tests & Stabilität
-- [ ] TEST-01: Automatisierte GUI-Tests einbinden. | fertig wenn: GUI-Tests laufen.
-- [ ] TEST-02: Fehler-Simulation (Laienfehler) integrieren. | fertig wenn: klare Fehlerfälle.
+- [x] TEST-01: Automatisierte GUI-Tests einbinden. | fertig wenn: GUI-Tests laufen.
+- [x] TEST-02: Fehler-Simulation (Laienfehler) integrieren. | fertig wenn: klare Fehlerfälle.
 - [ ] TEST-03: Robustheitstest für fehlende Rechte/beschädigte Dateien. | fertig wenn: System bleibt stabil.
 - [ ] TEST-04: Modulübergreifende Funktionschecks implementieren. | fertig wenn: Checks laufen.
 - [ ] TEST-05: Vollautomatische Codequalität- und Formatprüfung (Linting/Formatting = Code-Check). | fertig wenn: Checks laufen automatisch.

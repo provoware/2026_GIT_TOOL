@@ -156,6 +156,12 @@ def _build_default_files(root: Path) -> dict[Path, str]:
         "state_path": "data/test_state.json",
         "tests_command": ["bash", "scripts/run_tests.sh"],
     }
+    selftest_payload = {
+        "testcases": {
+            "beispiel_modul": {"text": "Selbsttest"},
+            "status": {"request": "Selbsttest"},
+        }
+    }
 
     return {
         root / "config" / "modules.json": json.dumps(modules_payload, indent=2, ensure_ascii=False)
@@ -175,6 +181,10 @@ def _build_default_files(root: Path) -> dict[Path, str]:
         root
         / "config"
         / "test_gate.json": json.dumps(test_gate_payload, indent=2, ensure_ascii=False)
+        + "\n",
+        root
+        / "config"
+        / "module_selftests.json": json.dumps(selftest_payload, indent=2, ensure_ascii=False)
         + "\n",
         root
         / "todo.txt": (

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.31] – 2026-01-22
+- Qualität: Fehlerklassifizierung (leicht/mittel/schwer) für Modul-Checks ergänzt.
+- Qualität: Datei-Ampelsystem mit klaren Problemhinweisen ergänzt.
+- Qualität: Modul-Selbsttests mit GUI- und CLI-Ausgabe ergänzt.
+- Tests: Fehler-Simulation für typische Laienfehler ergänzt.
+- Tests: Zusätzliche Tests für Qualitätschecks, Selbsttests und Simulation ergänzt.
+
 ## [0.1.30] – 2026-01-21
 - Start-Routine: Fehleralternativen statt Abbruch ergänzt (Hinweise + Sammelreport).
 - Start-Routine: JSON-Validierung und Dateinamenkorrektur integriert.

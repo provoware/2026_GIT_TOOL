@@ -118,3 +118,10 @@
 - UI: Farbiges Sofort-Feedback im Statusbereich (Erfolg/Fehler/Busy) ergänzt.
 - Qualität: JSON-Validator für Konfigurationen und Manifeste ergänzt.
 - Qualität: Automatische Dateinamenkorrektur für data/ und logs/ ergänzt.
+
+## 2026-01-22
+- Qualität: Fehlerklassifizierung (leicht/mittel/schwer) im GUI-Launcher ergänzt.
+- Qualität: Datei-Ampelsystem für wichtige Release-Dateien ergänzt.
+- Qualität: Modul-Selbsttests mit GUI- und CLI-Ausgabe ergänzt.
+- Tests: Fehler-Simulation für typische Laienfehler ergänzt.
+- Tests: Automatisierte Tests für Qualität, Selbsttests und Simulation ergänzt.
