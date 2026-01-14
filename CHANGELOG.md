@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.21] – 2026-01-16
+- Doku: PROJEKT_INFO um Automatik, Barrierefreiheit und Laienhinweise ergänzt.
+- Doku: ANALYSE_BERICHT mit Ist-Analyse, Best Practices und Laienvorschlägen aktualisiert.
+
 ## [0.1.20] – 2026-01-15
 - Start: Health-Check mit Selbstreparatur ergänzt (fehlende Dateien/Ordner werden erstellt).
 - Qualität: Pfad-Validierung in System-Skripten vereinheitlicht (Duplikate reduziert).

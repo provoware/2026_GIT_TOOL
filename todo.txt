@@ -65,3 +65,5 @@
 [x] 2026-01-09 | Analyse | Inkonsistenzen/Redundanzen/Robustheit dokumentieren | prüfen: ANALYSE_BERICHT.md öffnen | fertig wenn: Befunde + Verbesserungen beschrieben
 [x] 2026-01-15 | Start | Health-Check um Selbstreparatur ergänzt | prüfen: python system/health_check.py --root . --self-repair | fertig wenn: fehlende Dateien/Ordner werden erstellt
 [x] 2026-01-15 | Qualität | Pfad-Validierung zentralisiert (Duplikate reduziert) | prüfen: system/*_checker.py öffnen | fertig wenn: config_utils.ensure_path genutzt
+[x] 2026-01-16 | Doku | PROJEKT_INFO: Info-Text aktualisieren (Automatik, Barrierefreiheit, Laienhinweise) | prüfen: PROJEKT_INFO.md öffnen | fertig wenn: neue Abschnitte vorhanden
+[x] 2026-01-16 | Doku | ANALYSE_BERICHT: Ist-Analyse und Best-Practices ergänzen | prüfen: ANALYSE_BERICHT.md öffnen | fertig wenn: Empfehlungen + Laienhinweise vorhanden
