@@ -1,12 +1,12 @@
 # AGENTS.md (global, verbindlich)
 
 ## Prinzip
-- Arbeite immer Punkte aus TODO.md ab und dann immer so weiter (5 Task pro Runde).
+- Arbeite immer Punkte aus todo.txt ab und dann immer so weiter (9 Task pro Runde).
 - Erst analysieren, dann umsetzen, dann testen, dann dokumentieren. 
 - Kein Rumprobieren ohne Ende: max. 2 Fix-Runden pro Task. Wenn es klemmt: Task splitten.
 
 ## Reihenfolge je Runde (verbindlich)
-1) Lies TODO.md und nimm die 5 vom Aufwand kleinsten offenen Task .
+1) Lies todo.txt und nimm die 9 vom Aufwand kleinsten offenen Task .
 2) Führe eine kurze Ist-Analyse durch: Fehler, Lücken, Platzhalter, Risiken, Schwachstellen, best practices.
 3) Setze nur diese Task vollständig um (release-tauglich, konsistent).
 4) Validiere Erfolg: Tests/Checks laufen grün, Start läuft, Kernfunktion ok.
