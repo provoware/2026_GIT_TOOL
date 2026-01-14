@@ -133,6 +133,12 @@
 - Tooling: Standards-Viewer für interne Standards und Styleguide ergänzt.
 - Doku: Responsivitäts-Check der Launcher-GUI dokumentiert.
 
+## 2026-01-29
+- Standards: Modulnamen-Standard (snake_case + Pfadregel) dokumentiert und validiert.
+- UI: Einheitliche Abstands-Tokens für den Launcher eingeführt und genutzt.
+- Qualität: Fehlerhandling-Standard mit Ursache/Lösung/Log ergänzt.
+- Doku: Laienhinweise zu Modulnamen und Layout-Token ergänzt.
+
 ## 2026-01-20
 - UI: Kontrastmodus per Hotkey (Alt+K) im GUI-Launcher ergänzt.
 - UI: Zoom per Strg+Mausrad im GUI-Launcher ergänzt.

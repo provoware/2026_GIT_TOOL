@@ -226,9 +226,11 @@ Hier nur die wichtigsten Bereiche:
 3. Tastatur-Shortcuts: Alt+A (alle Module), Alt+D (Debug), Alt+R (aktualisieren), Alt+G (Diagnose), Alt+T (Theme), Alt+K (Kontrast), Alt+Q (beenden).
 4. Zoom: Strg + Mausrad (Zoom = Schriftgröße vergrößern/verkleinern).
 5. Modul-Check: Wird bei jeder Aktualisierung automatisch ausgeführt (Status steht in der Übersicht).
+6. UI-Abstände anpassen: `config/launcher_gui.json` → `layout.*` (Spacing = Abstände).
 ### Modul-Check (manuell)
 1. `python system/module_checker.py --config config/modules.json`
-2. Bei Fehlern werden klare Hinweise und Lösungsvorschläge ausgegeben.
+2. Modul-IDs sind `snake_case` und Pfade müssen `modules/<modul_id>` entsprechen.
+3. Bei Fehlern werden klare Hinweise und Lösungsvorschläge ausgegeben.
 
 ### Test-Sperre (manuell)
 1. `python system/test_gate.py --config config/test_gate.json`

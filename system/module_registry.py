@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
@@ -73,10 +74,15 @@ def load_manifest(module_dir: Path) -> ModuleManifest:
     if not manifest_path.exists():
         raise ModuleRegistryError(f"Manifest fehlt: {manifest_path}")
     data = _load_json(manifest_path)
-    module_id = _require_text(data.get("id"), "manifest.id")
+    module_id = _require_module_id(data.get("id"), "manifest.id")
     name = _require_text(data.get("name"), "manifest.name")
     version = _require_text(data.get("version"), "manifest.version")
     entry = _require_text(data.get("entry"), "manifest.entry")
+    if module_dir.name != module_id:
+        raise ModuleRegistryError(
+            "Manifest: id muss dem Modulordner entsprechen "
+            f"({module_dir.name} erwartet, gefunden: {module_id})."
+        )
     return ModuleManifest(module_id=module_id, name=name, version=version, entry=entry)
 
 
@@ -143,3 +149,12 @@ def _require_text(value: object, field: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise ModuleRegistryError(f"{field} ist leer oder ungültig.")
     return value.strip()
+
+
+def _require_module_id(value: object, field: str) -> str:
+    module_id = _require_text(value, field)
+    if not re.fullmatch(r"[a-z0-9]+(?:_[a-z0-9]+)*", module_id):
+        raise ModuleRegistryError(
+            f"{field} muss snake_case sein (z. B. modul_name_1)."
+        )
+    return module_id

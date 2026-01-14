@@ -98,3 +98,7 @@
   - **Tipp:** So bleiben Systemdateien sauber getrennt.
 - **Struktur prüfen:** `STRUKTUR.md` lesen (Struktur = Verzeichnisbaum).
   - **Tipp:** Dort siehst du alle Pflichtdateien und Platzhalter (Dummy-Dateien).
+- **Modulnamen prüfen:** Modul-IDs sind `snake_case` (nur klein + Unterstrich).
+  - **Tipp:** In `config/modules.json` muss der Pfad immer `modules/<modul_id>` sein.
+- **Abstände & Layout:** Einheitliche Abstände sind in `config/launcher_gui.json` festgelegt.
+  - **Tipp:** Wenn etwas „zu eng“ wirkt, die Werte in `layout.*` prüfen.

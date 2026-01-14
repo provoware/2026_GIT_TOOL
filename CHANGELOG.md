@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.38] – 2026-01-29
+- Standards: Modulnamen-Validierung (snake_case + Pfadregel) ergänzt.
+- GUI: Einheitliche Abstände über Layout-Tokens in der GUI-Konfiguration eingeführt.
+- Qualität: Fehlerhandling-Standard (Ursache/Lösung/Log) dokumentiert.
+- Doku: Laienhinweise zu Modulnamen und Layout-Token ergänzt.
+
 ## [0.1.37] – 2026-01-28
 - GUI: One-Click-Diagnose im Launcher ergänzt (Tests + Codequalität im Fenster).
 - Qualität: Health-Check repariert Leserechte/Ausführrechte im Self-Repair.

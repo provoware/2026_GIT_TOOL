@@ -32,7 +32,7 @@ class LauncherTests(unittest.TestCase):
                             {
                                 "id": "status",
                                 "name": "Status-Check",
-                                "path": "modules/status/module.py",
+                                "path": "modules/status",
                                 "enabled": True,
                                 "description": "Testmodul",
                             }
@@ -58,7 +58,7 @@ class LauncherTests(unittest.TestCase):
                             {
                                 "id": "fehlend",
                                 "name": "Fehlt",
-                                "path": "modules/fehlend/module.py",
+                                "path": "modules/fehlend",
                                 "enabled": True,
                                 "description": "Fehlerfall",
                             }
@@ -88,7 +88,7 @@ class LauncherTests(unittest.TestCase):
                             {
                                 "id": "status",
                                 "name": "Status-Check",
-                                "path": "modules/status/module.py",
+                                "path": "modules/status",
                                 "enabled": True,
                                 "description": "Testmodul",
                             }

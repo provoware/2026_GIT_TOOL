@@ -23,11 +23,13 @@ Diese Datei definiert verbindliche Standards für alle Module, den Launcher und 
 ## Einheitliche Benennung (Dateien/Module)
 - Ordner‑ und Dateinamen: **klein**, **unterstrich** (`snake_case`), **ohne Leerzeichen**.
 - Modul‑ID = Ordnername (z. B. `modules/datei_suche`).
+- Modul‑ID‑Regel: `^[a-z0-9]+(_[a-z0-9]+)*$` (nur Kleinbuchstaben, Zahlen, Unterstrich).
 - Pflichtdateien pro Modul:
   - `modules/<modul_id>/manifest.json`
   - `modules/<modul_id>/module.py`
 - Konfig‑Dateien tragen den Modul‑ID‑Namen (z. B. `config/datei_suche.json`).
 - Daten‑Dateien tragen den Modul‑ID‑Namen (z. B. `data/datei_suche_log.json`).
+- Modul‑Pfad in `config/modules.json` muss **genau** `modules/<modul_id>` sein.
 
 ## Gemeinsames Datenmodell
 - Zentrales Schema in `src/core/data_model.py` ist **verbindlich**.
@@ -66,11 +68,31 @@ Die Startroutine erledigt vollständig und selbstständig:
 - Debug‑Modus per `config/debug.json` aktivierbar.
 - Logs immer in `logs/` ablegen, nie im Code oder in `config/`.
 
+## Fehlerhandling (verbindlich)
+- **Struktur**: Titel → Ursache → Lösungsschritt → Hinweis auf Logdatei.
+- **Lösungsschritt** ist Pflicht (konkreter nächster Schritt).
+- **Schweregrad** angeben (leicht/mittel/schwer), sofern ermittelt.
+- **Kein Abbruch ohne Alternative**: Wenn möglich, eine sichere Alternative anbieten.
+- **Logging**: Fehler immer mit Kontext (Modul, Aktion, Datei) protokollieren.
+
+Beispiel (einfach, laienverständlich):
+> Fehler: Modul-Check fehlgeschlagen.  
+> Ursache: Modulordner fehlt.  
+> Lösung: Ordner `modules/status` anlegen und erneut starten.  
+> Hinweis: Details stehen in `logs/start_run.log`.
+
 ## Barrierefreiheit & Themes
 - Tastaturbedienung (Tab, Enter, Esc) überall möglich.
 - Kontraststarke Farben und klare Buttons.
 - Mehrere Themes liegen in den Modul-Configs (`config/*.json`) und in `config/launcher_gui.json`.
 - Mindestens ein **Kontrast-Theme** ist pro Modul/Launcher Pflicht.
+
+## UI-Abstände & visuelle Führung (verbindlich)
+- Einheitliches **Abstands-Raster** über Tokens in `config/launcher_gui.json` (`layout.*`).
+- Standard-Tokens: `gap_xs=4`, `gap_sm=8`, `gap_md=12`, `gap_lg=16`, `gap_xl=24`.
+- Buttons/Felder nutzen zentrale Werte (`button_padx`, `button_pady`, `field_padx`, `field_pady`).
+- **Visuelle Führung**: klare Überschriften, gruppierte Bereiche, eindeutige Primäraktion.
+- **Kontrast & Fokus**: deutlicher Fokusrahmen (`focus_thickness`) und hohe Lesbarkeit.
 
 ## Start-Modi (Safe-Mode & Sandbox)
 - **Safe-Mode**: reine Prüfungen ohne Schreibzugriffe (`./scripts/start.sh --safe-mode`).
