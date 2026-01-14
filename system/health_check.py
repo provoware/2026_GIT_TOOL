@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Iterable, List
 
 from config_utils import ensure_path
+from logging_center import setup_logging as setup_logging_center
 
 DEFAULT_ROOT = Path(__file__).resolve().parents[1]
 
@@ -306,8 +307,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def setup_logging(debug: bool) -> None:
-    level = logging.DEBUG if debug else logging.INFO
-    logging.basicConfig(level=level, format="%(levelname)s: %(message)s")
+    setup_logging_center(debug)
 
 
 def _render_output(issues: Iterable[str], repairs: Iterable[str]) -> str:

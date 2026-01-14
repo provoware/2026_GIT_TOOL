@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import List
 
 from config_utils import ensure_path
+from logging_center import setup_logging as setup_logging_center
 
 
 @dataclass(frozen=True)
@@ -68,8 +69,7 @@ def export_logs(logs_dir: Path, export_dir: Path) -> Path:
 
 
 def setup_logging(debug: bool) -> None:
-    level = logging.DEBUG if debug else logging.INFO
-    logging.basicConfig(level=level, format="%(levelname)s: %(message)s")
+    setup_logging_center(debug)
 
 
 def build_parser() -> argparse.ArgumentParser:

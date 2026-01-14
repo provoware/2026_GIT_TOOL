@@ -1,16 +1,16 @@
 # ANALYSE_BERICHT
 
-Stand: 2026-01-16
+Stand: 2026-01-25
 
 ## Kurzfazit
-Die Struktur ist insgesamt stabil. Die größten Risiken liegen in **Doppelnennungen** und **inkonsistenten Info-Dateien**. Eine klar gepflegte Dokumentation, automatische Prüfungen (Checks) und klare Rückmeldungen (Feedback) machen das System robuster und leichter wartbar.
+Die Struktur ist insgesamt stabil. Die größten Risiken liegen weiterhin in **Doppelnennungen** und **inkonsistenten Info-Dateien**, obwohl zentrale Modelle und Registry die Lage verbessern. Eine klar gepflegte Dokumentation, automatische Prüfungen (Checks) und klare Rückmeldungen (Feedback) machen das System robuster und leichter wartbar.
 
 ## Ist-Analyse (Fehler, Lücken, Risiken)
 - **Info-Dateien**: Inhalte sind teils überholt oder zu knapp erklärt (Risiko: Missverständnisse).
 - **Doppelte Einträge**: In Dokumenten und Aufgabenlisten können Dopplungen entstehen (Risiko: falscher Fortschritt).
-- **Wartbarkeit**: Ohne klare Trennung von System-Logik und variablen Daten steigt die Fehlergefahr.
+- **Wartbarkeit**: Zentrale Registry, Store und Konfigurationsmodelle reduzieren doppelte Logik, müssen aber konsistent gepflegt werden.
 - **Barrierefreiheit**: Theme- und Kontrast-Standards müssen durchgängig dokumentiert bleiben.
-- **Qualitätssicherung**: Automatische Tests laufen, aber Hinweise für Laien sollten noch deutlicher sein.
+- **Qualitätssicherung**: Automatische Tests laufen, laienfreundliche Anleitungen sind weiter wichtig.
 - **Sandbox-Risiken**: Ohne definierte Sandbox-Regeln können Module zu viele Rechte erhalten (Risiko: unerwünschte Zugriffe).
 
 ## Sandbox-Analyse (erweitert)
@@ -31,9 +31,9 @@ Die Struktur ist insgesamt stabil. Die größten Risiken liegen in **Doppelnennu
 - **Log-Filter**: Sensible Daten in Logs maskieren (Maskierung = unkenntlich machen).
 
 ## Inkonsistenzen und Redundanzen (Befunde)
-- **CHANGELOG.md** enthält doppelte Versionsblöcke.
-- **DEV_DOKU.md** listet mehrfach identische Einträge.
-- **todo.txt** enthält mehrfach identische Aufgaben.
+- **CHANGELOG.md**: Redundanzen geprüft; neue Einträge konsistent halten.
+- **DEV_DOKU.md**: Inhaltsdoppelungen vermeiden, stattdessen auf zentrale Dateien verweisen.
+- **todo.txt / TODO.md**: Synchronität regelmäßig prüfen (Automatik via todo_manager nutzen).
 
 ## Verbesserungen der Robustheit (Empfehlungen)
 1. **Dokumentation konsolidieren**: Doppelte Einträge entfernen, klare Single-Source-Dateien definieren.
@@ -42,6 +42,7 @@ Die Struktur ist insgesamt stabil. Die größten Risiken liegen in **Doppelnennu
 4. **Klare Trennung**: System-Logik (`src/`, `system/`) und variable Daten/Config (`data/`, `config/`) strikt trennen und benennen.
 5. **Validierung erzwingen**: Jede Funktion prüft Eingaben (Input) und Ergebnisse (Output) mit klaren Fehlermeldungen.
 6. **Tests laienfreundlich erklären**: Schritt-für-Schritt-Hilfen (Wizard) weiter ausbauen.
+7. **Laien-Anleitung aktuell halten**: ANLEITUNG_TOOL.md als zentrale Anleitung pflegen.
 
 ## Automatisierung (Best Practices)
 - **Start-Routine** übernimmt Abhängigkeiten (Dependencies), Struktur-Checks und Modul-Validierung.

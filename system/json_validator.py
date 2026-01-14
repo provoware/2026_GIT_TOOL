@@ -5,12 +5,13 @@ from __future__ import annotations
 
 import argparse
 import json
-import logging
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Dict, Iterable, List
 
 from config_utils import ensure_path
+from logging_center import get_logger
+from logging_center import setup_logging as setup_logging_center
 
 
 class JsonValidationError(Exception):
@@ -73,6 +74,9 @@ def validate_modules_config(data: dict) -> None:
 def validate_launcher_gui_config(data: dict) -> None:
     default_theme = _require_text(data.get("default_theme"), "default_theme")
     themes = _require_dict(data.get("themes"), "themes")
+    refresh_debounce_ms = data.get("refresh_debounce_ms", 200)
+    if not isinstance(refresh_debounce_ms, int) or refresh_debounce_ms < 50:
+        raise JsonValidationError("refresh_debounce_ms muss mindestens 50 sein.")
     if not themes:
         raise JsonValidationError("themes darf nicht leer sein.")
     if default_theme not in themes:
@@ -186,28 +190,26 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
-    logging.basicConfig(
-        level=logging.DEBUG if args.debug else logging.INFO,
-        format="%(levelname)s: %(message)s",
-    )
+    setup_logging_center(args.debug)
+    logger = get_logger("json_validator")
     results = validate_all(args.root)
     if not results:
-        logging.error("Keine JSON-Dateien gefunden.")
+        logger.error("Keine JSON-Dateien gefunden.")
         return 2
     total_issues = 0
     for result in results:
         if not result.issues:
-            logging.info("JSON OK: %s", result.path)
+            logger.info("JSON OK: %s", result.path)
             continue
         total_issues += len(result.issues)
         for issue in result.issues:
-            logging.error("JSON-Problem in %s: %s", result.path, issue)
+            logger.error("JSON-Problem in %s: %s", result.path, issue)
         if args.strict:
             return 2
     if total_issues:
-        logging.error("JSON-Validierung: %s Problem(e) gefunden.", total_issues)
+        logger.error("JSON-Validierung: %s Problem(e) gefunden.", total_issues)
         return 2
-    logging.info("JSON-Validierung: alle Prüfungen ok.")
+    logger.info("JSON-Validierung: alle Prüfungen ok.")
     return 0
 
 

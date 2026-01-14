@@ -21,16 +21,16 @@ Nächste 9 kleinste Aufgaben (Runde 2026-01-24) – erledigt
 [x] COM-04: Ghost-Mode (Testmodus ohne Schreiben). | fertig wenn: keine Writes.
 [x] CODE-04: Styleguide (PEP8 + Projektregeln) als Markdown beilegen. | fertig wenn: Styleguide vorhanden.
 
-Nächste 9 kleinste Aufgaben (Runde 2026-01-25) – offen
-[ ] ARCH-01: Plugin-System mit zentraler Registry einführen (Registry = Modul-Liste). | fertig wenn: Module nur über Registry geladen werden.
-[ ] ARCH-02: Modul-API definieren (Schnittstellen, Events, States). | fertig wenn: API-Dokument + Beispiel vorhanden.
-[ ] ARCH-03: Zentralen Store einführen (Store = gemeinsamer Zustands-Speicher). | fertig wenn: Module lesen/schreiben zentral.
-[ ] ARCH-04: Single Source of Truth für Theme/Settings/Logging. | fertig wenn: doppelte Logik entfernt.
-[ ] ARCH-06: Zentrales Logging-Modul implementieren (Logging = Protokoll). | fertig wenn: ein Logging-Modul genutzt.
-[ ] PERF-01: Lazy Loading für Module (spätes Laden) implementieren. | fertig wenn: Startzeit sinkt.
-[ ] PERF-02: Debounce/Throttle für teure Aktionen (gebremstes Auslösen). | fertig wenn: UI bleibt flüssig.
-[ ] PERF-03: Asynchrones Logging statt blockierend. | fertig wenn: Log schreibt ohne UI-Block.
-[ ] PERF-04: JSON-Handling mit geprüftem Modell absichern (z. B. Pydantic). | fertig wenn: Validierung zentral.
+Nächste 9 kleinste Aufgaben (Runde 2026-01-25) – erledigt
+[x] ARCH-01: Plugin-System mit zentraler Registry einführen (Registry = Modul-Liste). | fertig wenn: Module nur über Registry geladen werden.
+[x] ARCH-02: Modul-API definieren (Schnittstellen, Events, States). | fertig wenn: API-Dokument + Beispiel vorhanden.
+[x] ARCH-03: Zentralen Store einführen (Store = gemeinsamer Zustands-Speicher). | fertig wenn: Module lesen/schreiben zentral.
+[x] ARCH-04: Single Source of Truth für Theme/Settings/Logging. | fertig wenn: doppelte Logik entfernt.
+[x] ARCH-06: Zentrales Logging-Modul implementieren (Logging = Protokoll). | fertig wenn: ein Logging-Modul genutzt.
+[x] PERF-01: Lazy Loading für Module (spätes Laden) implementieren. | fertig wenn: Startzeit sinkt.
+[x] PERF-02: Debounce/Throttle für teure Aktionen (gebremstes Auslösen). | fertig wenn: UI bleibt flüssig.
+[x] PERF-03: Asynchrones Logging statt blockierend. | fertig wenn: Log schreibt ohne UI-Block.
+[x] PERF-04: JSON-Handling mit geprüftem Modell absichern (z. B. Pydantic). | fertig wenn: Validierung zentral.
 
 Nächste 5 kleinste Aufgaben (Runde 2026-01-23) – erledigt
 [x] QA-08: Sandbox-Analyse erweitern (Sandbox = Testumgebung). | fertig wenn: Analyse deckt Sandbox-Risiken ab.
@@ -107,3 +107,5 @@ Laien-Tipps (hilfreich, optional)
 - Standards lesen: `./scripts/show_standards.sh --list` (Standards = interne Regeln).
 - Start mit Debugging: `./scripts/start.sh --debug` (Debugging = detaillierte Fehlersuche).
 - Start-Log speichern: `./scripts/start.sh --log-file logs/start_run.log` (Log = Protokoll).
+- Anleitung lesen: `ANLEITUNG_TOOL.md` (Schritt-für-Schritt-Hilfe).
+- Modul-API lesen: `docs/MODUL_API.md` (API = Schnittstellen-Übersicht).

@@ -14,6 +14,8 @@ from pathlib import Path
 from typing import Iterable, List
 
 from config_utils import ensure_path
+from logging_center import get_logger
+from logging_center import setup_logging as setup_logging_center
 
 CONFIG_DEFAULT = Path(__file__).resolve().parents[1] / "config" / "test_gate.json"
 TASK_PATTERN = re.compile(r"^\[(x|X| )\]\s+")
@@ -159,29 +161,27 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
-    logging.basicConfig(
-        level=logging.DEBUG if args.debug else logging.INFO,
-        format="%(levelname)s: %(message)s",
-    )
+    setup_logging_center(args.debug)
+    logger = get_logger("test_gate")
 
     try:
         config = load_config(args.config)
         state = load_state(config.state_path)
     except TestGateError as exc:
-        logging.error("Test-Sperre konnte nicht gestartet werden: %s", exc)
+        logger.error("Test-Sperre konnte nicht gestartet werden: %s", exc)
         return 2
 
     if not config.todo_path.exists():
-        logging.error("To-Do-Datei nicht gefunden: %s", config.todo_path)
+        logger.error("To-Do-Datei nicht gefunden: %s", config.todo_path)
         return 2
 
     todo_lines = config.todo_path.read_text(encoding="utf-8").splitlines()
     total, done = count_tasks(todo_lines)
     should_run, diff = evaluate_gate(done, state.last_done, config.threshold)
 
-    logging.info("Stand: %s erledigt von %s Aufgaben.", done, total)
+    logger.info("Stand: %s erledigt von %s Aufgaben.", done, total)
     if not should_run:
-        logging.info(
+        logger.info(
             "Tests werden erst nach kompletter Runde ausgeführt: %s von %s erledigt.",
             diff,
             config.threshold,
@@ -190,12 +190,12 @@ def main() -> int:
 
     exit_code = run_tests(config.tests_command)
     if exit_code != 0:
-        logging.error("Tests fehlgeschlagen (Exit-Code: %s).", exit_code)
+        logger.error("Tests fehlgeschlagen (Exit-Code: %s).", exit_code)
         save_state(config.state_path, state.last_done, "fehlgeschlagen")
         return exit_code
 
     save_state(config.state_path, done, "ok")
-    logging.info("Tests erfolgreich. Status aktualisiert.")
+    logger.info("Tests erfolgreich. Status aktualisiert.")
     return 0
 
 

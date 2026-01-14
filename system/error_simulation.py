@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import logging
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
@@ -14,6 +13,8 @@ from typing import List
 import dependency_checker
 import launcher_gui
 import module_checker
+from logging_center import get_logger
+from logging_center import setup_logging as setup_logging_center
 
 
 class ErrorSimulationError(Exception):
@@ -127,14 +128,12 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
-    logging.basicConfig(
-        level=logging.DEBUG if args.debug else logging.INFO,
-        format="%(levelname)s: %(message)s",
-    )
+    setup_logging_center(args.debug)
+    logger = get_logger("error_simulation")
     try:
         results = run_simulations()
     except ErrorSimulationError as exc:
-        logging.error("Fehler-Simulation fehlgeschlagen: %s", exc)
+        logger.error("Fehler-Simulation fehlgeschlagen: %s", exc)
         return 2
     print(render_report(results), end="")
     return 0

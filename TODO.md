@@ -13,18 +13,18 @@
 - **Best Practice**: Aufgaben sollten eindeutige IDs haben und pro Bereich gruppiert sein.
 - **Lücke**: todo.txt und TODO.md waren nicht 1:1 synchron → Risiko: widersprüchlicher Fortschritt.
 - **Best Practice**: Eine Kurzliste (todo.txt) soll die gleiche ID-Struktur wie TODO.md nutzen.
-- **Lücke**: Es fehlt noch ein Plugin-System mit Registry (Registry = zentrale Liste der Module).
-- **Lücke**: Modul-API (Schnittstellen, Events, States) ist noch nicht final definiert.
-- **Lücke**: Zentraler Store (Store = gemeinsamer Zustands-Speicher) fehlt, ebenso Single Source of Truth (einzige Quelle) für Theme/Settings/Logging.
-- **Risiko**: Startzeit kann ohne Lazy Loading (spätes Laden) langsam werden.
-- **Risiko**: GUI kann ohne Debounce/Throttle (gebremstes Auslösen) ruckeln.
-- **Lücke**: Asynchrones Logging (nicht blockierend) fehlt.
-- **Lücke**: JSON-Validierung ist nicht zentral durch ein geprüftes Modell abgesichert (z. B. Pydantic).
+- **Erledigt**: Plugin-System mit Registry (Registry = zentrale Liste der Module) umgesetzt.
+- **Erledigt**: Modul-API (Schnittstellen, Events, States) ist dokumentiert und mit Beispiel hinterlegt.
+- **Erledigt**: Zentraler Store (Store = gemeinsamer Zustands-Speicher) eingeführt; Single Source of Truth (einzige Quelle) für Theme/Settings/Logging umgesetzt.
+- **Erledigt**: Lazy Loading (spätes Laden) für Module und Caching eingeführt.
+- **Erledigt**: Debounce/Throttle (gebremstes Auslösen) für GUI-Aktualisierung umgesetzt.
+- **Erledigt**: Asynchrones Logging (nicht blockierend) eingeführt.
+- **Erledigt**: JSON-Validierung ist über geprüfte Modelle abgesichert.
 - **Lücke**: Komfortfunktionen wie globale Suche, Favoritenleiste, Mini-Panels und Auto-Theming fehlen.
 - **Hinweis**: Zusätzliche Barrierefreiheit (Kontrast-Hotkey, Zoom per STRG+Mausrad, Screenreader-Struktur) ist umgesetzt, Gesamtprüfung bleibt offen.
 - **Lücke**: Build/Release-Automatisierung (deb/AppImage/Build-All) fehlt.
 - **Lücke**: Sicherheitsfeatures (PIN-Sperre, Modultests vor dem Laden) sind noch offen.
-- **Lücke**: Roadmap-Elemente (Grundtheme/Branding, Safe-Mode, Sandbox-Modus, Logging-Modul) sind noch nicht vollständig in den Aufgaben erfasst.
+- **Hinweis**: Roadmap-Elemente (Grundtheme/Branding, Safe-Mode, Sandbox-Modus) bleiben außerhalb dieser Runde offen; Logging-Modul ist umgesetzt.
 
 ## Kurzliste (aus todo.txt, synchron)
 Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
@@ -46,16 +46,16 @@ Nächste 9 kleinste Aufgaben (Runde 2026-01-24) – erledigt
 - [x] COM-04: Ghost-Mode (Testmodus ohne Schreiben). | fertig wenn: keine Writes.
 - [x] CODE-04: Styleguide (PEP8 + Projektregeln) als Markdown beilegen. | fertig wenn: Styleguide vorhanden.
 
-Nächste 9 kleinste Aufgaben (Runde 2026-01-25) – offen
-- [ ] ARCH-01: Plugin-System mit zentraler Registry einführen (Registry = Modul-Liste). | fertig wenn: Module nur über Registry geladen werden.
-- [ ] ARCH-02: Modul-API definieren (Schnittstellen, Events, States). | fertig wenn: API-Dokument + Beispiel vorhanden.
-- [ ] ARCH-03: Zentralen Store einführen (Store = gemeinsamer Zustands-Speicher). | fertig wenn: Module lesen/schreiben zentral.
-- [ ] ARCH-04: Single Source of Truth für Theme/Settings/Logging. | fertig wenn: doppelte Logik entfernt.
-- [ ] ARCH-06: Zentrales Logging-Modul implementieren (Logging = Protokoll). | fertig wenn: ein Logging-Modul genutzt.
-- [ ] PERF-01: Lazy Loading für Module (spätes Laden) implementieren. | fertig wenn: Startzeit sinkt.
-- [ ] PERF-02: Debounce/Throttle für teure Aktionen (gebremstes Auslösen). | fertig wenn: UI bleibt flüssig.
-- [ ] PERF-03: Asynchrones Logging statt blockierend. | fertig wenn: Log schreibt ohne UI-Block.
-- [ ] PERF-04: JSON-Handling mit geprüftem Modell absichern (z. B. Pydantic). | fertig wenn: Validierung zentral.
+Nächste 9 kleinste Aufgaben (Runde 2026-01-25) – erledigt
+- [x] ARCH-01: Plugin-System mit zentraler Registry einführen (Registry = Modul-Liste). | fertig wenn: Module nur über Registry geladen werden.
+- [x] ARCH-02: Modul-API definieren (Schnittstellen, Events, States). | fertig wenn: API-Dokument + Beispiel vorhanden.
+- [x] ARCH-03: Zentralen Store einführen (Store = gemeinsamer Zustands-Speicher). | fertig wenn: Module lesen/schreiben zentral.
+- [x] ARCH-04: Single Source of Truth für Theme/Settings/Logging. | fertig wenn: doppelte Logik entfernt.
+- [x] ARCH-06: Zentrales Logging-Modul implementieren (Logging = Protokoll). | fertig wenn: ein Logging-Modul genutzt.
+- [x] PERF-01: Lazy Loading für Module (spätes Laden) implementieren. | fertig wenn: Startzeit sinkt.
+- [x] PERF-02: Debounce/Throttle für teure Aktionen (gebremstes Auslösen). | fertig wenn: UI bleibt flüssig.
+- [x] PERF-03: Asynchrones Logging statt blockierend. | fertig wenn: Log schreibt ohne UI-Block.
+- [x] PERF-04: JSON-Handling mit geprüftem Modell absichern (z. B. Pydantic). | fertig wenn: Validierung zentral.
 
 Runde 2026-01-23 (5 kleinste Aufgaben dieser Runde) – erledigt
 - [x] QA-08: Sandbox-Analyse erweitern (Sandbox = Testumgebung). | fertig wenn: Analyse deckt Sandbox-Risiken ab.
@@ -90,6 +90,8 @@ Runde 2026-01-21 (5 kleinste Aufgaben dieser Runde) – erledigt
 - Standards lesen: `./scripts/show_standards.sh --list` (Standards = interne Regeln).
 - Start mit Debugging: `./scripts/start.sh --debug` (Debugging = detaillierte Fehlersuche).
 - Start-Log speichern: `./scripts/start.sh --log-file logs/start_run.log` (Log = Protokoll).
+- Anleitung lesen: `ANLEITUNG_TOOL.md` (Schritt-für-Schritt-Hilfe).
+- Modul-API lesen: `docs/MODUL_API.md` (API = Schnittstellen-Übersicht).
 
 ## Runde 2026-01-20 (5 kleinste Aufgaben dieser Runde) – erledigt
 - [x] ACC-01: Kontrastmodus per Hotkey umschaltbar. | fertig wenn: Hotkey aktiv.
@@ -135,31 +137,31 @@ Runde 2026-01-21 (5 kleinste Aufgaben dieser Runde) – erledigt
 
 ## Offene Aufgaben (kleinste zuerst)
 Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
-- [ ] ARCH-01: Plugin-System mit zentraler Registry einführen (Registry = Modul-Liste). | fertig wenn: Module nur über Registry geladen werden.
-- [ ] ARCH-02: Modul-API definieren (Schnittstellen, Events, States). | fertig wenn: API-Dokument + Beispiel vorhanden.
-- [ ] ARCH-03: Zentralen Store einführen (Store = gemeinsamer Zustands-Speicher). | fertig wenn: Module lesen/schreiben zentral.
-- [ ] ARCH-04: Single Source of Truth für Theme/Settings/Logging. | fertig wenn: doppelte Logik entfernt.
-- [ ] ARCH-06: Zentrales Logging-Modul implementieren (Logging = Protokoll). | fertig wenn: ein Logging-Modul genutzt.
-- [ ] PERF-01: Lazy Loading für Module (spätes Laden) implementieren. | fertig wenn: Startzeit sinkt.
-- [ ] PERF-02: Debounce/Throttle für teure Aktionen (gebremstes Auslösen). | fertig wenn: UI bleibt flüssig.
-- [ ] PERF-03: Asynchrones Logging statt blockierend. | fertig wenn: Log schreibt ohne UI-Block.
-- [ ] PERF-04: JSON-Handling mit geprüftem Modell absichern (z. B. Pydantic). | fertig wenn: Validierung zentral.
+- [x] ARCH-01: Plugin-System mit zentraler Registry einführen (Registry = Modul-Liste). | fertig wenn: Module nur über Registry geladen werden.
+- [x] ARCH-02: Modul-API definieren (Schnittstellen, Events, States). | fertig wenn: API-Dokument + Beispiel vorhanden.
+- [x] ARCH-03: Zentralen Store einführen (Store = gemeinsamer Zustands-Speicher). | fertig wenn: Module lesen/schreiben zentral.
+- [x] ARCH-04: Single Source of Truth für Theme/Settings/Logging. | fertig wenn: doppelte Logik entfernt.
+- [x] ARCH-06: Zentrales Logging-Modul implementieren (Logging = Protokoll). | fertig wenn: ein Logging-Modul genutzt.
+- [x] PERF-01: Lazy Loading für Module (spätes Laden) implementieren. | fertig wenn: Startzeit sinkt.
+- [x] PERF-02: Debounce/Throttle für teure Aktionen (gebremstes Auslösen). | fertig wenn: UI bleibt flüssig.
+- [x] PERF-03: Asynchrones Logging statt blockierend. | fertig wenn: Log schreibt ohne UI-Block.
+- [x] PERF-04: JSON-Handling mit geprüftem Modell absichern (z. B. Pydantic). | fertig wenn: Validierung zentral.
 
 ## Backlog (nach Bereichen, noch zu priorisieren)
 
 ### A. Architektur & Struktur
-- [ ] ARCH-01: Plugin-System mit zentraler Registry einführen (Registry = Modul-Liste). | fertig wenn: Module nur über Registry geladen werden.
-- [ ] ARCH-02: Modul-API definieren (Schnittstellen, Events, States). | fertig wenn: API-Dokument + Beispiel vorhanden.
-- [ ] ARCH-03: Zentralen Store einführen (Store = gemeinsamer Zustands-Speicher). | fertig wenn: Module lesen/schreiben zentral.
-- [ ] ARCH-04: Single Source of Truth für Theme/Settings/Logging. | fertig wenn: doppelte Logik entfernt.
+- [x] ARCH-01: Plugin-System mit zentraler Registry einführen (Registry = Modul-Liste). | fertig wenn: Module nur über Registry geladen werden.
+- [x] ARCH-02: Modul-API definieren (Schnittstellen, Events, States). | fertig wenn: API-Dokument + Beispiel vorhanden.
+- [x] ARCH-03: Zentralen Store einführen (Store = gemeinsamer Zustands-Speicher). | fertig wenn: Module lesen/schreiben zentral.
+- [x] ARCH-04: Single Source of Truth für Theme/Settings/Logging. | fertig wenn: doppelte Logik entfernt.
 - [ ] ARCH-05: Projektstruktur final definieren und standardisieren. | fertig wenn: Struktur-Standard dokumentiert.
-- [ ] ARCH-06: Zentrales Logging-Modul implementieren (Logging = Protokoll). | fertig wenn: ein Logging-Modul genutzt.
+- [x] ARCH-06: Zentrales Logging-Modul implementieren (Logging = Protokoll). | fertig wenn: ein Logging-Modul genutzt.
 
 ### B. Performance & Stabilität
-- [ ] PERF-01: Lazy Loading für Module (spätes Laden) implementieren. | fertig wenn: Startzeit sinkt.
-- [ ] PERF-02: Debounce/Throttle für teure Aktionen (gebremstes Auslösen). | fertig wenn: UI bleibt flüssig.
-- [ ] PERF-03: Asynchrones Logging statt blockierend. | fertig wenn: Log schreibt ohne UI-Block.
-- [ ] PERF-04: JSON-Handling mit geprüftem Modell absichern (z. B. Pydantic). | fertig wenn: Validierung zentral.
+- [x] PERF-01: Lazy Loading für Module (spätes Laden) implementieren. | fertig wenn: Startzeit sinkt.
+- [x] PERF-02: Debounce/Throttle für teure Aktionen (gebremstes Auslösen). | fertig wenn: UI bleibt flüssig.
+- [x] PERF-03: Asynchrones Logging statt blockierend. | fertig wenn: Log schreibt ohne UI-Block.
+- [x] PERF-04: JSON-Handling mit geprüftem Modell absichern (z. B. Pydantic). | fertig wenn: Validierung zentral.
 
 ### C. Bedienbarkeit
 - [ ] UX-06: Globales Suchfeld im Dashboard (Dateien/Module/Texte). | fertig wenn: zentrale Suche nutzbar.

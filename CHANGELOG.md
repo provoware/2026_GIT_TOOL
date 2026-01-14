@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.34] – 2026-01-25
+- Architektur: Zentrale Modul-Registry (Plugin-System) und Store eingeführt.
+- Architektur: Modul-API dokumentiert (Schnittstellen, Events, States) mit Beispiel.
+- Architektur: Single Source of Truth für Theme/Settings/Logging umgesetzt.
+- Logging: Asynchrones Logging-Modul für alle Systemtools eingeführt.
+- Performance: Lazy Loading/Caching für Modul-Imports ergänzt.
+- Performance: Debounce für GUI-Aktualisierung ergänzt.
+- Qualität: Konfigurationen über geprüfte Modelle zentral validiert.
+- Doku: Laien-Tool-Anleitung mit FAQ, Befehlen und Tipps ergänzt.
+
 ## [0.1.33] – 2026-01-24
 - Start: Safe-Mode (schreibgeschützt) und Ghost-Mode ergänzt.
 - Start: Sandbox-Modus implementiert (isolierte Kopie).
