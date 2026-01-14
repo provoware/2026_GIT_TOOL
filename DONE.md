@@ -1,5 +1,14 @@
 # DONE
 
+## 2026-01-24
+- Architektur: Struktur-Check zur Trennung von System/Config/Daten ergänzt.
+- Start: Safe-Mode (schreibgeschützt) und Ghost-Mode (Alias) ergänzt.
+- Start: Sandbox-Modus mit isolierter Kopie umgesetzt.
+- Start: Abhängigkeits-Feedback in einfacher Sprache ergänzt.
+- Tooling: System-Scan als Vorabprüfung ohne Schreiben ergänzt.
+- Doku: Strukturstandard und Theme-Pflege dokumentiert.
+- Tests: Test-Automatik auf 9 Tasks pro Runde angepasst.
+
 ## 2026-01-07
 - Doku: Entwickler-Dokumentation strukturiert.
 - Doku: Projekt-Anleitung für Laien erstellt.

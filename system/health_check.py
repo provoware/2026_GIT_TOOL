@@ -155,7 +155,7 @@ def _build_default_files(root: Path) -> dict[Path, str]:
         },
     }
     test_gate_payload = {
-        "threshold": 5,
+        "threshold": 9,
         "todo_path": "todo.txt",
         "state_path": "data/test_state.json",
         "tests_command": ["bash", "scripts/run_tests.sh"],

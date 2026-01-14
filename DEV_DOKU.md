@@ -34,7 +34,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Modul-Check blockiert `..`-Segmente im Entry-Pfad mit klarer Fehlermeldung.
 - Testskript zeigt eine Schritt-für-Schritt-Hilfe und schreibt Logs nach `logs/test_run.log`.
 - Testskript bricht bei Fehlern mit klarer Meldung und Log-Hinweis ab.
-- Test-Automatik startet nach abgeschlossenen 5 Tasks (Runden-Logik).
+- Test-Automatik startet nach abgeschlossenen 9 Tasks (Runden-Logik).
 - Health-Check prüft wichtige Dateien/Ordner vor dem Start mit klaren Hinweisen.
 - Health-Check kann fehlende Basiselemente automatisch per Self-Repair anlegen.
 - Start-Routine ruft den Health-Check mit aktivem Self-Repair auf.
@@ -52,6 +52,9 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Start-Routine unterstützt Debug- und Logging-Modus (Logdatei start_run.log).
 - Start-Routine zeigt Fehleralternativen statt sofortigem Abbruch und sammelt Hinweise.
 - Start-Routine prüft JSON-Dateien und korrigiert Dateinamen in data/ und logs/.
+- Start-Routine bietet Safe-Mode (schreibgeschützt), Ghost-Mode (Alias) und Sandbox-Modus.
+- Struktur-Check prüft die Trennung von Systemlogik, Config und Daten.
+- System-Scan kann als Vorabprüfung ohne Schreibzugriffe laufen.
 - Standards-Viewer zeigt interne Standards und Styleguide per CLI an.
 - Launcher-GUI ist für kleine Fenstergrößen optimiert (zweizeilige Steuerleiste + Umbruch im Footer).
 
@@ -88,6 +91,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - `system/qa_checks.py`: Qualitäts-Checks (Fehlerklassen + Ampel).
 - `system/error_simulation.py`: Fehler-Simulation (typische Laienfehler).
 - `system/health_check.py`: Health-Check für wichtige Dateien/Ordner vor dem Start.
+- `system/structure_checker.py`: Struktur-Check (Trennung von System/Config/Daten/Logs).
 - `system/config_utils.py`: Hilfsfunktionen für Pfad- und JSON-Validierung.
 - `system/test_gate.py`: Test-Sperre (Tests erst nach kompletter Runde).
   - `system/json_validator.py`: JSON-Validator für Konfigurationen und Manifeste.
@@ -115,9 +119,10 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
   - `scripts/repo_basis_check.sh`: Repo-Check (Remote + Push-Trockenlauf).
   - `scripts/run_tests.sh`: Tests + Codequalität + Formatprüfung.
   - `scripts/generate_launcher_gui_contrast_report.py`: Kontrastbericht für Launcher-Themes.
-  - `scripts/check_env.sh`: Umgebungs-Check (Python + Start-Routine).
-  - `scripts/bootstrap.sh`: Bootstrap (Basis-Ordner erstellen).
-  - `scripts/show_standards.sh`: Standards + Styleguide anzeigen.
+- `scripts/check_env.sh`: Umgebungs-Check (Python + Start-Routine).
+- `scripts/bootstrap.sh`: Bootstrap (Basis-Ordner erstellen).
+- `scripts/show_standards.sh`: Standards + Styleguide anzeigen.
+- `scripts/system_scan.sh`: System-Scan (Vorabprüfung ohne Schreiben).
 - `klick_start.sh`: Klick&Start-Skript (führt Start-Routine aus und öffnet die GUI-Startübersicht).
 - `tests/`: Automatische Tests (Unit-Tests).
 - `modules/`: Modul-Ordner (Standard: manifest.json + module.py).
@@ -145,6 +150,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - **Codequalität (Linting)**: Ruff prüft Fehler und Stilregeln automatisch.
 - **Formatierung**: Black prüft den Code auf einheitliches Format.
 - **Prüfungen**: Start-Routine prüft Struktur und Abhängigkeiten automatisch.
+- **Prüfungen**: Struktur-Check stellt Trennung von System/Config/Daten/Logs sicher.
+- **Prüfungen**: System-Scan bietet eine Vorabprüfung ohne Schreibzugriff.
 - **Prüfungen**: Modul-Check validiert aktivierte Module und deren Manifest.
 - **Prüfungen**: Modul-Selbsttests melden Status pro Modul (GUI und CLI).
 - **Prüfungen**: Modulverbund-Checks prüfen Selftests, IDs und Manifest-Konsistenz.
@@ -166,9 +173,16 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 ### Start-Routine (Struktur + Fortschritt)
 1. `./scripts/start.sh`
 2. Die Start-Routine erstellt fehlende Ordner automatisch, führt den Health-Check mit Selbstreparatur aus, prüft JSONs, korrigiert Dateinamen, prüft Abhängigkeiten, prüft Module und zeigt den Fortschritt in Prozent.
-3. Tests laufen automatisch, sobald eine Runde (5 erledigte Tasks) erreicht ist.
+3. Tests laufen automatisch, sobald eine Runde (9 erledigte Tasks) erreicht ist.
 4. Optional: `./scripts/start.sh --debug` (Debugging = detaillierte Diagnoseausgaben).
 5. Optional: `./scripts/start.sh --log-file logs/start_run.log` (Logdatei festlegen).
+6. Optional: `./scripts/start.sh --safe-mode` (schreibgeschützt, keine Änderungen).
+7. Optional: `./scripts/start.sh --ghost-mode` (Alias für Safe-Mode).
+8. Optional: `./scripts/start.sh --sandbox` (isolierte Sandbox, Schreibzugriffe nur dort).
+
+### System-Scan (Vorabprüfung ohne Schreiben)
+1. `./scripts/system_scan.sh`
+2. Optional: `./scripts/system_scan.sh --debug` (Debugging = detaillierte Diagnoseausgaben).
 
 ### Setup-Skripte (separat ausführbar)
 1. `./scripts/check_env.sh` (Voraussetzungen prüfen)
@@ -197,6 +211,12 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 ### Kontrastbericht (Launcher-Themes)
 1. `python scripts/generate_launcher_gui_contrast_report.py`
 2. Der Bericht wird unter `reports/kontrastpruefung_launcher_gui.md` gespeichert.
+
+### Themes & Kontrast (Pflege)
+1. Launcher-Themes stehen in `config/launcher_gui.json` (z. B. `hell`, `dunkel`, `kontrast`).
+2. Modul-Themes stehen in `config/<modul>.json` unter `themes`.
+3. Pflicht: Mindestens ein Kontrast-Theme pro Modul/Launcher.
+4. Tipp: Vor Änderungen den Kontrastbericht ausführen.
 
 ### Abhängigkeiten (manuell prüfen)
 1. `python system/dependency_checker.py --requirements config/requirements.txt`
@@ -236,7 +256,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 
 ### Test-Sperre (manuell)
 1. `python system/test_gate.py --config config/test_gate.json`
-2. Tests starten erst nach kompletter Runde, sonst erscheint ein Hinweis.
+2. Tests starten erst nach kompletter Runde (9 Tasks), sonst erscheint ein Hinweis.
 
 ### Log-Export (ZIP)
 1. `python system/log_exporter.py`

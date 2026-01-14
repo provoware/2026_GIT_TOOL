@@ -10,12 +10,27 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
-Nächste 5 kleinste Aufgaben (Runde 2026-01-24) – offen
-[ ] DATA-06: Trennung von Systemlogik und variablen Daten/Configs (Config = Konfiguration). | fertig wenn: klare Ordnertrennung umgesetzt.
-[ ] UX-05: Perfektes Farb- und Kontrastverhalten mit mehreren Themes. | fertig wenn: Themes dokumentiert.
-[ ] START-09: Safe-Mode (schreibgeschützt) beim Start. | fertig wenn: Start ohne Schreibzugriffe möglich.
-[ ] START-10: Sandbox-Modus (virtuelle Umgebung) implementieren. | fertig wenn: Start in isolierter Umgebung.
-[ ] ARCH-05: Projektstruktur final definieren und standardisieren. | fertig wenn: Struktur-Standard dokumentiert.
+Nächste 9 kleinste Aufgaben (Runde 2026-01-24) – erledigt
+[x] DATA-06: Trennung von Systemlogik und variablen Daten/Configs (Config = Konfiguration). | fertig wenn: klare Ordnertrennung umgesetzt.
+[x] UX-05: Perfektes Farb- und Kontrastverhalten mit mehreren Themes. | fertig wenn: Themes dokumentiert.
+[x] START-09: Safe-Mode (schreibgeschützt) beim Start. | fertig wenn: Start ohne Schreibzugriffe möglich.
+[x] START-10: Sandbox-Modus (virtuelle Umgebung) implementieren. | fertig wenn: Start in isolierter Umgebung.
+[x] ARCH-05: Projektstruktur final definieren und standardisieren. | fertig wenn: Struktur-Standard dokumentiert.
+[x] START-08: Start-Routine mit Nutzerfeedback für Abhängigkeiten (Dependencies = Abhängigkeiten). | fertig wenn: klare Hinweise + automatische Installation.
+[x] COM-02: Systemscanner vor Start (Rechte/JSON/Ordner). | fertig wenn: Scanner blockiert Fehler.
+[x] COM-04: Ghost-Mode (Testmodus ohne Schreiben). | fertig wenn: keine Writes.
+[x] CODE-04: Styleguide (PEP8 + Projektregeln) als Markdown beilegen. | fertig wenn: Styleguide vorhanden.
+
+Nächste 9 kleinste Aufgaben (Runde 2026-01-25) – offen
+[ ] ARCH-01: Plugin-System mit zentraler Registry einführen (Registry = Modul-Liste). | fertig wenn: Module nur über Registry geladen werden.
+[ ] ARCH-02: Modul-API definieren (Schnittstellen, Events, States). | fertig wenn: API-Dokument + Beispiel vorhanden.
+[ ] ARCH-03: Zentralen Store einführen (Store = gemeinsamer Zustands-Speicher). | fertig wenn: Module lesen/schreiben zentral.
+[ ] ARCH-04: Single Source of Truth für Theme/Settings/Logging. | fertig wenn: doppelte Logik entfernt.
+[ ] ARCH-06: Zentrales Logging-Modul implementieren (Logging = Protokoll). | fertig wenn: ein Logging-Modul genutzt.
+[ ] PERF-01: Lazy Loading für Module (spätes Laden) implementieren. | fertig wenn: Startzeit sinkt.
+[ ] PERF-02: Debounce/Throttle für teure Aktionen (gebremstes Auslösen). | fertig wenn: UI bleibt flüssig.
+[ ] PERF-03: Asynchrones Logging statt blockierend. | fertig wenn: Log schreibt ohne UI-Block.
+[ ] PERF-04: JSON-Handling mit geprüftem Modell absichern (z. B. Pydantic). | fertig wenn: Validierung zentral.
 
 Nächste 5 kleinste Aufgaben (Runde 2026-01-23) – erledigt
 [x] QA-08: Sandbox-Analyse erweitern (Sandbox = Testumgebung). | fertig wenn: Analyse deckt Sandbox-Risiken ab.

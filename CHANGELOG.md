@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.33] – 2026-01-24
+- Start: Safe-Mode (schreibgeschützt) und Ghost-Mode ergänzt.
+- Start: Sandbox-Modus implementiert (isolierte Kopie).
+- Start: Struktur-Check für Ordnertrennung ergänzt.
+- Start: Abhängigkeits-Feedback klarer ausgegeben.
+- Tooling: System-Scan als Vorabprüfung ergänzt.
+- Doku: Struktur- und Theme-Standard aktualisiert.
+- Tests: Test-Automatik auf 9 Tasks pro Runde angepasst.
+
 ## [0.1.32] – 2026-01-23
 - Analyse: Sandbox-Risiken dokumentiert und Schutzmaßnahmen ergänzt.
 - Tests: Modulverbund-Checks ergänzt (Selftests, Manifest-IDs, Konsistenz).

@@ -120,6 +120,18 @@ def _render_missing(missing: Iterable[str]) -> str:
     return f"Fehlende Abhängigkeiten: {items}"
 
 
+def _render_next_steps(no_auto_install: bool) -> List[str]:
+    steps = [
+        "Tipp: Abhängigkeiten installieren mit: python -m pip install -r config/requirements.txt.",
+        "Hinweis: Im Safe-Mode werden keine Pakete installiert.",
+    ]
+    if no_auto_install:
+        steps.append("Auto-Installation ist deaktiviert. Bitte Installation manuell starten.")
+    else:
+        steps.append("Auto-Installation ist aktiv und wird jetzt gestartet.")
+    return steps
+
+
 def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
@@ -146,8 +158,9 @@ def main() -> int:
         return 0
 
     print(_render_missing(result.missing))
+    for line in _render_next_steps(args.no_auto_install):
+        print(line)
     if args.no_auto_install:
-        print("Hinweis: Auto-Installation ist deaktiviert.")
         return 1
 
     print("Abhängigkeiten: Installation wird gestartet.")

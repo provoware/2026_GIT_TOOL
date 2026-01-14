@@ -19,12 +19,14 @@ Bitte **bei jeder Struktur- oder Tool-Änderung** mit aktualisieren.
 ## Tooldateien (wichtige Einstiege)
 - `klick_start.sh`: Startet die komplette Start-Routine und öffnet die GUI-Übersicht.
 - `scripts/start.sh`: Führt die Start-Routine (Health-Check, Struktur, Abhängigkeiten) aus.
+- `scripts/system_scan.sh`: System-Scan (Vorabprüfung ohne Schreiben).
 - `scripts/run_tests.sh`: Führt Tests, Codequalität (Linting) und Formatprüfung aus.
 - `scripts/repo_basis_check.sh`: Prüft Git-Setup (Remote + Push-Trockenlauf).
 - `scripts/generate_launcher_gui_contrast_report.py`: Erstellt den Kontrastbericht für den GUI-Launcher.
 - `system/launcher.py`: CLI-Launcher (Modulübersicht).
 - `system/launcher_gui.py`: GUI-Launcher (Startübersicht mit Themes).
 - `system/health_check.py`: Health-Check (Pflichtdateien/Ordner prüfen).
+- `system/structure_checker.py`: Struktur-Check (Trennung von System/Config/Daten/Logs).
 - `system/dependency_checker.py`: Abhängigkeiten (Dependencies) prüfen und installieren.
 - `system/module_checker.py`: Modul-Check (Manifest + Entry-Datei validieren).
 - `system/todo_manager.py`: Fortschritt berechnen und To-Dos archivieren.
@@ -33,10 +35,15 @@ Bitte **bei jeder Struktur- oder Tool-Änderung** mit aktualisieren.
 ## Automatik: Was beim Start geprüft wird
 Die Start-Routine führt eine **vollautomatische Prüfung (Check)** aus und gibt **klare Rückmeldungen (Feedback)**:
 1. **Health-Check**: Pflichtdateien und Ordner werden geprüft, fehlende Elemente werden bei Bedarf erstellt.
-2. **Struktur-Check**: Projektordner werden geprüft und falls nötig angelegt.
+2. **Struktur-Check**: Projektordner werden geprüft und Trennung wird validiert.
 3. **Abhängigkeits-Check**: `config/requirements.txt` wird geprüft; fehlende Pakete werden installiert.
 4. **Modul-Check**: Module werden validiert (Manifest, Entry, Pfad-Sicherheit).
 5. **Fortschritt**: Der Fortschritt aus `todo.txt` wird berechnet und angezeigt.
+
+Hinweis zu Start-Modi:
+- **Safe-Mode** (`./scripts/start.sh --safe-mode`): Nur prüfen, keine Schreibzugriffe.
+- **Ghost-Mode** (`./scripts/start.sh --ghost-mode`): Alias für Safe-Mode.
+- **Sandbox** (`./scripts/start.sh --sandbox`): Isolierte Kopie, Schreibzugriffe bleiben dort.
 
 ## Barrierefreiheit und Qualität (Kurzstandard)
 - **Tastaturbedienung**: Alle Funktionen müssen ohne Maus erreichbar sein.

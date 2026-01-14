@@ -5,17 +5,20 @@ Diese Datei definiert verbindliche Standards für alle Module, den Launcher und 
 
 ## Verbindliche Projektstruktur
 - `src/`: Systemlogik (stabile Kernlogik, keine variablen Daten).
+- `system/`: Systemskripte/Checks (Start‑/Validierungslogik).
 - `config/`: Konfiguration (änderbar ohne Code, z. B. Module-Liste, Themes).
 - `data/`: Variable Daten und Laufzeitdateien.
 - `logs/`: Protokolle (Fehler, Debug, Ereignisse).
 - `scripts/`: Start‑ und Prüfskripte (automatisierte Checks).
 - `modules/`: Einzelne Module (je Modul eigener Ordner).
+- `tests/`: Automatisierte Tests.
 
 ## Trennung von Systemlogik und variablen Dateien
 - **Systemlogik** liegt ausschließlich in `src/` und `system/`.
 - **Variable Dateien** (Nutzdaten/Protokolle) liegen ausschließlich in `data/` und `logs/`.
 - **Konfiguration** liegt ausschließlich in `config/` und darf keine Logik enthalten.
 - Module lesen Konfigurationen, schreiben aber nur Daten in `data/` (nie in `config/`).
+- Der Struktur-Check (`system/structure_checker.py`) prüft diese Trennung automatisch.
 
 ## Einheitliche Benennung (Dateien/Module)
 - Ordner‑ und Dateinamen: **klein**, **unterstrich** (`snake_case`), **ohne Leerzeichen**.
@@ -66,7 +69,13 @@ Die Startroutine erledigt vollständig und selbstständig:
 ## Barrierefreiheit & Themes
 - Tastaturbedienung (Tab, Enter, Esc) überall möglich.
 - Kontraststarke Farben und klare Buttons.
-- Mehrere Themes in `config/themes/` (z. B. Hell, Dunkel, Hoher Kontrast).
+- Mehrere Themes liegen in den Modul-Configs (`config/*.json`) und in `config/launcher_gui.json`.
+- Mindestens ein **Kontrast-Theme** ist pro Modul/Launcher Pflicht.
+
+## Start-Modi (Safe-Mode & Sandbox)
+- **Safe-Mode**: reine Prüfungen ohne Schreibzugriffe (`./scripts/start.sh --safe-mode`).
+- **Ghost-Mode**: Alias für Safe-Mode (Testmodus ohne Schreiben).
+- **Sandbox**: Start in isolierter Kopie, Schreibzugriffe bleiben in der Sandbox.
 
 ## Tests & Codequalität
 - Automatische Tests für Kernfunktionen.
