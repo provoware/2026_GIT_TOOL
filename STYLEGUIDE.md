@@ -18,6 +18,7 @@ Er ergänzt die Projekt-Standards in `standards.md`.
 ## Projektregeln (verbindlich)
 - **Einfache Sprache**: Fehler- und Hilfetexte sind Deutsch und laienverständlich.
 - **Barrierefreiheit**: Tastaturbedienung, klarer Kontrast, eindeutige Buttons.
+- **Modulnamen**: Modul-IDs sind `snake_case` (z. B. `datei_suche`) und entsprechen dem Ordnernamen.
 - **Trennung der Bereiche**:
   - `src/` und `system/` = Systemlogik.
   - `config/` = Konfiguration.
@@ -30,6 +31,12 @@ Er ergänzt die Projekt-Standards in `standards.md`.
 - **Logging**: Einheitliches Format, keine blockierenden UI-Aktionen.
 - **Keine Überschreibungen**: Dateien nie unbemerkt überschreiben.
 - **Modul-Standard**: Module folgen der gemeinsamen Schnittstelle (init/run/exit/validateInput/validateOutput).
+- **Fehlerhandling**: Meldungen haben **Ursache + Lösungsschritt** und verweisen auf Logs.
+
+## UI-Layout (Abstände & Führung)
+- **Abstands-Raster**: nutze `layout.*` aus `config/launcher_gui.json`.
+- **Konsistente Buttons**: gleiche Innenabstände (`button_padx`, `button_pady`).
+- **Lesbarkeit**: klare Überschriften, gruppierte Bereiche, ausreichend Weißraum.
 
 ## Qualitätssicherung (automatisch)
 - **Formatter**: Black (Formatierer = automatische Vereinheitlichung).

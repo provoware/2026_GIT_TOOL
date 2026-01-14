@@ -65,6 +65,19 @@ def _simulate_invalid_gui_color() -> SimulationResult:
                             },
                         }
                     },
+                    "layout": {
+                        "gap_xs": 4,
+                        "gap_sm": 8,
+                        "gap_md": 12,
+                        "gap_lg": 16,
+                        "gap_xl": 24,
+                        "button_padx": 12,
+                        "button_pady": 6,
+                        "field_padx": 6,
+                        "field_pady": 4,
+                        "text_spacing": {"before": 4, "line": 2, "after": 4},
+                        "focus_thickness": 2,
+                    },
                 }
             ),
             encoding="utf-8",

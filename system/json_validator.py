@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Dict, Iterable, List
@@ -64,9 +65,9 @@ def validate_modules_config(data: dict) -> None:
         raise JsonValidationError("modules darf nicht leer sein.")
     for index, entry in enumerate(modules, start=1):
         entry_obj = _require_dict(entry, f"modules[{index}]")
-        _require_text(entry_obj.get("id"), f"modules[{index}].id")
+        module_id = _require_module_id(entry_obj.get("id"), f"modules[{index}].id")
         _require_text(entry_obj.get("name"), f"modules[{index}].name")
-        _require_text(entry_obj.get("path"), f"modules[{index}].path")
+        _require_module_path(entry_obj.get("path"), module_id, f"modules[{index}].path")
         _require_bool(entry_obj.get("enabled"), f"modules[{index}].enabled")
         _require_text(entry_obj.get("description"), f"modules[{index}].description")
 
@@ -74,6 +75,7 @@ def validate_modules_config(data: dict) -> None:
 def validate_launcher_gui_config(data: dict) -> None:
     default_theme = _require_text(data.get("default_theme"), "default_theme")
     themes = _require_dict(data.get("themes"), "themes")
+    layout = _require_dict(data.get("layout"), "layout")
     refresh_debounce_ms = data.get("refresh_debounce_ms", 200)
     if not isinstance(refresh_debounce_ms, int) or refresh_debounce_ms < 50:
         raise JsonValidationError("refresh_debounce_ms muss mindestens 50 sein.")
@@ -81,6 +83,7 @@ def validate_launcher_gui_config(data: dict) -> None:
         raise JsonValidationError("themes darf nicht leer sein.")
     if default_theme not in themes:
         raise JsonValidationError("default_theme ist nicht in themes enthalten.")
+    _validate_layout(layout)
     for name, entry in themes.items():
         theme_name = _require_text(name, "themes.key")
         entry_obj = _require_dict(entry, f"themes.{theme_name}")
@@ -119,10 +122,50 @@ def validate_todo_config(data: dict) -> None:
 
 
 def validate_manifest(data: dict, path: Path) -> None:
-    _require_text(data.get("id"), f"{path.name}.id")
+    _require_module_id(data.get("id"), f"{path.name}.id")
     _require_text(data.get("name"), f"{path.name}.name")
     _require_text(data.get("version"), f"{path.name}.version")
     _require_text(data.get("entry"), f"{path.name}.entry")
+
+
+def _require_module_id(value: object, label: str) -> str:
+    module_id = _require_text(value, label)
+    if not re.fullmatch(r"[a-z0-9]+(?:_[a-z0-9]+)*", module_id):
+        raise JsonValidationError(f"{label} muss snake_case sein (z. B. modul_name_1).")
+    return module_id
+
+
+def _require_module_path(value: object, module_id: str, label: str) -> str:
+    path = _require_text(value, label)
+    path_parts = Path(path).parts
+    if len(path_parts) != 2 or path_parts[0] != "modules" or path_parts[1] != module_id:
+        raise JsonValidationError(f"{label} muss 'modules/{module_id}' entsprechen.")
+    return path
+
+
+def _require_int_min(value: object, label: str, minimum: int) -> int:
+    if not isinstance(value, int):
+        raise JsonValidationError(f"{label} ist kein Integer.")
+    if value < minimum:
+        raise JsonValidationError(f"{label} muss mindestens {minimum} sein.")
+    return value
+
+
+def _validate_layout(layout: dict) -> None:
+    _require_int_min(layout.get("gap_xs"), "layout.gap_xs", 0)
+    _require_int_min(layout.get("gap_sm"), "layout.gap_sm", 0)
+    _require_int_min(layout.get("gap_md"), "layout.gap_md", 0)
+    _require_int_min(layout.get("gap_lg"), "layout.gap_lg", 0)
+    _require_int_min(layout.get("gap_xl"), "layout.gap_xl", 0)
+    _require_int_min(layout.get("button_padx"), "layout.button_padx", 0)
+    _require_int_min(layout.get("button_pady"), "layout.button_pady", 0)
+    _require_int_min(layout.get("field_padx"), "layout.field_padx", 0)
+    _require_int_min(layout.get("field_pady"), "layout.field_pady", 0)
+    _require_int_min(layout.get("focus_thickness"), "layout.focus_thickness", 0)
+    text_spacing = _require_dict(layout.get("text_spacing"), "layout.text_spacing")
+    _require_int_min(text_spacing.get("before"), "layout.text_spacing.before", 0)
+    _require_int_min(text_spacing.get("line"), "layout.text_spacing.line", 0)
+    _require_int_min(text_spacing.get("after"), "layout.text_spacing.after", 0)
 
 
 VALIDATORS: Dict[str, Callable[[dict], None]] = {

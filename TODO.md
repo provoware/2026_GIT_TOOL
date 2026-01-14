@@ -35,6 +35,12 @@ Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
 - [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 - [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Runde 2026-01-29 (4 kleinste Aufgaben dieser Runde) – erledigt
+- [x] STD-01: Modulnamen-Standard (snake_case + Pfad) validieren. | fertig wenn: Validator blockiert Abweichungen.
+- [x] UX-12: UI-Abstände/Spacing-Tokens in GUI-Konfig + Launcher nutzen. | fertig wenn: Layout nutzt config-Token.
+- [x] QA-09: Fehlerhandling-Standard (Ursache/Lösung/Log) ergänzen. | fertig wenn: Standards dokumentiert.
+- [x] DOC-15: Laienhinweise zu Modulnamen/Layouts ergänzen. | fertig wenn: Anleitung ergänzt.
+
 Runde 2026-01-28 (4 kleinste Aufgaben dieser Runde) – erledigt
 - [x] COM-01: One-Click-Diag (Tests + Ergebnisse in Fenster). | fertig wenn: Diagnosen sichtbar.
 - [x] SEC-01: Rechteprobleme beim Start automatisch korrigieren. | fertig wenn: Self-Repair behebt Rechte.

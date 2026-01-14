@@ -172,6 +172,7 @@ class LauncherGui:
         self.last_non_contrast_theme = self.gui_config.default_theme
         self.contrast_theme = self._resolve_contrast_theme()
         self.status_palette: Dict[str, str] = {}
+        self.layout = self.gui_config.layout
 
         self.root.title("Launcher – Startübersicht")
         self.root.minsize(640, 420)
@@ -190,12 +191,14 @@ class LauncherGui:
             font=self.header_font,
             anchor="w",
         )
-        header.pack(fill="x", padx=16, pady=(16, 8))
+        header.pack(fill="x", padx=self.layout.gap_lg, pady=(self.layout.gap_lg, self.layout.gap_sm))
 
         controls_section = tk.LabelFrame(self.root, text="Einstellungen und Filter")
-        controls_section.pack(fill="x", padx=16, pady=(0, 12))
+        controls_section.pack(
+            fill="x", padx=self.layout.gap_lg, pady=(0, self.layout.gap_md)
+        )
         controls = tk.Frame(controls_section)
-        controls.pack(fill="x", padx=12, pady=8)
+        controls.pack(fill="x", padx=self.layout.gap_md, pady=self.layout.gap_sm)
 
         tk.Label(controls, text="Farbschema:").grid(row=0, column=0, sticky="w")
         self.theme_var = tk.StringVar(value=self.gui_config.default_theme)
@@ -207,9 +210,16 @@ class LauncherGui:
         )
         if self.button_font is not None:
             self.theme_menu.configure(font=self.button_font)
-        self.theme_menu.configure(padx=8, pady=4)
+        self.theme_menu.configure(
+            padx=self.layout.field_padx, pady=self.layout.field_pady
+        )
         self.theme_menu.configure(takefocus=1)
-        self.theme_menu.grid(row=0, column=1, sticky="w", padx=(8, 24))
+        self.theme_menu.grid(
+            row=0,
+            column=1,
+            sticky="w",
+            padx=(self.layout.gap_sm, self.layout.gap_xl),
+        )
 
         self.show_all_var = tk.BooleanVar(value=show_all)
         self.show_all_check = tk.Checkbutton(
@@ -220,9 +230,17 @@ class LauncherGui:
         )
         if self.button_font is not None:
             self.show_all_check.configure(font=self.button_font)
-        self.show_all_check.configure(padx=6, pady=4)
+        self.show_all_check.configure(
+            padx=self.layout.field_padx, pady=self.layout.field_pady
+        )
         self.show_all_check.configure(takefocus=1, underline=0)
-        self.show_all_check.grid(row=0, column=2, sticky="w", padx=(8, 0), pady=4)
+        self.show_all_check.grid(
+            row=0,
+            column=2,
+            sticky="w",
+            padx=(self.layout.gap_sm, 0),
+            pady=self.layout.gap_xs,
+        )
 
         self.debug_var = tk.BooleanVar(value=self.debug)
         self.debug_check = tk.Checkbutton(
@@ -233,9 +251,17 @@ class LauncherGui:
         )
         if self.button_font is not None:
             self.debug_check.configure(font=self.button_font)
-        self.debug_check.configure(padx=6, pady=4)
+        self.debug_check.configure(
+            padx=self.layout.field_padx, pady=self.layout.field_pady
+        )
         self.debug_check.configure(takefocus=1, underline=0)
-        self.debug_check.grid(row=1, column=0, sticky="w", pady=(8, 0), padx=(0, 12))
+        self.debug_check.grid(
+            row=1,
+            column=0,
+            sticky="w",
+            pady=(self.layout.gap_sm, 0),
+            padx=(0, self.layout.gap_md),
+        )
 
         self.refresh_button = tk.Button(
             controls,
@@ -244,9 +270,17 @@ class LauncherGui:
         )
         if self.button_font is not None:
             self.refresh_button.configure(font=self.button_font)
-        self.refresh_button.configure(padx=12, pady=6)
+        self.refresh_button.configure(
+            padx=self.layout.button_padx, pady=self.layout.button_pady
+        )
         self.refresh_button.configure(takefocus=1, underline=0)
-        self.refresh_button.grid(row=1, column=2, sticky="e", padx=(0, 0), pady=(8, 0))
+        self.refresh_button.grid(
+            row=1,
+            column=2,
+            sticky="e",
+            padx=(0, 0),
+            pady=(self.layout.gap_sm, 0),
+        )
 
         self.diagnostics_button = tk.Button(
             controls,
@@ -255,14 +289,22 @@ class LauncherGui:
         )
         if self.button_font is not None:
             self.diagnostics_button.configure(font=self.button_font)
-        self.diagnostics_button.configure(padx=12, pady=6)
+        self.diagnostics_button.configure(
+            padx=self.layout.button_padx, pady=self.layout.button_pady
+        )
         self.diagnostics_button.configure(takefocus=1, underline=0)
-        self.diagnostics_button.grid(row=1, column=1, sticky="w", padx=(8, 12), pady=(8, 0))
+        self.diagnostics_button.grid(
+            row=1,
+            column=1,
+            sticky="w",
+            padx=(self.layout.gap_sm, self.layout.gap_md),
+            pady=(self.layout.gap_sm, 0),
+        )
 
         controls.columnconfigure(2, weight=1)
 
         help_section = tk.LabelFrame(self.root, text="Hilfe (Kurzinfo)")
-        help_section.pack(fill="x", padx=16, pady=(0, 12))
+        help_section.pack(fill="x", padx=self.layout.gap_lg, pady=(0, self.layout.gap_md))
         self.help_label = tk.Label(
             help_section,
             text=(
@@ -276,20 +318,27 @@ class LauncherGui:
             anchor="w",
             justify="left",
         )
-        self.help_label.pack(fill="x", padx=12, pady=8)
+        self.help_label.pack(fill="x", padx=self.layout.gap_md, pady=self.layout.gap_sm)
 
         self.status_var = tk.StringVar(value="Status: Bereit.")
         status_section = tk.LabelFrame(self.root, text="Status")
-        status_section.pack(fill="x", padx=16, pady=(0, 8))
+        status_section.pack(fill="x", padx=self.layout.gap_lg, pady=(0, self.layout.gap_sm))
         self.status_label = tk.Label(
             status_section,
             textvariable=self.status_var,
             anchor="w",
         )
-        self.status_label.pack(fill="x", padx=12, pady=6)
+        self.status_label.pack(
+            fill="x", padx=self.layout.gap_md, pady=self.layout.field_pady
+        )
 
         output_section = tk.LabelFrame(self.root, text="Modulübersicht")
-        output_section.pack(fill="both", expand=True, padx=16, pady=(0, 16))
+        output_section.pack(
+            fill="both",
+            expand=True,
+            padx=self.layout.gap_lg,
+            pady=(0, self.layout.gap_lg),
+        )
         self.output_text = tk.Text(
             output_section,
             wrap="word",
@@ -299,8 +348,15 @@ class LauncherGui:
             relief="groove",
             takefocus=1,
         )
-        self.output_text.configure(spacing1=4, spacing2=2, spacing3=4, highlightthickness=2)
-        self.output_text.pack(fill="both", expand=True, padx=12, pady=12)
+        self.output_text.configure(
+            spacing1=self.layout.text_spacing.before,
+            spacing2=self.layout.text_spacing.line,
+            spacing3=self.layout.text_spacing.after,
+            highlightthickness=self.layout.focus_thickness,
+        )
+        self.output_text.pack(
+            fill="both", expand=True, padx=self.layout.gap_md, pady=self.layout.gap_md
+        )
         self.output_text.configure(state="disabled")
 
         self.footer_label = tk.Label(
@@ -313,7 +369,9 @@ class LauncherGui:
             ),
             anchor="w",
         )
-        self.footer_label.pack(fill="x", padx=16, pady=(0, 12))
+        self.footer_label.pack(
+            fill="x", padx=self.layout.gap_lg, pady=(0, self.layout.gap_md)
+        )
 
         self._bind_accessibility_shortcuts()
         self._bind_responsive_layout()
