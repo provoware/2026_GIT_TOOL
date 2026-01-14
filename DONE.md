@@ -78,3 +78,10 @@
 - Doku: Release-Checkliste für die GUI in todo.txt ergänzt.
 - Doku: TODO.md strukturiert, Dubletten entfernt und Backlog gruppiert.
 - Doku: todo.txt als laienfreundliche Kurzliste ergänzt.
+
+## 2026-01-17
+- Doku: todo.txt-Kurzliste in TODO.md integriert (Release-Checkliste + IDs).
+- Doku: Kurz-Ist-Analyse um Synchronitäts-Lücke ergänzt.
+- Doku: Offene Aufgaben mit Hinweis auf Synchronität dokumentiert.
+- Doku: todo.txt mit IDs und Hinweis auf TODO.md aktualisiert.
+- Doku: Laien-Tipps in TODO.md ergänzt und erweitert.
