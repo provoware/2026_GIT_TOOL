@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.25] – 2026-01-17
+- Doku: todo.txt in TODO.md als synchronisierte Kurzliste integriert.
+- Doku: todo.txt mit IDs und Hinweis auf TODO.md vereinheitlicht.
+- Doku: Laien-Tipps erweitert und in TODO.md gespiegelt.
+
 ## [0.1.24] – 2026-01-16
 - Doku: TODO.md strukturiert, Dubletten entfernt und Backlog gruppiert.
 - Doku: todo.txt als laienfreundliche Kurzliste ergänzt.

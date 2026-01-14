@@ -11,6 +11,31 @@
 - **Schwachstelle**: Fehlermeldungen sind noch nicht überall in einfacher Sprache mit Lösungsschritt vorhanden.
 - **Abhängigkeit**: Für GUI-Tests fehlt eine automatisierte Routine (GUI-Tests = Tests für Benutzeroberflächen).
 - **Best Practice**: Aufgaben sollten eindeutige IDs haben und pro Bereich gruppiert sein.
+- **Lücke**: todo.txt und TODO.md waren nicht 1:1 synchron → Risiko: widersprüchlicher Fortschritt.
+- **Best Practice**: Eine Kurzliste (todo.txt) soll die gleiche ID-Struktur wie TODO.md nutzen.
+
+## Kurzliste (aus todo.txt, synchron)
+Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
+- [ ] REL-GUI-01: Kontrast prüfen (Kontrast = Helligkeitsunterschied; Ziel ≥ 4,5:1).
+- [ ] REL-GUI-02: Fokusreihenfolge prüfen (Fokus = aktuelles Element bei Tab).
+- [ ] REL-GUI-03: Screenreader-Labels ergänzen (Screenreader = Vorlese-Programm).
+- [ ] REL-GUI-04: Fehler-/Statusmeldungen in einfacher Sprache + Lösungsschritt.
+- [ ] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
+- [ ] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
+
+## Laien-Tipps (aus todo.txt, erweitert)
+- Starte zuerst den GUI-Launcher (Startübersicht) und teste mit der Tab-Taste (Tastaturbedienung).
+- Nutze den Health-Check (Systemprüfung) vor dem Start, wenn etwas fehlt.
+- Lies die Fehlermeldung bis zum Ende – dort steht der nächste Schritt.
+- Wenn etwas nicht klappt: erst neu starten, dann Logdatei prüfen (logs/test_run.log).
+- Tipp für Einsteiger: Beginne mit einem kleinen Test-Projektordner, damit Änderungen übersichtlich bleiben.
+
+## Runde 2026-01-17 (5 kleinste Aufgaben dieser Runde) – erledigt
+- [x] TODO-DOK-01: todo.txt-Kurzliste in TODO.md integriert (Release-Checkliste + IDs). | fertig wenn: Abschnitt deckungsgleich.
+- [x] TODO-DOK-02: Kurz-Ist-Analyse um Synchronitäts-Lücke ergänzt. | fertig wenn: Analyse zeigt Risiko.
+- [x] TODO-DOK-03: Offene Aufgaben mit Hinweis auf Synchronität ergänzt. | fertig wenn: klare Verbindung TODO.md ↔ todo.txt.
+- [x] TODO-DOK-04: todo.txt mit IDs und Hinweis auf TODO.md aktualisiert. | fertig wenn: Kurzliste konsistent.
+- [x] TODO-DOK-05: Laien-Tipps in TODO.md ergänzt und erweitert. | fertig wenn: Tipps vorhanden.
 
 ## Runde 2026-01-16 (5 kleinste Aufgaben dieser Runde) – erledigt
 - [x] TODO-STR-01: TODO.md bereinigt (Duplikate entfernt, klare Abschnitte). | fertig wenn: Struktur eindeutig und doppelte Einträge entfernt.
@@ -20,6 +45,7 @@
 - [x] TODO-STR-05: Laienhinweise ergänzt (einfacher Text, Fachbegriffe erklärt). | fertig wenn: neue Aufgaben sind laienverständlich.
 
 ## Offene Aufgaben (kleinste zuerst)
+Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
 - [ ] REL-GUI-01: GUI-Kontrastprüfung für alle Themes (Kontrast = Helligkeitsunterschied; Ziel ≥ 4,5:1). | fertig wenn: Dokument mit geprüften Werten vorhanden.
 - [ ] REL-GUI-02: Tastatur-Fokusreihenfolge in allen Hauptansichten prüfen (Fokus = aktuell ausgewähltes Element). | fertig wenn: durchgehend per Tab erreichbar.
 - [ ] REL-GUI-03: Screenreader-Labels ergänzen (Screenreader = Vorlese-Programm). | fertig wenn: alle Bedienelemente klare Labels haben.
