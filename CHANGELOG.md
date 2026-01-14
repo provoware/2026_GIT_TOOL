@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.28] – 2026-01-19
+- GUI-Launcher: Steuerleiste zweizeilig gemacht, Footer-Text responsiv umbrochen.
+- GUI-Launcher: Mindestgröße reduziert, damit kleine Fenster besser nutzbar sind.
+- Start: Setup-Skripte getrennt (check_env.sh, bootstrap.sh) und Start-Routine erweitert.
+- Start: Debug- und Logging-Modus ergänzt (start_run.log).
+- Tooling: Standards-Viewer ergänzt (Standards + Styleguide per CLI).
+- Doku: Responsivitäts-Check der Launcher-GUI dokumentiert.
+- Doku: DEV_DOKU und To-Do-Listen aktualisiert.
+
 ## [0.1.27] – 2026-01-18
 - Doku: A–I-Backlog (Architektur bis Komfortfunktionen) strukturiert in TODO.md ergänzt.
 - Doku: README um Architektur, Start-Routine, Tests und Barrierefreiheit erweitert.

@@ -196,9 +196,10 @@ class LauncherGui:
         self.refresh_button = None
         self.status_var = None
         self.status_label = None
+        self.footer_label = None
 
         self.root.title("Launcher – Startübersicht")
-        self.root.minsize(720, 480)
+        self.root.minsize(640, 420)
         self._build_ui(show_all)
 
     def _build_ui(self, show_all: bool) -> None:
@@ -224,7 +225,7 @@ class LauncherGui:
             command=lambda _value: self.apply_theme(self.theme_var.get()),
         )
         self.theme_menu.configure(takefocus=1)
-        self.theme_menu.grid(row=0, column=1, sticky="w", padx=(8, 16))
+        self.theme_menu.grid(row=0, column=1, sticky="w", padx=(8, 24))
 
         self.show_all_var = tk.BooleanVar(value=show_all)
         self.show_all_check = tk.Checkbutton(
@@ -234,7 +235,7 @@ class LauncherGui:
             command=self.refresh,
         )
         self.show_all_check.configure(takefocus=1, underline=0)
-        self.show_all_check.grid(row=0, column=2, sticky="w", padx=(0, 16))
+        self.show_all_check.grid(row=0, column=2, sticky="w")
 
         self.debug_var = tk.BooleanVar(value=self.debug)
         self.debug_check = tk.Checkbutton(
@@ -244,7 +245,7 @@ class LauncherGui:
             command=self.refresh,
         )
         self.debug_check.configure(takefocus=1, underline=0)
-        self.debug_check.grid(row=0, column=3, sticky="w")
+        self.debug_check.grid(row=1, column=0, sticky="w", pady=(8, 0))
 
         self.refresh_button = tk.Button(
             controls,
@@ -252,9 +253,9 @@ class LauncherGui:
             command=self.refresh,
         )
         self.refresh_button.configure(takefocus=1, underline=0)
-        self.refresh_button.grid(row=0, column=4, sticky="e", padx=(16, 0))
+        self.refresh_button.grid(row=1, column=2, sticky="e", padx=(0, 0), pady=(8, 0))
 
-        controls.columnconfigure(4, weight=1)
+        controls.columnconfigure(2, weight=1)
 
         self.status_var = tk.StringVar(value="Status: Bereit.")
         self.status_label = tk.Label(
@@ -284,7 +285,7 @@ class LauncherGui:
         self.output_text.pack(fill="both", expand=True, padx=16, pady=(0, 16))
         self.output_text.configure(state="disabled")
 
-        footer = tk.Label(
+        self.footer_label = tk.Label(
             self.root,
             text=(
                 "Tipp: Mit Tabulator erreichst du alle Bedienelemente. "
@@ -293,9 +294,10 @@ class LauncherGui:
             ),
             anchor="w",
         )
-        footer.pack(fill="x", padx=16, pady=(0, 12))
+        self.footer_label.pack(fill="x", padx=16, pady=(0, 12))
 
         self._bind_accessibility_shortcuts()
+        self._bind_responsive_layout()
         self.apply_theme(self.gui_config.default_theme)
         self.refresh()
         self.root.after(100, lambda: self._focus_widget(self.theme_menu))
@@ -307,6 +309,16 @@ class LauncherGui:
         self.root.bind_all("<Alt-t>", lambda _event: self._focus_widget(self.theme_menu))
         self.root.bind_all("<Alt-q>", lambda _event: self.root.quit())
         self.root.bind_all("<Control-r>", lambda _event: self._refresh_from_shortcut())
+
+    def _bind_responsive_layout(self) -> None:
+        self.root.bind("<Configure>", lambda _event: self._update_wrap_length())
+        self._update_wrap_length()
+
+    def _update_wrap_length(self) -> None:
+        if self.footer_label is None:
+            return
+        width = max(self.root.winfo_width() - 32, 280)
+        self.footer_label.configure(wraplength=width, justify="left")
 
     def _focus_widget(self, widget) -> None:
         if widget is not None:
