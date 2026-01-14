@@ -74,3 +74,5 @@
 ## 2026-01-16
 - Doku: PROJEKT_INFO um Automatik, Barrierefreiheit und Laienhinweise ergänzt.
 - Doku: ANALYSE_BERICHT mit Ist-Analyse, Best Practices und Laienvorschlägen aktualisiert.
+- Doku: Standards um Benennungsstandard und Datenmodell-Referenz ergänzt.
+- Doku: Release-Checkliste für die GUI in todo.txt ergänzt.

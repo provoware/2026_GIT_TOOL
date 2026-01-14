@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.23] – 2026-01-16
+- Doku: Standards um Benennungsstandard und Datenmodell-Referenz ergänzt.
+- Doku: Release-Checkliste für die GUI in todo.txt ergänzt.
+
 ## [0.1.22] – 2026-01-14
 - Qualität: Health-Check bereinigt und wieder lauffähig gemacht (Syntax + Self-Repair).
 - Doku: Doppelte Versionsabschnitte im Changelog zusammengeführt.

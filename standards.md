@@ -11,6 +11,25 @@ Diese Datei definiert verbindliche Standards für alle Module, den Launcher und 
 - `scripts/`: Start‑ und Prüfskripte (automatisierte Checks).
 - `modules/`: Einzelne Module (je Modul eigener Ordner).
 
+## Trennung von Systemlogik und variablen Dateien
+- **Systemlogik** liegt ausschließlich in `src/` und `system/`.
+- **Variable Dateien** (Nutzdaten/Protokolle) liegen ausschließlich in `data/` und `logs/`.
+- **Konfiguration** liegt ausschließlich in `config/` und darf keine Logik enthalten.
+- Module lesen Konfigurationen, schreiben aber nur Daten in `data/` (nie in `config/`).
+
+## Einheitliche Benennung (Dateien/Module)
+- Ordner‑ und Dateinamen: **klein**, **unterstrich** (`snake_case`), **ohne Leerzeichen**.
+- Modul‑ID = Ordnername (z. B. `modules/datei_suche`).
+- Pflichtdateien pro Modul:
+  - `modules/<modul_id>/manifest.json`
+  - `modules/<modul_id>/module.py`
+- Konfig‑Dateien tragen den Modul‑ID‑Namen (z. B. `config/datei_suche.json`).
+- Daten‑Dateien tragen den Modul‑ID‑Namen (z. B. `data/datei_suche_log.json`).
+
+## Gemeinsames Datenmodell
+- Zentrales Schema in `src/core/data_model.py` ist **verbindlich**.
+- Module nutzen dieses Schema für To‑Dos/Kalender, damit Austauschbarkeit gewährleistet ist.
+
 ## Modulstandard (Template)
 Jedes Modul besitzt:
 - `modules/<modulname>/manifest.json`: Metadaten (Name, Version, Kurzbeschreibung, benötigte Berechtigungen).

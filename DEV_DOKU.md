@@ -29,6 +29,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Health-Check ist lauffähig, Ruff-konform und nutzt konsistente Datumswerte (Self-Repair aktiv).
 - Changelog-Abschnitte mit doppelten Versionsnummern sind zusammengeführt (0.1.20/0.1.19/0.1.15).
 - Info-Dateien (PROJEKT_INFO/ANALYSE_BERICHT) sind aktualisiert und laienfreundlich erläutert.
+- Standards enthalten einen Benennungsstandard für Dateien/Module und eine Datenmodell-Referenz.
 
 ## Struktur (aktuell)
 - `PROJEKT_INFO.md`: Übersicht zu Ordnerstruktur und Tooldateien (mit Aktualisierungspflicht).
@@ -94,6 +95,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fehler-Logs sind optisch hervorgehoben (Level `ERROR`).
 - Zentrales Datenmodell für To-Dos/Kalender in `src/core/data_model.py`.
 - Einheitliche Modul-Schnittstelle (init/run/exit/validateInput/validateOutput) gemäß `standards.md`.
+- Einheitliche Benennung für Dateien/Module (snake_case, Modul-ID = Ordnername, Pflichtdateien manifest.json + module.py).
 - Modul-Pfade in `config/modules.json` zeigen auf Modulordner (nicht auf einzelne Dateien).
 - Notiz-Editor und Charakter-Modul nutzen Templates, Themes und Dashboard-Statistiken.
 
@@ -109,6 +111,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Abgeschlossene Aufgaben kommen nach `DONE.md`.
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 - `PROJEKT_INFO.md` ist Pflicht und wird bei Struktur- oder Tool-Änderungen aktualisiert.
+- Release-Checkliste für die GUI wird in `todo.txt` gepflegt.
 
 ## Bauen/Starten/Testen
 ### Fortschritt aus todo.txt berechnen
