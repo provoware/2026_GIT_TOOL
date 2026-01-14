@@ -18,6 +18,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - GUI-Launcher bietet Kontrastmodus per Hotkey (Alt+K) und Zoom per Strg+Mausrad.
 - GUI-Launcher hat Hilfe-Kurzinfo und klar benannte Bereiche (Einstellungen, Status, Modulübersicht).
 - GUI-Launcher validiert Eingaben und Ausgaben mit klaren Fehlermeldungen.
+- GUI-Launcher zeigt farbige Statusmeldungen für Erfolg/Fehler/Busy.
+- GUI-Launcher nutzt größere Bedienelemente (Großbutton-UI) für bessere Bedienbarkeit.
 - Kontrastprüfung für Launcher-Themes ist dokumentiert und automatisch testbar.
 - Download-Ordner-Aufräum-Modul bietet Scan, Plan, Undo und Protokoll.
 - Datei-Suche-Modul bietet Filter, Organisation und Undo.
@@ -42,6 +44,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Styleguide (PEP8 + Projektregeln) liegt als Markdown-Datei vor.
 - Start-Routine nutzt jetzt getrennte Setup-Skripte (check_env.sh, bootstrap.sh).
 - Start-Routine unterstützt Debug- und Logging-Modus (Logdatei start_run.log).
+- Start-Routine zeigt Fehleralternativen statt sofortigem Abbruch und sammelt Hinweise.
+- Start-Routine prüft JSON-Dateien und korrigiert Dateinamen in data/ und logs/.
 - Standards-Viewer zeigt interne Standards und Styleguide per CLI an.
 - Launcher-GUI ist für kleine Fenstergrößen optimiert (zweizeilige Steuerleiste + Umbruch im Footer).
 
@@ -76,6 +80,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - `system/health_check.py`: Health-Check für wichtige Dateien/Ordner vor dem Start.
 - `system/config_utils.py`: Hilfsfunktionen für Pfad- und JSON-Validierung.
 - `system/test_gate.py`: Test-Sperre (Tests erst nach kompletter Runde).
+  - `system/json_validator.py`: JSON-Validator für Konfigurationen und Manifeste.
+  - `system/filename_fixer.py`: Automatische Dateinamenkorrektur (data/, logs/).
   - `system/module_checker.py`: Modul-Check (Struktur + Manifest + Entry-Datei).
   - `system/dependency_checker.py`: Abhängigkeiten prüfen und automatisch installieren.
   - `system/color_utils.py`: Farb- und Kontrastberechnung für UI-Checks.
@@ -145,7 +151,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 
 ### Start-Routine (Struktur + Fortschritt)
 1. `./scripts/start.sh`
-2. Die Start-Routine erstellt fehlende Ordner automatisch, führt den Health-Check mit Selbstreparatur aus, prüft Abhängigkeiten, prüft Module und zeigt den Fortschritt in Prozent.
+2. Die Start-Routine erstellt fehlende Ordner automatisch, führt den Health-Check mit Selbstreparatur aus, prüft JSONs, korrigiert Dateinamen, prüft Abhängigkeiten, prüft Module und zeigt den Fortschritt in Prozent.
 3. Tests laufen automatisch, sobald eine Runde (3 erledigte Tasks) erreicht ist.
 4. Optional: `./scripts/start.sh --debug` (Debugging = detaillierte Diagnoseausgaben).
 5. Optional: `./scripts/start.sh --log-file logs/start_run.log` (Logdatei festlegen).
@@ -163,7 +169,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 2. Führt Pytest, Ruff (Linting) und Black (Formatprüfung) in dieser Reihenfolge aus.
 3. Hinweis: Details zu Fehlern stehen im Fehlerprotokoll (Log) unter `logs/test_run.log`.
 4. Hilfe: `./scripts/run_tests.sh --help` zeigt den geführten Ablauf.
-3. Optional: `./scripts/run_tests.sh --help` (kurze Erklärung für Laien).
+5. Optional: `./scripts/run_tests.sh --help` (kurze Erklärung für Laien).
 
 ### Kontrastbericht (Launcher-Themes)
 1. `python scripts/generate_launcher_gui_contrast_report.py`
@@ -172,6 +178,14 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 ### Abhängigkeiten (manuell prüfen)
 1. `python system/dependency_checker.py --requirements config/requirements.txt`
 2. Optional: `python system/dependency_checker.py --requirements config/requirements.txt --no-auto-install`
+
+### JSON-Validator (manuell)
+1. `python system/json_validator.py --root .`
+2. Optional: `python system/json_validator.py --root . --strict` (stoppt beim ersten Fehler).
+
+### Dateinamen-Korrektur (manuell)
+1. `python system/filename_fixer.py --root .`
+2. Optional: `python system/filename_fixer.py --root . --dry-run` (nur anzeigen).
 
 ### Repo-Basis-Check (Push-Trockenlauf)
 1. `./scripts/repo_basis_check.sh`

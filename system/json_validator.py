@@ -1,0 +1,210 @@
+#!/usr/bin/env python3
+"""JSON-Validator: prüft Konfigurationsdateien auf gültige Struktur."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import logging
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Callable, Dict, Iterable, List
+
+from config_utils import ensure_path
+
+
+class JsonValidationError(Exception):
+    """Allgemeiner Fehler für den JSON-Validator."""
+
+
+@dataclass(frozen=True)
+class ValidationResult:
+    path: Path
+    issues: List[str]
+
+
+def _require_text(value: object, label: str) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise JsonValidationError(f"{label} fehlt oder ist leer.")
+    return value.strip()
+
+
+def _require_bool(value: object, label: str) -> bool:
+    if not isinstance(value, bool):
+        raise JsonValidationError(f"{label} ist kein Wahrheitswert (bool).")
+    return value
+
+
+def _require_list(value: object, label: str) -> list:
+    if not isinstance(value, list):
+        raise JsonValidationError(f"{label} ist keine Liste.")
+    return value
+
+
+def _require_dict(value: object, label: str) -> dict:
+    if not isinstance(value, dict):
+        raise JsonValidationError(f"{label} ist kein Objekt (dict).")
+    return value
+
+
+def _load_json(path: Path) -> dict:
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise JsonValidationError(f"JSON ist ungültig: {path}") from exc
+
+
+def validate_modules_config(data: dict) -> None:
+    modules = _require_list(data.get("modules"), "modules")
+    _require_text(data.get("version", "1.0"), "version")
+    if not modules:
+        raise JsonValidationError("modules darf nicht leer sein.")
+    for index, entry in enumerate(modules, start=1):
+        entry_obj = _require_dict(entry, f"modules[{index}]")
+        _require_text(entry_obj.get("id"), f"modules[{index}].id")
+        _require_text(entry_obj.get("name"), f"modules[{index}].name")
+        _require_text(entry_obj.get("path"), f"modules[{index}].path")
+        _require_bool(entry_obj.get("enabled"), f"modules[{index}].enabled")
+        _require_text(entry_obj.get("description"), f"modules[{index}].description")
+
+
+def validate_launcher_gui_config(data: dict) -> None:
+    default_theme = _require_text(data.get("default_theme"), "default_theme")
+    themes = _require_dict(data.get("themes"), "themes")
+    if not themes:
+        raise JsonValidationError("themes darf nicht leer sein.")
+    if default_theme not in themes:
+        raise JsonValidationError("default_theme ist nicht in themes enthalten.")
+    for name, entry in themes.items():
+        theme_name = _require_text(name, "themes.key")
+        entry_obj = _require_dict(entry, f"themes.{theme_name}")
+        _require_text(entry_obj.get("label"), f"themes.{theme_name}.label")
+        colors = _require_dict(entry_obj.get("colors"), f"themes.{theme_name}.colors")
+        for key in (
+            "background",
+            "foreground",
+            "accent",
+            "button_background",
+            "button_foreground",
+            "status_success",
+            "status_error",
+            "status_busy",
+            "status_foreground",
+        ):
+            _require_text(colors.get(key), f"themes.{theme_name}.colors.{key}")
+
+
+def validate_test_gate_config(data: dict) -> None:
+    threshold = data.get("threshold", 1)
+    if not isinstance(threshold, int) or threshold <= 0:
+        raise JsonValidationError("threshold muss eine positive Zahl sein.")
+    _require_text(data.get("todo_path", "todo.txt"), "todo_path")
+    _require_text(data.get("state_path", "data/test_state.json"), "state_path")
+    tests_command = _require_list(data.get("tests_command", []), "tests_command")
+    if not tests_command:
+        raise JsonValidationError("tests_command darf nicht leer sein.")
+    for item in tests_command:
+        _require_text(item, "tests_command")
+
+
+def validate_todo_config(data: dict) -> None:
+    _require_text(data.get("todo_path"), "todo_path")
+    _require_text(data.get("archive_path"), "archive_path")
+
+
+def validate_manifest(data: dict, path: Path) -> None:
+    _require_text(data.get("id"), f"{path.name}.id")
+    _require_text(data.get("name"), f"{path.name}.name")
+    _require_text(data.get("version"), f"{path.name}.version")
+    _require_text(data.get("entry"), f"{path.name}.entry")
+
+
+VALIDATORS: Dict[str, Callable[[dict], None]] = {
+    "modules.json": validate_modules_config,
+    "launcher_gui.json": validate_launcher_gui_config,
+    "test_gate.json": validate_test_gate_config,
+    "todo_config.json": validate_todo_config,
+}
+
+
+def iter_json_files(root: Path) -> Iterable[Path]:
+    config_dir = root / "config"
+    if config_dir.exists():
+        yield from sorted(config_dir.glob("*.json"))
+    modules_dir = root / "modules"
+    if modules_dir.exists():
+        yield from sorted(modules_dir.glob("*/manifest.json"))
+
+
+def validate_json_file(path: Path) -> ValidationResult:
+    ensure_path(path, "json_path", JsonValidationError)
+    data = _load_json(path)
+    issues: List[str] = []
+    validator = VALIDATORS.get(path.name)
+    try:
+        if path.name == "manifest.json":
+            validate_manifest(data, path)
+        elif validator is not None:
+            validator(data)
+    except JsonValidationError as exc:
+        issues.append(str(exc))
+    return ValidationResult(path=path, issues=issues)
+
+
+def validate_all(root: Path) -> List[ValidationResult]:
+    ensure_path(root, "root", JsonValidationError)
+    results: List[ValidationResult] = []
+    for path in iter_json_files(root):
+        results.append(validate_json_file(path))
+    return results
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="JSON-Validator: prüft Konfigurationsdateien und Manifeste.",
+    )
+    parser.add_argument(
+        "--root",
+        type=Path,
+        default=Path(__file__).resolve().parents[1],
+        help="Projektwurzel für die Prüfung.",
+    )
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Bei erstem Fehler abbrechen.",
+    )
+    parser.add_argument("--debug", action="store_true", help="Debug-Modus aktivieren.")
+    return parser
+
+
+def main() -> int:
+    parser = build_parser()
+    args = parser.parse_args()
+    logging.basicConfig(
+        level=logging.DEBUG if args.debug else logging.INFO,
+        format="%(levelname)s: %(message)s",
+    )
+    results = validate_all(args.root)
+    if not results:
+        logging.error("Keine JSON-Dateien gefunden.")
+        return 2
+    total_issues = 0
+    for result in results:
+        if not result.issues:
+            logging.info("JSON OK: %s", result.path)
+            continue
+        total_issues += len(result.issues)
+        for issue in result.issues:
+            logging.error("JSON-Problem in %s: %s", result.path, issue)
+        if args.strict:
+            return 2
+    if total_issues:
+        logging.error("JSON-Validierung: %s Problem(e) gefunden.", total_issues)
+        return 2
+    logging.info("JSON-Validierung: alle Prüfungen ok.")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

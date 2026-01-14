@@ -111,3 +111,10 @@
 - UI: Screenreader-freundliche Bereichsstruktur im GUI-Launcher ergänzt.
 - UI: Hilfetexte direkt in der GUI integriert (Kurzinfo).
 - Qualität: Eingabe-/Ausgabe-Validierung im GUI-Launcher erweitert.
+
+## 2026-01-21
+- Start: Fehleralternativen in der Start-Routine ergänzt (keine sofortigen Abbrüche).
+- UI: Großbutton-UI im GUI-Launcher umgesetzt (größere Schrift/Abstände).
+- UI: Farbiges Sofort-Feedback im Statusbereich (Erfolg/Fehler/Busy) ergänzt.
+- Qualität: JSON-Validator für Konfigurationen und Manifeste ergänzt.
+- Qualität: Automatische Dateinamenkorrektur für data/ und logs/ ergänzt.

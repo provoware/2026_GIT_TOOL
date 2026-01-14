@@ -10,12 +10,19 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
-Nächste 5 kleinste Aufgaben (Runde 2026-01-21) – offen
-[ ] START-06: Fehleralternativen statt Abbruch. | fertig wenn: Vorschläge statt Stop.
-[ ] UX-02: Großbutton-UI realisieren (Großbutton = große Schaltflächen). | fertig wenn: große Buttons nutzbar.
-[ ] UX-04: Farbiges Sofort-Feedbacksystem (Erfolg/Fehler). | fertig wenn: klare Farben.
-[ ] QA-01: JSON-Validator einbauen. | fertig wenn: JSON geprüft.
-[ ] QA-02: Automatische Dateinamenkorrektur. | fertig wenn: falsche Namen korrigiert.
+Nächste 5 kleinste Aufgaben (Runde 2026-01-22) – offen
+[ ] QA-03: Fehlerklassifizierung (leicht/mittel/schwer). | fertig wenn: Fehlerstufe angezeigt.
+[ ] QA-04: Ampelsystem für Dateifehler. | fertig wenn: Ampelstatus sichtbar.
+[ ] QA-05: Modul-Selbsttests mit GUI-Ausgabe. | fertig wenn: Teststatus sichtbar.
+[ ] TEST-01: Automatisierte GUI-Tests einbinden. | fertig wenn: GUI-Tests laufen.
+[ ] TEST-02: Fehler-Simulation (Laienfehler) integrieren. | fertig wenn: klare Fehlerfälle.
+
+Nächste 5 kleinste Aufgaben (Runde 2026-01-21) – erledigt
+[x] START-06: Fehleralternativen statt Abbruch. | fertig wenn: Vorschläge statt Stop.
+[x] UX-02: Großbutton-UI realisieren (Großbutton = große Schaltflächen). | fertig wenn: große Buttons nutzbar.
+[x] UX-04: Farbiges Sofort-Feedbacksystem (Erfolg/Fehler). | fertig wenn: klare Farben.
+[x] QA-01: JSON-Validator einbauen. | fertig wenn: JSON geprüft.
+[x] QA-02: Automatische Dateinamenkorrektur. | fertig wenn: falsche Namen korrigiert.
 
 Nächste 5 kleinste Aufgaben (Runde 2026-01-20) – erledigt
 [x] ACC-01: Kontrastmodus per Hotkey umschaltbar. | fertig wenn: Hotkey aktiv.
