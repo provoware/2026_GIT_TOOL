@@ -7,7 +7,6 @@ import argparse
 import json
 import logging
 import os
-from datetime import date
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -37,12 +36,18 @@ def _ensure_items(items: Iterable[CheckItem], label: str) -> List[CheckItem]:
     return items_list
 
 
-def _check_dir(item: CheckItem, issues: List[str], self_repair: bool) -> None:
+def _check_dir(
+    item: CheckItem,
+    issues: List[str],
+    repairs: List[str],
+    self_repair: bool,
+) -> None:
     if not item.path.exists():
         if self_repair:
             try:
                 item.path.mkdir(parents=True, exist_ok=True)
                 logging.info("Self-Repair: Ordner erstellt: %s (%s).", item.label, item.path)
+                repairs.append(f"Ordner erstellt: {item.label} ({item.path}).")
                 return
             except OSError as exc:
                 issues.append(
@@ -58,6 +63,7 @@ def _check_dir(item: CheckItem, issues: List[str], self_repair: bool) -> None:
 def _check_file(
     item: CheckItem,
     issues: List[str],
+    repairs: List[str],
     self_repair: bool,
     defaults: dict[Path, str],
 ) -> None:
@@ -70,16 +76,14 @@ def _check_file(
             try:
                 item.path.parent.mkdir(parents=True, exist_ok=True)
                 item.path.write_text(default_content, encoding="utf-8")
+                logging.info("Self-Repair: Datei erstellt: %s (%s).", item.label, item.path)
+                repairs.append(f"Datei erstellt: {item.label} ({item.path}).")
+                return
             except OSError as exc:
                 issues.append(
                     f"Self-Repair fehlgeschlagen: Datei {item.label} ({item.path}). Grund: {exc}"
                 )
                 return
-            if not item.path.exists() or not item.path.is_file():
-                issues.append(f"Self-Repair: Datei nicht angelegt: {item.label} ({item.path}).")
-                return
-            logging.info("Self-Repair: Datei erstellt: %s (%s).", item.label, item.path)
-            return
         issues.append(f"Datei fehlt: {item.label} ({item.path}).")
         return
     if not item.path.is_file():
@@ -108,30 +112,8 @@ def _check_executable(item: CheckItem, issues: List[str]) -> None:
         )
 
 
-def _default_file_content(root: Path, path: Path) -> str | None:
-    if not isinstance(root, Path):
-        raise HealthCheckError("root ist kein Pfad (Path).")
-    if not isinstance(path, Path):
-        raise HealthCheckError("path ist kein Pfad (Path).")
-    relative = path.relative_to(root).as_posix()
-
-    default_modules = {
-        "version": "1.0",
-        "modules": [
-            {
-                "id": "status",
-                "name": "Status-Check",
-                "path": "modules/status",
-                "enabled": True,
-                "description": "Minimaler Status-Check für die Grundprüfung.",
-            }
-        ],
-    }
-    default_launcher = {
-        "default_theme": "kontrast",
-        "themes": {
 def _build_default_files(root: Path) -> dict[Path, str]:
-    today = date.today().isoformat()
+    today = datetime.now(timezone.utc).date().isoformat()
     modules_payload = {
         "modules": [
             {
@@ -165,10 +147,6 @@ def _build_default_files(root: Path) -> dict[Path, str]:
                     "button_background": "#1a1a1a",
                     "button_foreground": "#ffffff",
                 },
-            }
-        },
-    }
-    default_test_gate = {
             },
         },
     }
@@ -179,62 +157,14 @@ def _build_default_files(root: Path) -> dict[Path, str]:
         "tests_command": ["bash", "scripts/run_tests.sh"],
     }
 
-    defaults = {
-        "todo.txt": (
-            "# To-Do-Liste\n"
-            "# Format: [ ] JJJJ-MM-TT | Bereich | Aufgabe | prüfen: ... | fertig wenn: ...\n"
-        ),
-        "CHANGELOG.md": (
-            "# Changelog\n\n"
-            "## [0.1.0] – Initial\n"
-            "- Platzhalterdatei (automatisch erstellt).\n"
-        ),
-        "DEV_DOKU.md": (
-            "# DEV_DOKU\n\n"
-            "## Hinweis\n"
-            "Diese Datei wurde automatisch erstellt. Bitte Inhalte ergänzen.\n"
-        ),
-        "DONE.md": (
-            "# DONE\n\n"
-            f"## {datetime.now(timezone.utc).date().isoformat()}\n"
-            "- Selbstreparatur: Datei automatisch erstellt.\n"
-        ),
-        "PROGRESS.md": (
-            "# PROGRESS\n\n"
-            f"Stand: {datetime.now(timezone.utc).date().isoformat()}\n\n"
-    defaults = {
-        root / "config" / "modules.json": json.dumps(
-            modules_payload, indent=2, ensure_ascii=False
-        )
+    return {
+        root / "config" / "modules.json": json.dumps(modules_payload, indent=2, ensure_ascii=False)
         + "\n",
-        root / "config" / "launcher_gui.json": json.dumps(
-            gui_payload, indent=2, ensure_ascii=False
-        )
+        root / "config" / "launcher_gui.json": json.dumps(gui_payload, indent=2, ensure_ascii=False)
         + "\n",
-        root / "config" / "requirements.txt": (
-            "# Abhängigkeiten (eine pro Zeile)\n"
-            "# Beispiel: requests==2.31.0\n"
-        ),
-        root / "config" / "test_gate.json": json.dumps(
-            test_gate_payload, indent=2, ensure_ascii=False
-        )
-        + "\n",
-        root / "todo.txt": (
-            "# To-Do-Liste\n"
-            "# Format: [ ] JJJJ-MM-TT | Bereich | Titel | prüfen: ... | fertig wenn: ...\n"
-        ),
-        root / "CHANGELOG.md": "# Changelog\n\n## [Unreleased]\n- Platzhalter.\n",
-        root / "DEV_DOKU.md": "# DEV_DOKU\n\n## Zweck\nPlatzhalter für die Entwickler-Dokumentation.\n",
-        root / "DONE.md": f"# DONE\n\n## {today}\n- Platzhalter.\n",
-        root / "PROGRESS.md": (
-            "# PROGRESS\n\n"
-            f"Stand: {today}\n\n"
-            "- Gesamt: 0 Tasks\n"
-            "- Erledigt: 0 Tasks\n"
-            "- Offen: 0 Tasks\n"
-            "- Fortschritt: 0,00 %\n"
-        ),
-        "config/requirements.txt": (
+        root
+        / "config"
+        / "requirements.txt": (
             "# Python-Abhängigkeiten (pip-Pakete)\n"
             "# Beispiel: requests>=2.32.0\n"
             "# Hinweis: Leere Datei bedeutet, dass aktuell keine externen Pakete nötig sind.\n"
@@ -242,53 +172,35 @@ def _build_default_files(root: Path) -> dict[Path, str]:
             "ruff>=0.5.0\n"
             "black>=24.0.0\n"
         ),
-        "config/modules.json": (json.dumps(default_modules, indent=2, ensure_ascii=False) + "\n"),
-        "config/launcher_gui.json": (
-            json.dumps(default_launcher, indent=2, ensure_ascii=False) + "\n"
+        root
+        / "config"
+        / "test_gate.json": json.dumps(test_gate_payload, indent=2, ensure_ascii=False)
+        + "\n",
+        root
+        / "todo.txt": (
+            "# To-Do-Liste\n"
+            "# Format: [ ] JJJJ-MM-TT | Bereich | Titel | prüfen: ... | fertig wenn: ...\n"
         ),
-        "config/test_gate.json": (
-            json.dumps(default_test_gate, indent=2, ensure_ascii=False) + "\n"
+        root / "CHANGELOG.md": "# Changelog\n\n## [Unreleased]\n- Platzhalter.\n",
+        root
+        / "DEV_DOKU.md": (
+            "# DEV_DOKU\n\n## Zweck\nPlatzhalter für die Entwickler-Dokumentation.\n"
+        ),
+        root / "DONE.md": f"# DONE\n\n## {today}\n- Platzhalter.\n",
+        root
+        / "PROGRESS.md": (
+            "# PROGRESS\n\n"
+            f"Stand: {today}\n\n"
+            "- Gesamt: 0 Tasks\n"
+            "- Erledigt: 0 Tasks\n"
+            "- Offen: 0 Tasks\n"
+            "- Fortschritt: 0,00 %\n"
         ),
     }
-    return defaults.get(relative)
-
-
-def _apply_self_repair(
-    root: Path,
-    dir_items: Iterable[CheckItem],
-    file_items: Iterable[CheckItem],
-) -> List[str]:
-    if not isinstance(root, Path):
-        raise HealthCheckError("root ist kein Pfad (Path).")
-    repairs: List[str] = []
-
-    for item in dir_items:
-        if not item.path.exists():
-            item.path.mkdir(parents=True, exist_ok=True)
-            repairs.append(f"Ordner erstellt: {item.label} ({item.path}).")
-
-    for item in file_items:
-        if item.path.exists():
-            continue
-        content = _default_file_content(root, item.path)
-        if content is None:
-            repairs.append(f"Datei fehlt (kein Standard verfügbar): {item.label} ({item.path}).")
-            continue
-        item.path.parent.mkdir(parents=True, exist_ok=True)
-        item.path.write_text(content, encoding="utf-8")
-        repairs.append(f"Datei erstellt: {item.label} ({item.path}).")
-
-    return repairs
 
 
 def run_health_check(root: Path, self_repair: bool = False) -> tuple[List[str], List[str]]:
     ensure_path(root, "root", HealthCheckError)
-    }
-    return defaults
-
-
-def run_health_check(root: Path, self_repair: bool = False) -> List[str]:
-    _ensure_path(root, "root")
     if not root.exists():
         raise HealthCheckError(f"Root-Verzeichnis fehlt: {root}")
     if not root.is_dir():
@@ -312,7 +224,7 @@ def run_health_check(root: Path, self_repair: bool = False) -> List[str]:
         "Ordnerliste",
     )
     for item in dir_items:
-        _check_dir(item, issues, self_repair)
+        _check_dir(item, issues, repairs, self_repair)
 
     file_items = _ensure_items(
         [
@@ -329,7 +241,7 @@ def run_health_check(root: Path, self_repair: bool = False) -> List[str]:
         "Dateiliste",
     )
     for item in file_items:
-        _check_file(item, issues, self_repair, defaults)
+        _check_file(item, issues, repairs, self_repair, defaults)
 
     json_items = _ensure_items(
         [
@@ -350,21 +262,6 @@ def run_health_check(root: Path, self_repair: bool = False) -> List[str]:
         ],
         "Skriptliste",
     )
-    for item in script_items:
-        _check_executable(item, issues)
-
-    if self_repair:
-        repairs = _apply_self_repair(root, dir_items, file_items)
-        for message in repairs:
-            logging.info("Selbstreparatur: %s", message)
-
-    issues = []
-    for item in dir_items:
-        _check_dir(item, issues)
-    for item in file_items:
-        _check_file(item, issues)
-    for item in json_items:
-        _check_json(item, issues)
     for item in script_items:
         _check_executable(item, issues)
 
@@ -390,11 +287,6 @@ def build_parser() -> argparse.ArgumentParser:
         "--debug",
         action="store_true",
         help="Debug-Modus aktivieren.",
-    )
-    parser.add_argument(
-        "--self-repair",
-        action="store_true",
-        help="Fehlende Basisdateien und Ordner automatisch anlegen.",
     )
     return parser
 
@@ -440,7 +332,6 @@ def main() -> int:
         issues, repairs = run_health_check(args.root, self_repair=args.self_repair)
         if args.self_repair:
             logging.info("Self-Repair ist aktiv. Fehlende Basiselemente werden erstellt.")
-        issues = run_health_check(args.root, self_repair=args.self_repair)
     except HealthCheckError as exc:
         logging.error("Health-Check konnte nicht starten: %s", exc)
         return 2
