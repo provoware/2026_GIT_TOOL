@@ -34,10 +34,14 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Standards enthalten einen Benennungsstandard für Dateien/Module und eine Datenmodell-Referenz.
 - TODO.md ist strukturiert (IDs, Bereiche, klare Offen/Erledigt-Abschnitte).
 - todo.txt ist als laienfreundliche Kurzliste gepflegt und mit TODO.md synchronisiert.
+- A–I-Backlog (Architektur bis Komfortfunktionen) ist strukturiert dokumentiert.
+- README ist um Architektur/Start/Tests/Barrierefreiheit ergänzt.
+- Styleguide (PEP8 + Projektregeln) liegt als Markdown-Datei vor.
 
 ## Struktur (aktuell)
 - `PROJEKT_INFO.md`: Übersicht zu Ordnerstruktur und Tooldateien (mit Aktualisierungspflicht).
 - `ANALYSE_BERICHT.md`: Analysebericht zu Inkonsistenzen, Redundanzen und Robustheit.
+- `STYLEGUIDE.md`: Styleguide (PEP8 + Projektregeln).
 - `src/`: Systemlogik (stabile Kernlogik).
   - `src/records/record_updater.py`: Logik für Archivierung und Changelog.
   - `src/core/data_model.py`: Zentrales Datenmodell für To-Dos und Kalender.
