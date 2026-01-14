@@ -194,6 +194,8 @@ class LauncherGui:
         self.show_all_check = None
         self.debug_check = None
         self.refresh_button = None
+        self.status_var = None
+        self.status_label = None
 
         self.root.title("Launcher – Startübersicht")
         self.root.minsize(720, 480)
@@ -254,6 +256,21 @@ class LauncherGui:
 
         controls.columnconfigure(4, weight=1)
 
+        self.status_var = tk.StringVar(value="Status: Bereit.")
+        self.status_label = tk.Label(
+            self.root,
+            textvariable=self.status_var,
+            anchor="w",
+        )
+        self.status_label.pack(fill="x", padx=16, pady=(0, 8))
+
+        output_label = tk.Label(
+            self.root,
+            text="Modulübersicht (Ausgabe)",
+            anchor="w",
+        )
+        output_label.pack(fill="x", padx=16, pady=(0, 4))
+
         self.output_text = tk.Text(
             self.root,
             wrap="word",
@@ -281,6 +298,7 @@ class LauncherGui:
         self._bind_accessibility_shortcuts()
         self.apply_theme(self.gui_config.default_theme)
         self.refresh()
+        self.root.after(100, lambda: self._focus_widget(self.theme_menu))
 
     def _bind_accessibility_shortcuts(self) -> None:
         self.root.bind_all("<Alt-a>", lambda _event: self._toggle_show_all())
@@ -378,6 +396,7 @@ class LauncherGui:
         show_all = bool(self.show_all_var.get())
         debug = bool(self.debug_var.get())
         try:
+            self._set_status("Prüfe Module…", busy=True)
             modules = load_modules(self.module_config)
             modules = filter_modules(modules, show_all)
             root_dir = self.module_config.resolve().parents[1]
@@ -385,9 +404,17 @@ class LauncherGui:
             issues = run_module_check(self.module_config)
             text = self._append_module_check(text, issues)
         except (LauncherError, GuiLauncherError) as exc:
-            text = f"Fehler: {exc}\n"
+            text = (
+                "Fehler beim Aktualisieren.\n"
+                f"Ursache: {exc}\n"
+                "Lösung: Bitte config/modules.json und die Modulordner prüfen, "
+                "danach erneut auf „Übersicht aktualisieren“ klicken.\n"
+            )
             logging.error("GUI-Launcher Fehler: %s", exc)
             self._show_error(str(exc))
+            self._set_status("Fehler aufgetreten. Bitte Hinweise lesen.", busy=False)
+        else:
+            self._set_status("Bereit.", busy=False)
 
         self._set_output(text)
 
@@ -399,10 +426,25 @@ class LauncherGui:
         self.output_text.insert("end", text)
         self.output_text.configure(state="disabled")
 
+    def _set_status(self, message: str, busy: bool) -> None:
+        if not isinstance(message, str) or not message.strip():
+            raise GuiLauncherError("Statusmeldung ist leer.")
+        if self.status_var is not None:
+            self.status_var.set(f"Status: {message}")
+        self.root.configure(cursor="watch" if busy else "")
+        self.root.update_idletasks()
+
     def _show_error(self, message: str) -> None:
         import tkinter.messagebox as messagebox
 
-        messagebox.showerror("Fehler", message)
+        cleaned = message.strip() if isinstance(message, str) else "Unbekannter Fehler."
+        friendly = (
+            "Es gab ein Problem beim Aktualisieren der Modulübersicht.\n\n"
+            f"Ursache: {cleaned}\n\n"
+            "Lösung: Prüfe die Einträge in config/modules.json und die Modulordner. "
+            "Danach erneut auf „Übersicht aktualisieren“ klicken."
+        )
+        messagebox.showerror("Fehler", friendly)
 
     def _append_module_check(self, text: str, issues: List[str]) -> str:
         if not isinstance(text, str) or not text.strip():
@@ -411,8 +453,8 @@ class LauncherGui:
         if issues:
             lines.append("Es wurden Probleme gefunden:")
             lines.extend([f"- {issue}" for issue in issues])
-            lines.append("Bitte Konfiguration oder Modulstruktur korrigieren.")
-            self._show_error("Modul-Check: Es wurden Probleme gefunden. Details siehe Übersicht.")
+            lines.append("Lösung: Bitte config/modules.json und die Modulordner korrigieren.")
+            self._show_error("Modul-Check: Probleme gefunden. Details stehen in der Übersicht.")
             logging.error("Modul-Check: %s Problem(e) gefunden.", len(issues))
             for issue in issues:
                 logging.error("Modul-Check: %s", issue)

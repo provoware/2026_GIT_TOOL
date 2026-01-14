@@ -9,6 +9,7 @@ Bitte **bei jeder Struktur- oder Tool-Änderung** mit aktualisieren.
 - `data/`: Nutzdaten und Protokolle (z. B. Moduldaten, Logs).
 - `logs/`: Laufzeit-Logs (z. B. Testprotokolle).
 - `modules/`: Module nach Standard (Manifest + Entry-Datei).
+- `reports/`: Prüfberichte (z. B. Kontrastprüfungen).
 - `scripts/`: Start- und Prüfskripte (Automatisierung).
 - `src/`: Kernlogik (stabile System-Logik, unabhängig von Config).
 - `system/`: Tool-Logik (CLI-Tools, Checks, Launcher).
@@ -20,6 +21,7 @@ Bitte **bei jeder Struktur- oder Tool-Änderung** mit aktualisieren.
 - `scripts/start.sh`: Führt die Start-Routine (Health-Check, Struktur, Abhängigkeiten) aus.
 - `scripts/run_tests.sh`: Führt Tests, Codequalität (Linting) und Formatprüfung aus.
 - `scripts/repo_basis_check.sh`: Prüft Git-Setup (Remote + Push-Trockenlauf).
+- `scripts/generate_launcher_gui_contrast_report.py`: Erstellt den Kontrastbericht für den GUI-Launcher.
 - `system/launcher.py`: CLI-Launcher (Modulübersicht).
 - `system/launcher_gui.py`: GUI-Launcher (Startübersicht mit Themes).
 - `system/health_check.py`: Health-Check (Pflichtdateien/Ordner prüfen).

@@ -14,6 +14,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Modul-Check prüft registrierte Module über `config/modules.json`.
 - GUI-Launcher führt beim Aktualisieren zusätzlich den Modul-Check aus und meldet Probleme direkt in der Übersicht.
 - GUI-Launcher nutzt zusätzliche Themes und sichtbare Fokusrahmen für bessere Tastaturbedienung.
+- GUI-Launcher zeigt eine Statuszeile inkl. Busy-Hinweis bei längeren Aktionen.
+- Kontrastprüfung für Launcher-Themes ist dokumentiert und automatisch testbar.
 - Download-Ordner-Aufräum-Modul bietet Scan, Plan, Undo und Protokoll.
 - Datei-Suche-Modul bietet Filter, Organisation und Undo.
 - Abhängigkeitsprüfung ignoriert Inline-Kommentare in requirements.txt.
@@ -65,7 +67,10 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - `system/test_gate.py`: Test-Sperre (Tests erst nach kompletter Runde).
   - `system/module_checker.py`: Modul-Check (Struktur + Manifest + Entry-Datei).
   - `system/dependency_checker.py`: Abhängigkeiten prüfen und automatisch installieren.
+  - `system/color_utils.py`: Farb- und Kontrastberechnung für UI-Checks.
 - `logs/`: Logdateien (Protokolle).
+- `reports/`: Prüfberichte (z. B. Kontrast).
+  - `reports/kontrastpruefung_launcher_gui.md`: Kontrastwerte der Launcher-Themes.
 - `data/log_exports/`: Exporte von Logdateien.
 - `data/test_state.json`: Statusdatei für den Test-Start.
 - `data/notiz_editor.json`: Datenablage für den Notiz-Editor.
@@ -79,6 +84,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - `scripts/`: Start- und Prüfskripte.
   - `scripts/repo_basis_check.sh`: Repo-Check (Remote + Push-Trockenlauf).
   - `scripts/run_tests.sh`: Tests + Codequalität + Formatprüfung.
+  - `scripts/generate_launcher_gui_contrast_report.py`: Kontrastbericht für Launcher-Themes.
 - `klick_start.sh`: Klick&Start-Skript (führt Start-Routine aus und öffnet die GUI-Startübersicht).
 - `tests/`: Automatische Tests (Unit-Tests).
 - `modules/`: Modul-Ordner (Standard: manifest.json + module.py).
@@ -136,6 +142,10 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 3. Hinweis: Details zu Fehlern stehen im Fehlerprotokoll (Log) unter `logs/test_run.log`.
 4. Hilfe: `./scripts/run_tests.sh --help` zeigt den geführten Ablauf.
 3. Optional: `./scripts/run_tests.sh --help` (kurze Erklärung für Laien).
+
+### Kontrastbericht (Launcher-Themes)
+1. `python scripts/generate_launcher_gui_contrast_report.py`
+2. Der Bericht wird unter `reports/kontrastpruefung_launcher_gui.md` gespeichert.
 
 ### Abhängigkeiten (manuell prüfen)
 1. `python system/dependency_checker.py --requirements config/requirements.txt`

@@ -85,3 +85,8 @@
 - Doku: Offene Aufgaben mit Hinweis auf Synchronität dokumentiert.
 - Doku: todo.txt mit IDs und Hinweis auf TODO.md aktualisiert.
 - Doku: Laien-Tipps in TODO.md ergänzt und erweitert.
+- UI: Kontrastprüfung für Launcher-Themes dokumentiert.
+- UI: Launcher-Statusanzeige inkl. Busy-Hinweis ergänzt.
+- UI: Zusatz-Label für Screenreader in der Modulübersicht ergänzt.
+- UI: Fokus-Start auf Theme-Auswahl gesetzt.
+- Tests: Kontrasttest für Launcher-Themes ergänzt.

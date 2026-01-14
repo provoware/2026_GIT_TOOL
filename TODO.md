@@ -16,11 +16,11 @@
 
 ## Kurzliste (aus todo.txt, synchron)
 Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
-- [ ] REL-GUI-01: Kontrast prüfen (Kontrast = Helligkeitsunterschied; Ziel ≥ 4,5:1).
-- [ ] REL-GUI-02: Fokusreihenfolge prüfen (Fokus = aktuelles Element bei Tab).
-- [ ] REL-GUI-03: Screenreader-Labels ergänzen (Screenreader = Vorlese-Programm).
-- [ ] REL-GUI-04: Fehler-/Statusmeldungen in einfacher Sprache + Lösungsschritt.
-- [ ] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
+- [x] REL-GUI-01: Kontrast prüfen (Kontrast = Helligkeitsunterschied; Ziel ≥ 4,5:1).
+- [x] REL-GUI-02: Fokusreihenfolge prüfen (Fokus = aktuelles Element bei Tab).
+- [x] REL-GUI-03: Screenreader-Labels ergänzen (Screenreader = Vorlese-Programm).
+- [x] REL-GUI-04: Fehler-/Statusmeldungen in einfacher Sprache + Lösungsschritt.
+- [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 - [ ] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
 ## Laien-Tipps (aus todo.txt, erweitert)
@@ -37,6 +37,13 @@ Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
 - [x] TODO-DOK-04: todo.txt mit IDs und Hinweis auf TODO.md aktualisiert. | fertig wenn: Kurzliste konsistent.
 - [x] TODO-DOK-05: Laien-Tipps in TODO.md ergänzt und erweitert. | fertig wenn: Tipps vorhanden.
 
+## Runde 2026-01-17 (5 kleinste Aufgaben dieser Runde) – erledigt
+- [x] REL-GUI-01: GUI-Kontrastprüfung für alle Themes (Kontrast = Helligkeitsunterschied; Ziel ≥ 4,5:1). | fertig wenn: Dokument mit geprüften Werten vorhanden.
+- [x] REL-GUI-02: Tastatur-Fokusreihenfolge in allen Hauptansichten prüfen (Fokus = aktuell ausgewähltes Element). | fertig wenn: durchgehend per Tab erreichbar.
+- [x] REL-GUI-03: Screenreader-Labels ergänzen (Screenreader = Vorlese-Programm). | fertig wenn: alle Bedienelemente klare Labels haben.
+- [x] REL-GUI-04: Fehler- und Statusmeldungen in einfacher Sprache mit Lösungsschritt. | fertig wenn: Meldungen erklären Ursache + nächsten Schritt.
+- [x] REL-GUI-05: Barrierefreie Ladezustände (Busy-Indikator = Ladeanzeige) ausgeben. | fertig wenn: lange Aktionen zeigen Status an.
+
 ## Runde 2026-01-16 (5 kleinste Aufgaben dieser Runde) – erledigt
 - [x] TODO-STR-01: TODO.md bereinigt (Duplikate entfernt, klare Abschnitte). | fertig wenn: Struktur eindeutig und doppelte Einträge entfernt.
 - [x] TODO-STR-02: Offene Aufgaben analysiert und Risiken dokumentiert. | fertig wenn: Kurz-Ist-Analyse vorhanden.
@@ -46,11 +53,6 @@ Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
 
 ## Offene Aufgaben (kleinste zuerst)
 Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
-- [ ] REL-GUI-01: GUI-Kontrastprüfung für alle Themes (Kontrast = Helligkeitsunterschied; Ziel ≥ 4,5:1). | fertig wenn: Dokument mit geprüften Werten vorhanden.
-- [ ] REL-GUI-02: Tastatur-Fokusreihenfolge in allen Hauptansichten prüfen (Fokus = aktuell ausgewähltes Element). | fertig wenn: durchgehend per Tab erreichbar.
-- [ ] REL-GUI-03: Screenreader-Labels ergänzen (Screenreader = Vorlese-Programm). | fertig wenn: alle Bedienelemente klare Labels haben.
-- [ ] REL-GUI-04: Fehler- und Statusmeldungen in einfacher Sprache mit Lösungsschritt. | fertig wenn: Meldungen erklären Ursache + nächsten Schritt.
-- [ ] REL-GUI-05: Barrierefreie Ladezustände (Busy-Indikator = Ladeanzeige) ausgeben. | fertig wenn: lange Aktionen zeigen Status an.
 - [ ] REL-GUI-06: Responsive Layout für kleine Auflösungen prüfen. | fertig wenn: Bedienung bleibt möglich.
 
 ## Backlog (nach Bereichen, noch zu priorisieren)
