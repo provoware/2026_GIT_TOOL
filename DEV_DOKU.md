@@ -30,6 +30,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Changelog-Abschnitte mit doppelten Versionsnummern sind zusammengeführt (0.1.20/0.1.19/0.1.15).
 - Info-Dateien (PROJEKT_INFO/ANALYSE_BERICHT) sind aktualisiert und laienfreundlich erläutert.
 - Standards enthalten einen Benennungsstandard für Dateien/Module und eine Datenmodell-Referenz.
+- TODO.md ist strukturiert (IDs, Bereiche, klare Offen/Erledigt-Abschnitte).
+- todo.txt ist als laienfreundliche Kurzliste für die nächste Runde gepflegt.
 
 ## Struktur (aktuell)
 - `PROJEKT_INFO.md`: Übersicht zu Ordnerstruktur und Tooldateien (mit Aktualisierungspflicht).
@@ -112,6 +114,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Fortschritt wird in `PROGRESS.md` aktualisiert.
 - `PROJEKT_INFO.md` ist Pflicht und wird bei Struktur- oder Tool-Änderungen aktualisiert.
 - Release-Checkliste für die GUI wird in `todo.txt` gepflegt.
+- TODO.md enthält die vollständige Aufgabenstruktur (IDs + Bereiche).
 
 ## Bauen/Starten/Testen
 ### Fortschritt aus todo.txt berechnen

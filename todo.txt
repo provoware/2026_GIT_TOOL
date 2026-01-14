@@ -1,0 +1,22 @@
+TODO – Kurzliste (einfach erklärt)
+
+Release-Checkliste GUI (Barrierefreiheit)
+[ ] Kontrast prüfen (Kontrast = Helligkeitsunterschied; Ziel ≥ 4,5:1).
+[ ] Fokusreihenfolge prüfen (Fokus = aktuelles Element beim Tab-Taste).
+[ ] Screenreader-Labels ergänzen (Screenreader = Vorlese-Programm).
+[ ] Fehler-/Statusmeldungen in einfacher Sprache + Lösungsschritt.
+[ ] Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
+[ ] Responsives Layout prüfen (passt sich kleinen Fenstern an).
+
+Nächste 5 kleinste Aufgaben (Runde 2026-01-16) – erledigt
+[x] TODO.md aufräumen und strukturieren.
+[x] Offene Aufgaben kurz analysieren und Risiken notieren.
+[x] Backlog in klare Bereiche sortieren.
+[x] todo.txt erstellen/aktualisieren.
+[x] Laienhinweise ergänzen (einfache Sprache mit kurzen Erklärungen).
+
+Laien-Tipps (hilfreich, optional)
+- Starte zuerst den GUI-Launcher (Startübersicht) und teste mit der Tab-Taste.
+- Nutze den Health-Check (Systemprüfung) vor dem Start, wenn etwas fehlt.
+- Lies die Fehlermeldung bis zum Ende – dort steht der nächste Schritt.
+- Wenn etwas nicht klappt: erst neu starten, dann Logdatei prüfen (logs/test_run.log).

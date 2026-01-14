@@ -76,3 +76,5 @@
 - Doku: ANALYSE_BERICHT mit Ist-Analyse, Best Practices und Laienvorschlägen aktualisiert.
 - Doku: Standards um Benennungsstandard und Datenmodell-Referenz ergänzt.
 - Doku: Release-Checkliste für die GUI in todo.txt ergänzt.
+- Doku: TODO.md strukturiert, Dubletten entfernt und Backlog gruppiert.
+- Doku: todo.txt als laienfreundliche Kurzliste ergänzt.
