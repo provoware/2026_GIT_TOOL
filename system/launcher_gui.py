@@ -10,7 +10,10 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
 import config_utils
+import error_simulation
 import module_checker
+import module_selftests
+import qa_checks
 from launcher import (
     LauncherError,
     filter_modules,
@@ -594,6 +597,12 @@ class LauncherGui:
             text = render_module_text(modules, root_dir, debug)
             issues = run_module_check(self.module_config)
             text = self._append_module_check(text, issues)
+            file_report = qa_checks.check_release_files(root_dir)
+            text = self._append_file_status(text, file_report)
+            selftests = module_selftests.run_selftests(self.module_config)
+            text = self._append_selftests(text, selftests)
+            simulations = error_simulation.run_simulations()
+            text = self._append_error_simulation(text, simulations)
         except (LauncherError, GuiLauncherError) as exc:
             text = (
                 "Fehler beim Aktualisieren.\n"
@@ -658,7 +667,9 @@ class LauncherGui:
         lines = [text.rstrip(), "", "Modul-Check:"]
         if issues:
             lines.append("Es wurden Probleme gefunden:")
-            lines.extend([f"- {issue}" for issue in issues])
+            lines.extend(
+                [f"- {issue} (Stufe: {qa_checks.classify_issue(issue)})" for issue in issues]
+            )
             lines.append("Lösung: Bitte config/modules.json und die Modulordner korrigieren.")
             self._show_error("Modul-Check: Probleme gefunden. Details stehen in der Übersicht.")
             logging.error("Modul-Check: %s Problem(e) gefunden.", len(issues))
@@ -666,6 +677,42 @@ class LauncherGui:
                 logging.error("Modul-Check: %s", issue)
         else:
             lines.append("Alle aktiven Module sind vorhanden und korrekt.")
+        return "\n".join(lines).rstrip() + "\n"
+
+    def _append_file_status(self, text: str, report: qa_checks.FileStatusReport) -> str:
+        if not isinstance(text, str) or not text.strip():
+            raise GuiLauncherError("Ausgabetext ist leer.")
+        lines = [text.rstrip(), "", "Datei-Status (Ampel):"]
+        lines.append(f"Ampelstatus: {report.traffic_light}")
+        if report.issues:
+            lines.append("Datei-Probleme:")
+            for issue in report.issues:
+                lines.append(f"- {issue.message} (Stufe: {issue.severity})")
+        else:
+            lines.append("Keine Datei-Probleme gefunden.")
+        return "\n".join(lines).rstrip() + "\n"
+
+    def _append_selftests(self, text: str, results: List[module_selftests.SelftestResult]) -> str:
+        if not isinstance(text, str) or not text.strip():
+            raise GuiLauncherError("Ausgabetext ist leer.")
+        lines = [text.rstrip(), "", "Modul-Selbsttests:"]
+        for result in results:
+            lines.append(
+                f"- {result.name} ({result.module_id}): {result.status} – {result.message}"
+            )
+        return "\n".join(lines).rstrip() + "\n"
+
+    def _append_error_simulation(
+        self, text: str, results: List[error_simulation.SimulationResult]
+    ) -> str:
+        if not isinstance(text, str) or not text.strip():
+            raise GuiLauncherError("Ausgabetext ist leer.")
+        lines = [text.rstrip(), "", "Fehler-Simulation (Laienfehler):"]
+        for result in results:
+            lines.append(f"- Fall: {result.title}")
+            lines.append(f"  Ergebnis: {result.status}")
+            lines.append(f"  Meldung: {result.message}")
+            lines.append(f"  Hinweis: {result.hint}")
         return "\n".join(lines).rstrip() + "\n"
 
 

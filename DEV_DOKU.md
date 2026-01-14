@@ -20,6 +20,10 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - GUI-Launcher validiert Eingaben und Ausgaben mit klaren Fehlermeldungen.
 - GUI-Launcher zeigt farbige Statusmeldungen für Erfolg/Fehler/Busy.
 - GUI-Launcher nutzt größere Bedienelemente (Großbutton-UI) für bessere Bedienbarkeit.
+- GUI-Launcher zeigt Fehlerklassen (leicht/mittel/schwer) im Modul-Check.
+- GUI-Launcher zeigt Datei-Ampelstatus inkl. Dateiproblemen.
+- GUI-Launcher zeigt Modul-Selbsttests und deren Status.
+- GUI-Launcher zeigt Fehler-Simulationen mit klaren Hinweisen.
 - Kontrastprüfung für Launcher-Themes ist dokumentiert und automatisch testbar.
 - Download-Ordner-Aufräum-Modul bietet Scan, Plan, Undo und Protokoll.
 - Datei-Suche-Modul bietet Filter, Organisation und Undo.
@@ -69,6 +73,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
   - `config/ruff.toml`: Ruff-Regeln für Codequalität (Linting).
   - `config/black.toml`: Black-Regeln für Codeformatierung.
   - `config/test_gate.json`: Regeln für die Test-Sperre (Schwelle + Befehl).
+  - `config/module_selftests.json`: Testfälle für Modul-Selbsttests.
   - `config/modules.json`: Modul-Liste für den Launcher.
   - `config/todo_kalender.json`: Konfiguration für To-Do-&-Kalender-Modul.
   - `config/modules.json`: Registrierte Module für den Modul-Check.
@@ -77,6 +82,9 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
   - `system/log_exporter.py`: Logdateien als ZIP exportieren.
 - `system/launcher.py`: Launcher (Modulübersicht).
 - `system/launcher_gui.py`: GUI-Launcher (Startübersicht mit Themes).
+- `system/module_selftests.py`: Modul-Selbsttests (Status pro Modul).
+- `system/qa_checks.py`: Qualitäts-Checks (Fehlerklassen + Ampel).
+- `system/error_simulation.py`: Fehler-Simulation (typische Laienfehler).
 - `system/health_check.py`: Health-Check für wichtige Dateien/Ordner vor dem Start.
 - `system/config_utils.py`: Hilfsfunktionen für Pfad- und JSON-Validierung.
 - `system/test_gate.py`: Test-Sperre (Tests erst nach kompletter Runde).
@@ -135,6 +143,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - **Formatierung**: Black prüft den Code auf einheitliches Format.
 - **Prüfungen**: Start-Routine prüft Struktur und Abhängigkeiten automatisch.
 - **Prüfungen**: Modul-Check validiert aktivierte Module und deren Manifest.
+- **Prüfungen**: Modul-Selbsttests melden Status pro Modul (GUI und CLI).
+- **Prüfungen**: Fehler-Simulation zeigt typische Laienfehler mit Lösungshinweis.
 
 ## Dokumentationsregeln
 - Änderungen werden im `CHANGELOG.md` beschrieben.
@@ -170,6 +180,14 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 3. Hinweis: Details zu Fehlern stehen im Fehlerprotokoll (Log) unter `logs/test_run.log`.
 4. Hilfe: `./scripts/run_tests.sh --help` zeigt den geführten Ablauf.
 5. Optional: `./scripts/run_tests.sh --help` (kurze Erklärung für Laien).
+
+### Modul-Selbsttests (manuell)
+1. `python system/module_selftests.py`
+2. Zeigt pro Modul einen Status (ok/fehler/übersprungen) an.
+
+### Fehler-Simulation (manuell)
+1. `python system/error_simulation.py`
+2. Zeigt typische Laienfehler mit Meldung und Lösungsschritt an.
 
 ### Kontrastbericht (Launcher-Themes)
 1. `python scripts/generate_launcher_gui_contrast_report.py`

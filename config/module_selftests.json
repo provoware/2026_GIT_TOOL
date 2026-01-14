@@ -1,0 +1,25 @@
+{
+  "testcases": {
+    "beispiel_modul": {
+      "text": "Selbsttest"
+    },
+    "charakter_modul": {
+      "action": "list_templates"
+    },
+    "datei_suche": {
+      "action": "history"
+    },
+    "download_aufraeumen": {
+      "action": "history"
+    },
+    "notiz_editor": {
+      "action": "list_templates"
+    },
+    "todo_kalender": {
+      "action": "list"
+    },
+    "status": {
+      "request": "Selbsttest"
+    }
+  }
+}
