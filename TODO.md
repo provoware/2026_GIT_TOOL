@@ -1,7 +1,7 @@
 # TODO (strukturiert, barrierefrei, laienverständlich)
 
 ## Regeln (verbindlich)
-- Pro Runde werden **genau 5 kleine Aufgaben** erledigt.
+- Pro Runde werden **genau 9 kleine Aufgaben** erledigt.
 - Erst **kurz analysieren**, dann **umsetzen**, dann **testen**, dann **dokumentieren**.
 - Fachwörter werden **einfach erklärt** (Fachbegriff in Klammern mit kurzer Erklärung).
 
@@ -35,12 +35,27 @@ Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
 - [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 - [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
-Nächste 5 kleinste Aufgaben (Runde 2026-01-24) – offen
-- [ ] DATA-06: Trennung von Systemlogik und variablen Daten/Configs (Config = Konfiguration). | fertig wenn: klare Ordnertrennung umgesetzt.
-- [ ] UX-05: Perfektes Farb- und Kontrastverhalten mit mehreren Themes. | fertig wenn: Themes dokumentiert.
-- [ ] START-09: Safe-Mode (schreibgeschützt) beim Start. | fertig wenn: Start ohne Schreibzugriffe möglich.
-- [ ] START-10: Sandbox-Modus (virtuelle Umgebung) implementieren. | fertig wenn: Start in isolierter Umgebung.
-- [ ] ARCH-05: Projektstruktur final definieren und standardisieren. | fertig wenn: Struktur-Standard dokumentiert.
+Nächste 9 kleinste Aufgaben (Runde 2026-01-24) – erledigt
+- [x] DATA-06: Trennung von Systemlogik und variablen Daten/Configs (Config = Konfiguration). | fertig wenn: klare Ordnertrennung umgesetzt.
+- [x] UX-05: Perfektes Farb- und Kontrastverhalten mit mehreren Themes. | fertig wenn: Themes dokumentiert.
+- [x] START-09: Safe-Mode (schreibgeschützt) beim Start. | fertig wenn: Start ohne Schreibzugriffe möglich.
+- [x] START-10: Sandbox-Modus (virtuelle Umgebung) implementieren. | fertig wenn: Start in isolierter Umgebung.
+- [x] ARCH-05: Projektstruktur final definieren und standardisieren. | fertig wenn: Struktur-Standard dokumentiert.
+- [x] START-08: Start-Routine mit Nutzerfeedback für Abhängigkeiten (Dependencies = Abhängigkeiten). | fertig wenn: klare Hinweise + automatische Installation.
+- [x] COM-02: Systemscanner vor Start (Rechte/JSON/Ordner). | fertig wenn: Scanner blockiert Fehler.
+- [x] COM-04: Ghost-Mode (Testmodus ohne Schreiben). | fertig wenn: keine Writes.
+- [x] CODE-04: Styleguide (PEP8 + Projektregeln) als Markdown beilegen. | fertig wenn: Styleguide vorhanden.
+
+Nächste 9 kleinste Aufgaben (Runde 2026-01-25) – offen
+- [ ] ARCH-01: Plugin-System mit zentraler Registry einführen (Registry = Modul-Liste). | fertig wenn: Module nur über Registry geladen werden.
+- [ ] ARCH-02: Modul-API definieren (Schnittstellen, Events, States). | fertig wenn: API-Dokument + Beispiel vorhanden.
+- [ ] ARCH-03: Zentralen Store einführen (Store = gemeinsamer Zustands-Speicher). | fertig wenn: Module lesen/schreiben zentral.
+- [ ] ARCH-04: Single Source of Truth für Theme/Settings/Logging. | fertig wenn: doppelte Logik entfernt.
+- [ ] ARCH-06: Zentrales Logging-Modul implementieren (Logging = Protokoll). | fertig wenn: ein Logging-Modul genutzt.
+- [ ] PERF-01: Lazy Loading für Module (spätes Laden) implementieren. | fertig wenn: Startzeit sinkt.
+- [ ] PERF-02: Debounce/Throttle für teure Aktionen (gebremstes Auslösen). | fertig wenn: UI bleibt flüssig.
+- [ ] PERF-03: Asynchrones Logging statt blockierend. | fertig wenn: Log schreibt ohne UI-Block.
+- [ ] PERF-04: JSON-Handling mit geprüftem Modell absichern (z. B. Pydantic). | fertig wenn: Validierung zentral.
 
 Runde 2026-01-23 (5 kleinste Aufgaben dieser Runde) – erledigt
 - [x] QA-08: Sandbox-Analyse erweitern (Sandbox = Testumgebung). | fertig wenn: Analyse deckt Sandbox-Risiken ab.
@@ -120,11 +135,15 @@ Runde 2026-01-21 (5 kleinste Aufgaben dieser Runde) – erledigt
 
 ## Offene Aufgaben (kleinste zuerst)
 Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
-- [ ] DATA-06: Trennung von Systemlogik und variablen Daten/Configs (Config = Konfiguration). | fertig wenn: klare Ordnertrennung umgesetzt.
-- [ ] UX-05: Perfektes Farb- und Kontrastverhalten mit mehreren Themes. | fertig wenn: Themes dokumentiert.
-- [ ] START-09: Safe-Mode (schreibgeschützt) beim Start. | fertig wenn: Start ohne Schreibzugriffe möglich.
-- [ ] START-10: Sandbox-Modus (virtuelle Umgebung) implementieren. | fertig wenn: Start in isolierter Umgebung.
-- [ ] ARCH-05: Projektstruktur final definieren und standardisieren. | fertig wenn: Struktur-Standard dokumentiert.
+- [ ] ARCH-01: Plugin-System mit zentraler Registry einführen (Registry = Modul-Liste). | fertig wenn: Module nur über Registry geladen werden.
+- [ ] ARCH-02: Modul-API definieren (Schnittstellen, Events, States). | fertig wenn: API-Dokument + Beispiel vorhanden.
+- [ ] ARCH-03: Zentralen Store einführen (Store = gemeinsamer Zustands-Speicher). | fertig wenn: Module lesen/schreiben zentral.
+- [ ] ARCH-04: Single Source of Truth für Theme/Settings/Logging. | fertig wenn: doppelte Logik entfernt.
+- [ ] ARCH-06: Zentrales Logging-Modul implementieren (Logging = Protokoll). | fertig wenn: ein Logging-Modul genutzt.
+- [ ] PERF-01: Lazy Loading für Module (spätes Laden) implementieren. | fertig wenn: Startzeit sinkt.
+- [ ] PERF-02: Debounce/Throttle für teure Aktionen (gebremstes Auslösen). | fertig wenn: UI bleibt flüssig.
+- [ ] PERF-03: Asynchrones Logging statt blockierend. | fertig wenn: Log schreibt ohne UI-Block.
+- [ ] PERF-04: JSON-Handling mit geprüftem Modell absichern (z. B. Pydantic). | fertig wenn: Validierung zentral.
 
 ## Backlog (nach Bereichen, noch zu priorisieren)
 
@@ -157,7 +176,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
 - [ ] CODE-01: Einheitliche Modulstruktur erzwingen (`module.json`, `main.py`, `ui/`). | fertig wenn: Validator blockiert Abweichung.
 - [x] CODE-02: Setup-Skripte trennen (check_env.sh, bootstrap.sh, start.sh). | fertig wenn: Skripte getrennt vorhanden.
 - [ ] CODE-03: Starke Typisierung + klare Moduleingänge definieren. | fertig wenn: Typen + Entry-Contracts dokumentiert.
-- [ ] CODE-04: Styleguide (PEP8 + Projektregeln) als Markdown beilegen. | fertig wenn: Styleguide vorhanden.
+- [x] CODE-04: Styleguide (PEP8 + Projektregeln) als Markdown beilegen. | fertig wenn: Styleguide vorhanden.
 
 ### F. Sicherheit
 - [ ] SEC-01: Rechteprobleme beim Start automatisch korrigieren. | fertig wenn: Self-Repair behebt Rechte.
@@ -177,9 +196,9 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
 
 ### I. Zentrale Komfortfunktionen
 - [ ] COM-01: One-Click-Diag (Tests + Ergebnisse in Fenster). | fertig wenn: Diagnosen sichtbar.
-- [ ] COM-02: Systemscanner vor Start (Rechte/JSON/Ordner). | fertig wenn: Scanner blockiert Fehler.
+- [x] COM-02: Systemscanner vor Start (Rechte/JSON/Ordner). | fertig wenn: Scanner blockiert Fehler.
 - [ ] COM-03: Recovery-Modus starten können. | fertig wenn: Start im Notfall.
-- [ ] COM-04: Ghost-Mode (Testmodus ohne Schreiben). | fertig wenn: keine Writes.
+- [x] COM-04: Ghost-Mode (Testmodus ohne Schreiben). | fertig wenn: keine Writes.
 
 ### Start & Launcher
 - [ ] START-01: GUI-Launcher erstellen (Fenster, Theme, Layout). | fertig wenn: Startfenster stabil geöffnet.
@@ -189,7 +208,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt`.
 - [ ] START-05: Visuelle Fortschrittsanzeige beim Start. | fertig wenn: Prozent sichtbar.
 - [ ] START-06: Fehleralternativen statt Abbruch. | fertig wenn: Vorschläge statt Stop.
 - [ ] START-07: Gesundheitsprüfung vor Start (Health-Check = Systemprüfung). | fertig wenn: wichtige Dateien geprüft.
-- [ ] START-08: Start-Routine mit Nutzerfeedback für Abhängigkeiten (Dependencies = Abhängigkeiten). | fertig wenn: klare Hinweise + automatische Installation.
+- [x] START-08: Start-Routine mit Nutzerfeedback für Abhängigkeiten (Dependencies = Abhängigkeiten). | fertig wenn: klare Hinweise + automatische Installation.
 - [ ] START-09: Safe-Mode (schreibgeschützt) beim Start. | fertig wenn: Start ohne Schreibzugriffe möglich.
 - [ ] START-10: Sandbox-Modus (virtuelle Umgebung) implementieren. | fertig wenn: Start in isolierter Umgebung.
 - [ ] START-11: Ampelstatus + Fortschrittsanzeige beim Start. | fertig wenn: Ampel/Fortschritt sichtbar.

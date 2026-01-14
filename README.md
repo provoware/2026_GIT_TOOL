@@ -5,7 +5,7 @@ Dieses Projekt ist ein sauberer Neuaufbau mit Fokus auf Robustheit, Nachvollzieh
 
 ## Ist-Analyse (aktueller Stand)
 - Es gibt noch keine vollständige Anwendung mit allen geplanten Modulen; die Start-Routine liegt als Skript vor.
-- Die Ordnertrennung ist angelegt (Systemlogik, Konfiguration, Daten), weitere Trennung ist in Arbeit.
+- Die Ordnertrennung ist umgesetzt und wird per Struktur-Check geprüft.
 - Wichtige Qualitätsziele (Barrierefreiheit, Logging, automatische Prüfungen) sind dokumentiert und teilweise umgesetzt.
 - Es fehlen zentrale Architektur-Bausteine wie Plugin-Registry (Registry = zentrale Modul-Liste), Modul-API und ein gemeinsamer Store (Store = Zustands-Speicher).
 - Performance- und Stabilitätsmaßnahmen (Lazy Loading, asynchrones Logging) sind noch nicht umgesetzt.
@@ -20,12 +20,15 @@ Dieses Projekt ist ein sauberer Neuaufbau mit Fokus auf Robustheit, Nachvollzieh
 ## Schnellstart (Doku + vorhandene Skripte)
 Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweisung):
 - `./scripts/start.sh` (Start-Routine = automatischer Projektstart mit Prüfungen und Feedback)
+- `./scripts/start.sh --safe-mode` (Safe-Mode = nur prüfen, nichts schreiben)
+- `./scripts/start.sh --sandbox` (Sandbox = isolierte Kopie für Testläufe)
+- `./scripts/system_scan.sh` (System-Scan = Vorabprüfung ohne Schreiben)
 - `./scripts/run_tests.sh` (Tests + Codequalität = automatische Prüfung von Funktionen und Stil)
 - `./scripts/repo_basis_check.sh` (Repo-Check = Basisprüfung für Git-Remote)
 
 ## Release-Checks & Test-Automatik
 - **Start-Routine** prüft automatisch Struktur, Abhängigkeiten und Module mit klaren Hinweisen (Feedback).
-- **Test-Automatik** startet Tests automatisch nach einer abgeschlossenen Runde (5 erledigte Tasks).
+- **Test-Automatik** startet Tests automatisch nach einer abgeschlossenen Runde (9 erledigte Tasks).
 - **Modulverbund-Checks** prüfen konsistente Moduleinträge, Selftests und Manifest-IDs.
 - **Codequalität & Formatierung** laufen automatisch über Ruff (Linting = Regelprüfung) und Black (Formatierung).
 

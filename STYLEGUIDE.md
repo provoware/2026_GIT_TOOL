@@ -22,6 +22,10 @@ Er ergänzt die Projekt-Standards in `standards.md`.
   - `src/` und `system/` = Systemlogik.
   - `config/` = Konfiguration.
   - `data/` und `logs/` = variable Daten/Protokolle.
+- **Start-Modi**:
+  - Safe-Mode = nur prüfen, nichts schreiben.
+  - Ghost-Mode = Alias für Safe-Mode (Testmodus ohne Schreiben).
+  - Sandbox = isolierte Kopie, Änderungen bleiben dort.
 - **Validierung**: Jede Funktion prüft Eingabe und Ausgabe (Input/Output = Ein-/Ausgabe).
 - **Logging**: Einheitliches Format, keine blockierenden UI-Aktionen.
 - **Keine Überschreibungen**: Dateien nie unbemerkt überschreiben.
