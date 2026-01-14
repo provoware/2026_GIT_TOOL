@@ -4,14 +4,15 @@
 from __future__ import annotations
 
 import argparse
-import importlib.util
 import json
-import logging
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List
 
 import module_checker
+from logging_center import get_logger
+from logging_center import setup_logging as setup_logging_center
+from module_loader import MODULE_LOADER, ModuleLoaderError
 
 CONFIG_DEFAULT = Path(__file__).resolve().parents[1] / "config" / "modules.json"
 SELFTEST_DEFAULT = Path(__file__).resolve().parents[1] / "config" / "module_selftests.json"
@@ -50,14 +51,10 @@ def load_test_inputs(path: Path) -> Dict[str, Any]:
 
 
 def _load_module(entry_path: Path, module_id: str):
-    if not entry_path.exists():
-        raise ModuleSelftestError(f"Modul-Datei fehlt: {entry_path}")
-    spec = importlib.util.spec_from_file_location(module_id, entry_path)
-    if spec is None or spec.loader is None:
-        raise ModuleSelftestError(f"Modul konnte nicht geladen werden: {entry_path}")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+    try:
+        return MODULE_LOADER.load(module_id, entry_path)
+    except ModuleLoaderError as exc:
+        raise ModuleSelftestError(str(exc)) from exc
 
 
 def _run_module_test(entry_path: Path, module_id: str, input_data: Any) -> None:
@@ -147,14 +144,12 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
-    logging.basicConfig(
-        level=logging.DEBUG if args.debug else logging.INFO,
-        format="%(levelname)s: %(message)s",
-    )
+    setup_logging_center(args.debug)
+    logger = get_logger("module_selftests")
     try:
         results = run_selftests(args.config, args.selftests)
     except (ModuleSelftestError, module_checker.ModuleCheckError) as exc:
-        logging.error("Modul-Selbsttests konnten nicht starten: %s", exc)
+        logger.error("Modul-Selbsttests konnten nicht starten: %s", exc)
         return 2
 
     print(render_results(results), end="")

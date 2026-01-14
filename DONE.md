@@ -141,3 +141,14 @@
 - Tests: Robustheit gegen beschädigte JSONs und fehlende Leserechte ergänzt.
 - Tests: Test-Automatik auf 5 Tasks pro Runde angepasst.
 - Tooling: Testskript ergänzt Modulverbund-Checks vor dem Testlauf.
+
+## 2026-01-25
+- Architektur: Zentrale Modul-Registry (Plugin-System) eingeführt.
+- Architektur: Modul-API dokumentiert (Schnittstellen, Events, States) inkl. Beispiel.
+- Architektur: Zentraler Store für Module/Settings/Logging ergänzt.
+- Architektur: Single Source of Truth für Theme/Settings/Logging umgesetzt.
+- Logging: Asynchrones Logging-Modul mit Queue-Listener eingeführt.
+- Performance: Lazy Loading/Caching für Modul-Imports ergänzt.
+- Performance: Debounce für GUI-Aktualisierung ergänzt.
+- Qualität: Konfigurationen über geprüfte Modelle zentral validiert.
+- Doku: Laien-Tool-Anleitung mit Fragen/Problemlösungen ergänzt.

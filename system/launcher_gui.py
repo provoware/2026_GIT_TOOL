@@ -4,22 +4,18 @@
 from __future__ import annotations
 
 import argparse
-import logging
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
-import config_utils
 import error_simulation
 import module_checker
 import module_selftests
 import qa_checks
-from launcher import (
-    LauncherError,
-    filter_modules,
-    load_modules,
-    resolve_module_path,
-)
+from config_models import ConfigModelError, GuiConfigModel
+from config_models import load_gui_config as load_gui_config_model
+from launcher import LauncherError, filter_modules, load_modules
+from logging_center import get_logger
+from logging_center import setup_logging as setup_logging_center
 
 DEFAULT_MODULE_CONFIG = Path(__file__).resolve().parents[1] / "config" / "modules.json"
 DEFAULT_GUI_CONFIG = Path(__file__).resolve().parents[1] / "config" / "launcher_gui.json"
@@ -27,19 +23,6 @@ DEFAULT_GUI_CONFIG = Path(__file__).resolve().parents[1] / "config" / "launcher_
 
 class GuiLauncherError(Exception):
     """Allgemeiner Fehler für den GUI-Launcher."""
-
-
-@dataclass(frozen=True)
-class Theme:
-    name: str
-    label: str
-    colors: Dict[str, str]
-
-
-@dataclass(frozen=True)
-class GuiConfig:
-    default_theme: str
-    themes: Dict[str, Theme]
 
 
 def _require_text(value: object, label: str) -> str:
@@ -60,60 +43,11 @@ def _require_list_of_strings(value: object, label: str) -> List[str]:
     return value
 
 
-def _validate_color(value: str, label: str) -> str:
-    if not isinstance(value, str) or not value.strip():
-        raise GuiLauncherError(f"Farbe fehlt: {label}.")
-    text = value.strip()
-    if not text.startswith("#") or len(text) not in {4, 7}:
-        raise GuiLauncherError(f"Farbe {label} ist ungültig. Erwartet z. B. #fff oder #ffffff.")
-    return text
-
-
-def load_gui_config(config_path: Path) -> GuiConfig:
-    config_utils.ensure_path(config_path, "config_path", GuiLauncherError)
-    data = config_utils.load_json(
-        config_path,
-        GuiLauncherError,
-        "GUI-Konfiguration fehlt",
-        "GUI-Konfiguration ist kein gültiges JSON",
-    )
-    default_theme = _require_text(data.get("default_theme"), "default_theme")
-    themes_raw = data.get("themes")
-    if not isinstance(themes_raw, dict) or not themes_raw:
-        raise GuiLauncherError("themes fehlen oder sind leer.")
-
-    themes: Dict[str, Theme] = {}
-    for name, entry in themes_raw.items():
-        theme_name = _require_text(name, "theme_name")
-        if not isinstance(entry, dict):
-            raise GuiLauncherError(f"Theme {theme_name} ist kein Objekt.")
-        label = _require_text(entry.get("label"), f"themes.{theme_name}.label")
-        colors_raw = entry.get("colors")
-        if not isinstance(colors_raw, dict):
-            raise GuiLauncherError(f"Theme {theme_name} hat keine Farben.")
-        colors = {
-            "background": _validate_color(colors_raw.get("background"), "background"),
-            "foreground": _validate_color(colors_raw.get("foreground"), "foreground"),
-            "accent": _validate_color(colors_raw.get("accent"), "accent"),
-            "button_background": _validate_color(
-                colors_raw.get("button_background"), "button_background"
-            ),
-            "button_foreground": _validate_color(
-                colors_raw.get("button_foreground"), "button_foreground"
-            ),
-            "status_success": _validate_color(colors_raw.get("status_success"), "status_success"),
-            "status_error": _validate_color(colors_raw.get("status_error"), "status_error"),
-            "status_busy": _validate_color(colors_raw.get("status_busy"), "status_busy"),
-            "status_foreground": _validate_color(
-                colors_raw.get("status_foreground"), "status_foreground"
-            ),
-        }
-        themes[theme_name] = Theme(name=theme_name, label=label, colors=colors)
-
-    if default_theme not in themes:
-        raise GuiLauncherError("default_theme ist nicht in themes enthalten.")
-
-    return GuiConfig(default_theme=default_theme, themes=themes)
+def load_gui_config(config_path: Path) -> GuiConfigModel:
+    try:
+        return load_gui_config_model(config_path)
+    except ConfigModelError as exc:
+        raise GuiLauncherError(str(exc)) from exc
 
 
 def build_module_lines(
@@ -132,8 +66,7 @@ def build_module_lines(
         lines.append(f"{index}. {module.name} ({module.module_id}) – {status}")
         lines.append(f"   Beschreibung: {module.description}")
         if debug:
-            module_path = resolve_module_path(root, module.path)
-            lines.append(f"   Pfad: {module_path}")
+            lines.append(f"   Pfad: {module.path}")
         lines.append("")
 
     if not lines:
@@ -150,8 +83,7 @@ def render_module_text(modules: Iterable[object], root: Path, debug: bool) -> st
 
 
 def setup_logging(debug: bool) -> None:
-    level = logging.DEBUG if debug else logging.INFO
-    logging.basicConfig(level=level, format="%(levelname)s: %(message)s")
+    setup_logging_center(debug)
 
 
 def run_module_check(config_path: Path) -> List[str]:
@@ -201,7 +133,7 @@ class LauncherGui:
         self,
         root,
         module_config: Path,
-        gui_config: GuiConfig,
+        gui_config: GuiConfigModel,
         show_all: bool,
         debug: bool,
     ) -> None:
@@ -218,6 +150,9 @@ class LauncherGui:
         self.show_all_check = None
         self.debug_check = None
         self.refresh_button = None
+        self.refresh_job = None
+        self.refresh_debounce_ms = gui_config.refresh_debounce_ms
+        self.logger = get_logger("launcher_gui")
         self.status_var = None
         self.status_label = None
         self.footer_label = None
@@ -301,7 +236,7 @@ class LauncherGui:
         self.refresh_button = tk.Button(
             controls,
             text="Übersicht aktualisieren",
-            command=self.refresh,
+            command=self.request_refresh,
         )
         if self.button_font is not None:
             self.refresh_button.configure(font=self.button_font)
@@ -368,7 +303,7 @@ class LauncherGui:
         self._bind_responsive_layout()
         self._bind_zoom_controls()
         self.apply_theme(self.gui_config.default_theme)
-        self.refresh()
+        self.request_refresh()
         self.root.after(100, lambda: self._focus_widget(self.theme_menu))
 
     def _init_fonts(self, tkfont) -> None:
@@ -456,20 +391,17 @@ class LauncherGui:
 
     def _toggle_show_all(self) -> None:
         self.show_all_var.set(not bool(self.show_all_var.get()))
-        self.refresh()
+        self.request_refresh()
 
     def _toggle_debug(self) -> None:
         self.debug_var.set(not bool(self.debug_var.get()))
-        self.refresh()
+        self.request_refresh()
 
     def _refresh_from_shortcut(self) -> None:
-        if self.refresh_button is not None:
-            self.refresh_button.invoke()
-        else:
-            self.refresh()
+        self.request_refresh()
 
     def _resolve_contrast_theme(self) -> Optional[str]:
-        if not isinstance(self.gui_config, GuiConfig):
+        if not isinstance(self.gui_config, GuiConfigModel):
             raise GuiLauncherError("gui_config ist ungültig.")
         if "kontrast" in self.gui_config.themes:
             return "kontrast"
@@ -493,6 +425,12 @@ class LauncherGui:
         self._set_theme(target)
         label = self.gui_config.themes[target].label
         self._set_status(f"Farbschema aktiv: {label}", state="success")
+
+    def request_refresh(self) -> None:
+        if self.refresh_job is not None:
+            self.root.after_cancel(self.refresh_job)
+        self._set_status("Aktualisierung wird vorbereitet…", state="busy")
+        self.refresh_job = self.root.after(self.refresh_debounce_ms, self.refresh)
 
     def _set_theme(self, theme_name: str) -> None:
         clean_name = _require_text(theme_name, "theme_name")
@@ -587,6 +525,7 @@ class LauncherGui:
             self._apply_widget_style(child, background, foreground, accent, button_bg, button_fg)
 
     def refresh(self) -> None:
+        self.refresh_job = None
         show_all = bool(self.show_all_var.get())
         debug = bool(self.debug_var.get())
         try:
@@ -610,7 +549,7 @@ class LauncherGui:
                 "Lösung: Bitte config/modules.json und die Modulordner prüfen, "
                 "danach erneut auf „Übersicht aktualisieren“ klicken.\n"
             )
-            logging.error("GUI-Launcher Fehler: %s", exc)
+            self.logger.error("GUI-Launcher Fehler: %s", exc)
             self._show_error(str(exc))
             self._set_status("Fehler aufgetreten. Bitte Hinweise lesen.", state="error")
         else:
@@ -672,9 +611,9 @@ class LauncherGui:
             )
             lines.append("Lösung: Bitte config/modules.json und die Modulordner korrigieren.")
             self._show_error("Modul-Check: Probleme gefunden. Details stehen in der Übersicht.")
-            logging.error("Modul-Check: %s Problem(e) gefunden.", len(issues))
+            self.logger.error("Modul-Check: %s Problem(e) gefunden.", len(issues))
             for issue in issues:
-                logging.error("Modul-Check: %s", issue)
+                self.logger.error("Modul-Check: %s", issue)
         else:
             lines.append("Alle aktiven Module sind vorhanden und korrekt.")
         return "\n".join(lines).rstrip() + "\n"
@@ -716,7 +655,12 @@ class LauncherGui:
         return "\n".join(lines).rstrip() + "\n"
 
 
-def run_gui(module_config: Path, gui_config: GuiConfig, show_all: bool, debug: bool) -> int:
+def run_gui(
+    module_config: Path,
+    gui_config: GuiConfigModel,
+    show_all: bool,
+    debug: bool,
+) -> int:
     if not isinstance(module_config, Path):
         raise GuiLauncherError("module_config ist kein Pfad (Path).")
 
@@ -744,12 +688,13 @@ def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
     setup_logging(args.debug)
+    logger = get_logger("launcher_gui")
 
     try:
         gui_config = load_gui_config(args.gui_config)
         return run_gui(args.config, gui_config, args.show_all, args.debug)
     except (GuiLauncherError, LauncherError) as exc:
-        logging.error("GUI-Launcher konnte nicht starten: %s", exc)
+        logger.error("GUI-Launcher konnte nicht starten: %s", exc)
         return 2
 
 

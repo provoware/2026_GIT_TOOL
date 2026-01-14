@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import logging
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, List
@@ -12,6 +11,8 @@ from typing import Iterable, List
 import module_checker
 import module_selftests
 from config_utils import ensure_path
+from logging_center import get_logger
+from logging_center import setup_logging as setup_logging_center
 
 
 class ModuleIntegrationError(Exception):
@@ -106,14 +107,12 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
-    logging.basicConfig(
-        level=logging.DEBUG if args.debug else logging.INFO,
-        format="%(levelname)s: %(message)s",
-    )
+    setup_logging_center(args.debug)
+    logger = get_logger("module_integration_checks")
     try:
         result = run_integration_checks(args.config, args.selftests)
     except ModuleIntegrationError as exc:
-        logging.error("Modulverbund-Checks konnten nicht starten: %s", exc)
+        logger.error("Modulverbund-Checks konnten nicht starten: %s", exc)
         return 2
 
     output = _render_issues(result.issues)

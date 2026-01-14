@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Iterable, List, Tuple
 
 from config_utils import ensure_path
+from logging_center import setup_logging as setup_logging_center
 
 CONFIG_DEFAULT = Path(__file__).resolve().parents[1] / "config" / "todo_config.json"
 
@@ -164,8 +165,7 @@ def archive_completed_tasks(todo_path: Path, archive_path: Path) -> Tuple[int, i
 
 
 def setup_logging(debug: bool) -> None:
-    level = logging.DEBUG if debug else logging.INFO
-    logging.basicConfig(level=level, format="%(levelname)s: %(message)s")
+    setup_logging_center(debug)
 
 
 def run_progress(config: TodoConfig, progress_path: Path | None = None) -> int:

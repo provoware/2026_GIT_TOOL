@@ -57,6 +57,14 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - System-Scan kann als Vorabprüfung ohne Schreibzugriffe laufen.
 - Standards-Viewer zeigt interne Standards und Styleguide per CLI an.
 - Launcher-GUI ist für kleine Fenstergrößen optimiert (zweizeilige Steuerleiste + Umbruch im Footer).
+- Modul-Registry (Plugin-System) lädt Module zentral über config/modules.json.
+- Modul-API ist dokumentiert (Schnittstellen, Events, States) inkl. Beispielmodul.
+- Zentraler Store hält Module/Settings/Logging als Single Source of Truth.
+- Zentrales Logging-Modul arbeitet asynchron (Queue-Listener) für alle Systemtools.
+- Konfigurationsmodelle validieren GUI- und Modul-Config zentral (inkl. Hex-Farben).
+- GUI-Launcher nutzt Debounce für Aktualisierung, um Mehrfachklicks abzufangen.
+- Modul-Loader cached Modulimporte (Lazy Loading) für schnellere Abläufe.
+- Laien-Tool-Anleitung ist als eigenständige Schritt-für-Schritt-Doku ergänzt.
 
 ## Struktur (aktuell)
 - `PROJEKT_INFO.md`: Übersicht zu Ordnerstruktur und Tooldateien (mit Aktualisierungspflicht).

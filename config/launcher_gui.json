@@ -1,5 +1,6 @@
 {
   "default_theme": "hell",
+  "refresh_debounce_ms": 200,
   "themes": {
     "hell": {
       "label": "Hell",

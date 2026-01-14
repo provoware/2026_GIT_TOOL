@@ -29,8 +29,15 @@ Bitte **bei jeder Struktur- oder Tool-Änderung** mit aktualisieren.
 - `system/structure_checker.py`: Struktur-Check (Trennung von System/Config/Daten/Logs).
 - `system/dependency_checker.py`: Abhängigkeiten (Dependencies) prüfen und installieren.
 - `system/module_checker.py`: Modul-Check (Manifest + Entry-Datei validieren).
+- `system/module_registry.py`: Modul-Registry (Plugin-System) für zentrales Laden.
+- `system/store.py`: Zentraler Store für gemeinsame Zustände.
+- `system/config_models.py`: Geprüfte Konfigurationsmodelle (GUI/Module).
+- `system/logging_center.py`: Zentrales asynchrones Logging.
+- `system/module_loader.py`: Lazy Loader für Modul-Imports (Caching).
 - `system/todo_manager.py`: Fortschritt berechnen und To-Dos archivieren.
 - `system/log_exporter.py`: Logdateien als ZIP exportieren.
+- `ANLEITUNG_TOOL.md`: Laienfreundliche Tool-Anleitung (Schritte, Tipps, FAQ).
+- `docs/MODUL_API.md`: Modul-API (Schnittstellen, Events, States) mit Beispiel.
 
 ## Automatik: Was beim Start geprüft wird
 Die Start-Routine führt eine **vollautomatische Prüfung (Check)** aus und gibt **klare Rückmeldungen (Feedback)**:

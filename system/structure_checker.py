@@ -4,12 +4,13 @@
 from __future__ import annotations
 
 import argparse
-import logging
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, List
 
 from config_utils import ensure_path
+from logging_center import get_logger
+from logging_center import setup_logging as setup_logging_center
 
 
 class StructureCheckError(Exception):
@@ -115,18 +116,16 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
-    logging.basicConfig(
-        level=logging.DEBUG if args.debug else logging.INFO,
-        format="%(levelname)s: %(message)s",
-    )
+    setup_logging_center(args.debug)
+    logger = get_logger("structure_checker")
     issues = run_check(args.root)
     if issues:
-        logging.error("Struktur-Check: %s Hinweis(e) gefunden.", len(issues))
+        logger.error("Struktur-Check: %s Hinweis(e) gefunden.", len(issues))
         for issue in issues:
-            logging.error("- %s (%s)", issue.message, issue.path)
-        logging.error("Bitte Struktur laut standards.md korrigieren.")
+            logger.error("- %s (%s)", issue.message, issue.path)
+        logger.error("Bitte Struktur laut standards.md korrigieren.")
         return 2
-    logging.info("Struktur-Check: OK. Ordnertrennung ist eingehalten.")
+    logger.info("Struktur-Check: OK. Ordnertrennung ist eingehalten.")
     return 0
 
 
