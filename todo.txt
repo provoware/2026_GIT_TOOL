@@ -11,6 +11,10 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
 Nächste 4 kleinste Aufgaben (Runde 2026-01-30) – erledigt
+[x] CODE-01: Einheitliche Modulstruktur erzwingen (`manifest.json`, `module.py`). | fertig wenn: Validator blockiert Abweichung.
+[x] SEC-03: Modul-Tests vor dem Laden erzwingen. | fertig wenn: defekte Module blockiert.
+[x] COM-03: Recovery-Modus starten können. | fertig wenn: Start im Notfall.
+[x] START-11: Ampelstatus + Fortschrittsanzeige beim Start. | fertig wenn: Ampel/Fortschritt sichtbar.
 [x] UX-06: Globales Suchfeld im Dashboard (Dateien/Module/Texte). | fertig wenn: zentrale Suche nutzbar.
 [x] UX-07: Favoritenleiste für oft genutzte Module. | fertig wenn: Favoriten sichtbar/umschaltbar.
 [x] UX-08: Mini-Panels für Schnellaktionen (Export/Backup/Notes). | fertig wenn: Quick-Actions sichtbar.

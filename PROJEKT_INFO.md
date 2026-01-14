@@ -20,6 +20,7 @@ Die vollständige Struktur steht in `STRUKTUR.md`.
 ## Tooldateien (wichtige Einstiege)
 - `klick_start.sh`: Startet die komplette Start-Routine und öffnet die GUI-Übersicht.
 - `scripts/start.sh`: Führt die Start-Routine (Health-Check, Struktur, Abhängigkeiten) aus.
+- `scripts/recovery.sh`: Recovery-Modus (Notfallstart mit Reparatur).
 - `scripts/system_scan.sh`: System-Scan (Vorabprüfung ohne Schreiben).
 - `scripts/run_tests.sh`: Führt Tests, Codequalität (Linting) und Formatprüfung aus.
 - `scripts/update_docs.sh`: Aktualisiert Auto-Status in README und DEV_DOKU.
@@ -51,12 +52,14 @@ Die Start-Routine führt eine **vollautomatische Prüfung (Check)** aus und gibt
 2. **Struktur-Check**: Projektordner werden geprüft und Trennung wird validiert.
 3. **Abhängigkeits-Check**: `config/requirements.txt` wird geprüft; fehlende Pakete werden installiert.
 4. **Modul-Check**: Module werden validiert (Manifest, Entry, Pfad-Sicherheit).
-5. **Fortschritt**: Der Fortschritt aus `todo.txt` wird berechnet und angezeigt.
+5. **Modul-Selftests**: Selftests laufen im Modulverbund-Check, defekte Module werden blockiert.
+6. **Fortschritt**: Der Fortschritt aus `todo.txt` wird berechnet und angezeigt.
 
 Hinweis zu Start-Modi:
 - **Safe-Mode** (`./scripts/start.sh --safe-mode`): Nur prüfen, keine Schreibzugriffe.
 - **Ghost-Mode** (`./scripts/start.sh --ghost-mode`): Alias für Safe-Mode.
 - **Sandbox** (`./scripts/start.sh --sandbox`): Isolierte Kopie, Schreibzugriffe bleiben dort.
+- **Recovery-Modus** (`./scripts/recovery.sh`): Notfallstart mit Reparatur und Minimalchecks.
 
 ## Barrierefreiheit und Qualität (Kurzstandard)
 - **Tastaturbedienung**: Alle Funktionen müssen ohne Maus erreichbar sein.

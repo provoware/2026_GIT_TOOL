@@ -27,6 +27,8 @@ Diese Datei definiert verbindliche Standards für alle Module, den Launcher und 
 - Pflichtdateien pro Modul:
   - `modules/<modul_id>/manifest.json`
   - `modules/<modul_id>/module.py`
+- Strukturregeln werden zusätzlich in `config/module_structure.json` gepflegt
+  (Pflicht-Entry + Ausnahmen für Sonderfälle).
 - Konfig‑Dateien tragen den Modul‑ID‑Namen (z. B. `config/datei_suche.json`).
 - Daten‑Dateien tragen den Modul‑ID‑Namen (z. B. `data/datei_suche_log.json`).
 - Modul‑Pfad in `config/modules.json` muss **genau** `modules/<modul_id>` sein.

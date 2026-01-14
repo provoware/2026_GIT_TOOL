@@ -32,6 +32,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Abhängigkeitsprüfung ignoriert Inline-Kommentare auch bei Tabs/Mehrfach-Leerzeichen.
 - Modul-Check validiert Entry-Pfade gegen Pfad-Traversal.
 - Modul-Check blockiert `..`-Segmente im Entry-Pfad mit klarer Fehlermeldung.
+- Modul-Check erzwingt die Modulstruktur über `config/module_structure.json` (Standard-Entry).
 - Modul-API-Validator prüft `run`, `validateInput`, `validateOutput` ohne Modul-Import.
 - Testskript zeigt eine Schritt-für-Schritt-Hilfe und schreibt Logs nach `logs/test_run.log`.
 - Testskript bricht bei Fehlern mit klarer Meldung und Log-Hinweis ab.
@@ -71,6 +72,12 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - GUI-Launcher bietet eine One-Click-Diagnose (Tests + Codequalität) mit Ergebnisanzeige.
 - Doku-Autoupdater aktualisiert Statusblöcke in README/DEV_DOKU.
 - Modul-API-Typen (TypedDicts) sind zentral dokumentiert.
+- Modulverbund-Checks führen Selftests aus und blockieren defekte Module.
+- Start-Routine zeigt am Ende einen Ampelstatus (grün/rot).
+- Recovery-Modus steht als separates Skript für Notfallstarts bereit.
+
+<!-- AUTO-STATUS:START -->
+**Auto-Status (aktualisiert: 2026-01-14)**
 - Dashboard-Tool bietet globale Suche über Module, Einträge und Notizen.
 - Dashboard-Tool bietet Favoritenleiste für oft genutzte Module (umschaltbar).
 - Dashboard-Tool enthält Mini-Panels für Export, Backup und Schnellnotizen.
@@ -150,6 +157,7 @@ Hier nur die wichtigsten Bereiche:
 6. Optional: `./scripts/start.sh --safe-mode` (schreibgeschützt, keine Änderungen).
 7. Optional: `./scripts/start.sh --ghost-mode` (Alias für Safe-Mode).
 8. Optional: `./scripts/start.sh --sandbox` (isolierte Sandbox, Schreibzugriffe nur dort).
+9. Notfall: `./scripts/recovery.sh` (Recovery-Modus mit Reparatur und Minimalchecks).
 
 ### System-Scan (Vorabprüfung ohne Schreiben)
 1. `./scripts/system_scan.sh`

@@ -12,14 +12,15 @@ class ModuleLoaderError(ValueError):
 
 @dataclass
 class ModuleLoader:
-    _cache: Dict[str, Any] = field(default_factory=dict)
+    _cache: Dict[tuple[str, Path], Any] = field(default_factory=dict)
 
     def load(self, module_id: str, entry_path: Path) -> Any:
         if not isinstance(module_id, str) or not module_id.strip():
             raise ModuleLoaderError("module_id ist leer oder ungültig.")
         if not isinstance(entry_path, Path):
             raise ModuleLoaderError("entry_path ist kein Pfad (Path).")
-        cached = self._cache.get(module_id)
+        cache_key = (module_id.strip(), entry_path.resolve())
+        cached = self._cache.get(cache_key)
         if cached is not None:
             return cached
         if not entry_path.exists():
@@ -29,7 +30,7 @@ class ModuleLoader:
             raise ModuleLoaderError(f"Modul konnte nicht geladen werden: {entry_path}")
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
-        self._cache[module_id] = module
+        self._cache[cache_key] = module
         return module
 
 

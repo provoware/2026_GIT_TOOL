@@ -1,6 +1,12 @@
 # Changelog
 
 ## [0.1.39] – 2026-01-30
+- Qualität: Modulstruktur-Validator mit Pflicht-Entry + Konfig-Ausnahmen ergänzt.
+- Sicherheit: Modulverbund-Check führt Selftests aus und blockiert fehlerhafte Module.
+- Start: Ampelstatus am Ende der Start-Routine ergänzt.
+- Start: Recovery-Modus als Notfallstart-Skript ergänzt.
+- Health-Check: Standarddatei für Modulstruktur-Config ergänzt.
+- Doku: Recovery-Modus und Modulstruktur-Regeln dokumentiert.
 - Dashboard: Globale Suche für Module, Einträge, Aktionen und Notizen ergänzt.
 - Dashboard: Favoritenleiste für Module inkl. Umschalten ergänzt.
 - Dashboard: Mini-Panels für Export/Backup/Schnellnotizen ergänzt.

@@ -224,6 +224,11 @@ def _build_default_files(root: Path) -> dict[Path, str]:
             "status": {"request": "Selbsttest"},
         }
     }
+    structure_payload = {
+        "required_entry": "module.py",
+        "entry_exceptions": [],
+        "required_files": ["manifest.json", "module.py"],
+    }
 
     return {
         root / "config" / "modules.json": json.dumps(modules_payload, indent=2, ensure_ascii=False)
@@ -247,6 +252,10 @@ def _build_default_files(root: Path) -> dict[Path, str]:
         root
         / "config"
         / "module_selftests.json": json.dumps(selftest_payload, indent=2, ensure_ascii=False)
+        + "\n",
+        root
+        / "config"
+        / "module_structure.json": json.dumps(structure_payload, indent=2, ensure_ascii=False)
         + "\n",
         root
         / "todo.txt": (
