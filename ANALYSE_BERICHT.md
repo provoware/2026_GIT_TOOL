@@ -1,27 +1,41 @@
 # ANALYSE_BERICHT
 
-Stand: 2026-01-09
+Stand: 2026-01-16
 
 ## Kurzfazit
-Die Struktur ist grundsätzlich stabil, aber es gibt **Redundanzen in der Doku** und **doppelte Aufgaben in todo.txt**. Für Robustheit und Wartbarkeit lohnt sich eine **bereinigte Dokumentation** und eine **automatisierte Konsistenzprüfung**.
+Die Struktur ist insgesamt stabil. Die größten Risiken liegen in **Doppelnennungen** und **inkonsistenten Info-Dateien**. Eine klar gepflegte Dokumentation, automatische Prüfungen (Checks) und klare Rückmeldungen (Feedback) machen das System robuster und leichter wartbar.
+
+## Ist-Analyse (Fehler, Lücken, Risiken)
+- **Info-Dateien**: Inhalte sind teils überholt oder zu knapp erklärt (Risiko: Missverständnisse).
+- **Doppelte Einträge**: In Dokumenten und Aufgabenlisten können Dopplungen entstehen (Risiko: falscher Fortschritt).
+- **Wartbarkeit**: Ohne klare Trennung von System-Logik und variablen Daten steigt die Fehlergefahr.
+- **Barrierefreiheit**: Theme- und Kontrast-Standards müssen durchgängig dokumentiert bleiben.
+- **Qualitätssicherung**: Automatische Tests laufen, aber Hinweise für Laien sollten noch deutlicher sein.
 
 ## Inkonsistenzen und Redundanzen (Befunde)
-- **CHANGELOG.md** enthält doppelte Versionsblöcke (z. B. 0.1.15 und 0.1.16 erscheinen mehrfach).
-- **DEV_DOKU.md** listet mehrere Einträge doppelt (z. B. `config/modules.json`, `modules/`).
-- **todo.txt** enthält mehrfach identische Aufgaben (z. B. Modul-Check-Tasks).
-
-## Fehlerquellen / Risiken
-- **Doppelte Dokumentation** erhöht das Risiko, dass Inhalte auseinanderlaufen.
-- **Mehrfache To-do-Einträge** verfälschen Fortschrittswerte und erschweren Planung.
-- **Fehlende zentrale Strukturübersicht** erschwert neuen Personen den Einstieg.
+- **CHANGELOG.md** enthält doppelte Versionsblöcke.
+- **DEV_DOKU.md** listet mehrfach identische Einträge.
+- **todo.txt** enthält mehrfach identische Aufgaben.
 
 ## Verbesserungen der Robustheit (Empfehlungen)
-1. **Dokumentation bereinigen**: Doppelte Einträge in CHANGELOG/DEV_DOKU und todo.txt zusammenführen.
-2. **Automatische Konsistenzprüfung**: kleines Skript, das Doku- und todo-Duplikate meldet (z. B. simple String-Prüfung über rg/awk).
-3. **Strukturübersicht pflegen**: PROJEKT_INFO.md als Pflichtdokument in der Start-Routine prüfen.
-4. **Stärkere Validierung**: Start-Routine prüft zusätzlich, ob PROJEKT_INFO.md existiert und ob wichtige Tooldateien auffindbar sind.
-5. **Klare Verantwortlichkeiten**: „System“ (Logik) und „Config“ (Einstellungen) strikt trennen und in Doku konsequent benennen.
+1. **Dokumentation konsolidieren**: Doppelte Einträge entfernen, klare Single-Source-Dateien definieren.
+2. **Automatische Prüfung erweitern**: Start-Routine mit klaren Statusmeldungen (Feedback) und Self-Repair weiter ausbauen.
+3. **Info-Dateien pflegen**: PROJEKT_INFO.md regelmäßig aktualisieren und als Pflichtdatei prüfen lassen.
+4. **Klare Trennung**: System-Logik (`src/`, `system/`) und variable Daten/Config (`data/`, `config/`) strikt trennen und benennen.
+5. **Validierung erzwingen**: Jede Funktion prüft Eingaben (Input) und Ergebnisse (Output) mit klaren Fehlermeldungen.
+6. **Tests laienfreundlich erklären**: Schritt-für-Schritt-Hilfen (Wizard) weiter ausbauen.
+
+## Automatisierung (Best Practices)
+- **Start-Routine** übernimmt Abhängigkeiten (Dependencies), Struktur-Checks und Modul-Validierung.
+- **Test-Routine** kombiniert Tests, Linting (Codeprüfung) und Formatierung in einem Ablauf.
+- **Logging** sorgt für nachvollziehbare Fehleranalyse, Debug-Modus liefert Details.
+
+## Weiterführende Laienvorschläge
+- **Einfach starten**: `./klick_start.sh` nutzen – prüft Struktur, Abhängigkeiten und Module automatisch.
+- **Fehler finden**: Logs öffnen (`logs/test_run.log`) und die erste Fehlermeldung lesen.
+- **Gezielt testen**: `./scripts/run_tests.sh --help` erklärt jeden Schritt in einfacher Sprache.
+- **Sicherheit prüfen**: Einmal pro Woche den Health-Check laufen lassen.
 
 ## Nächste kleine Schritte (pragmatisch)
-- Doppelte Doku-Einträge entfernen und einheitliche Strukturübersicht als „Single Source of Truth“ festlegen.
-- Kleines Prüfsystem ergänzen, das vor dem Start fehlende Pflichtdateien meldet.
+- Doppelte Doku-Einträge entfernen und klare Regeln für Info-Dateien festlegen.
+- Pflicht-Checks in der Start-Routine konsequent nutzen und sichtbar dokumentieren.

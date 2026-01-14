@@ -70,3 +70,7 @@
 - Qualität: Pfad-Validierung zentralisiert, Duplikate über `config_utils.ensure_path` entfernt.
 - Start: Health-Check um Self-Repair für fehlende Basiselemente ergänzt.
 - Start: Start-Routine nutzt Self-Repair und zeigt klaren Hinweis.
+
+## 2026-01-16
+- Doku: PROJEKT_INFO um Automatik, Barrierefreiheit und Laienhinweise ergänzt.
+- Doku: ANALYSE_BERICHT mit Ist-Analyse, Best Practices und Laienvorschlägen aktualisiert.

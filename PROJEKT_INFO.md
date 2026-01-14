@@ -5,12 +5,12 @@ Diese Datei gibt eine **kurze Übersicht** zur Ordnerstruktur und zu wichtigen T
 Bitte **bei jeder Struktur- oder Tool-Änderung** mit aktualisieren.
 
 ## Ordnerstruktur (Top-Level)
-- `config/`: Konfigurationen (Einstellungen, Regeln, Themes).
+- `config/`: Konfigurationen (Einstellungen, Regeln, Themes). Änderbar ohne Code.
 - `data/`: Nutzdaten und Protokolle (z. B. Moduldaten, Logs).
 - `logs/`: Laufzeit-Logs (z. B. Testprotokolle).
 - `modules/`: Module nach Standard (Manifest + Entry-Datei).
-- `scripts/`: Start- und Prüfskripte.
-- `src/`: Kernlogik (stabile System-Logik).
+- `scripts/`: Start- und Prüfskripte (Automatisierung).
+- `src/`: Kernlogik (stabile System-Logik, unabhängig von Config).
 - `system/`: Tool-Logik (CLI-Tools, Checks, Launcher).
 - `tests/`: Automatische Tests (Unit-Tests).
 - `gms-archiv-tool_v1.2.3_2026-01-06/`: UI-Frontend (separates Projekt).
@@ -23,10 +23,30 @@ Bitte **bei jeder Struktur- oder Tool-Änderung** mit aktualisieren.
 - `system/launcher.py`: CLI-Launcher (Modulübersicht).
 - `system/launcher_gui.py`: GUI-Launcher (Startübersicht mit Themes).
 - `system/health_check.py`: Health-Check (Pflichtdateien/Ordner prüfen).
-- `system/dependency_checker.py`: Abhängigkeiten prüfen und installieren.
+- `system/dependency_checker.py`: Abhängigkeiten (Dependencies) prüfen und installieren.
 - `system/module_checker.py`: Modul-Check (Manifest + Entry-Datei validieren).
 - `system/todo_manager.py`: Fortschritt berechnen und To-Dos archivieren.
 - `system/log_exporter.py`: Logdateien als ZIP exportieren.
+
+## Automatik: Was beim Start geprüft wird
+Die Start-Routine führt eine **vollautomatische Prüfung (Check)** aus und gibt **klare Rückmeldungen (Feedback)**:
+1. **Health-Check**: Pflichtdateien und Ordner werden geprüft, fehlende Elemente werden bei Bedarf erstellt.
+2. **Struktur-Check**: Projektordner werden geprüft und falls nötig angelegt.
+3. **Abhängigkeits-Check**: `config/requirements.txt` wird geprüft; fehlende Pakete werden installiert.
+4. **Modul-Check**: Module werden validiert (Manifest, Entry, Pfad-Sicherheit).
+5. **Fortschritt**: Der Fortschritt aus `todo.txt` wird berechnet und angezeigt.
+
+## Barrierefreiheit und Qualität (Kurzstandard)
+- **Tastaturbedienung**: Alle Funktionen müssen ohne Maus erreichbar sein.
+- **Kontrast**: Themes mit hoher Lesbarkeit (Ziel: 4,5:1) bereitstellen.
+- **Validierung**: Jede Funktion prüft Eingaben (Input) und Ergebnisse (Output).
+- **Logging**: Aktionen werden protokolliert; Debug-Modus (Debugging) zeigt Details.
+
+## Weiterführende Hinweise für Laien
+- **Starten**: `./klick_start.sh` nutzt alle Prüfungen automatisch.
+- **Fehler verstehen**: Fehlermeldungen nennen Ursache + Lösungsschritt.
+- **Hilfe ansehen**: `./scripts/run_tests.sh --help` erklärt den Testlauf Schritt für Schritt.
+- **Logs prüfen**: Bei Problemen zuerst `logs/test_run.log` öffnen.
 
 ## Aktualisierungspflicht
 - **Bei Ordneränderungen**: Abschnitt „Ordnerstruktur“ aktualisieren.
