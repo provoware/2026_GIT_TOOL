@@ -63,9 +63,9 @@ def load_pin_config(path: Path) -> PinConfig:
     enabled = data.get("enabled", False)
     if not isinstance(enabled, bool):
         raise PinAuthError("enabled ist kein Wahrheitswert (bool).")
-    pin_hint = _require_text(data.get("pin_hint", ""))
-    pin_hash = _require_text(data.get("pin_hash", ""))
-    salt = _require_text(data.get("salt", ""))
+    pin_hint = _require_text(data.get("pin_hint", ""), "pin_hint")
+    pin_hash = _require_text(data.get("pin_hash", ""), "pin_hash")
+    salt = _require_text(data.get("salt", ""), "salt")
     max_attempts = _require_int_min(data.get("max_attempts", 3), "max_attempts", 1)
     lock_min_seconds = _require_int_min(data.get("lock_min_seconds", 2), "lock_min_seconds", 1)
     lock_max_seconds = _require_int_min(data.get("lock_max_seconds", 7), "lock_max_seconds", 1)

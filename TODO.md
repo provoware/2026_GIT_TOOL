@@ -35,11 +35,11 @@ Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
 - [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 - [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
-Runde 2026-02-12 (4 kleinste Aufgaben dieser Runde) – offen
-- [ ] MEDIA-01: Wavesurfer erweitern (Markers/Regions/Minimap/Exportprofil). | fertig wenn: Funktionen sichtbar.
-- [ ] MEDIA-02: FFmpeg-Wrapper verbessern (Presets/Auto-Name/Fortschritt). | fertig wenn: Komfortfunktionen aktiv.
-- [ ] MEDIA-03: Dateimanager erweitern (Quick-Rename/Tagging/Favoriten). | fertig wenn: Features vorhanden.
-- [ ] DATA-01: Profil-System mit getrennten Projektordnern. | fertig wenn: Profile trennen Daten.
+Runde 2026-02-12 (4 kleinste Aufgaben dieser Runde) – erledigt
+- [x] START-16: PIN-Login-Config-Check stabilisieren (kein Abbruch bei leerer Konfiguration). | fertig wenn: Start läuft ohne TypeError.
+- [x] VIS-04: Dashboard-Layout an Design_und_Layoutvorgabe angleichen (Topbar, Panels, Farben). | fertig wenn: UI entspricht Vorgabe.
+- [x] VIS-05: Zeitachsen-Optik an Vorgabe anpassen (Gradient, Marker, Panel-Look). | fertig wenn: Timeline wirkt wie Vorlage.
+- [x] UI-17: Hintergrund/Glas-Layer an Designvorgabe anpassen (Sterne, Kontrast). | fertig wenn: Look konsistent.
 
 Runde 2026-02-11 (4 kleinste Aufgaben dieser Runde) – erledigt
 - [x] FLOW-01: Globales Drag-and-Drop (Dateien/Module). | fertig wenn: Ziehen funktioniert.
