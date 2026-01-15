@@ -210,6 +210,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [x] CODE-02: Setup-Skripte trennen (check_env.sh, bootstrap.sh, start.sh). | fertig wenn: Skripte getrennt vorhanden.
 - [x] CODE-03: Starke Typisierung + klare Moduleingänge definieren. | fertig wenn: Typen + Entry-Contracts dokumentiert.
 - [x] CODE-04: Styleguide (PEP8 + Projektregeln) als Markdown beilegen. | fertig wenn: Styleguide vorhanden.
+- [x] STD-02: GMS-Frontend-Ordner nach `snake_case`-Standard benennen. | fertig wenn: Pfad + Doku konsistent.
 
 ### F. Sicherheit
 - [x] SEC-01: Rechteprobleme beim Start automatisch korrigieren. | fertig wenn: Self-Repair behebt Rechte.
@@ -231,9 +232,12 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 
 ### J. Tests
 - [x] TEST-07: Tests für Modul-API-Validator ergänzen (Tests = automatische Prüfungen). | fertig wenn: Testfälle für Pflichtfunktionen grün sind.
+- [x] QA-10: Linting/Format-Skripte für das GMS-Frontend ergänzen. | fertig wenn: `npm run lint/format` verfügbar.
 
 ### K. Dokumentation
 - [x] DOC-14: MODUL_API.md um Modul-API-Check ergänzen. | fertig wenn: Hinweis auf automatische Prüfung dokumentiert ist.
+- [x] DOC-16: GMS-Frontend-README um Build/Test/Logging/Barrierefreiheit ergänzen. | fertig wenn: README vollständig.
+- [x] DOC-17: DEV_DOKU/PROJEKT_INFO/STRUKTUR auf neuen GMS-Pfad aktualisieren. | fertig wenn: Doku konsistent.
 - [x] COM-01: One-Click-Diag (Tests + Ergebnisse in Fenster). | fertig wenn: Diagnosen sichtbar.
 - [x] COM-02: Systemscanner vor Start (Rechte/JSON/Ordner). | fertig wenn: Scanner blockiert Fehler.
 - [x] COM-03: Recovery-Modus starten können. | fertig wenn: Start im Notfall.

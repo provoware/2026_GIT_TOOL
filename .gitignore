@@ -11,6 +11,9 @@ __pycache__/
 !logs/test_run.log
 !logs/start_run.log
 
+# Node
+node_modules/
+
 # Runtime state (Dummy wird versioniert)
 
 # OS

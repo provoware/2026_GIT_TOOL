@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.40] – 2026-02-01
+- Standards: GMS-Frontend-Pfad auf snake_case-Standard umgestellt.
+- Qualität: Linting- und Format-Skripte für das GMS-Frontend ergänzt.
+- Doku: GMS-Frontend-README und Entwicklerdoku aktualisiert.
+
 ## [0.1.39] – 2026-01-30
 - Qualität: Modulstruktur-Validator mit Pflicht-Entry + Konfig-Ausnahmen ergänzt.
 - Sicherheit: Modulverbund-Check führt Selftests aus und blockiert fehlerhafte Module.

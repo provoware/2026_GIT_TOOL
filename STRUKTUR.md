@@ -1,6 +1,6 @@
 # STRUKTUR (Verzeichnisbaum + Pflichtdateien)
 
-Stand: 2026-01-30
+Stand: 2026-02-01
 
 ## Zweck
 Diese Datei ist die **Single Source of Truth** für den Projektaufbau.
@@ -57,7 +57,7 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 │   └── todo_kalender.json
 ├── docs
 │   └── MODUL_API.md
-├── gms-archiv-tool_v1.2.3_2026-01-06
+├── gms_archiv_tool_v1_2_3_2026_01_06
 │   ├── docs
 │   │   ├── PROJECT.md
 │   │   └── TOOL_GUIDE.md
@@ -73,6 +73,9 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 │   │   ├── index.css
 │   │   ├── main.jsx
 │   │   └── selftest.js
+│   ├── .eslintrc.cjs
+│   ├── .prettierignore
+│   ├── .prettierrc.cjs
 │   ├── CHANGELOG.md
 │   ├── index.html
 │   ├── package.json

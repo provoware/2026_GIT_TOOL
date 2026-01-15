@@ -15,7 +15,7 @@ Die vollständige Struktur steht in `STRUKTUR.md`.
 - `src/`: Kernlogik (stabile System-Logik, unabhängig von Config).
 - `system/`: Tool-Logik (CLI-Tools, Checks, Launcher).
 - `tests/`: Automatische Tests (Unit-Tests).
-- `gms-archiv-tool_v1.2.3_2026-01-06/`: UI-Frontend (separates Projekt).
+- `gms_archiv_tool_v1_2_3_2026_01_06/`: UI-Frontend (separates Projekt).
 
 ## Tooldateien (wichtige Einstiege)
 - `klick_start.sh`: Startet die komplette Start-Routine und öffnet die GUI-Übersicht.
