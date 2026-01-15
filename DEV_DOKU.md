@@ -82,12 +82,16 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Start-Routine zeigt am Ende einen Ampelstatus (grün/rot).
 - Recovery-Modus steht als separates Skript für Notfallstarts bereit.
 - Testskript nutzt automatisch den Venv-Interpreter für Tests und Codequalität.
+- Changelog-Automatik kann DONE/CHANGELOG aus den Rundentasks in todo.txt ableiten.
+- Strukturpflege aktualisiert baumstruktur.txt, manifest.json und dummy_register.json automatisch.
+- Build-All-Skript bündelt Checks, Strukturpflege, Doku-Update und Tests.
+- Globale Settings liegen als zentrale Datei in config/global_settings.json vor.
 
 <!-- AUTO-STATUS:START -->
 **Auto-Status (aktualisiert: 2026-01-15)**
 
-- Gesamt: 117 Tasks
-- Erledigt: 117 Tasks
+- Gesamt: 121 Tasks
+- Erledigt: 121 Tasks
 - Offen: 0 Tasks
 - Fortschritt: 100,00 %
 <!-- AUTO-STATUS:END -->
@@ -100,7 +104,9 @@ Hier nur die wichtigsten Bereiche:
 - `STRUKTUR.md`: Verzeichnisbaum inkl. Pflicht- und Dummy-Dateien.
 - `README.md`: Schnellstart, Ziele und Hinweise.
 - `config/`: Konfiguration (z. B. Themes, Module, Test-Gate).
+- `config/global_settings.json`: Zentrale Einstellungen (UI/Logging/Autosave).
 - `data/`: Variable Daten (z. B. Logs, Zustände, Platzhalterdateien).
+- `data/manifest.json`: Automatisch gepflegte Modulübersicht.
 - `logs/`: Laufzeit-Logs (Test- und Startprotokolle).
 - `modules/`: Module mit `manifest.json` + `module.py`.
 - `reports/`: Prüfberichte (z. B. Kontrastprüfung).
@@ -189,6 +195,18 @@ Hier nur die wichtigsten Bereiche:
 ### Doku-Update (Auto-Status)
 1. `./scripts/update_docs.sh`
 2. Aktualisiert die Auto-Status-Blöcke in `README.md` und `DEV_DOKU.md`.
+
+### Changelog-Automatik (Rundentasks)
+1. `./scripts/update_records.sh`
+2. Liest erledigte Rundentasks aus `todo.txt` und ergänzt `DONE.md`/`CHANGELOG.md`.
+
+### Strukturpflege (Manifest + Register)
+1. `./scripts/update_structure.sh`
+2. Aktualisiert `data/baumstruktur.txt`, `data/manifest.json` und `data/dummy_register.json`.
+
+### Build-All (Ein-Befehl-Build)
+1. `./scripts/build_all.sh`
+2. Führt Checks, Strukturpflege, Doku-Update und Tests in einem Schritt aus.
 
 ### Modul-Selbsttests (manuell)
 1. `python system/module_selftests.py`

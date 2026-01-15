@@ -1,4 +1,192 @@
-DUMMY – Platzhalterdatei.
+Projektstruktur (2026_GIT_TOOL)
 
-Diese Datei wird später automatisch mit dem aktuellen Verzeichnisbaum gefüllt.
-Bitte nicht löschen.
+├── config/
+│   ├── agent_rules.json
+│   ├── black.toml
+│   ├── charakter_modul.json
+│   ├── datei_suche.json
+│   ├── download_aufraeumen.json
+│   ├── filename_suffixes.json
+│   ├── global_settings.json
+│   ├── launcher_gui.json
+│   ├── module_selftests.json
+│   ├── module_structure.json
+│   ├── modules.json
+│   ├── notiz_editor.json
+│   ├── pin.json
+│   ├── pytest.ini
+│   ├── records.json
+│   ├── requirements.txt
+│   ├── ruff.toml
+│   ├── test_gate.json
+│   ├── todo_config.json
+│   └── todo_kalender.json
+├── dashboard-timeline-tool/
+│   ├── projekt_dashboard_tool_react.jsx
+│   └── projekt_dashboard_tool_react.txt
+├── data/
+│   ├── log_exports/
+│   ├── baumstruktur.txt
+│   ├── dummy_register.json
+│   ├── manifest.json
+│   ├── pin_state.json
+│   ├── test_state.json
+│   ├── todo_archive.txt
+│   └── todo_kalender.json
+├── docs/
+│   └── MODUL_API.md
+├── genrearchiv_tool_v1_2_3_2026_01_06/
+│   ├── docs/
+│   │   ├── PROJECT.md
+│   │   └── TOOL_GUIDE.md
+│   ├── src/
+│   │   ├── config/
+│   │   │   └── modules.js
+│   │   ├── system/
+│   │   │   └── startupChecks.js
+│   │   ├── utils/
+│   │   │   └── logging.js
+│   │   ├── App.jsx
+│   │   ├── index.css
+│   │   ├── main.jsx
+│   │   └── selftest.js
+│   ├── CHANGELOG.md
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── postcss.config.cjs
+│   ├── README.md
+│   ├── requirements.md
+│   ├── tailwind.config.cjs
+│   └── vite.config.js
+├── logs/
+│   ├── start_run.log
+│   └── test_run.log
+├── modules/
+│   ├── beispiel_modul/
+│   │   ├── manifest.json
+│   │   └── module.py
+│   ├── charakter_modul/
+│   │   ├── manifest.json
+│   │   └── module.py
+│   ├── datei_suche/
+│   │   ├── manifest.json
+│   │   └── module.py
+│   ├── download_aufraeumen/
+│   │   ├── manifest.json
+│   │   └── module.py
+│   ├── notiz_editor/
+│   │   ├── manifest.json
+│   │   └── module.py
+│   ├── status/
+│   │   ├── manifest.json
+│   │   └── module.py
+│   └── todo_kalender/
+│       ├── manifest.json
+│       └── module.py
+├── reports/
+│   ├── kontrastpruefung_launcher_gui.md
+│   └── responsivitaet_launcher_gui.md
+├── scripts/
+│   ├── assign_agent.py
+│   ├── bootstrap.sh
+│   ├── build_all.sh
+│   ├── check_env.sh
+│   ├── ensure_venv.sh
+│   ├── generate_launcher_gui_contrast_report.py
+│   ├── progress.js
+│   ├── recovery.sh
+│   ├── repo_basis_check.sh
+│   ├── run_tests.sh
+│   ├── show_standards.sh
+│   ├── start.sh
+│   ├── system_scan.sh
+│   ├── update_docs.sh
+│   ├── update_records.py
+│   ├── update_records.sh
+│   └── update_structure.sh
+├── src/
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── agent_assignment.py
+│   │   ├── data_model.py
+│   │   ├── errors.py
+│   │   └── todo_parser.py
+│   ├── records/
+│   │   ├── __init__.py
+│   │   └── record_updater.py
+│   └── __init__.py
+├── system/
+│   ├── color_utils.py
+│   ├── config_models.py
+│   ├── config_utils.py
+│   ├── dependency_checker.py
+│   ├── diagnostics_runner.py
+│   ├── doc_updater.py
+│   ├── error_simulation.py
+│   ├── filename_fixer.py
+│   ├── health_check.py
+│   ├── json_validator.py
+│   ├── launcher.py
+│   ├── launcher_gui.py
+│   ├── log_exporter.py
+│   ├── logging_center.py
+│   ├── module_api_types.py
+│   ├── module_api_validator.py
+│   ├── module_checker.py
+│   ├── module_integration_checks.py
+│   ├── module_loader.py
+│   ├── module_registry.py
+│   ├── module_selftests.py
+│   ├── pin_auth.py
+│   ├── qa_checks.py
+│   ├── self_repair.py
+│   ├── standards_viewer.py
+│   ├── store.py
+│   ├── structure_checker.py
+│   ├── structure_updater.py
+│   ├── test_gate.py
+│   └── todo_manager.py
+├── tests/
+│   ├── test_agent_assignment.py
+│   ├── test_charakter_modul_module.py
+│   ├── test_data_model.py
+│   ├── test_datei_suche_module.py
+│   ├── test_dependency_checker.py
+│   ├── test_diagnostics_runner.py
+│   ├── test_doc_updater.py
+│   ├── test_download_aufraeumen_module.py
+│   ├── test_error_simulation.py
+│   ├── test_filename_fixer.py
+│   ├── test_json_validator.py
+│   ├── test_launcher.py
+│   ├── test_launcher_gui.py
+│   ├── test_launcher_gui_contrast.py
+│   ├── test_log_exporter.py
+│   ├── test_module_api_validator.py
+│   ├── test_module_checker.py
+│   ├── test_module_integration_checks.py
+│   ├── test_module_selftests.py
+│   ├── test_notiz_editor_module.py
+│   ├── test_pin_auth.py
+│   ├── test_qa_checks.py
+│   ├── test_robustness_checks.py
+│   ├── test_todo_kalender_module.py
+│   └── test_todo_manager.py
+├── AGENTS.md
+├── ANALYSE_BERICHT.md
+├── ANLEITUNG_TOOL.md
+├── CHANGELOG.md
+├── DEV_DOKU.md
+├── DONE.md
+├── klick_start.sh
+├── PROGRESS.md
+├── PROJEKT_INFO.md
+├── README.md
+├── standards.md
+├── STRUKTUR.md
+├── STYLEGUIDE.md
+├── TODO.md
+└── todo.txt
+
+Stand: 2026-01-15T12:38:09+00:00

@@ -10,6 +10,12 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Nächste 4 kleinste Aufgaben (Runde 2026-01-15) – erledigt
+[x] DOC-01: CHANGELOG-Automatik einbauen (Changelog = Änderungsprotokoll). | fertig wenn: Changelog automatisch aktualisiert.
+[x] DATA-02: Globale Settings als zentrale Datei (Settings = Einstellungen). | fertig wenn: Settings-Datei + Checks vorhanden.
+[x] DATA-04: Automatische Pflege von baumstruktur.txt/manifest.json/dummy_register.json. | fertig wenn: Update-Skript aktualisiert Dateien.
+[x] REL-07: Build-Skripte automatisieren (`./build_all.sh`). | fertig wenn: Ein-Befehl-Build verfügbar.
+
 Nächste 4 kleinste Aufgaben (Runde 2026-02-03) – erledigt
 [x] START-12: Virtuelle Umgebung automatisch erstellen/verwenden (Venv = isolierte Python-Umgebung). | fertig wenn: Start nutzt .venv standardmäßig.
 [x] START-13: GUI-Voraussetzungen prüfen (Tkinter = GUI-Bibliothek). | fertig wenn: Start meldet Tkinter-Status.

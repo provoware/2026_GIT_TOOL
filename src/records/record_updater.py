@@ -10,10 +10,14 @@ from datetime import date
 from pathlib import Path
 from typing import Iterable, List
 
-TASK_PATTERN = re.compile(
+DATED_TASK_PATTERN = re.compile(
     r"^\[(?P<status>[ xX])\]\s+(?P<date>\d{4}-\d{2}-\d{2})\s+\|\s+"
     r"(?P<area>[^|]+?)\s+\|\s+(?P<title>[^|]+?)\s+\|"
 )
+ROUND_HEADER_PATTERN = re.compile(
+    r"^Nächste 4 kleinste Aufgaben \\(Runde (?P<date>\d{4}-\d{2}-\d{2})\\)"
+)
+ROUND_TASK_PATTERN = re.compile(r"^\[(?P<status>[ xX])\]\s+(?P<text>.+)$")
 DONE_ENTRY_PATTERN = re.compile(
     r"^-\s+\[x\]\s+(?P<date>\d{4}-\d{2}-\d{2})\s+\|\s+"
     r"(?P<area>[^|]+?)\s+\|\s+(?P<title>[^|]+?)\s*$"
@@ -71,19 +75,65 @@ def validate_config(config: RecordConfig) -> None:
         raise ValueError("Konfiguration: Prefix für DONE-Einträge fehlt.")
 
 
+def _parse_round_task(text: str, date: str, raw_line: str) -> TodoTask | None:
+    stripped = text.strip()
+    if not stripped:
+        return None
+    if "|" in stripped:
+        stripped = stripped.split("|", 1)[0].strip()
+    if ":" in stripped:
+        area, title = stripped.split(":", 1)
+        area = area.strip()
+        title = title.strip()
+    else:
+        area = "Allgemein"
+        title = stripped
+    if not title:
+        return None
+    return TodoTask(status="", date=date, area=area, title=title, raw_line=raw_line)
+
+
 def parse_todo_lines(lines: Iterable[str]) -> List[TodoTask]:
     tasks: List[TodoTask] = []
+    current_round_date: str | None = None
+    round_locked = False
     for line in lines:
-        match = TASK_PATTERN.match(line)
+        header_match = ROUND_HEADER_PATTERN.match(line.strip())
+        if header_match:
+            if not round_locked:
+                current_round_date = header_match.group("date")
+                round_locked = True
+            else:
+                current_round_date = None
+            continue
+
+        match = DATED_TASK_PATTERN.match(line)
         if match:
-            task = TodoTask(
-                status=match.group("status"),
-                date=match.group("date"),
-                area=match.group("area").strip(),
-                title=match.group("title").strip(),
-                raw_line=line,
+            tasks.append(
+                TodoTask(
+                    status=match.group("status"),
+                    date=match.group("date"),
+                    area=match.group("area").strip(),
+                    title=match.group("title").strip(),
+                    raw_line=line,
+                )
             )
-            tasks.append(task)
+            continue
+
+        if current_round_date:
+            round_match = ROUND_TASK_PATTERN.match(line.strip())
+            if round_match:
+                task = _parse_round_task(round_match.group("text"), current_round_date, line)
+                if task:
+                    tasks.append(
+                        TodoTask(
+                            status=round_match.group("status"),
+                            date=task.date,
+                            area=task.area,
+                            title=task.title,
+                            raw_line=line,
+                        )
+                    )
     return tasks
 
 
@@ -116,20 +166,49 @@ def archive_done_tasks(
     updated_todo_lines: List[str] = []
     archived_tasks: List[TodoTask] = []
     removed_done_lines = 0
+    current_round_date: str | None = None
+    round_locked = False
 
     for line in todo_lines:
-        match = TASK_PATTERN.match(line)
-        if not match:
+        header_match = ROUND_HEADER_PATTERN.match(line.strip())
+        if header_match:
+            if not round_locked:
+                current_round_date = header_match.group("date")
+                round_locked = True
+            else:
+                current_round_date = None
             updated_todo_lines.append(line)
             continue
 
-        task = TodoTask(
-            status=match.group("status"),
-            date=match.group("date"),
-            area=match.group("area").strip(),
-            title=match.group("title").strip(),
-            raw_line=line,
-        )
+        match = DATED_TASK_PATTERN.match(line)
+        if match:
+            task = TodoTask(
+                status=match.group("status"),
+                date=match.group("date"),
+                area=match.group("area").strip(),
+                title=match.group("title").strip(),
+                raw_line=line,
+            )
+        else:
+            task = None
+            if current_round_date:
+                round_match = ROUND_TASK_PATTERN.match(line.strip())
+                if round_match:
+                    task = _parse_round_task(
+                        round_match.group("text"), current_round_date, line
+                    )
+                    if task:
+                        task = TodoTask(
+                            status=round_match.group("status"),
+                            date=task.date,
+                            area=task.area,
+                            title=task.title,
+                            raw_line=line,
+                        )
+
+        if not task:
+            updated_todo_lines.append(line)
+            continue
 
         if task.status.lower() == "x":
             removed_done_lines += 1

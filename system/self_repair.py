@@ -141,6 +141,11 @@ def build_default_files(root: Path) -> dict[Path, str]:
         "lock_min_seconds": 2,
         "lock_max_seconds": 7,
     }
+    global_settings_payload = {
+        "ui": {"default_theme": "auto", "contrast_mode": "normal"},
+        "logging": {"level": "info", "debug": False},
+        "autosave": {"enabled": True, "interval_minutes": 10},
+    }
 
     return {
         root / "config" / "modules.json": json.dumps(modules_payload, indent=2, ensure_ascii=False)
@@ -180,6 +185,12 @@ def build_default_files(root: Path) -> dict[Path, str]:
         root
         / "config"
         / "filename_suffixes.json": json.dumps(suffix_payload, indent=2, ensure_ascii=False)
+        + "\n",
+        root
+        / "config"
+        / "global_settings.json": json.dumps(
+            global_settings_payload, indent=2, ensure_ascii=False
+        )
         + "\n",
         root / "config" / "pin.json": json.dumps(pin_payload, indent=2, ensure_ascii=False) + "\n",
         root
@@ -391,6 +402,7 @@ def run_self_repair(root: Path, dry_run: bool) -> tuple[List[str], List[str]]:
             RepairItem(root / "config" / "module_structure.json", "Modul-Struktur"),
             RepairItem(root / "config" / "todo_config.json", "To-Do-Konfig"),
             RepairItem(root / "config" / "filename_suffixes.json", "Suffix-Standards"),
+            RepairItem(root / "config" / "global_settings.json", "Global-Settings"),
             RepairItem(root / "config" / "pin.json", "PIN-Konfiguration"),
             RepairItem(root / "data" / "pin_state.json", "PIN-Status"),
             RepairItem(root / "todo.txt", "To-Do-Liste"),
@@ -413,6 +425,7 @@ def run_self_repair(root: Path, dry_run: bool) -> tuple[List[str], List[str]]:
             RepairItem(root / "config" / "module_structure.json", "Modul-Struktur"),
             RepairItem(root / "config" / "todo_config.json", "To-Do-Konfig"),
             RepairItem(root / "config" / "filename_suffixes.json", "Suffix-Standards"),
+            RepairItem(root / "config" / "global_settings.json", "Global-Settings"),
             RepairItem(root / "config" / "pin.json", "PIN-Konfiguration"),
             RepairItem(root / "data" / "pin_state.json", "PIN-Status"),
         ],
