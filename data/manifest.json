@@ -1,0 +1,54 @@
+{
+  "generated_at": "2026-01-15T12:38:09+00:00",
+  "modules": [
+    {
+      "id": "status",
+      "name": "Status-Check",
+      "version": "1.0.0",
+      "entry": "module.py",
+      "path": "modules/status"
+    },
+    {
+      "id": "todo_kalender",
+      "name": "To-Do & Kalender",
+      "version": "0.1.0",
+      "entry": "module.py",
+      "path": "modules/todo_kalender"
+    },
+    {
+      "id": "beispiel_modul",
+      "name": "Beispiel-Modul",
+      "version": "1.0.0",
+      "entry": "module.py",
+      "path": "modules/beispiel_modul"
+    },
+    {
+      "id": "notiz_editor",
+      "name": "Notiz-Editor",
+      "version": "1.0.0",
+      "entry": "module.py",
+      "path": "modules/notiz_editor"
+    },
+    {
+      "id": "charakter_modul",
+      "name": "Charakter-Modul",
+      "version": "1.0.0",
+      "entry": "module.py",
+      "path": "modules/charakter_modul"
+    },
+    {
+      "id": "download_aufraeumen",
+      "name": "Download-Ordner aufräumen",
+      "version": "1.0.0",
+      "entry": "module.py",
+      "path": "modules/download_aufraeumen"
+    },
+    {
+      "id": "datei_suche",
+      "name": "Datei-Suche",
+      "version": "1.0.0",
+      "entry": "module.py",
+      "path": "modules/datei_suche"
+    }
+  ]
+}

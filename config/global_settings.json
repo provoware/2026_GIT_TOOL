@@ -1,0 +1,14 @@
+{
+  "ui": {
+    "default_theme": "auto",
+    "contrast_mode": "normal"
+  },
+  "logging": {
+    "level": "info",
+    "debug": false
+  },
+  "autosave": {
+    "enabled": true,
+    "interval_minutes": 10
+  }
+}

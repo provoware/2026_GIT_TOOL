@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.46] – 2026-01-15
+- Doku: Changelog-Automatik ergänzt und Rundentasks in todo.txt werden automatisch archiviert.
+- Daten: Globale Settings-Datei ergänzt und in Health-Check/Self-Repair aufgenommen.
+- Daten: Strukturpflege aktualisiert baumstruktur.txt, manifest.json und dummy_register.json automatisch.
+- Release: Build-All-Skript bündelt Checks, Strukturpflege, Doku-Update und Tests.
+
 ## [0.1.45] – 2026-02-03
 - Start: Venv-Automatik ergänzt, Start-Routine nutzt den Venv-Interpreter.
 - Start: GUI-Voraussetzungen (Tkinter) werden geprüft und klar gemeldet.

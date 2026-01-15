@@ -31,6 +31,8 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 │   ├── charakter_modul.json
 │   ├── datei_suche.json
 │   ├── download_aufraeumen.json
+│   ├── filename_suffixes.json
+│   ├── global_settings.json
 │   ├── launcher_gui.json
 │   ├── module_structure.json
 │   ├── module_selftests.json
@@ -52,6 +54,7 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 │   ├── .gitkeep
 │   ├── baumstruktur.txt
 │   ├── dummy_register.json
+│   ├── manifest.json
 │   ├── test_state.json
 │   ├── todo_archive.txt
 │   └── todo_kalender.json

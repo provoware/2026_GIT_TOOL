@@ -11,6 +11,10 @@
 - Sicherheit: Self-Repair-Bibliothek für Dateinamen/JSON/Rechte ergänzt.
 - Start: Vollständige Self-Repair-Routine in der Start-Routine integriert.
 - Daten: Dateinamen-Suffix-Standards für data/logs implementiert.
+- Doku: Changelog-Automatik für Rundentasks ergänzt.
+- Daten: Globale Settings-Datei angelegt und Checks ergänzt.
+- Daten: Strukturpflege für baumstruktur/manifest/register automatisiert.
+- Release: Build-All-Skript für Ein-Befehl-Build ergänzt.
 
 ## 2026-02-02
 - Genrearchiv-Frontend: Ordner/Package/UI-Branding konsistent umbenannt.

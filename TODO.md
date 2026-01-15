@@ -226,7 +226,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 ### H. Build & Release
 - [ ] REL-05: .deb-Paket mit postinst-Initialisierung. | fertig wenn: postinst läuft.
 - [ ] REL-06: AppImage mit integriertem Self-Check. | fertig wenn: Self-Check startet.
-- [ ] REL-07: Build-Skripte automatisieren (`./build_all.sh`). | fertig wenn: Ein-Befehl-Build.
+- [x] REL-07: Build-Skripte automatisieren (`./build_all.sh`). | fertig wenn: Ein-Befehl-Build.
 
 ### I. Zentrale Komfortfunktionen
 
@@ -280,9 +280,9 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 
 ### Profil- & Datenstruktur
 - [ ] DATA-01: Profil-System mit getrennten Projektordnern. | fertig wenn: Profile trennen Daten.
-- [ ] DATA-02: Globale Settings als zentrale Datei. | fertig wenn: eine Settings-Datei existiert.
+- [x] DATA-02: Globale Settings als zentrale Datei. | fertig wenn: eine Settings-Datei existiert.
 - [ ] DATA-03: Versionierung pro Modul + Änderungsverläufe. | fertig wenn: Historie sichtbar.
-- [ ] DATA-04: Automatische Pflege von baumstruktur.txt/manifest.json/dummy_register.json. | fertig wenn: Dateien automatisch aktualisiert.
+- [x] DATA-04: Automatische Pflege von baumstruktur.txt/manifest.json/dummy_register.json. | fertig wenn: Dateien automatisch aktualisiert.
 - [x] DATA-05: Dateinamen-Suffix-Standards implementieren. | fertig wenn: Endungen folgen Standard.
 
 ### UX & Barrierefreiheit
@@ -339,7 +339,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [ ] VIS-03: Lesbarkeit + skalierende Elemente verbessern. | fertig wenn: besser lesbar.
 
 ### Dokumentation & Systempflege
-- [ ] DOC-01: CHANGELOG-Automatik einbauen. | fertig wenn: Changelog automatisch.
+- [x] DOC-01: CHANGELOG-Automatik einbauen. | fertig wenn: Changelog automatisch.
 - [x] DOC-02: README-/Doku-Autoupdater erstellen. | fertig wenn: Doku aktualisiert.
 - [ ] DOC-03: Developer-Panel im Dashboard integrieren. | fertig wenn: Panel sichtbar.
 - [x] DOC-04: Interne Standards im Tool anzeigen (Konfig, Regeln, Tests). | fertig wenn: Standards sichtbar.

@@ -15,8 +15,8 @@ Dieses Projekt ist ein sauberer Neuaufbau mit Fokus auf Robustheit, Nachvollzieh
 <!-- AUTO-STATUS:START -->
 **Auto-Status (aktualisiert: 2026-01-15)**
 
-- Gesamt: 117 Tasks
-- Erledigt: 117 Tasks
+- Gesamt: 121 Tasks
+- Erledigt: 121 Tasks
 - Offen: 0 Tasks
 - Fortschritt: 100,00 %
 <!-- AUTO-STATUS:END -->
@@ -38,6 +38,9 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 - `./scripts/run_tests.sh` (Tests + Codequalität = automatische Prüfung von Funktionen und Stil)
 - `python system/diagnostics_runner.py` (Diagnose = Tests und Codequalität mit Zusammenfassung)
 - `./scripts/update_docs.sh` (Doku-Update = Auto-Status in README/DEV_DOKU aktualisieren)
+- `./scripts/update_records.sh` (Changelog-Automatik = DONE/CHANGELOG aus todo.txt aktualisieren)
+- `./scripts/update_structure.sh` (Strukturpflege = Baumstruktur/Manifest/Register aktualisieren)
+- `./scripts/build_all.sh` (Ein-Befehl-Build = Checks, Strukturpflege, Doku, Tests)
 - `./scripts/repo_basis_check.sh` (Repo-Check = Basisprüfung für Git-Remote)
 
 ## Release-Checks & Test-Automatik
@@ -120,6 +123,8 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 - `todo.txt`: Offene Aufgaben im Überblick.
 - `STRUKTUR.md`: Verzeichnisbaum + Pflichtdateien (inkl. Dummy-Platzhalter).
 - `CHANGELOG.md`: Änderungen je Version.
+- `config/global_settings.json`: Zentrale Settings (Einstellungen) für UI/Logging/Autosave.
+- `data/manifest.json`: Automatisch gepflegter Manifest-Überblick.
 
 ## Lizenz
 Noch nicht festgelegt.
