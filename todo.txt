@@ -10,6 +10,12 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Nächste 4 kleinste Aufgaben (Runde 2026-02-02) – erledigt
+[x] REN-01: Genrearchiv-Frontend zu Genrearchiv umbenennen (Ordner/Branding/Package). | fertig wenn: Name/Ordner/Title konsistent.
+[x] REN-02: Storage- und Exportnamen auf Genrearchiv umstellen inkl. Migration. | fertig wenn: Keys/Dateinamen + Legacy-Fallback.
+[x] REN-03: Doku-Pfade/Beispiele auf Genrearchiv aktualisieren. | fertig wenn: PROJEKT_INFO/STRUKTUR/DEV_DOKU/Standards aktualisiert.
+[x] REN-04: Genrearchiv-Tool optimal einsortieren (Struktur + Doku). | fertig wenn: Struktur und Doku listen Genrearchiv sauber.
+
 Nächste 4 kleinste Aufgaben (Runde 2026-01-15, Pflege) – erledigt
 [x] QA-11: Modulnamen-Abgleich zwischen Manifest und Modul-Config prüfen. | fertig wenn: Modulverbund-Check meldet Name-Mismatch.
 [x] DOC-18: Info-Dateien und Auto-Status aktualisieren. | fertig wenn: README/DEV_DOKU/CHANGELOG/DONE/PROGRESS aktuell.
@@ -23,10 +29,10 @@ Nächste 4 kleinste Aufgaben (Runde 2026-01-15) – erledigt
 [x] START-07: Gesundheitsprüfung vor Start (Health-Check = Systemprüfung). | fertig wenn: wichtige Dateien geprüft.
 
 Nächste 4 kleinste Aufgaben (Runde 2026-02-01) – erledigt
-[x] STD-02: GMS-Frontend-Ordner nach `snake_case`-Standard benennen. | fertig wenn: Pfad + Doku konsistent.
-[x] QA-10: Linting/Format-Skripte für das GMS-Frontend ergänzen. | fertig wenn: `npm run lint/format` verfügbar.
-[x] DOC-16: GMS-Frontend-README um Build/Test/Logging/Barrierefreiheit ergänzen. | fertig wenn: README vollständig.
-[x] DOC-17: DEV_DOKU/PROJEKT_INFO/STRUKTUR auf neuen GMS-Pfad aktualisieren. | fertig wenn: Doku konsistent.
+[x] STD-02: Genrearchiv-Frontend-Ordner nach `snake_case`-Standard benennen. | fertig wenn: Pfad + Doku konsistent.
+[x] QA-10: Linting/Format-Skripte für das Genrearchiv-Frontend ergänzen. | fertig wenn: `npm run lint/format` verfügbar.
+[x] DOC-16: Genrearchiv-Frontend-README um Build/Test/Logging/Barrierefreiheit ergänzen. | fertig wenn: README vollständig.
+[x] DOC-17: DEV_DOKU/PROJEKT_INFO/STRUKTUR auf neuen Genrearchiv-Pfad aktualisieren. | fertig wenn: Doku konsistent.
 
 Nächste 4 kleinste Aufgaben (Runde 2026-01-30) – erledigt
 [x] CODE-01: Einheitliche Modulstruktur erzwingen (`manifest.json`, `module.py`). | fertig wenn: Validator blockiert Abweichung.

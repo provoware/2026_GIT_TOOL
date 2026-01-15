@@ -59,7 +59,7 @@ const checkStorage = (storage) => {
   if (typeof get !== "function" || typeof set !== "function" || typeof remove !== "function") {
     return { ok: false, message: "Lokaler Speicher (Local Storage) kann nicht genutzt werden." };
   }
-  const testKey = "__gms_start_check__";
+  const testKey = "__genrearchiv_start_check__";
   const setOk = set(testKey, "1");
   const getOk = get(testKey) === "1";
   const removeOk = remove(testKey);

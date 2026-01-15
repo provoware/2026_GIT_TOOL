@@ -42,7 +42,10 @@ import {
 import { createLogEntry, formatLogLine, normalizeLogEntry } from "./utils/logging";
 
 const APP_VERSION = "1.2.3";
-const LS_KEY = "pppoppi_gms_archiv_v1";
+const LS_KEY = "pppoppi_genrearchiv_v1";
+const LEGACY_LS_KEY = "pppoppi_gms_archiv_v1";
+const SELFTEST_KEY = "__genrearchiv_selftest__";
+const LEGACY_SELFTEST_KEY = "__gms_selftest__";
 const DEFAULT_SCALE = 1.0;
 const LOG_QUEUE_LIMIT = 10;
 
@@ -662,7 +665,7 @@ function Topbar({
             <Sparkles className="h-5 w-5" />
           </div>
           <div>
-            <div className="text-xl font-semibold tracking-wide" style={{ color: "var(--text)" }}>GMS Archiv Tool</div>
+            <div className="text-xl font-semibold tracking-wide" style={{ color: "var(--text)" }}>Genrearchiv Tool</div>
             <div className="text-base" style={{ color: "var(--muted2)" }}>
               v{APP_VERSION} • Themes • Zoom
             </div>
@@ -1144,14 +1147,12 @@ function ImportExport({
   onSelfTest,
   onSelfTestFail,
   selfTest,
-  fileRef,
-}) {
-  const statusTone = selfTest?.ok === true ? "green" : selfTest?.ok === false ? "red" : "slate";
-  const statusLabel = selfTest?.ok === true ? "Status: OK" : selfTest?.ok === false ? "Status: Fehler" : "Status: offen";
   onStartupCheck,
   startupReport,
   fileRef,
 }) {
+  const statusTone = selfTest?.ok === true ? "green" : selfTest?.ok === false ? "red" : "slate";
+  const statusLabel = selfTest?.ok === true ? "Status: OK" : selfTest?.ok === false ? "Status: Fehler" : "Status: offen";
   const summary = startupReport?.summary || { ok: 0, warn: 0, error: 0 };
   return (
     <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_1fr]">
@@ -1510,9 +1511,15 @@ function ArchivView({
 
 export default function App() {
   const [state, setState] = useState(() => {
-    const raw = safeLsGet(LS_KEY);
+    const current = safeLsGet(LS_KEY);
+    const legacy = current ? null : safeLsGet(LEGACY_LS_KEY);
+    const raw = current ?? legacy;
     if (!raw) return makeDefaultState();
     const parsed = safeJsonParse(raw);
+    if (parsed.ok && legacy) {
+      safeLsSet(LS_KEY, raw);
+      safeLsRemove(LEGACY_LS_KEY);
+    }
     return parsed.ok ? coerceState(parsed.value) : makeDefaultState();
   });
 
@@ -1559,9 +1566,11 @@ export default function App() {
     const baseState = snapshot || stateRef.current;
     const profilesList = Object.keys(baseState?.profiles || {}).sort((a, b) => a.localeCompare(b));
     const itemsList = collectAllItems(baseState);
-    const storageKey = "__gms_selftest__";
-    const storageAvailable = safeLsSet(storageKey, "1");
-    if (storageAvailable) safeLsRemove(storageKey);
+    const storageAvailable = safeLsSet(SELFTEST_KEY, "1") || safeLsSet(LEGACY_SELFTEST_KEY, "1");
+    if (storageAvailable) {
+      safeLsRemove(SELFTEST_KEY);
+      safeLsRemove(LEGACY_SELFTEST_KEY);
+    }
 
     const report = buildSelfTestReport({
       state: baseState,
@@ -1593,6 +1602,8 @@ export default function App() {
 
   useEffect(() => {
     runSelfTest({ auto: true, snapshot: stateRef.current });
+  }, []);
+
   const runStartupCheck = () => {
     const report = runStartupChecks({
       state: stateRef.current,
@@ -1602,7 +1613,7 @@ export default function App() {
         set: safeLsSet,
         remove: safeLsRemove,
       },
-      persistedSnapshot: safeLsGet(LS_KEY),
+      persistedSnapshot: safeLsGet(LS_KEY) ?? safeLsGet(LEGACY_LS_KEY),
     });
     setStartupReport(report);
     if (!report.ok) {
@@ -2034,7 +2045,7 @@ export default function App() {
       return;
     }
 
-    const fn = `gms-archiv-gesamt_v${APP_VERSION}_${new Date().toISOString().slice(0, 10)}.json`;
+    const fn = `genrearchiv-gesamt_v${APP_VERSION}_${new Date().toISOString().slice(0, 10)}.json`;
     downloadText(fn, payload);
     pushLog("export", "Gesamt-Export erstellt", { bytes: payload.length });
     setState((prev) => ({ ...prev, stats: { ...prev.stats, exports: Number(prev.stats.exports || 0) + 1, lastExportAt: nowIso() }, updatedAt: nowIso() }));
@@ -2054,7 +2065,7 @@ export default function App() {
       return;
     }
 
-    const fn = `gms-archiv-profil_${pname}_v${APP_VERSION}_${new Date().toISOString().slice(0, 10)}.json`;
+    const fn = `genrearchiv-profil_${pname}_v${APP_VERSION}_${new Date().toISOString().slice(0, 10)}.json`;
     downloadText(fn, payload);
     pushLog("export", "Profil-Export erstellt", { profile: pname, bytes: payload.length });
     setState((prev) => ({ ...prev, stats: { ...prev.stats, exports: Number(prev.stats.exports || 0) + 1, lastExportAt: nowIso() }, updatedAt: nowIso() }));
@@ -2153,28 +2164,6 @@ export default function App() {
       pushLog("import", "Datei lesen fehlgeschlagen", { error: String(e) }, "error");
       showToast("Dateifehler");
     }
-  };
-
-  const runSelfTest = (context = {}) => {
-    const source = typeof context?.source === "string" ? context.source : "manual";
-    pushLog("diagnose", "Self-Test gestartet", { source, roundSize: context?.roundSize, task: context?.task });
-    const snapshot = stateRef.current || state;
-    const v = validateState(snapshot);
-    if (!v.ok) {
-      pushLog("diagnose", "Self-Test FAIL", { errors: v.errors }, "error");
-      showToast("Self-Test FAIL");
-      return;
-    }
-    const payload = JSON.stringify({ ...state, exportedAt: nowIso() });
-    const parsed = safeJsonParse(payload);
-    const v2 = parsed.ok ? validateState(coerceState(parsed.value)) : { ok: false, errors: ["Parse fail"] };
-    if (!v2.ok) {
-      pushLog("diagnose", "Self-Test Roundtrip FAIL", { errors: v2.errors }, "error");
-      showToast("Roundtrip FAIL");
-      return;
-    }
-    pushLog("diagnose", "Self-Test OK", { profiles: profiles.length, items: allItems.length });
-    showToast("Self-Test OK");
   };
 
   const chartAll = useMemo(() => [

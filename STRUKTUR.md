@@ -57,7 +57,7 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 │   └── todo_kalender.json
 ├── docs
 │   └── MODUL_API.md
-├── gms_archiv_tool_v1_2_3_2026_01_06
+├── genrearchiv_tool_v1_2_3_2026_01_06
 │   ├── docs
 │   │   ├── PROJECT.md
 │   │   └── TOOL_GUIDE.md
