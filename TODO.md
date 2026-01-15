@@ -309,8 +309,8 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [ ] FLOW-01: Globales Drag-and-Drop (Dateien/Module). | fertig wenn: Ziehen funktioniert.
 - [ ] FLOW-02: Undo-/Redo-System global. | fertig wenn: Rückgängig möglich.
 - [x] FLOW-03: Autosave alle 10 Minuten. | fertig wenn: automatische Sicherung läuft.
-- [ ] FLOW-04: Globales Event-/Signal-System. | fertig wenn: Module reagieren konsistent.
-- [ ] FLOW-05: Rechte- und Schreibschutzsystem. | fertig wenn: Schutz aktiv.
+- [x] FLOW-04: Globales Event-/Signal-System. | fertig wenn: Module reagieren konsistent.
+- [x] FLOW-05: Rechte- und Schreibschutzsystem. | fertig wenn: Schutz aktiv.
 
 ### Kernmodule
 - [ ] CORE-01: Dateimanager-Modul finalisieren. | fertig wenn: Kernfunktionen stabil.
@@ -333,7 +333,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [ ] IO-02: Backup-System vollständig integrieren. | fertig wenn: Sicherungen laufen.
 - [x] IO-03: Testmodus (schreibgeschützt) einbauen. | fertig wenn: keine Schreibzugriffe.
 - [x] IO-04: Autosave in Logs protokollieren. | fertig wenn: Logs enthalten Autosave.
-- [ ] IO-05: Selektive Exporte aktivieren. | fertig wenn: Teil-Exporte möglich.
+- [x] IO-05: Selektive Exporte aktivieren. | fertig wenn: Teil-Exporte möglich.
 
 ### Fehler- & Strukturprüfung
 - [x] QA-01: JSON-Validator einbauen. | fertig wenn: JSON geprüft.
@@ -378,7 +378,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 
 ### Abschlusslogik
 - [x] END-01: Logout: Save-All + sauberes Schließen. | fertig wenn: Daten gespeichert.
-- [ ] END-02: End-Audit-Check (Release-Status) integrieren. | fertig wenn: Audit sichtbar.
+- [x] END-02: End-Audit-Check (Release-Status) integrieren. | fertig wenn: Audit sichtbar.
 
 ## Archiv (erledigt, konsolidiert)
 - [x] 2026-01-07: Setup, Architektur-Standards, Modul-Schnittstelle, UI-Farben, Logging, To-Do-Validierung, Modul-Check, Basis-Tests.

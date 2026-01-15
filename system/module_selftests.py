@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List
 
 import module_checker
+from event_bus import EVENT_BUS
 from logging_center import get_logger
 from logging_center import setup_logging as setup_logging_center
 from module_loader import MODULE_LOADER, ModuleLoaderError
@@ -78,6 +79,7 @@ def run_selftests(
     entries = module_checker.load_modules(modules_config)
     results: List[SelftestResult] = []
     for entry in entries:
+        EVENT_BUS.emit("module_selftest_start", {"module_id": entry.module_id})
         if not entry.enabled:
             results.append(
                 SelftestResult(
@@ -112,6 +114,10 @@ def run_selftests(
                     message=str(exc),
                 )
             )
+            EVENT_BUS.emit(
+                "module_selftest_result",
+                {"module_id": entry.module_id, "status": "fehler", "message": str(exc)},
+            )
         else:
             results.append(
                 SelftestResult(
@@ -120,6 +126,14 @@ def run_selftests(
                     status="ok",
                     message="Selbsttest erfolgreich.",
                 )
+            )
+            EVENT_BUS.emit(
+                "module_selftest_result",
+                {
+                    "module_id": entry.module_id,
+                    "status": "ok",
+                    "message": "Selbsttest erfolgreich.",
+                },
             )
     return results
 

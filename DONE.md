@@ -1,5 +1,11 @@
 # DONE
 
+## 2026-02-11
+- Abschluss: End-Audit-Check mit Release-Status in der GUI ergänzt.
+- IO: Selektiver Export als ZIP inkl. Presets und Launcher-Aktion ergänzt.
+- Flow: Globales Event-/Signal-System mit Event-Bus integriert.
+- Sicherheit: Schreibschutzsystem auf Basis von Manifest-Rechten umgesetzt.
+
 ## 2026-02-07
 - GUI: Tooltips mit Kurz-Hinweisen für Launcher-Steuerung ergänzt.
 - GUI: Kontext-Hilfe im Launcher eingeführt (Fokus + F1).

@@ -147,6 +147,23 @@ def build_default_files(root: Path) -> dict[Path, str]:
         "logging": {"level": "info", "debug": False},
         "autosave": {"enabled": True, "interval_minutes": 10},
     }
+    selective_export_payload = {
+        "default_preset": "support_pack",
+        "output_dir": "data/exports",
+        "base_name": "selective_export",
+        "presets": {
+            "support_pack": {
+                "label": "Support-Paket (Logs, Config, Reports)",
+                "includes": ["logs", "config", "reports"],
+                "excludes": ["logs/*.old", "logs/*.bak"],
+            },
+            "logs_only": {
+                "label": "Nur Logs",
+                "includes": ["logs"],
+                "excludes": ["logs/*.old", "logs/*.bak"],
+            },
+        },
+    }
 
     return {
         root / "config" / "modules.json": json.dumps(modules_payload, indent=2, ensure_ascii=False)
@@ -190,6 +207,12 @@ def build_default_files(root: Path) -> dict[Path, str]:
         root
         / "config"
         / "global_settings.json": json.dumps(global_settings_payload, indent=2, ensure_ascii=False)
+        + "\n",
+        root
+        / "config"
+        / "selective_export.json": json.dumps(
+            selective_export_payload, indent=2, ensure_ascii=False
+        )
         + "\n",
         root / "config" / "pin.json": json.dumps(pin_payload, indent=2, ensure_ascii=False) + "\n",
         root

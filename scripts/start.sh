@@ -120,6 +120,12 @@ if [[ "${SANDBOX_MODE}" -eq 1 ]]; then
   ROOT_DIR="${SANDBOX_ROOT}"
 fi
 
+if [[ "${SAFE_MODE}" -eq 1 ]]; then
+  export GENREARCHIV_WRITE_MODE="read-only"
+else
+  export GENREARCHIV_WRITE_MODE="normal"
+fi
+
 if [[ "${NO_LOG}" -eq 0 ]]; then
   if [[ -z "${LOG_FILE}" ]]; then
     LOG_FILE="${ROOT_DIR}/logs/start_run.log"

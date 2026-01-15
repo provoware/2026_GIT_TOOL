@@ -5,6 +5,10 @@
 - Automatisch ergänzt: REL-02: Offizielles Icon-Set (Provoware-Look) integrieren.
 - Automatisch ergänzt: REL-04: ZIP-Auto-Export alle fünf Entwicklungsschritte.
 - Automatisch ergänzt: REL-08: Desktop-File + Icon-Integration für Linux.
+- Flow: Event-Bus für globale Modulevents ergänzt.
+- Sicherheit: Schreibschutzsystem auf Manifest-Rechten aufgebaut.
+- IO: Selektiver Export mit Presets und Launcher-Integration ergänzt.
+- Abschluss: End-Audit-Check mit Release-Status in der GUI ergänzt.
 
 ## [0.1.53] – 2026-02-09
 - Release: AppImage-Builder mit integriertem Self-Check ergänzt.

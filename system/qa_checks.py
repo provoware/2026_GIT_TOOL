@@ -70,6 +70,7 @@ def check_release_files(root: Path) -> FileStatusReport:
         ("config/ruff.toml", "Ruff-Konfiguration", True, "file"),
         ("config/black.toml", "Black-Konfiguration", True, "file"),
         ("config/module_selftests.json", "Modul-Selbsttests", True, "json"),
+        ("config/selective_export.json", "Selektive Exporte", True, "json"),
         ("todo.txt", "Kurzliste (todo.txt)", True, "file"),
         ("scripts/start.sh", "Startskript", True, "file"),
         ("scripts/run_tests.sh", "Tests-Skript", True, "file"),

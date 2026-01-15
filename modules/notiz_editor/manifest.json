@@ -3,5 +3,6 @@
   "name": "Notiz-Editor",
   "version": "1.0.0",
   "description": "Erstellt, verwaltet und strukturiert Notizen mit Templates, Favoriten und Dashboard-Statistiken.",
-  "entry": "module.py"
+  "entry": "module.py",
+  "permissions": ["read:data", "write:data", "read:config"]
 }
