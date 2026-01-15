@@ -236,8 +236,8 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [ ] MEDIA-03: Dateimanager erweitern (Quick-Rename/Tagging/Favoriten). | fertig wenn: Features vorhanden.
 
 ### H. Build & Release
-- [ ] REL-05: .deb-Paket mit postinst-Initialisierung. | fertig wenn: postinst läuft.
-- [ ] REL-06: AppImage mit integriertem Self-Check. | fertig wenn: Self-Check startet.
+- [x] REL-05: .deb-Paket mit postinst-Initialisierung. | fertig wenn: postinst läuft.
+- [x] REL-06: AppImage mit integriertem Self-Check. | fertig wenn: Self-Check startet.
 - [x] REL-07: Build-Skripte automatisieren (`./build_all.sh`). | fertig wenn: Ein-Befehl-Build.
 
 ### I. Zentrale Komfortfunktionen
@@ -372,12 +372,12 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 ### Release-Build
 - [x] REL-01: .deb-Paket bauen. | fertig wenn: Paket erzeugt.
 - [x] REL-02: Offizielles Icon-Set (Provoware-Look) integrieren. | fertig wenn: Icons vorhanden.
-- [ ] REL-03: One-File-Distribution (AppImage/PyInstaller). | fertig wenn: Ein-Datei-Build.
+- [x] REL-03: One-File-Distribution (AppImage/PyInstaller). | fertig wenn: Ein-Datei-Build.
 - [x] REL-04: ZIP-Auto-Export alle fünf Entwicklungsschritte. | fertig wenn: ZIP-Automatik läuft.
 - [x] REL-08: Desktop-File + Icon-Integration für Linux. | fertig wenn: Desktop-Startdatei vorhanden.
 
 ### Abschlusslogik
-- [ ] END-01: Logout: Save-All + sauberes Schließen. | fertig wenn: Daten gespeichert.
+- [x] END-01: Logout: Save-All + sauberes Schließen. | fertig wenn: Daten gespeichert.
 - [ ] END-02: End-Audit-Check (Release-Status) integrieren. | fertig wenn: Audit sichtbar.
 
 ## Archiv (erledigt, konsolidiert)

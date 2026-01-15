@@ -97,12 +97,12 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Autosave schreibt Sicherungen in data/autosave/ und protokolliert nach logs/autosave.log.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-01-15)**
+**Auto-Status (aktualisiert: 2026-02-09)**
 
 - Gesamt: 149 Tasks
-- Erledigt: 145 Tasks
-- Offen: 4 Tasks
-- Fortschritt: 97,32 %
+- Erledigt: 149 Tasks
+- Offen: 0 Tasks
+- Fortschritt: 100,00 %
 <!-- AUTO-STATUS:END -->
 
 ## Struktur (aktuell)
@@ -225,7 +225,19 @@ Hier nur die wichtigsten Bereiche:
 ### Deb-Paket bauen (Linux)
 1. `./scripts/build_deb.sh`
 2. Das Paket landet im Ordner `dist/` (falls `dpkg-deb` installiert ist).
-3. Optional: `./scripts/build_deb.sh --debug` (Debugging = detaillierte Diagnoseausgaben).
+3. Post-Installation: `system/deb_postinst.sh` erstellt Logs/Daten und startet Self-Check.
+4. Optional: `./scripts/build_deb.sh --debug` (Debugging = detaillierte Diagnoseausgaben).
+
+### AppImage bauen (Linux)
+1. `./scripts/build_appimage.sh`
+2. Das AppImage landet im Ordner `dist/` (falls `appimagetool` installiert ist).
+3. Beim Start läuft automatisch ein Self-Check, danach startet die Start-Routine.
+4. Optional: `./scripts/build_appimage.sh --debug` (Debugging = detaillierte Diagnoseausgaben).
+
+### One-File-Build (PyInstaller)
+1. `./scripts/build_onefile.sh`
+2. Die Ein-Datei-Ausgabe landet im Ordner `dist/` (falls `pyinstaller` installiert ist).
+3. Optional: `./scripts/build_onefile.sh --debug` (Debugging = detaillierte Diagnoseausgaben).
 
 ### Modul-Selbsttests (manuell)
 1. `python system/module_selftests.py`
@@ -274,7 +286,7 @@ Hier nur die wichtigsten Bereiche:
 ### GUI-Launcher (Startübersicht)
 1. `python system/launcher_gui.py`
 2. Optional: `python system/launcher_gui.py --show-all --debug` (Details anzeigen).
-3. Tastatur-Shortcuts: Alt+A (alle Module), Alt+D (Debug), Alt+R (aktualisieren), Alt+G (Diagnose), Alt+T (Theme), Alt+K (Kontrast), Alt+Q (beenden).
+3. Tastatur-Shortcuts: Alt+A (alle Module), Alt+D (Debug), Alt+R (aktualisieren), Alt+G (Diagnose), Alt+T (Theme), Alt+K (Kontrast), Alt+Q (abmelden & sichern).
 4. Zoom: Strg + Mausrad (Zoom = Schriftgröße vergrößern/verkleinern).
 5. Modul-Check: Wird bei jeder Aktualisierung automatisch ausgeführt (Status steht in der Übersicht).
 6. UI-Abstände anpassen: `config/launcher_gui.json` → `layout.*` (Spacing = Abstände).

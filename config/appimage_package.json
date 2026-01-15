@@ -1,0 +1,12 @@
+{
+  "app_id": "2026_git_tool",
+  "app_name": "2026 Git Tool",
+  "version": "0.1.0",
+  "install_root": "/opt/2026_git_tool",
+  "desktop_entry_config": "config/desktop_entry.json",
+  "icon_source": "assets/icons/provoware.svg",
+  "exclude_paths": [".git", ".venv", "logs", "data/exports", "data/log_exports", "__pycache__", "node_modules"],
+  "output_dir": "dist",
+  "self_check_command": "python3 {app_root}/system/health_check.py --root {app_root} --self-repair",
+  "start_command": "bash {app_root}/scripts/start.sh --log-file {app_root}/logs/appimage_start.log"
+}

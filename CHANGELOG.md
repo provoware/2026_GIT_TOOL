@@ -6,6 +6,12 @@
 - Automatisch ergänzt: REL-04: ZIP-Auto-Export alle fünf Entwicklungsschritte.
 - Automatisch ergänzt: REL-08: Desktop-File + Icon-Integration für Linux.
 
+## [0.1.53] – 2026-02-09
+- Release: AppImage-Builder mit integriertem Self-Check ergänzt.
+- Release: One-File-Build (PyInstaller) mit Konfig und Entry-Skript ergänzt.
+- Release: .deb-Postinst-Initialisierung ergänzt (Self-Check + Ordner).
+- GUI: Abmelden mit Autosave und sauberem Schließen ergänzt.
+
 ## [0.1.52] – 2026-02-07
 - GUI: Tooltips für Launcher-Steuerung ergänzt und barrierearm platziert.
 - GUI: Kontext-Hilfe im Launcher ergänzt (Fokus + F1).

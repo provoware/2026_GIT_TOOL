@@ -39,6 +39,7 @@ class DebPackageConfig:
     icon_source: Path
     exclude_paths: List[str]
     output_dir: Path
+    postinst_script: Path | None
 
 
 def load_config(path: Path) -> DebPackageConfig:
@@ -58,6 +59,7 @@ def load_config(path: Path) -> DebPackageConfig:
         icon_source=Path(data.get("icon_source", "")),
         exclude_paths=list(data.get("exclude_paths", [])),
         output_dir=Path(data.get("output_dir", "dist")),
+        postinst_script=_optional_path(data.get("postinst_script", "")),
     )
     validate_config(config)
     return config
@@ -80,6 +82,25 @@ def validate_config(config: DebPackageConfig) -> None:
         raise DebBuilderError("Desktop-Entry-Konfiguration fehlt.")
     if not config.icon_source:
         raise DebBuilderError("Icon-Quelle fehlt.")
+    if config.postinst_script is not None and not config.postinst_script.as_posix():
+        raise DebBuilderError("postinst_script ist ungültig.")
+
+
+def _optional_path(value: str) -> Path | None:
+    if not isinstance(value, str):
+        raise DebBuilderError("Pfadwert ist ungültig.")
+    cleaned = value.strip()
+    if not cleaned:
+        return None
+    return Path(cleaned)
+
+
+def _resolve_repo_path(repo_root: Path, path_value: Path) -> Path:
+    ensure_path(repo_root, "repo_root", DebBuilderError)
+    ensure_path(path_value, "path_value", DebBuilderError)
+    if path_value.is_absolute():
+        return path_value
+    return repo_root / path_value
 
 
 def build_control_content(config: DebPackageConfig) -> str:
@@ -157,6 +178,14 @@ def prepare_deb_structure(repo_root: Path, config: DebPackageConfig, staging_roo
     )
     icon_target.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(repo_root / config.icon_source, icon_target)
+
+    if config.postinst_script is not None:
+        postinst_source = _resolve_repo_path(repo_root, config.postinst_script)
+        if not postinst_source.exists():
+            raise DebBuilderError(f"postinst fehlt: {postinst_source}")
+        postinst_target = debian_dir / "postinst"
+        shutil.copy2(postinst_source, postinst_target)
+        postinst_target.chmod(0o755)
 
     if file_count == 0:
         raise DebBuilderError("Keine Dateien für das Paket gefunden.")
