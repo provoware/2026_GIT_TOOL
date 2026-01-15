@@ -1,5 +1,10 @@
 # DONE
 
+## 2026-02-07
+- GUI: Tooltips mit Kurz-Hinweisen für Launcher-Steuerung ergänzt.
+- GUI: Kontext-Hilfe im Launcher eingeführt (Fokus + F1).
+- Doku: DEV_DOKU um Tooltip- und Kontext-Hilfe ergänzt.
+
 ## 2026-02-06
 - GUI: Großbutton-UI über neue Layout-Parameter (Button-Breite + Schriftgröße) umgesetzt.
 - GUI: Button-Breite skaliert mit Zoom für bessere Bedienbarkeit.

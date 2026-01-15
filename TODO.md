@@ -35,6 +35,12 @@ Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
 - [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 - [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Runde 2026-02-07 (4 kleinste Aufgaben dieser Runde) – erledigt
+- [x] UX-13: Tooltip-Hinweise im Launcher ergänzen (Tooltip = Kurz-Hinweis). | fertig wenn: Tooltips sichtbar.
+- [x] UX-14: Kontext-Hilfe im Launcher ergänzen (Kontext-Hilfe = Fokus-Erklärung). | fertig wenn: Fokus-Hilfe sichtbar.
+- [x] UX-15: Hilfetexte in einfacher Sprache überarbeiten (Fachbegriff erklärt). | fertig wenn: klare Hilfe.
+- [x] DOC-19: Entwicklerdoku zu Tooltips/Kontext-Hilfe ergänzen. | fertig wenn: DEV_DOKU angepasst.
+
 Runde 2026-01-15 (4 kleinste Aufgaben dieser Runde) – erledigt
 - [x] REN-DE-01: Ordner dashboard-timeline-tool in dashboard_zeitachsen_werkzeug umbenennen. | fertig wenn: Ordnername ist deutsch und snake_case.
 - [x] REN-DE-02: Ordner genrearchiv_tool_v1_2_3_2026_01_06 in genrearchiv_werkzeug_v1_2_3_2026_01_06 umbenennen. | fertig wenn: Ordnername ist deutsch und snake_case.

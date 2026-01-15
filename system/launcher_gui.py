@@ -43,6 +43,91 @@ class GuiLauncherError(Exception):
     """Allgemeiner Fehler für den GUI-Launcher."""
 
 
+class Tooltip:
+    def __init__(
+        self,
+        widget,
+        text_provider,
+        delay_ms: int = 500,
+        max_width: int = 360,
+        font=None,
+    ) -> None:
+        if widget is None:
+            raise GuiLauncherError("Tooltip-Widget fehlt.")
+        if not callable(text_provider):
+            raise GuiLauncherError("Tooltip-Provider ist ungültig.")
+        if not isinstance(delay_ms, int) or delay_ms < 0:
+            raise GuiLauncherError("Tooltip-Delay ist ungültig.")
+        if not isinstance(max_width, int) or max_width < 120:
+            raise GuiLauncherError("Tooltip-Breite ist ungültig.")
+        self.widget = widget
+        self.text_provider = text_provider
+        self.delay_ms = delay_ms
+        self.max_width = max_width
+        self.font = font
+        self._after_id = None
+        self._tip_window = None
+
+        self.widget.bind("<Enter>", self._schedule, add="+")
+        self.widget.bind("<Leave>", self._hide, add="+")
+        self.widget.bind("<FocusIn>", self._schedule, add="+")
+        self.widget.bind("<FocusOut>", self._hide, add="+")
+
+    def _schedule(self, _event=None) -> None:
+        self._cancel()
+        self._after_id = self.widget.after(self.delay_ms, self._show)
+
+    def _cancel(self) -> None:
+        if self._after_id is not None:
+            self.widget.after_cancel(self._after_id)
+            self._after_id = None
+
+    def _show(self) -> None:
+        if self._tip_window is not None:
+            return
+        payload = self.text_provider()
+        if not isinstance(payload, dict):
+            raise GuiLauncherError("Tooltip-Payload ist ungültig.")
+        text = payload.get("text", "")
+        if not isinstance(text, str) or not text.strip():
+            return
+        import tkinter as tk
+
+        bg = payload.get("bg", "#1f1f1f")
+        fg = payload.get("fg", "#ffffff")
+        border = payload.get("border", "#ffffff")
+        self._tip_window = tk.Toplevel(self.widget)
+        tip = self._tip_window
+        tip.wm_overrideredirect(True)
+        tip.configure(background=border)
+
+        container = tk.Frame(tip, background=border, padx=1, pady=1)
+        container.pack(fill="both", expand=True)
+        label = tk.Label(
+            container,
+            text=text,
+            background=bg,
+            foreground=fg,
+            justify="left",
+            wraplength=self.max_width,
+            padx=8,
+            pady=6,
+        )
+        if self.font is not None:
+            label.configure(font=self.font)
+        label.pack(fill="both", expand=True)
+
+        x = self.widget.winfo_rootx() + 12
+        y = self.widget.winfo_rooty() + self.widget.winfo_height() + 10
+        tip.wm_geometry(f"+{x}+{y}")
+
+    def _hide(self, _event=None) -> None:
+        self._cancel()
+        if self._tip_window is not None:
+            self._tip_window.destroy()
+            self._tip_window = None
+
+
 def _require_text(value: object, label: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise GuiLauncherError(f"{label} fehlt oder ist leer.")
@@ -182,6 +267,15 @@ class LauncherGui:
         self.status_indicator = None
         self.footer_label = None
         self.help_label = None
+        self.context_help_label = None
+        self.context_help_default = (
+            "Kontext-Hilfe: Wähle ein Feld oder einen Knopf, "
+            "dann erscheint hier eine kurze Erklärung."
+        )
+        self.current_help_text = self.context_help_default
+        self.help_texts: Dict[object, str] = {}
+        self.tooltips: List[Tooltip] = []
+        self.tooltip_style: Dict[str, str] = {}
         self.developer_hint = None
         self.header_font = None
         self.output_font = None
@@ -344,14 +438,27 @@ class LauncherGui:
                 "Entwicklerbereich: System-Scan (Prüfung), Standards (Regeln) und "
                 "Log-Ordner (Protokolle). "
                 "Kontrastmodus: Alt+K. Zoom: Strg + Mausrad. "
-                "Tastatur: Tab für Fokus, Alt+A (alle Module), Alt+D (Debug), "
-                "Alt+R (aktualisieren), Alt+G (Diagnose), Alt+S (System-Scan), "
-                "Alt+P (Standards), Alt+L (Logs), Alt+T (Theme), Alt+Q (beenden)."
+                "Tastatur: Tab für Fokus, F1 für Kontext-Hilfe. "
+                "Kurzbefehle: Alt+A (alle Module), Alt+D (Debug), Alt+R (aktualisieren), "
+                "Alt+G (Diagnose), Alt+S (System-Scan), Alt+P (Standards), "
+                "Alt+L (Logs), Alt+T (Theme), Alt+Q (beenden)."
             ),
             anchor="w",
             justify="left",
         )
         self.help_label.pack(fill="x", padx=self.layout.gap_md, pady=self.layout.gap_sm)
+
+        self.context_help_label = tk.Label(
+            help_section,
+            text=self.context_help_default,
+            anchor="w",
+            justify="left",
+        )
+        self.context_help_label.pack(
+            fill="x",
+            padx=self.layout.gap_md,
+            pady=(0, self.layout.gap_sm),
+        )
 
         developer_section = tk.LabelFrame(
             self.root, text=f"{ICON_SET['developer']} Entwicklerbereich (für Profis)"
@@ -465,7 +572,7 @@ class LauncherGui:
             self.root,
             text=(
                 "Tipp: Mit Tabulator erreichst du alle Bedienelemente. "
-                "Kurzbefehle: Alt+A (alle Module), Alt+D (Debug), Alt+R "
+                "Kurzbefehle: F1 (Kontext-Hilfe), Alt+A (alle Module), Alt+D (Debug), Alt+R "
                 "(aktualisieren), Alt+G (Diagnose), Alt+S (System-Scan), "
                 "Alt+P (Standards), Alt+L (Logs), Alt+T (Theme), Alt+K (Kontrast), "
                 "Strg + Mausrad (Zoom), Alt+Q (beenden)."
@@ -477,6 +584,8 @@ class LauncherGui:
         self._bind_accessibility_shortcuts()
         self._bind_responsive_layout()
         self._bind_zoom_controls()
+        self._bind_help_context()
+        self._register_help_entries()
         self.apply_theme(self.gui_config.default_theme)
         self.request_refresh()
         self.root.after(100, lambda: self._focus_widget(self.theme_menu))
@@ -508,6 +617,7 @@ class LauncherGui:
         self.root.bind_all("<Alt-l>", lambda _event: self.open_logs())
         self.root.bind_all("<Alt-q>", lambda _event: self.root.quit())
         self.root.bind_all("<Control-r>", lambda _event: self._refresh_from_shortcut())
+        self.root.bind_all("<F1>", lambda _event: self._announce_context_help())
 
     def _bind_zoom_controls(self) -> None:
         self.root.bind_all("<Control-MouseWheel>", self._on_zoom_mousewheel)
@@ -577,8 +687,121 @@ class LauncherGui:
             self.footer_label.configure(wraplength=width, justify="left")
         if self.help_label is not None:
             self.help_label.configure(wraplength=width, justify="left")
+        if self.context_help_label is not None:
+            self.context_help_label.configure(wraplength=width, justify="left")
         if self.developer_hint is not None:
             self.developer_hint.configure(wraplength=width, justify="left")
+
+    def _bind_help_context(self) -> None:
+        self.root.bind_all("<FocusIn>", self._handle_focus_in, add="+")
+        self.root.bind_all("<FocusOut>", self._handle_focus_out, add="+")
+
+    def _handle_focus_in(self, event) -> None:
+        widget = getattr(event, "widget", None)
+        if widget in self.help_texts:
+            self._set_context_help(self.help_texts[widget])
+
+    def _handle_focus_out(self, _event) -> None:
+        self._set_context_help(self.context_help_default)
+
+    def _set_context_help(self, text: str) -> None:
+        clean_text = _require_text(text, "context_help")
+        self.current_help_text = clean_text
+        if self.context_help_label is not None:
+            self.context_help_label.configure(text=clean_text)
+
+    def _announce_context_help(self) -> None:
+        if not isinstance(self.current_help_text, str) or not self.current_help_text.strip():
+            return
+        self._set_status(f"Hilfe: {self.current_help_text}", state="success")
+
+    def _tooltip_payload(self, text: str) -> Dict[str, str]:
+        clean_text = _require_text(text, "tooltip_text")
+        payload = {
+            "text": clean_text,
+            "bg": self.tooltip_style.get("bg", "#1f1f1f"),
+            "fg": self.tooltip_style.get("fg", "#ffffff"),
+            "border": self.tooltip_style.get("border", "#ffffff"),
+        }
+        return payload
+
+    def _register_tooltip(self, widget, text: str) -> None:
+        clean_text = _require_text(text, "tooltip_text")
+        tooltip = Tooltip(
+            widget=widget,
+            text_provider=lambda: self._tooltip_payload(clean_text),
+            delay_ms=500,
+            max_width=360,
+            font=self.button_font,
+        )
+        self.tooltips.append(tooltip)
+
+    def _register_help(self, widget, tooltip_text: str, context_text: str) -> None:
+        clean_context = _require_text(context_text, "context_help")
+        self.help_texts[widget] = clean_context
+        self._register_tooltip(widget, tooltip_text)
+
+    def _register_help_entries(self) -> None:
+        if self.theme_menu is not None:
+            self._register_help(
+                self.theme_menu,
+                "Farbschema wählen (Theme = Farbstil).",
+                "Farbschema wählen: Wähle ein Theme (Farbstil), um Kontrast und Farben anzupassen.",
+            )
+        if self.show_all_check is not None:
+            self._register_help(
+                self.show_all_check,
+                "Zeigt alle Module (auch deaktivierte).",
+                "Alle Module anzeigen: Zeigt auch deaktivierte Module, damit du sie prüfen kannst.",
+            )
+        if self.debug_check is not None:
+            self._register_help(
+                self.debug_check,
+                "Zeigt technische Details (Debugging = Fehlersuche).",
+                "Debug-Details: Zeigt technische Zusatzinfos (Debugging = Fehlersuche).",
+            )
+        if self.refresh_button is not None:
+            self._register_help(
+                self.refresh_button,
+                "Aktualisiert die Modulübersicht.",
+                "Übersicht aktualisieren: Lädt Module neu und prüft Fehler.",
+            )
+        if self.diagnostics_button is not None:
+            self._register_help(
+                self.diagnostics_button,
+                "Startet Tests und Codeprüfungen.",
+                "Diagnose starten: Führt Tests und Codequalität (Linting/Format) aus.",
+            )
+        if self.scan_button is not None:
+            self._register_help(
+                self.scan_button,
+                "Startet den System-Scan (Vorabprüfung).",
+                "System-Scan: Prüft Dateien, Ordner und Rechte ohne Schreiben.",
+            )
+        if self.standards_button is not None:
+            self._register_help(
+                self.standards_button,
+                "Zeigt die Standards (interne Regeln).",
+                "Standards anzeigen: Zeigt die internen Regeln (Standards = Regeln).",
+            )
+        if self.logs_button is not None:
+            self._register_help(
+                self.logs_button,
+                "Öffnet den Log-Ordner (Protokolle).",
+                "Log-Ordner öffnen: Zeigt Protokolle (Logs), falls etwas schiefgeht.",
+            )
+        if self.output_text is not None:
+            self._register_help(
+                self.output_text,
+                "Hier stehen Module und Prüfergebnisse.",
+                "Modulübersicht: Zeigt Module, Prüfungen und Hinweise in einfacher Sprache.",
+            )
+        if self.status_label is not None:
+            self._register_help(
+                self.status_label,
+                "Zeigt Statusmeldungen (bereit, läuft, Fehler).",
+                "Status: Zeigt ob das Tool bereit ist, arbeitet oder einen Fehler meldet.",
+            )
 
     def _focus_widget(self, widget) -> None:
         if widget is not None:
@@ -650,6 +873,11 @@ class LauncherGui:
             "error": theme.colors["status_error"],
             "busy": theme.colors["status_busy"],
             "foreground": theme.colors["status_foreground"],
+        }
+        self.tooltip_style = {
+            "bg": theme.colors["button_background"],
+            "fg": theme.colors["button_foreground"],
+            "border": theme.colors["accent"],
         }
 
         widgets = self.root.winfo_children()
