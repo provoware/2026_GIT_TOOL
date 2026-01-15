@@ -10,11 +10,17 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
-Nächste 4 kleinste Aufgaben (Runde 2026-02-11) – offen
-[ ] FLOW-01: Globales Drag-and-Drop (Dateien/Module). | fertig wenn: Ziehen funktioniert.
-[ ] FLOW-02: Undo-/Redo-System global. | fertig wenn: Rückgängig möglich.
-[ ] IO-01: Exportcenter (JSON, TXT, PDF, ZIP) implementieren. | fertig wenn: Exporte laufen.
-[ ] IO-02: Backup-System vollständig integrieren. | fertig wenn: Sicherungen laufen.
+Nächste 4 kleinste Aufgaben (Runde 2026-02-12) – offen
+[ ] MEDIA-01: Wavesurfer erweitern (Markers/Regions/Minimap/Exportprofil). | fertig wenn: Funktionen sichtbar.
+[ ] MEDIA-02: FFmpeg-Wrapper verbessern (Presets/Auto-Name/Fortschritt). | fertig wenn: Komfortfunktionen aktiv.
+[ ] MEDIA-03: Dateimanager erweitern (Quick-Rename/Tagging/Favoriten). | fertig wenn: Features vorhanden.
+[ ] DATA-01: Profil-System mit getrennten Projektordnern. | fertig wenn: Profile trennen Daten.
+
+Nächste 4 kleinste Aufgaben (Runde 2026-02-11) – erledigt
+[x] FLOW-01: Globales Drag-and-Drop (Dateien/Module). | fertig wenn: Ziehen funktioniert.
+[x] FLOW-02: Undo-/Redo-System global. | fertig wenn: Rückgängig möglich.
+[x] IO-01: Exportcenter (JSON, TXT, PDF, ZIP) implementieren. | fertig wenn: Exporte laufen.
+[x] IO-02: Backup-System vollständig integrieren. | fertig wenn: Sicherungen laufen.
 
 Nächste 4 kleinste Aufgaben (Runde 2026-02-10) – erledigt
 [x] END-02: End-Audit-Check (Release-Status) integrieren. | fertig wenn: Audit sichtbar.

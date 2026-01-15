@@ -1,0 +1,7 @@
+{
+  "output_dir": "data/exports",
+  "sources": ["config", "data", "logs", "reports"],
+  "report_base_name": "export_center_report",
+  "include_extensions": [".json", ".txt", ".md", ".log"],
+  "enabled_formats": ["json", "txt", "pdf", "zip"]
+}

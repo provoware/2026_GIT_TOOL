@@ -71,6 +71,8 @@ def check_release_files(root: Path) -> FileStatusReport:
         ("config/black.toml", "Black-Konfiguration", True, "file"),
         ("config/module_selftests.json", "Modul-Selbsttests", True, "json"),
         ("config/selective_export.json", "Selektive Exporte", True, "json"),
+        ("config/export_center.json", "Export-Center", True, "json"),
+        ("config/backup.json", "Backup-System", True, "json"),
         ("todo.txt", "Kurzliste (todo.txt)", True, "file"),
         ("scripts/start.sh", "Startskript", True, "file"),
         ("scripts/run_tests.sh", "Tests-Skript", True, "file"),

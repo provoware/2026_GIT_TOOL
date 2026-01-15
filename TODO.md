@@ -35,6 +35,18 @@ Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
 - [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 - [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Runde 2026-02-12 (4 kleinste Aufgaben dieser Runde) – offen
+- [ ] MEDIA-01: Wavesurfer erweitern (Markers/Regions/Minimap/Exportprofil). | fertig wenn: Funktionen sichtbar.
+- [ ] MEDIA-02: FFmpeg-Wrapper verbessern (Presets/Auto-Name/Fortschritt). | fertig wenn: Komfortfunktionen aktiv.
+- [ ] MEDIA-03: Dateimanager erweitern (Quick-Rename/Tagging/Favoriten). | fertig wenn: Features vorhanden.
+- [ ] DATA-01: Profil-System mit getrennten Projektordnern. | fertig wenn: Profile trennen Daten.
+
+Runde 2026-02-11 (4 kleinste Aufgaben dieser Runde) – erledigt
+- [x] FLOW-01: Globales Drag-and-Drop (Dateien/Module). | fertig wenn: Ziehen funktioniert.
+- [x] FLOW-02: Undo-/Redo-System global. | fertig wenn: Rückgängig möglich.
+- [x] IO-01: Exportcenter (JSON, TXT, PDF, ZIP) implementieren. | fertig wenn: Exporte laufen.
+- [x] IO-02: Backup-System vollständig integrieren. | fertig wenn: Sicherungen laufen.
+
 Runde 2026-02-07 (4 kleinste Aufgaben dieser Runde) – erledigt
 - [x] UX-13: Tooltip-Hinweise im Launcher ergänzen (Tooltip = Kurz-Hinweis). | fertig wenn: Tooltips sichtbar.
 - [x] UX-14: Kontext-Hilfe im Launcher ergänzen (Kontext-Hilfe = Fokus-Erklärung). | fertig wenn: Fokus-Hilfe sichtbar.
@@ -306,8 +318,8 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [x] UX-11: Basis-Iconset und Branding einfügen. | fertig wenn: Icons + Branding konsistent.
 
 ### Workflow-Logik
-- [ ] FLOW-01: Globales Drag-and-Drop (Dateien/Module). | fertig wenn: Ziehen funktioniert.
-- [ ] FLOW-02: Undo-/Redo-System global. | fertig wenn: Rückgängig möglich.
+- [x] FLOW-01: Globales Drag-and-Drop (Dateien/Module). | fertig wenn: Ziehen funktioniert.
+- [x] FLOW-02: Undo-/Redo-System global. | fertig wenn: Rückgängig möglich.
 - [x] FLOW-03: Autosave alle 10 Minuten. | fertig wenn: automatische Sicherung läuft.
 - [x] FLOW-04: Globales Event-/Signal-System. | fertig wenn: Module reagieren konsistent.
 - [x] FLOW-05: Rechte- und Schreibschutzsystem. | fertig wenn: Schutz aktiv.
@@ -329,8 +341,8 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [ ] CORE-14: Songtext- und Genre-Archive integrieren. | fertig wenn: Archive nutzbar.
 
 ### Speicherung & Export
-- [ ] IO-01: Exportcenter (JSON, TXT, PDF, ZIP) implementieren. | fertig wenn: Exporte laufen.
-- [ ] IO-02: Backup-System vollständig integrieren. | fertig wenn: Sicherungen laufen.
+- [x] IO-01: Exportcenter (JSON, TXT, PDF, ZIP) implementieren. | fertig wenn: Exporte laufen.
+- [x] IO-02: Backup-System vollständig integrieren. | fertig wenn: Sicherungen laufen.
 - [x] IO-03: Testmodus (schreibgeschützt) einbauen. | fertig wenn: keine Schreibzugriffe.
 - [x] IO-04: Autosave in Logs protokollieren. | fertig wenn: Logs enthalten Autosave.
 - [x] IO-05: Selektive Exporte aktivieren. | fertig wenn: Teil-Exporte möglich.
