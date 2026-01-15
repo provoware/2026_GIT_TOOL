@@ -16,11 +16,14 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - GUI-Launcher führt beim Aktualisieren zusätzlich den Modul-Check aus und meldet Probleme direkt in der Übersicht.
 - GUI-Launcher nutzt zusätzliche Themes und sichtbare Fokusrahmen für bessere Tastaturbedienung.
 - GUI-Launcher zeigt eine Statuszeile inkl. Busy-Hinweis bei längeren Aktionen.
+- GUI-Launcher zeigt einen Status-Punkt für sofortiges Farbfeedback (Erfolg/Fehler/Busy).
 - GUI-Launcher bietet Kontrastmodus per Hotkey (Alt+K) und Zoom per Strg+Mausrad.
 - GUI-Launcher hat Hilfe-Kurzinfo und klar benannte Bereiche (Einstellungen, Status, Modulübersicht).
+- GUI-Launcher enthält einen Entwicklerbereich mit System-Scan, Standards-Liste und Log-Ordner.
 - GUI-Launcher validiert Eingaben und Ausgaben mit klaren Fehlermeldungen.
 - GUI-Launcher zeigt farbige Statusmeldungen für Erfolg/Fehler/Busy.
 - GUI-Launcher nutzt größere Bedienelemente (Großbutton-UI) für bessere Bedienbarkeit.
+- GUI-Launcher bietet ein Basis-Branding und ein Papierkorb-Theme.
 - GUI-Launcher zeigt Fehlerklassen (leicht/mittel/schwer) im Modul-Check.
 - GUI-Launcher zeigt Datei-Ampelstatus inkl. Dateiproblemen.
 - GUI-Launcher zeigt Modul-Selbsttests und deren Status.
@@ -88,12 +91,12 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Globale Settings liegen als zentrale Datei in config/global_settings.json vor.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-01-15)**
+**Auto-Status (aktualisiert: 2026-02-04)**
 
-- Gesamt: 121 Tasks
-- Erledigt: 121 Tasks
-- Offen: 0 Tasks
-- Fortschritt: 100,00 %
+- Gesamt: 244 Tasks
+- Erledigt: 191 Tasks
+- Offen: 53 Tasks
+- Fortschritt: 78,28 %
 <!-- AUTO-STATUS:END -->
 
 ## Struktur (aktuell)

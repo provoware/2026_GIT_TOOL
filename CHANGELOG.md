@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.47] – 2026-02-04
+- GUI: Entwicklerbereich im Launcher ergänzt (System-Scan, Standards-Liste, Log-Ordner).
+- GUI: Sofort-Feedback über Status-Punkt und klarere Statusfarben erweitert.
+- GUI: Basis-Branding und neue „Papierkorb“-Themevariante ergänzt.
+
 ## [0.1.46] – 2026-01-15
 - Doku: Changelog-Automatik ergänzt und Rundentasks in todo.txt werden automatisch archiviert.
 - Daten: Globale Settings-Datei ergänzt und in Health-Check/Self-Repair aufgenommen.

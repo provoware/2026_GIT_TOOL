@@ -13,12 +13,12 @@ Dieses Projekt ist ein sauberer Neuaufbau mit Fokus auf Robustheit, Nachvollzieh
 - Komfortfunktionen wie globale Suche, Favoritenleiste, Mini-Panels und Auto-Theming sind umgesetzt.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-01-15)**
+**Auto-Status (aktualisiert: 2026-02-04)**
 
-- Gesamt: 121 Tasks
-- Erledigt: 121 Tasks
-- Offen: 0 Tasks
-- Fortschritt: 100,00 %
+- Gesamt: 244 Tasks
+- Erledigt: 191 Tasks
+- Offen: 53 Tasks
+- Fortschritt: 78,28 %
 <!-- AUTO-STATUS:END -->
 
 ## Ziele (in Arbeit)
@@ -65,6 +65,11 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 - Im GUI-Launcher gibt es einen Button „Diagnose starten“.
 - Die Diagnose führt Tests, Modulverbund-Checks und Codequalität aus.
 - Ergebnisse werden direkt in der Übersicht angezeigt und zusätzlich im Log gespeichert.
+- Der Entwicklerbereich bietet System-Scan, Standards-Liste und Log-Ordner mit einem Klick.
+
+## Design & Branding
+- Der GUI-Launcher zeigt ein klares Basis-Branding mit kleinen Symbolen (Icons).
+- Zusätzlich gibt es ein „Papierkorb“-Theme für einen warmen, kontrastreichen Look.
 
 ## Robustheit & Self-Repair
 - Der Health-Check kann fehlende Dateien/Ordner automatisch anlegen.

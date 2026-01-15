@@ -10,6 +10,12 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Nächste 4 kleinste Aufgaben (Runde 2026-02-04) – erledigt
+[x] UX-04: Farbiges Sofort-Feedbacksystem (Erfolg/Fehler). | fertig wenn: klare Farben.
+[x] UX-10: Grundtheme + Trash-Design implementieren. | fertig wenn: Basis-Theme + Papierkorb-Design vorhanden.
+[x] UX-11: Basis-Iconset und Branding einfügen. | fertig wenn: Icons + Branding konsistent.
+[x] DOC-03: Developer-Panel im Dashboard integrieren. | fertig wenn: Panel sichtbar.
+
 Nächste 4 kleinste Aufgaben (Runde 2026-01-15) – erledigt
 [x] DOC-01: CHANGELOG-Automatik einbauen (Changelog = Änderungsprotokoll). | fertig wenn: Changelog automatisch aktualisiert.
 [x] DATA-02: Globale Settings als zentrale Datei (Settings = Einstellungen). | fertig wenn: Settings-Datei + Checks vorhanden.

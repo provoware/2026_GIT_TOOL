@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import subprocess
 import threading
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
@@ -21,6 +22,17 @@ from logging_center import setup_logging as setup_logging_center
 
 DEFAULT_MODULE_CONFIG = Path(__file__).resolve().parents[1] / "config" / "modules.json"
 DEFAULT_GUI_CONFIG = Path(__file__).resolve().parents[1] / "config" / "launcher_gui.json"
+BRAND_NAME = "Genrearchiv"
+ICON_SET = {
+    "header": "🧭",
+    "theme": "🎨",
+    "refresh": "🔄",
+    "diagnostics": "🧪",
+    "developer": "🛠️",
+    "scan": "🩺",
+    "standards": "📏",
+    "logs": "📂",
+}
 
 
 class GuiLauncherError(Exception):
@@ -153,14 +165,20 @@ class LauncherGui:
         self.debug_check = None
         self.refresh_button = None
         self.diagnostics_button = None
+        self.scan_button = None
+        self.standards_button = None
+        self.logs_button = None
         self.diagnostics_running = False
+        self.maintenance_running = False
         self.refresh_job = None
         self.refresh_debounce_ms = gui_config.refresh_debounce_ms
         self.logger = get_logger("launcher_gui")
         self.status_var = None
         self.status_label = None
+        self.status_indicator = None
         self.footer_label = None
         self.help_label = None
+        self.developer_hint = None
         self.header_font = None
         self.output_font = None
         self.button_font = None
@@ -174,7 +192,7 @@ class LauncherGui:
         self.status_palette: Dict[str, str] = {}
         self.layout = self.gui_config.layout
 
-        self.root.title("Launcher – Startübersicht")
+        self.root.title(f"{BRAND_NAME} – Startübersicht")
         self.root.minsize(640, 420)
         self._build_ui(show_all)
 
@@ -187,7 +205,7 @@ class LauncherGui:
 
         header = tk.Label(
             self.root,
-            text="Startübersicht: Module",
+            text=f"{ICON_SET['header']} {BRAND_NAME} – Startübersicht",
             font=self.header_font,
             anchor="w",
         )
@@ -202,7 +220,9 @@ class LauncherGui:
         controls = tk.Frame(controls_section)
         controls.pack(fill="x", padx=self.layout.gap_md, pady=self.layout.gap_sm)
 
-        tk.Label(controls, text="Farbschema:").grid(row=0, column=0, sticky="w")
+        tk.Label(controls, text=f"{ICON_SET['theme']} Farbschema:").grid(
+            row=0, column=0, sticky="w"
+        )
         self.theme_var = tk.StringVar(value=self.gui_config.default_theme)
         self.theme_menu = tk.OptionMenu(
             controls,
@@ -261,7 +281,7 @@ class LauncherGui:
 
         self.refresh_button = tk.Button(
             controls,
-            text="Übersicht aktualisieren",
+            text=f"{ICON_SET['refresh']} Übersicht aktualisieren",
             command=self.request_refresh,
         )
         if self.button_font is not None:
@@ -278,7 +298,7 @@ class LauncherGui:
 
         self.diagnostics_button = tk.Button(
             controls,
-            text="Diagnose starten",
+            text=f"{ICON_SET['diagnostics']} Diagnose starten",
             command=self.start_diagnostics,
         )
         if self.button_font is not None:
@@ -305,24 +325,86 @@ class LauncherGui:
                 "So geht's: Farbschema wählen, Module einblenden und mit "
                 "„Übersicht aktualisieren“ prüfen. "
                 "Diagnose: „Diagnose starten“ führt Tests und Codeprüfungen aus. "
+                "Entwicklerbereich: System-Scan (Prüfung), Standards (Regeln) und "
+                "Log-Ordner (Protokolle). "
                 "Kontrastmodus: Alt+K. Zoom: Strg + Mausrad. "
                 "Tastatur: Tab für Fokus, Alt+A (alle Module), Alt+D (Debug), "
-                "Alt+R (aktualisieren), Alt+G (Diagnose), Alt+T (Theme), Alt+Q (beenden)."
+                "Alt+R (aktualisieren), Alt+G (Diagnose), Alt+S (System-Scan), "
+                "Alt+P (Standards), Alt+L (Logs), Alt+T (Theme), Alt+Q (beenden)."
             ),
             anchor="w",
             justify="left",
         )
         self.help_label.pack(fill="x", padx=self.layout.gap_md, pady=self.layout.gap_sm)
 
+        developer_section = tk.LabelFrame(
+            self.root, text=f"{ICON_SET['developer']} Entwicklerbereich (für Profis)"
+        )
+        developer_section.pack(fill="x", padx=self.layout.gap_lg, pady=(0, self.layout.gap_md))
+        developer_frame = tk.Frame(developer_section)
+        developer_frame.pack(fill="x", padx=self.layout.gap_md, pady=self.layout.gap_sm)
+
+        self.developer_hint = tk.Label(
+            developer_frame,
+            text=(
+                "Hier findest du technische Hilfen: System-Scan (Prüfung), "
+                "Standards-Liste (Regeln) und Log-Ordner (Protokolle)."
+            ),
+            anchor="w",
+            justify="left",
+        )
+        self.developer_hint.grid(row=0, column=0, columnspan=3, sticky="w")
+
+        self.scan_button = tk.Button(
+            developer_frame,
+            text=f"{ICON_SET['scan']} System-Scan starten",
+            command=self.start_system_scan,
+        )
+        if self.button_font is not None:
+            self.scan_button.configure(font=self.button_font)
+        self.scan_button.configure(padx=self.layout.button_padx, pady=self.layout.button_pady)
+        self.scan_button.configure(takefocus=1, underline=0)
+        self.scan_button.grid(row=1, column=0, sticky="w", padx=(0, self.layout.gap_md))
+
+        self.standards_button = tk.Button(
+            developer_frame,
+            text=f"{ICON_SET['standards']} Standards anzeigen",
+            command=self.show_standards,
+        )
+        if self.button_font is not None:
+            self.standards_button.configure(font=self.button_font)
+        self.standards_button.configure(padx=self.layout.button_padx, pady=self.layout.button_pady)
+        self.standards_button.configure(takefocus=1, underline=0)
+        self.standards_button.grid(row=1, column=1, sticky="w", padx=(0, self.layout.gap_md))
+
+        self.logs_button = tk.Button(
+            developer_frame,
+            text=f"{ICON_SET['logs']} Log-Ordner öffnen",
+            command=self.open_logs,
+        )
+        if self.button_font is not None:
+            self.logs_button.configure(font=self.button_font)
+        self.logs_button.configure(padx=self.layout.button_padx, pady=self.layout.button_pady)
+        self.logs_button.configure(takefocus=1, underline=0)
+        self.logs_button.grid(row=1, column=2, sticky="w")
+
+        developer_frame.columnconfigure(2, weight=1)
+
         self.status_var = tk.StringVar(value="Status: Bereit.")
         status_section = tk.LabelFrame(self.root, text="Status")
         status_section.pack(fill="x", padx=self.layout.gap_lg, pady=(0, self.layout.gap_sm))
+        self.status_indicator = tk.Label(status_section, text="●", width=2, anchor="w")
+        self.status_indicator.pack(side="left", padx=(self.layout.gap_md, 0))
         self.status_label = tk.Label(
             status_section,
             textvariable=self.status_var,
             anchor="w",
         )
-        self.status_label.pack(fill="x", padx=self.layout.gap_md, pady=self.layout.field_pady)
+        self.status_label.pack(
+            fill="x",
+            padx=(self.layout.gap_sm, self.layout.gap_md),
+            pady=self.layout.field_pady,
+        )
 
         output_section = tk.LabelFrame(self.root, text="Modulübersicht")
         output_section.pack(
@@ -356,7 +438,8 @@ class LauncherGui:
             text=(
                 "Tipp: Mit Tabulator erreichst du alle Bedienelemente. "
                 "Kurzbefehle: Alt+A (alle Module), Alt+D (Debug), Alt+R "
-                "(aktualisieren), Alt+G (Diagnose), Alt+T (Theme), Alt+K (Kontrast), "
+                "(aktualisieren), Alt+G (Diagnose), Alt+S (System-Scan), "
+                "Alt+P (Standards), Alt+L (Logs), Alt+T (Theme), Alt+K (Kontrast), "
                 "Strg + Mausrad (Zoom), Alt+Q (beenden)."
             ),
             anchor="w",
@@ -392,6 +475,9 @@ class LauncherGui:
         self.root.bind_all("<Alt-t>", lambda _event: self._focus_widget(self.theme_menu))
         self.root.bind_all("<Alt-k>", lambda _event: self._toggle_contrast_theme())
         self.root.bind_all("<Alt-g>", lambda _event: self.start_diagnostics())
+        self.root.bind_all("<Alt-s>", lambda _event: self.start_system_scan())
+        self.root.bind_all("<Alt-p>", lambda _event: self.show_standards())
+        self.root.bind_all("<Alt-l>", lambda _event: self.open_logs())
         self.root.bind_all("<Alt-q>", lambda _event: self.root.quit())
         self.root.bind_all("<Control-r>", lambda _event: self._refresh_from_shortcut())
 
@@ -445,10 +531,13 @@ class LauncherGui:
         self._update_wrap_length()
 
     def _update_wrap_length(self) -> None:
-        if self.footer_label is None:
-            return
         width = max(self.root.winfo_width() - 32, 280)
-        self.footer_label.configure(wraplength=width, justify="left")
+        if self.footer_label is not None:
+            self.footer_label.configure(wraplength=width, justify="left")
+        if self.help_label is not None:
+            self.help_label.configure(wraplength=width, justify="left")
+        if self.developer_hint is not None:
+            self.developer_hint.configure(wraplength=width, justify="left")
 
     def _focus_widget(self, widget) -> None:
         if widget is not None:
@@ -633,6 +722,107 @@ class LauncherGui:
         thread = threading.Thread(target=self._run_diagnostics, daemon=True)
         thread.start()
 
+    def start_system_scan(self) -> None:
+        script_path = self.module_config.resolve().parents[1] / "scripts" / "system_scan.sh"
+        self._run_maintenance_task("System-Scan", ["bash", str(script_path)])
+
+    def show_standards(self) -> None:
+        script_path = self.module_config.resolve().parents[1] / "scripts" / "show_standards.sh"
+        self._run_maintenance_task("Standards-Liste", ["bash", str(script_path), "--list"])
+
+    def open_logs(self) -> None:
+        logs_path = self.module_config.resolve().parents[1] / "logs"
+        self._run_maintenance_task("Log-Ordner öffnen", ["xdg-open", str(logs_path)])
+
+    def _run_maintenance_task(self, title: str, command: List[str]) -> None:
+        clean_title = _require_text(title, "maintenance_title")
+        if not isinstance(command, list) or not all(isinstance(item, str) for item in command):
+            raise GuiLauncherError("Maintenance-Kommando ist ungültig.")
+        if self.maintenance_running:
+            self._set_status("Wartung läuft bereits…", state="busy")
+            return
+        if command and command[0] == "bash":
+            script_path = Path(command[1])
+            if not script_path.exists():
+                self._set_status("Script nicht gefunden.", state="error")
+                self._append_output(
+                    f"{clean_title}:\nFehler: Script {script_path} fehlt.\n"
+                )
+                return
+        if command and command[0] == "xdg-open":
+            target_path = Path(command[1])
+            if not target_path.exists():
+                self._set_status("Pfad nicht gefunden.", state="error")
+                self._append_output(
+                    f"{clean_title}:\nFehler: Pfad {target_path} fehlt.\n"
+                )
+                return
+        self.maintenance_running = True
+        self._set_maintenance_buttons("disabled")
+        self._set_status(f"{clean_title} läuft…", state="busy")
+        thread = threading.Thread(
+            target=self._execute_maintenance, args=(clean_title, command), daemon=True
+        )
+        thread.start()
+
+    def _execute_maintenance(self, title: str, command: List[str]) -> None:
+        try:
+            result = subprocess.run(
+                command,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            output = result.stdout.strip() or result.stderr.strip()
+            if not output:
+                output = "Keine Ausgabe erhalten."
+            status = "success" if result.returncode == 0 else "error"
+            report = self._format_maintenance_report(title, command, output, result.returncode)
+        except Exception as exc:
+            status = "error"
+            report = (
+                f"{title}:\n"
+                f"Fehler: {exc}\n"
+                "Lösung: Bitte das Skript prüfen und erneut versuchen.\n"
+            )
+        self.root.after(0, lambda: self._finish_maintenance(title, report, status))
+
+    def _finish_maintenance(self, title: str, report: str, status: str) -> None:
+        self.maintenance_running = False
+        self._set_maintenance_buttons("normal")
+        self._append_output(report)
+        if status == "success":
+            self._set_status(f"{title} abgeschlossen.", state="success")
+        else:
+            self._set_status(f"{title} mit Problemen.", state="error")
+
+    def _format_maintenance_report(
+        self, title: str, command: List[str], output: str, return_code: int
+    ) -> str:
+        clean_title = _require_text(title, "maintenance_title")
+        if not isinstance(command, list) or not all(isinstance(item, str) for item in command):
+            raise GuiLauncherError("Maintenance-Kommando ist ungültig.")
+        if not isinstance(output, str) or not output.strip():
+            raise GuiLauncherError("Maintenance-Ausgabe ist leer.")
+        if not isinstance(return_code, int):
+            raise GuiLauncherError("Maintenance-Exit-Code ist ungültig.")
+        lines = [
+            f"{clean_title}:",
+            f"Kommando: {' '.join(command)}",
+            f"Exit-Code: {return_code}",
+            "",
+            "Ausgabe:",
+            output,
+            "",
+        ]
+        return "\n".join(lines)
+
+    def _set_maintenance_buttons(self, state: str) -> None:
+        clean_state = _require_text(state, "maintenance_state")
+        for button in (self.scan_button, self.standards_button, self.logs_button):
+            if button is not None:
+                button.configure(state=clean_state)
+
     def _run_diagnostics(self) -> None:
         script_path = self.module_config.resolve().parents[1] / "scripts" / "run_tests.sh"
         try:
@@ -687,6 +877,16 @@ class LauncherGui:
         self.output_text.insert("end", clean_text)
         self.output_text.configure(state="disabled")
 
+    def _append_output(self, text: str) -> None:
+        clean_text = _require_text(text, "append_text")
+        if not clean_text.strip():
+            raise GuiLauncherError("Ausgabetext ist leer.")
+        current = ""
+        if self.output_text is not None:
+            current = self.output_text.get("1.0", "end").rstrip()
+        combined = f"{current}\n\n{clean_text}" if current else clean_text
+        self._set_output(combined)
+
     def _set_status(self, message: str, state: str = "success") -> None:
         if not isinstance(message, str) or not message.strip():
             raise GuiLauncherError("Statusmeldung ist leer.")
@@ -706,6 +906,8 @@ class LauncherGui:
         fg = self.status_palette.get("foreground", "")
         if bg:
             self.status_label.configure(bg=bg)
+            if self.status_indicator is not None:
+                self.status_indicator.configure(bg=bg, fg=fg or "#ffffff")
         if fg:
             self.status_label.configure(fg=fg)
 

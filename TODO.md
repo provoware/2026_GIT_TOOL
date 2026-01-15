@@ -289,9 +289,9 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [ ] UX-01: Barrierefreiheits-Set ergänzen (Kontrast, ARIA, Tastatur). | fertig wenn: Checkliste erfüllt.
 - [ ] UX-02: Großbutton-UI realisieren (Großbutton = große Schaltflächen). | fertig wenn: große Buttons nutzbar.
 - [x] UX-03: Hilfetexte direkt in der GUI integrieren. | fertig wenn: Hilfe pro Ansicht.
-- [ ] UX-04: Farbiges Sofort-Feedbacksystem (Erfolg/Fehler). | fertig wenn: klare Farben.
-- [ ] UX-10: Grundtheme + Trash-Design implementieren. | fertig wenn: Basis-Theme + Papierkorb-Design vorhanden.
-- [ ] UX-11: Basis-Iconset und Branding einfügen. | fertig wenn: Icons + Branding konsistent.
+- [x] UX-04: Farbiges Sofort-Feedbacksystem (Erfolg/Fehler). | fertig wenn: klare Farben.
+- [x] UX-10: Grundtheme + Trash-Design implementieren. | fertig wenn: Basis-Theme + Papierkorb-Design vorhanden.
+- [x] UX-11: Basis-Iconset und Branding einfügen. | fertig wenn: Icons + Branding konsistent.
 
 ### Workflow-Logik
 - [ ] FLOW-01: Globales Drag-and-Drop (Dateien/Module). | fertig wenn: Ziehen funktioniert.
@@ -341,7 +341,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 ### Dokumentation & Systempflege
 - [x] DOC-01: CHANGELOG-Automatik einbauen. | fertig wenn: Changelog automatisch.
 - [x] DOC-02: README-/Doku-Autoupdater erstellen. | fertig wenn: Doku aktualisiert.
-- [ ] DOC-03: Developer-Panel im Dashboard integrieren. | fertig wenn: Panel sichtbar.
+- [x] DOC-03: Developer-Panel im Dashboard integrieren. | fertig wenn: Panel sichtbar.
 - [x] DOC-04: Interne Standards im Tool anzeigen (Konfig, Regeln, Tests). | fertig wenn: Standards sichtbar.
 - [x] DOC-05: Weiterführende Laienvorschläge ergänzen (Tipps für Neulinge). | fertig wenn: Tipps vorhanden.
 - [x] DOC-11: Info-Dateien + README bereinigen und aktualisieren. | fertig wenn: alle Info-Dateien konsistent.
