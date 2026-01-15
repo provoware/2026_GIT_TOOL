@@ -1,6 +1,10 @@
 # Changelog
 
-## [Unreleased] – 2026-02-12
+## [Unreleased] – 2026-02-13
+- GUI: Hauptfenster mit 3x3-Modulraster, Drag/Resize und Kollisionsschutz ergänzt.
+- Module: Modulmanager für Laden, Aktivieren und Deaktivieren ergänzt.
+- GUI: Launcher um Hauptfenster-Button und Shortcut erweitert.
+- Tests: Modulmanager-Tests ergänzt.
 - Automatisch ergänzt: REL-01: .deb-Paket bauen.
 - Automatisch ergänzt: REL-02: Offizielles Icon-Set (Provoware-Look) integrieren.
 - Automatisch ergänzt: REL-04: ZIP-Auto-Export alle fünf Entwicklungsschritte.

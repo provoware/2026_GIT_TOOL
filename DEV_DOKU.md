@@ -25,6 +25,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - GUI-Launcher bietet Drag-and-Drop für Dateien/Module sowie Undo/Redo für Aktionen.
 - GUI-Launcher validiert Eingaben und Ausgaben mit klaren Fehlermeldungen.
 - GUI-Launcher zeigt farbige Statusmeldungen für Erfolg/Fehler/Busy.
+- Hauptfenster zeigt ein 3x3-Modulraster mit Drag/Resize und Kollisionsschutz.
+- Modulmanager aktiviert/deaktiviert Module und prüft Pflichtfunktionen (run/validateInput/validateOutput).
 - GUI-Launcher nutzt größere Bedienelemente (Großbutton-UI) für bessere Bedienbarkeit.
 - GUI-Launcher bietet ein Basis-Branding und ein Papierkorb-Theme.
 - GUI-Launcher zeigt Fehlerklassen (leicht/mittel/schwer) im Modul-Check.
@@ -102,12 +104,12 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Autosave schreibt Sicherungen in data/autosave/ und protokolliert nach logs/autosave.log.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-02-12)**
+**Auto-Status (aktualisiert: 2026-02-13)**
 
-- Gesamt: 165 Tasks
-- Erledigt: 165 Tasks
-- Offen: 0 Tasks
-- Fortschritt: 100 %
+- Gesamt: 260 Tasks
+- Erledigt: 243 Tasks
+- Offen: 17 Tasks
+- Fortschritt: 93 %
 <!-- AUTO-STATUS:END -->
 
 ## Struktur (aktuell)
@@ -306,11 +308,17 @@ Hier nur die wichtigsten Bereiche:
 ### GUI-Launcher (Startübersicht)
 1. `python system/launcher_gui.py`
 2. Optional: `python system/launcher_gui.py --show-all --debug` (Details anzeigen).
-3. Tastatur-Shortcuts: Alt+A (alle Module), Alt+D (Debug), Alt+R (aktualisieren), Alt+G (Diagnose), Alt+T (Theme), Alt+K (Kontrast), Alt+Q (abmelden & sichern).
+3. Tastatur-Shortcuts: Alt+A (alle Module), Alt+D (Debug), Alt+R (aktualisieren), Alt+G (Diagnose), Alt+M (Hauptfenster), Alt+T (Theme), Alt+K (Kontrast), Alt+Q (abmelden & sichern).
 4. Zoom: Strg + Mausrad (Zoom = Schriftgröße vergrößern/verkleinern).
 5. Modul-Check: Wird bei jeder Aktualisierung automatisch ausgeführt (Status steht in der Übersicht).
 6. UI-Abstände anpassen: `config/launcher_gui.json` → `layout.*` (Spacing = Abstände).
 7. Großbutton-UI anpassen: `layout.button_min_width` (Button-Breite) und `layout.button_font_size` (Schriftgröße).
+
+### Hauptfenster (Modulraster)
+1. Im GUI-Launcher auf „Hauptfenster öffnen“ klicken.
+2. Alternativ: `python system/main_window.py`.
+3. Bedienung: Module per Maus ziehen, Größe über ↘ ändern, Überlappungen sind blockiert.
+4. Module starten/stoppen: Buttons „Aktivieren“/„Deaktivieren“ im Modulfenster nutzen.
 ### Modul-Check (manuell)
 1. `python system/module_checker.py --config config/modules.json`
 2. Modul-IDs sind `snake_case` und Pfade müssen `modules/<modul_id>` entsprechen.

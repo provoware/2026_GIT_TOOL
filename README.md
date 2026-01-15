@@ -13,12 +13,12 @@ Dieses Projekt ist ein sauberer Neuaufbau mit Fokus auf Robustheit, Nachvollzieh
 - Komfortfunktionen wie globale Suche, Favoritenleiste, Mini-Panels und Auto-Theming sind umgesetzt.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-02-12)**
+**Auto-Status (aktualisiert: 2026-02-13)**
 
-- Gesamt: 165 Tasks
-- Erledigt: 165 Tasks
-- Offen: 0 Tasks
-- Fortschritt: 100 %
+- Gesamt: 260 Tasks
+- Erledigt: 243 Tasks
+- Offen: 17 Tasks
+- Fortschritt: 93 %
 <!-- AUTO-STATUS:END -->
 
 ## Ziele (in Arbeit)
@@ -95,6 +95,7 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 - Favoritenleiste für oft genutzte Module.
 - Mini-Panels für Schnellaktionen (Export, Backup, Notes).
 - Auto-Theming (Tag/Nacht-Erkennung).
+- Hauptfenster mit 3x3-Modulraster, Drag/Resize und Kollisionsschutz (keine Überlappung).
 
 ## Barrierefreiheit
 - Tastaturbedienung (Tab/Enter/Esc) für alle Funktionen.

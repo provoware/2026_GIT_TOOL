@@ -14,6 +14,7 @@ import backup_center
 import diagnostics_runner
 import end_audit
 import error_simulation
+import main_window
 import module_checker
 import module_selftests
 import qa_checks
@@ -23,6 +24,7 @@ from drag_drop import DragDropManager
 from launcher import LauncherError, filter_modules, load_modules
 from logging_center import get_logger
 from logging_center import setup_logging as setup_logging_center
+from module_manager import ModuleManagerError
 from undo_redo import UndoRedoAction, UndoRedoError, UndoRedoManager
 
 DEFAULT_MODULE_CONFIG = Path(__file__).resolve().parents[1] / "config" / "modules.json"
@@ -36,6 +38,7 @@ ICON_SET = {
     "theme": "🎨",
     "refresh": "🔄",
     "diagnostics": "🧪",
+    "main_window": "🧩",
     "developer": "🛠️",
     "logout": "🚪",
     "scan": "🩺",
@@ -263,6 +266,7 @@ class LauncherGui:
         self.debug_check = None
         self.refresh_button = None
         self.diagnostics_button = None
+        self.main_window_button = None
         self.logout_button = None
         self.scan_button = None
         self.standards_button = None
@@ -468,6 +472,27 @@ class LauncherGui:
             pady=(self.layout.gap_sm, 0),
         )
 
+        self.main_window_button = tk.Button(
+            controls,
+            text=f"{ICON_SET['main_window']} Hauptfenster öffnen",
+            command=self.open_main_window,
+        )
+        if self.button_font is not None:
+            self.main_window_button.configure(font=self.button_font)
+        self.main_window_button.configure(
+            padx=self.layout.button_padx,
+            pady=self.layout.button_pady,
+            width=self.button_min_width,
+        )
+        self.main_window_button.configure(takefocus=1, underline=0)
+        self.main_window_button.grid(
+            row=2,
+            column=1,
+            sticky="w",
+            padx=(self.layout.gap_sm, self.layout.gap_md),
+            pady=(self.layout.gap_sm, 0),
+        )
+
         controls.columnconfigure(2, weight=1)
 
         help_section = tk.LabelFrame(self.root, text="Hilfe (Kurzinfo)")
@@ -487,7 +512,7 @@ class LauncherGui:
                 "Kontrastmodus: Alt+K. Zoom: Strg + Mausrad. "
                 "Tastatur: Tab für Fokus, F1 für Kontext-Hilfe. "
                 "Kurzbefehle: Alt+A (alle Module), Alt+D (Debug), Alt+R (aktualisieren), "
-                "Alt+G (Diagnose), Alt+S (System-Scan), Alt+P (Standards), "
+                "Alt+G (Diagnose), Alt+M (Hauptfenster), Alt+S (System-Scan), Alt+P (Standards), "
                 "Alt+L (Logs), Alt+E (Export), Alt+X (Export-Center), Alt+B (Backup), "
                 "Alt+T (Theme), Alt+Q (abmelden & sichern), Strg+Z (Undo), Strg+Y (Redo)."
             ),
@@ -740,6 +765,7 @@ class LauncherGui:
         self.root.bind_all("<Alt-t>", lambda _event: self._focus_widget(self.theme_menu))
         self.root.bind_all("<Alt-k>", lambda _event: self._toggle_contrast_theme())
         self.root.bind_all("<Alt-g>", lambda _event: self.start_diagnostics())
+        self.root.bind_all("<Alt-m>", lambda _event: self.open_main_window())
         self.root.bind_all("<Alt-s>", lambda _event: self.start_system_scan())
         self.root.bind_all("<Alt-p>", lambda _event: self.show_standards())
         self.root.bind_all("<Alt-l>", lambda _event: self.open_logs())
@@ -997,6 +1023,12 @@ class LauncherGui:
                 self.diagnostics_button,
                 "Startet Tests und Codeprüfungen.",
                 "Diagnose starten: Führt Tests und Codequalität (Linting/Format) aus.",
+            )
+        if self.main_window_button is not None:
+            self._register_help(
+                self.main_window_button,
+                "Öffnet das Hauptfenster mit Modulraster.",
+                "Hauptfenster öffnen: Zeigt ein 3x3-Modulraster mit Drag/Resize und Start/Stop.",
             )
         if self.scan_button is not None:
             self._register_help(
@@ -1418,6 +1450,26 @@ class LauncherGui:
         self._set_status("Diagnose wird gestartet…", state="busy")
         thread = threading.Thread(target=self._run_diagnostics, daemon=True)
         thread.start()
+
+    def open_main_window(self) -> None:
+        import tkinter as tk
+
+        self._set_status("Hauptfenster wird geöffnet…", state="busy")
+        try:
+            window = tk.Toplevel(self.root)
+            main_window.MainWindow(
+                window,
+                module_config=self.module_config,
+                gui_config=self.gui_config,
+                debug=self.debug,
+                theme_name=self.current_theme,
+            )
+        except (main_window.MainWindowError, ModuleManagerError) as exc:
+            self.logger.error("Hauptfenster konnte nicht geöffnet werden: %s", exc)
+            self._show_error(str(exc))
+            self._set_status("Hauptfenster konnte nicht geöffnet werden.", state="error")
+        else:
+            self._set_status("Hauptfenster geöffnet.", state="success")
 
     def start_system_scan(self) -> None:
         script_path = self.module_config.resolve().parents[1] / "scripts" / "system_scan.sh"

@@ -95,7 +95,12 @@ def validateOutput(output: Dict[str, Any]) -> None:
         raise ModuleError("Ausgabe enthält keine data- oder ui-Daten.")
 
 
-def build_response(status: str, message: str, data: Dict[str, Any], ui: Dict[str, Any]) -> Dict[str, Any]:
+def build_response(
+    status: str,
+    message: str,
+    data: Dict[str, Any],
+    ui: Dict[str, Any],
+) -> Dict[str, Any]:
     response = {"status": status, "message": message, "data": data, "ui": ui}
     validateOutput(response)
     return response
@@ -222,7 +227,11 @@ def _save_state(config: ModuleConfig, state: Dict[str, Any]) -> None:
     config.data_path.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def _create_job(config: ModuleConfig, state: Dict[str, Any], input_data: Dict[str, Any]) -> Dict[str, Any]:
+def _create_job(
+    config: ModuleConfig,
+    state: Dict[str, Any],
+    input_data: Dict[str, Any],
+) -> Dict[str, Any]:
     input_path = Path(input_data["input_path"]).expanduser()
     preset_id = input_data["preset_id"]
     preset = _find_preset(config.presets, preset_id)
