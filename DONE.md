@@ -263,3 +263,9 @@
 - [x] 2026-02-08 | REL-02 | Offizielles Icon-Set (Provoware-Look) integrieren.
 - [x] 2026-02-08 | REL-04 | ZIP-Auto-Export alle fünf Entwicklungsschritte.
 - [x] 2026-02-08 | REL-08 | Desktop-File + Icon-Integration für Linux.
+
+## 2026-02-09
+- [x] 2026-02-09 | REL-03 | One-File-Distribution (AppImage/PyInstaller).
+- [x] 2026-02-09 | REL-05 | .deb-Paket mit postinst-Initialisierung.
+- [x] 2026-02-09 | REL-06 | AppImage mit integriertem Self-Check.
+- [x] 2026-02-09 | END-01 | Logout: Save-All + sauberes Schließen.

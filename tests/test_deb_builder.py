@@ -49,6 +49,7 @@ class DebBuilderTests(unittest.TestCase):
                 icon_source=Path("assets/icons/icon.svg"),
                 exclude_paths=[],
                 output_dir=Path("dist"),
+                postinst_script=None,
             )
             staging_root = Path(tmpdir) / "staging"
             prepare_deb_structure(repo_root, config, staging_root)
@@ -83,6 +84,7 @@ class DebBuilderTests(unittest.TestCase):
             icon_source=Path("assets/icons/icon.svg"),
             exclude_paths=[],
             output_dir=Path("dist"),
+            postinst_script=None,
         )
         control = build_control_content(config)
         self.assertIn("Package: demo", control)

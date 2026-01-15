@@ -10,11 +10,17 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
-Nächste 4 kleinste Aufgaben (Runde 2026-02-09) – offen
-[ ] REL-03: One-File-Distribution (AppImage/PyInstaller). | fertig wenn: Ein-Datei-Build.
-[ ] REL-05: .deb-Paket mit postinst-Initialisierung. | fertig wenn: postinst läuft.
-[ ] REL-06: AppImage mit integriertem Self-Check. | fertig wenn: Self-Check startet.
-[ ] END-01: Logout: Save-All + sauberes Schließen. | fertig wenn: Daten gespeichert.
+Nächste 4 kleinste Aufgaben (Runde 2026-02-10) – offen
+[ ] END-02: End-Audit-Check (Release-Status) integrieren. | fertig wenn: Audit sichtbar.
+[ ] IO-05: Selektive Exporte aktivieren. | fertig wenn: Teil-Exporte möglich.
+[ ] FLOW-04: Globales Event-/Signal-System. | fertig wenn: Module reagieren konsistent.
+[ ] FLOW-05: Rechte- und Schreibschutzsystem. | fertig wenn: Schutz aktiv.
+
+Nächste 4 kleinste Aufgaben (Runde 2026-02-09) – erledigt
+[x] REL-03: One-File-Distribution (AppImage/PyInstaller). | fertig wenn: Ein-Datei-Build.
+[x] REL-05: .deb-Paket mit postinst-Initialisierung. | fertig wenn: postinst läuft.
+[x] REL-06: AppImage mit integriertem Self-Check. | fertig wenn: Self-Check startet.
+[x] END-01: Logout: Save-All + sauberes Schließen. | fertig wenn: Daten gespeichert.
 
 Nächste 4 kleinste Aufgaben (Runde 2026-02-07) – erledigt
 [x] UX-13: Tooltip-Hinweise im Launcher ergänzen (Tooltip = Kurz-Hinweis). | fertig wenn: Tooltips sichtbar.

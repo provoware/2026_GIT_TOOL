@@ -1,0 +1,15 @@
+{
+  "name": "2026_git_tool_onefile",
+  "entry_script": "system/onefile_entry.py",
+  "output_dir": "dist",
+  "add_data": [
+    {"source": "config", "target": "config"},
+    {"source": "system", "target": "system"},
+    {"source": "scripts", "target": "scripts"},
+    {"source": "assets", "target": "assets"},
+    {"source": "modules", "target": "modules"},
+    {"source": "src", "target": "src"}
+  ],
+  "hidden_imports": ["tkinter"],
+  "icon": "assets/icons/provoware.svg"
+}

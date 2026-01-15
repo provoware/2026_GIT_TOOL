@@ -33,6 +33,7 @@ ICON_SET = {
     "refresh": "🔄",
     "diagnostics": "🧪",
     "developer": "🛠️",
+    "logout": "🚪",
     "scan": "🩺",
     "standards": "📏",
     "logs": "📂",
@@ -254,6 +255,7 @@ class LauncherGui:
         self.debug_check = None
         self.refresh_button = None
         self.diagnostics_button = None
+        self.logout_button = None
         self.scan_button = None
         self.standards_button = None
         self.logs_button = None
@@ -294,6 +296,7 @@ class LauncherGui:
         self.button_min_width = self.layout.button_min_width
         self.autosave_config: autosave_manager.AutosaveConfig | None = None
         self.autosave_job = None
+        self.logout_running = False
 
         self.root.title(f"{BRAND_NAME} – Startübersicht")
         self.root.minsize(640, 420)
@@ -404,6 +407,27 @@ class LauncherGui:
             pady=(self.layout.gap_sm, 0),
         )
 
+        self.logout_button = tk.Button(
+            controls,
+            text=f"{ICON_SET['logout']} Abmelden & sichern",
+            command=self.request_logout,
+        )
+        if self.button_font is not None:
+            self.logout_button.configure(font=self.button_font)
+        self.logout_button.configure(
+            padx=self.layout.button_padx,
+            pady=self.layout.button_pady,
+            width=self.button_min_width,
+        )
+        self.logout_button.configure(takefocus=1, underline=0)
+        self.logout_button.grid(
+            row=2,
+            column=2,
+            sticky="e",
+            padx=(0, 0),
+            pady=(self.layout.gap_sm, 0),
+        )
+
         self.diagnostics_button = tk.Button(
             controls,
             text=f"{ICON_SET['diagnostics']} Diagnose starten",
@@ -441,7 +465,7 @@ class LauncherGui:
                 "Tastatur: Tab für Fokus, F1 für Kontext-Hilfe. "
                 "Kurzbefehle: Alt+A (alle Module), Alt+D (Debug), Alt+R (aktualisieren), "
                 "Alt+G (Diagnose), Alt+S (System-Scan), Alt+P (Standards), "
-                "Alt+L (Logs), Alt+T (Theme), Alt+Q (beenden)."
+                "Alt+L (Logs), Alt+T (Theme), Alt+Q (abmelden & sichern)."
             ),
             anchor="w",
             justify="left",
@@ -575,7 +599,7 @@ class LauncherGui:
                 "Kurzbefehle: F1 (Kontext-Hilfe), Alt+A (alle Module), Alt+D (Debug), Alt+R "
                 "(aktualisieren), Alt+G (Diagnose), Alt+S (System-Scan), "
                 "Alt+P (Standards), Alt+L (Logs), Alt+T (Theme), Alt+K (Kontrast), "
-                "Strg + Mausrad (Zoom), Alt+Q (beenden)."
+                "Strg + Mausrad (Zoom), Alt+Q (abmelden & sichern)."
             ),
             anchor="w",
         )
@@ -586,6 +610,7 @@ class LauncherGui:
         self._bind_zoom_controls()
         self._bind_help_context()
         self._register_help_entries()
+        self.root.protocol("WM_DELETE_WINDOW", self.request_logout)
         self.apply_theme(self.gui_config.default_theme)
         self.request_refresh()
         self.root.after(100, lambda: self._focus_widget(self.theme_menu))
@@ -615,7 +640,7 @@ class LauncherGui:
         self.root.bind_all("<Alt-s>", lambda _event: self.start_system_scan())
         self.root.bind_all("<Alt-p>", lambda _event: self.show_standards())
         self.root.bind_all("<Alt-l>", lambda _event: self.open_logs())
-        self.root.bind_all("<Alt-q>", lambda _event: self.root.quit())
+        self.root.bind_all("<Alt-q>", lambda _event: self.request_logout())
         self.root.bind_all("<Control-r>", lambda _event: self._refresh_from_shortcut())
         self.root.bind_all("<F1>", lambda _event: self._announce_context_help())
 
@@ -670,6 +695,7 @@ class LauncherGui:
         for button in (
             self.refresh_button,
             self.diagnostics_button,
+            self.logout_button,
             self.scan_button,
             self.standards_button,
             self.logs_button,
@@ -766,6 +792,12 @@ class LauncherGui:
                 "Aktualisiert die Modulübersicht.",
                 "Übersicht aktualisieren: Lädt Module neu und prüft Fehler.",
             )
+        if self.logout_button is not None:
+            self._register_help(
+                self.logout_button,
+                "Sichert Daten und beendet das Tool.",
+                "Abmelden: Erst wird eine Sicherung erstellt, danach wird sauber beendet.",
+            )
         if self.diagnostics_button is not None:
             self._register_help(
                 self.diagnostics_button,
@@ -817,6 +849,62 @@ class LauncherGui:
 
     def _refresh_from_shortcut(self) -> None:
         self.request_refresh()
+
+    def request_logout(self) -> None:
+        if self.logout_running:
+            self._set_status("Abmelden läuft bereits…", state="busy")
+            return
+        self.logout_running = True
+        self._set_status("Abmelden: Sicherung wird vorbereitet…", state="busy")
+        thread = threading.Thread(target=self._execute_logout, daemon=True)
+        thread.start()
+
+    def _execute_logout(self) -> None:
+        report_lines = ["Abmelden: Sicherung und sauberes Schließen"]
+        success = True
+        if self.autosave_config and self.autosave_config.enabled:
+            try:
+                result = autosave_manager.create_autosave(
+                    DEFAULT_DATA_ROOT, DEFAULT_LOG_ROOT, self.logger
+                )
+                report_lines.append(f"Erfolg: {result.summary}")
+            except autosave_manager.AutosaveError as exc:
+                success = False
+                report_lines.extend(
+                    [
+                        "Fehler: Autosave fehlgeschlagen.",
+                        f"Ursache: {exc}",
+                        "Lösung: logs/autosave.log prüfen oder Safe-Mode nutzen.",
+                    ]
+                )
+        else:
+            report_lines.extend(
+                [
+                    "Hinweis: Autosave ist deaktiviert.",
+                    (
+                        "Lösung: In config/global_settings.json aktivieren, "
+                        "wenn du Sicherungen willst."
+                    ),
+                ]
+            )
+        report = "\n".join(report_lines).rstrip() + "\n"
+        self.root.after(0, lambda: self._finish_logout(report, success))
+
+    def _finish_logout(self, report: str, success: bool) -> None:
+        if report:
+            self._append_output(report)
+        status = "Abmelden abgeschlossen." if success else "Abmelden mit Problemen."
+        self._set_status(status, state="success" if success else "error")
+        self._cancel_autosave_job()
+        self.root.after(200, self.root.destroy)
+
+    def _cancel_autosave_job(self) -> None:
+        if self.autosave_job is not None:
+            try:
+                self.root.after_cancel(self.autosave_job)
+            except Exception:
+                pass
+            self.autosave_job = None
 
     def _resolve_contrast_theme(self) -> Optional[str]:
         if not isinstance(self.gui_config, GuiConfigModel):

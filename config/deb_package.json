@@ -8,6 +8,7 @@
   "install_root": "/opt/2026_git_tool",
   "desktop_entry_config": "config/desktop_entry.json",
   "icon_source": "assets/icons/provoware.svg",
+  "postinst_script": "system/deb_postinst.sh",
   "exclude_paths": [".git", ".venv", "logs", "data/exports", "data/log_exports", "__pycache__", "node_modules"],
   "output_dir": "dist"
 }

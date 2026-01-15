@@ -13,12 +13,12 @@ Dieses Projekt ist ein sauberer Neuaufbau mit Fokus auf Robustheit, Nachvollzieh
 - Komfortfunktionen wie globale Suche, Favoritenleiste, Mini-Panels und Auto-Theming sind umgesetzt.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-01-15)**
+**Auto-Status (aktualisiert: 2026-02-09)**
 
 - Gesamt: 149 Tasks
-- Erledigt: 145 Tasks
-- Offen: 4 Tasks
-- Fortschritt: 97,32 %
+- Erledigt: 149 Tasks
+- Offen: 0 Tasks
+- Fortschritt: 100,00 %
 <!-- AUTO-STATUS:END -->
 
 ## Ziele (in Arbeit)
@@ -44,6 +44,8 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 - `./scripts/build_all.sh` (Ein-Befehl-Build = Checks, Strukturpflege, Doku, Tests)
 - `./scripts/install_desktop_entry.sh` (Desktop-Entry = Startdatei für Linux-Menü)
 - `./scripts/build_deb.sh` (Deb-Paket = Installationspaket für Linux)
+- `./scripts/build_appimage.sh` (AppImage = Ein-Datei-Startpaket mit Self-Check)
+- `./scripts/build_onefile.sh` (One-File = PyInstaller-Einzeldatei)
 - `./scripts/repo_basis_check.sh` (Repo-Check = Basisprüfung für Git-Remote)
 
 ## Release-Checks & Test-Automatik
