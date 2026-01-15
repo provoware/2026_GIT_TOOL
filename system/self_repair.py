@@ -8,7 +8,6 @@ import hashlib
 import json
 import logging
 import os
-import random
 import stat
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -188,9 +187,7 @@ def build_default_files(root: Path) -> dict[Path, str]:
         + "\n",
         root
         / "config"
-        / "global_settings.json": json.dumps(
-            global_settings_payload, indent=2, ensure_ascii=False
-        )
+        / "global_settings.json": json.dumps(global_settings_payload, indent=2, ensure_ascii=False)
         + "\n",
         root / "config" / "pin.json": json.dumps(pin_payload, indent=2, ensure_ascii=False) + "\n",
         root
@@ -199,7 +196,8 @@ def build_default_files(root: Path) -> dict[Path, str]:
             {"failed_attempts": 0, "locked_until": None}, indent=2, ensure_ascii=False
         )
         + "\n",
-        root / "todo.txt": (
+        root
+        / "todo.txt": (
             "# To-Do-Liste\n"
             "# Format: [ ] JJJJ-MM-TT | Bereich | Titel | prüfen: ... | fertig wenn: ...\n"
         ),
@@ -498,7 +496,11 @@ def _render_output(issues: Iterable[str], repairs: Iterable[str], dry_run: bool)
     lines.extend([f"- {issue}" for issue in issues_list])
     if repairs_list:
         lines.append("")
-        lines.append("Hinweis: Reparaturen wurden ausgeführt." if not dry_run else "Hinweis: Reparaturen sind geplant (dry-run).")
+        lines.append(
+            "Hinweis: Reparaturen wurden ausgeführt."
+            if not dry_run
+            else "Hinweis: Reparaturen sind geplant (dry-run)."
+        )
         lines.extend([f"- {repair}" for repair in repairs_list])
     lines.append("")
     lines.append("Bitte die Hinweise prüfen und erneut starten.")

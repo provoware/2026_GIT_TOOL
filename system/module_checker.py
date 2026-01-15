@@ -27,9 +27,7 @@ from module_registry import (
 )
 
 CONFIG_DEFAULT = Path(__file__).resolve().parents[1] / "config" / "modules.json"
-STRUCTURE_CONFIG_DEFAULT = (
-    Path(__file__).resolve().parents[1] / "config" / "module_structure.json"
-)
+STRUCTURE_CONFIG_DEFAULT = Path(__file__).resolve().parents[1] / "config" / "module_structure.json"
 
 
 @dataclass(frozen=True)

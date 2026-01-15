@@ -67,12 +67,8 @@ def load_pin_config(path: Path) -> PinConfig:
     pin_hash = _require_text(data.get("pin_hash", ""))
     salt = _require_text(data.get("salt", ""))
     max_attempts = _require_int_min(data.get("max_attempts", 3), "max_attempts", 1)
-    lock_min_seconds = _require_int_min(
-        data.get("lock_min_seconds", 2), "lock_min_seconds", 1
-    )
-    lock_max_seconds = _require_int_min(
-        data.get("lock_max_seconds", 7), "lock_max_seconds", 1
-    )
+    lock_min_seconds = _require_int_min(data.get("lock_min_seconds", 2), "lock_min_seconds", 1)
+    lock_max_seconds = _require_int_min(data.get("lock_max_seconds", 7), "lock_max_seconds", 1)
     if lock_min_seconds > lock_max_seconds:
         raise PinAuthError("lock_min_seconds darf nicht größer als lock_max_seconds sein.")
     return PinConfig(

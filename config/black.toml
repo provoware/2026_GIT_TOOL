@@ -1,4 +1,4 @@
 [tool.black]
 line-length = 100
 skip-string-normalization = false
-exclude = "/(data|logs)/"
+exclude = "/(data|logs|.venv|node_modules)/"

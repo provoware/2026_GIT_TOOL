@@ -745,17 +745,13 @@ class LauncherGui:
             script_path = Path(command[1])
             if not script_path.exists():
                 self._set_status("Script nicht gefunden.", state="error")
-                self._append_output(
-                    f"{clean_title}:\nFehler: Script {script_path} fehlt.\n"
-                )
+                self._append_output(f"{clean_title}:\nFehler: Script {script_path} fehlt.\n")
                 return
         if command and command[0] == "xdg-open":
             target_path = Path(command[1])
             if not target_path.exists():
                 self._set_status("Pfad nicht gefunden.", state="error")
-                self._append_output(
-                    f"{clean_title}:\nFehler: Pfad {target_path} fehlt.\n"
-                )
+                self._append_output(f"{clean_title}:\nFehler: Pfad {target_path} fehlt.\n")
                 return
         self.maintenance_running = True
         self._set_maintenance_buttons("disabled")

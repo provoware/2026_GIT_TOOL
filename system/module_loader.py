@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict
@@ -8,6 +9,15 @@ from typing import Any, Dict
 
 class ModuleLoaderError(ValueError):
     pass
+
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
+
+
+def _ensure_root_on_path() -> None:
+    root_str = str(ROOT_DIR)
+    if root_str not in sys.path:
+        sys.path.insert(0, root_str)
 
 
 @dataclass
@@ -29,7 +39,13 @@ class ModuleLoader:
         if spec is None or spec.loader is None:
             raise ModuleLoaderError(f"Modul konnte nicht geladen werden: {entry_path}")
         module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
+        sys.modules[module_id] = module
+        _ensure_root_on_path()
+        try:
+            spec.loader.exec_module(module)
+        except Exception:
+            sys.modules.pop(module_id, None)
+            raise
         self._cache[cache_key] = module
         return module
 

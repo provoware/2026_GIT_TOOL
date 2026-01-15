@@ -194,9 +194,7 @@ def archive_done_tasks(
             if current_round_date:
                 round_match = ROUND_TASK_PATTERN.match(line.strip())
                 if round_match:
-                    task = _parse_round_task(
-                        round_match.group("text"), current_round_date, line
-                    )
+                    task = _parse_round_task(round_match.group("text"), current_round_date, line)
                     if task:
                         task = TodoTask(
                             status=round_match.group("status"),

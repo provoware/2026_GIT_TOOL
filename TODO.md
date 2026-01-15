@@ -286,7 +286,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [x] DATA-05: Dateinamen-Suffix-Standards implementieren. | fertig wenn: Endungen folgen Standard.
 
 ### UX & Barrierefreiheit
-- [ ] UX-01: Barrierefreiheits-Set ergänzen (Kontrast, ARIA, Tastatur). | fertig wenn: Checkliste erfüllt.
+- [x] UX-01: Barrierefreiheits-Set ergänzen (Kontrast, ARIA, Tastatur). | fertig wenn: Checkliste erfüllt.
 - [ ] UX-02: Großbutton-UI realisieren (Großbutton = große Schaltflächen). | fertig wenn: große Buttons nutzbar.
 - [x] UX-03: Hilfetexte direkt in der GUI integrieren. | fertig wenn: Hilfe pro Ansicht.
 - [x] UX-04: Farbiges Sofort-Feedbacksystem (Erfolg/Fehler). | fertig wenn: klare Farben.
@@ -334,9 +334,9 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [x] QA-08: Sandbox-Analyse erweitern (Sandbox = Testumgebung). | fertig wenn: Analyse deckt Sandbox-Risiken ab.
 
 ### Timeline & Visualisierung
-- [ ] VIS-01: Timeline-Tool responsiv überarbeiten. | fertig wenn: passt sich an.
-- [ ] VIS-02: Hover-Details, Zoom + flexible Abstände integrieren. | fertig wenn: Details und Zoom.
-- [ ] VIS-03: Lesbarkeit + skalierende Elemente verbessern. | fertig wenn: besser lesbar.
+- [x] VIS-01: Timeline-Tool responsiv überarbeiten. | fertig wenn: passt sich an.
+- [x] VIS-02: Hover-Details, Zoom + flexible Abstände integrieren. | fertig wenn: Details und Zoom.
+- [x] VIS-03: Lesbarkeit + skalierende Elemente verbessern. | fertig wenn: besser lesbar.
 
 ### Dokumentation & Systempflege
 - [x] DOC-01: CHANGELOG-Automatik einbauen. | fertig wenn: Changelog automatisch.

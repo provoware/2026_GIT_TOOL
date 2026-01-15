@@ -28,6 +28,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - GUI-Launcher zeigt Datei-Ampelstatus inkl. Dateiproblemen.
 - GUI-Launcher zeigt Modul-Selbsttests und deren Status.
 - GUI-Launcher zeigt Fehler-Simulationen mit klaren Hinweisen.
+- Timeline-Tool bietet responsive Zeitachse mit Zoom, Abstandregler und Hover-Details.
+- Timeline-Tool verbessert Lesbarkeit und ergänzt ARIA-Texte sowie Tastaturhinweise.
 - Kontrastprüfung für Launcher-Themes ist dokumentiert und automatisch testbar.
 - Download-Ordner-Aufräum-Modul bietet Scan, Plan, Undo und Protokoll.
 - Datei-Suche-Modul bietet Filter, Organisation und Undo.
@@ -91,12 +93,12 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Globale Settings liegen als zentrale Datei in config/global_settings.json vor.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-02-04)**
+**Auto-Status (aktualisiert: 2026-02-05)**
 
 - Gesamt: 244 Tasks
-- Erledigt: 191 Tasks
-- Offen: 53 Tasks
-- Fortschritt: 78,28 %
+- Erledigt: 195 Tasks
+- Offen: 49 Tasks
+- Fortschritt: 79,92 %
 <!-- AUTO-STATUS:END -->
 
 ## Struktur (aktuell)
