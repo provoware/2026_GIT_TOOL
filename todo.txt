@@ -10,6 +10,12 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Nächste 4 kleinste Aufgaben (Runde 2026-02-07) – erledigt
+[x] UX-13: Tooltip-Hinweise im Launcher ergänzen (Tooltip = Kurz-Hinweis). | fertig wenn: Tooltips sichtbar.
+[x] UX-14: Kontext-Hilfe im Launcher ergänzen (Kontext-Hilfe = Fokus-Erklärung). | fertig wenn: Fokus-Hilfe sichtbar.
+[x] UX-15: Hilfetexte in einfacher Sprache überarbeiten (Fachbegriff erklärt). | fertig wenn: klare Hilfe.
+[x] DOC-19: Entwicklerdoku zu Tooltips/Kontext-Hilfe ergänzen. | fertig wenn: DEV_DOKU angepasst.
+
 Nächste 4 kleinste Aufgaben (Runde 2026-02-06) – erledigt
 [x] START-01: GUI-Launcher erstellen (Fenster, Theme, Layout). | fertig wenn: Startfenster stabil geöffnet.
 [x] UX-02: Großbutton-UI realisieren (Großbutton = große Schaltflächen). | fertig wenn: große Buttons nutzbar.

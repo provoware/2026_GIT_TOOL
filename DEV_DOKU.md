@@ -19,6 +19,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - GUI-Launcher zeigt einen Status-Punkt für sofortiges Farbfeedback (Erfolg/Fehler/Busy).
 - GUI-Launcher bietet Kontrastmodus per Hotkey (Alt+K) und Zoom per Strg+Mausrad.
 - GUI-Launcher hat Hilfe-Kurzinfo und klar benannte Bereiche (Einstellungen, Status, Modulübersicht).
+- GUI-Launcher zeigt Tooltips (Kurz-Hinweise) und Kontext-Hilfe per Fokus + F1.
 - GUI-Launcher enthält einen Entwicklerbereich mit System-Scan, Standards-Liste und Log-Ordner.
 - GUI-Launcher validiert Eingaben und Ausgaben mit klaren Fehlermeldungen.
 - GUI-Launcher zeigt farbige Statusmeldungen für Erfolg/Fehler/Busy.
@@ -98,8 +99,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 <!-- AUTO-STATUS:START -->
 **Auto-Status (aktualisiert: 2026-01-15)**
 
-- Gesamt: 141 Tasks
-- Erledigt: 141 Tasks
+- Gesamt: 145 Tasks
+- Erledigt: 145 Tasks
 - Offen: 0 Tasks
 - Fortschritt: 100,00 %
 <!-- AUTO-STATUS:END -->

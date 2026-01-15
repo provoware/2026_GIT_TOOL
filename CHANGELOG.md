@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.52] – 2026-02-07
+- GUI: Tooltips für Launcher-Steuerung ergänzt und barrierearm platziert.
+- GUI: Kontext-Hilfe im Launcher ergänzt (Fokus + F1).
+- Doku: DEV_DOKU um Tooltip- und Kontext-Hilfe aktualisiert.
+
 ## [0.1.51] – 2026-02-06
 - GUI: Großbutton-UI über neue Layout-Parameter (Breite + Schriftgröße) verstärkt.
 - Qualität: GUI-Konfig-Modelle und JSON-Validator prüfen neue Button-Felder.

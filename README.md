@@ -15,8 +15,8 @@ Dieses Projekt ist ein sauberer Neuaufbau mit Fokus auf Robustheit, Nachvollzieh
 <!-- AUTO-STATUS:START -->
 **Auto-Status (aktualisiert: 2026-01-15)**
 
-- Gesamt: 141 Tasks
-- Erledigt: 141 Tasks
+- Gesamt: 145 Tasks
+- Erledigt: 145 Tasks
 - Offen: 0 Tasks
 - Fortschritt: 100,00 %
 <!-- AUTO-STATUS:END -->
