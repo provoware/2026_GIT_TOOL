@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.50] – 2026-01-15
+- Struktur: Zusatzprojekt dashboard-timeline-tool in dashboard_zeitachsen_werkzeug umbenannt.
+- Struktur: Zusatzprojekt genrearchiv_tool_v1_2_3_2026_01_06 in genrearchiv_werkzeug_v1_2_3_2026_01_06 umbenannt.
+- Doku: Strukturbaum, Standards und Pfadverweise auf neue Ordnernamen aktualisiert.
+
 ## [0.1.49] – 2026-01-15
 - Start: PIN-Login wird in der Start-Routine geprüft (optional über config/pin.json).
 - Start: Testmodus (--test-mode) als Alias für Safe-Mode ergänzt.

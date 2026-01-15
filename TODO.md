@@ -35,6 +35,12 @@ Diese Kurzliste ist **identisch** zu `todo.txt` und wird dort gespiegelt.
 - [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 - [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Runde 2026-01-15 (4 kleinste Aufgaben dieser Runde) – erledigt
+- [x] REN-DE-01: Ordner dashboard-timeline-tool in dashboard_zeitachsen_werkzeug umbenennen. | fertig wenn: Ordnername ist deutsch und snake_case.
+- [x] REN-DE-02: Ordner genrearchiv_tool_v1_2_3_2026_01_06 in genrearchiv_werkzeug_v1_2_3_2026_01_06 umbenennen. | fertig wenn: Ordnername ist deutsch und snake_case.
+- [x] REN-DE-03: Doku-Verweise (STRUKTUR/PROJEKT_INFO/DEV_DOKU) auf neue Ordnernamen aktualisieren. | fertig wenn: Doku zeigt die neuen Pfade.
+- [x] REN-DE-04: Strukturbaum und Standards-Beispiel auf neue Ordnernamen aktualisieren. | fertig wenn: baumstruktur.txt/standards.md sind konsistent.
+
 Runde 2026-01-30 (4 kleinste Aufgaben dieser Runde) – erledigt
 - [x] UX-06: Globales Suchfeld im Dashboard (Dateien/Module/Texte). | fertig wenn: zentrale Suche nutzbar.
 - [x] UX-07: Favoritenleiste für oft genutzte Module. | fertig wenn: Favoriten sichtbar/umschaltbar.

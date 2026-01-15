@@ -45,7 +45,7 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 │   ├── test_gate.json
 │   ├── todo_config.json
 │   └── todo_kalender.json
-├── dashboard-timeline-tool
+├── dashboard_zeitachsen_werkzeug
 │   ├── projekt_dashboard_tool_react.jsx
 │   └── projekt_dashboard_tool_react.txt
 ├── data
@@ -60,7 +60,7 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 │   └── todo_kalender.json
 ├── docs
 │   └── MODUL_API.md
-├── genrearchiv_tool_v1_2_3_2026_01_06
+├── genrearchiv_werkzeug_v1_2_3_2026_01_06
 │   ├── docs
 │   │   ├── PROJECT.md
 │   │   └── TOOL_GUIDE.md

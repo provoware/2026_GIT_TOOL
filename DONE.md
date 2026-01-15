@@ -5,6 +5,10 @@
 - Start: Testmodus (--test-mode) als Alias für Safe-Mode ergänzt.
 - Autosave: Automatische Sicherungen schreiben ZIP-Archive in data/autosave/.
 - Autosave: Autosave-Status wird in data/autosave_state.json gespeichert und in logs/autosave.log protokolliert.
+- Struktur: Projektordner dashboard-timeline-tool in dashboard_zeitachsen_werkzeug umbenannt.
+- Struktur: Projektordner genrearchiv_tool_v1_2_3_2026_01_06 in genrearchiv_werkzeug_v1_2_3_2026_01_06 umbenannt.
+- Doku: Pfadverweise für Zusatzprojekte in Struktur/Projektinfo/Entwicklerdoku aktualisiert.
+- Doku: Strukturbaum und Standards-Beispiel auf deutsche Ordnernamen angepasst.
 
 ## 2026-02-05
 - Barrierefreiheit: ARIA-Beschreibungen, Tastaturhinweise und Kontrast für die Zeitachse ergänzt.

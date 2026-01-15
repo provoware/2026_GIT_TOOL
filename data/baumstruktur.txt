@@ -21,7 +21,7 @@ Projektstruktur (2026_GIT_TOOL)
 │   ├── test_gate.json
 │   ├── todo_config.json
 │   └── todo_kalender.json
-├── dashboard-timeline-tool/
+├── dashboard_zeitachsen_werkzeug/
 │   ├── projekt_dashboard_tool_react.jsx
 │   └── projekt_dashboard_tool_react.txt
 ├── data/
@@ -35,7 +35,7 @@ Projektstruktur (2026_GIT_TOOL)
 │   └── todo_kalender.json
 ├── docs/
 │   └── MODUL_API.md
-├── genrearchiv_tool_v1_2_3_2026_01_06/
+├── genrearchiv_werkzeug_v1_2_3_2026_01_06/
 │   ├── docs/
 │   │   ├── PROJECT.md
 │   │   └── TOOL_GUIDE.md
