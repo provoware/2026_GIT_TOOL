@@ -118,6 +118,7 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 │   ├── assign_agent.py
 │   ├── bootstrap.sh
 │   ├── check_env.sh
+│   ├── ensure_venv.sh
 │   ├── generate_launcher_gui_contrast_report.py
 │   ├── progress.js
 │   ├── repo_basis_check.sh

@@ -60,6 +60,9 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Start-Routine zeigt Fehleralternativen statt sofortigem Abbruch und sammelt Hinweise.
 - Start-Routine prüft JSON-Dateien und korrigiert Dateinamen in data/ und logs/.
 - Start-Routine bietet Safe-Mode (schreibgeschützt), Ghost-Mode (Alias) und Sandbox-Modus.
+- Start-Routine nutzt automatisch eine virtuelle Umgebung (.venv) und meldet den aktiven Interpreter.
+- Start-Routine prüft GUI-Voraussetzungen (Tkinter) vor dem GUI-Start.
+- Start-Routine startet den GUI-Launcher automatisch nach erfolgreichen Checks.
 - Struktur-Check prüft die Trennung von Systemlogik, Config und Daten.
 - System-Scan kann als Vorabprüfung ohne Schreibzugriffe laufen.
 - Standards-Viewer zeigt interne Standards und Styleguide per CLI an.
@@ -78,12 +81,13 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Modulverbund-Checks führen Selftests aus und blockieren defekte Module.
 - Start-Routine zeigt am Ende einen Ampelstatus (grün/rot).
 - Recovery-Modus steht als separates Skript für Notfallstarts bereit.
+- Testskript nutzt automatisch den Venv-Interpreter für Tests und Codequalität.
 
 <!-- AUTO-STATUS:START -->
 **Auto-Status (aktualisiert: 2026-01-15)**
 
-- Gesamt: 113 Tasks
-- Erledigt: 113 Tasks
+- Gesamt: 117 Tasks
+- Erledigt: 117 Tasks
 - Offen: 0 Tasks
 - Fortschritt: 100,00 %
 <!-- AUTO-STATUS:END -->
@@ -146,7 +150,7 @@ Hier nur die wichtigsten Bereiche:
 
 ### Start-Routine (Struktur + Fortschritt)
 1. `./scripts/start.sh`
-2. Die Start-Routine erstellt fehlende Ordner automatisch, führt die Self-Repair-Bibliothek aus, prüft JSONs, korrigiert Dateinamen, prüft Abhängigkeiten, prüft Module und zeigt den Fortschritt in Prozent.
+2. Die Start-Routine erstellt fehlende Ordner automatisch, richtet eine Venv ein, führt Self-Repair aus, prüft JSONs, korrigiert Dateinamen, prüft Abhängigkeiten, prüft Module und zeigt den Fortschritt in Prozent.
 3. Tests laufen automatisch, sobald eine Runde (4 erledigte Tasks) erreicht ist.
 4. Optional: `./scripts/start.sh --debug` (Debugging = detaillierte Diagnoseausgaben).
 5. Optional: `./scripts/start.sh --log-file logs/start_run.log` (Logdatei festlegen).
@@ -154,6 +158,7 @@ Hier nur die wichtigsten Bereiche:
 7. Optional: `./scripts/start.sh --ghost-mode` (Alias für Safe-Mode).
 8. Optional: `./scripts/start.sh --sandbox` (isolierte Sandbox, Schreibzugriffe nur dort).
 9. Notfall: `./scripts/recovery.sh` (Recovery-Modus mit Reparatur und Minimalchecks).
+10. Die GUI wird nach erfolgreichem Start automatisch geöffnet.
 
 ### System-Scan (Vorabprüfung ohne Schreiben)
 1. `./scripts/system_scan.sh`
@@ -162,6 +167,7 @@ Hier nur die wichtigsten Bereiche:
 ### Setup-Skripte (separat ausführbar)
 1. `./scripts/check_env.sh` (Voraussetzungen prüfen)
 2. `./scripts/bootstrap.sh` (Basis-Ordner anlegen)
+3. `./scripts/ensure_venv.sh` (Venv vorbereiten/prüfen)
 
 ### Health-Check (manuell)
 1. `python system/health_check.py --root . --self-repair`
@@ -169,7 +175,7 @@ Hier nur die wichtigsten Bereiche:
 
 ### Tests + Codequalität (manuell)
 1. `./scripts/run_tests.sh`
-2. Führt Pytest, Ruff (Linting) und Black (Formatprüfung) in dieser Reihenfolge aus.
+2. Führt Pytest, Ruff (Linting) und Black (Formatprüfung) in dieser Reihenfolge in der Venv aus.
 3. Vor den Tests laufen Modulverbund-Checks (Selftests + Manifest-IDs).
 4. Hinweis: Details zu Fehlern stehen im Fehlerprotokoll (Log) unter `logs/test_run.log`.
 5. Hilfe: `./scripts/run_tests.sh --help` zeigt den geführten Ablauf.

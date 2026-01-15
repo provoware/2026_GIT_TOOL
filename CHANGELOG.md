@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.45] – 2026-02-03
+- Start: Venv-Automatik ergänzt, Start-Routine nutzt den Venv-Interpreter.
+- Start: GUI-Voraussetzungen (Tkinter) werden geprüft und klar gemeldet.
+- Start: GUI-Launcher startet nach erfolgreichem Startlauf automatisch.
+- Tests: run_tests.sh nutzt den gleichen Venv-Interpreter.
+
 ## [0.1.44] – 2026-01-15
 - Sicherheit: PIN-Login mit Zufallssperre und Statusdatei ergänzt.
 - Start: Self-Repair-Bibliothek ergänzt und in die Start-Routine integriert.

@@ -5,6 +5,7 @@ Dieses Projekt ist ein sauberer Neuaufbau mit Fokus auf Robustheit, Nachvollzieh
 
 ## Ist-Analyse (aktueller Stand)
 - Die Start-Routine ist als Skript verfügbar und führt automatische Prüfungen mit Nutzer-Feedback aus.
+- Die Start-Routine richtet automatisch eine virtuelle Umgebung (Venv = isolierte Python-Umgebung) ein und startet die GUI.
 - Die Ordnertrennung (System/Config/Daten) ist umgesetzt und wird per Struktur-Check geprüft.
 - Wichtige Qualitätsziele (Barrierefreiheit, Logging, automatische Prüfungen) sind implementiert und testbar.
 - Zentrale Architektur-Bausteine sind vorhanden: Plugin-Registry (Registry = zentrale Modul-Liste), Modul-API und gemeinsamer Store (Store = Zustands-Speicher).
@@ -14,8 +15,8 @@ Dieses Projekt ist ein sauberer Neuaufbau mit Fokus auf Robustheit, Nachvollzieh
 <!-- AUTO-STATUS:START -->
 **Auto-Status (aktualisiert: 2026-01-15)**
 
-- Gesamt: 113 Tasks
-- Erledigt: 113 Tasks
+- Gesamt: 117 Tasks
+- Erledigt: 117 Tasks
 - Offen: 0 Tasks
 - Fortschritt: 100,00 %
 <!-- AUTO-STATUS:END -->
@@ -32,6 +33,7 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 - `./scripts/start.sh` (Start-Routine = automatischer Projektstart mit Prüfungen und Feedback)
 - `./scripts/start.sh --safe-mode` (Safe-Mode = nur prüfen, nichts schreiben)
 - `./scripts/start.sh --sandbox` (Sandbox = isolierte Kopie für Testläufe)
+- `./scripts/ensure_venv.sh` (Venv = isolierte Python-Umgebung vorbereiten/prüfen)
 - `./scripts/system_scan.sh` (System-Scan = Vorabprüfung ohne Schreiben)
 - `./scripts/run_tests.sh` (Tests + Codequalität = automatische Prüfung von Funktionen und Stil)
 - `python system/diagnostics_runner.py` (Diagnose = Tests und Codequalität mit Zusammenfassung)
@@ -106,6 +108,7 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 - Arbeite Schritt für Schritt: erst verstehen, dann ändern, dann testen.
 - Starte die Tests mit `./scripts/run_tests.sh` (Tests = automatische Prüfroutinen).
 - Bei Fehlern: `logs/test_run.log` öffnen (Log = Protokoll) und den letzten Eintrag lesen.
+- Wenn die GUI nicht startet: `python3-tk` installieren (Tkinter = GUI-Bibliothek).
 - Nutze `python system/health_check.py --root . --self-repair` (Self-Repair = Selbstreparatur), wenn Ordner fehlen.
 - Diagnose für Einsteiger: `python system/diagnostics_runner.py` (Diagnose = Tests + Codequalität).
 - Doku-Aktualisierung: `./scripts/update_docs.sh` (Auto-Status = automatisch erzeugter Statusblock).
