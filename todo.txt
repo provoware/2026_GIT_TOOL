@@ -10,6 +10,12 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Nächste 4 kleinste Aufgaben (Runde 2026-01-15, Pflege) – erledigt
+[x] QA-11: Modulnamen-Abgleich zwischen Manifest und Modul-Config prüfen. | fertig wenn: Modulverbund-Check meldet Name-Mismatch.
+[x] DOC-18: Info-Dateien und Auto-Status aktualisieren. | fertig wenn: README/DEV_DOKU/CHANGELOG/DONE/PROGRESS aktuell.
+[x] OPS-02: Safe-Mode-Startlauf prüfen und dokumentieren. | fertig wenn: Safe-Mode getestet.
+[x] OPS-03: Fortschritt per todo_manager schreiben. | fertig wenn: PROGRESS aktualisiert.
+
 Nächste 4 kleinste Aufgaben (Runde 2026-01-15) – erledigt
 [x] START-03: Automatische Projektordner-Prüfung + Erzeugung. | fertig wenn: fehlende Ordner werden erstellt.
 [x] START-05: Visuelle Fortschrittsanzeige beim Start. | fertig wenn: Prozent sichtbar.

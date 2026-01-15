@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.42] – 2026-01-15
+- Qualität: Modulverbund-Checks prüfen Modulnamen gegen Manifest-Namen.
+- Tests: Modulverbund-Checks mit Test für Namensabweichungen ergänzt.
+- Doku: TODO.md Dubletten (START-09/10, DATA-06, UX-05) bereinigt.
+
 ## [0.1.41] – 2026-01-15
 - Doku: Start-Tasks (START-03/05/06/07) in TODO.md und todo.txt synchronisiert.
 - Doku: Fortschritt und Auto-Status aktualisiert.

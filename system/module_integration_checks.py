@@ -108,6 +108,11 @@ def run_integration_checks(
                 "Manifest-ID passt nicht zur Modul-Konfiguration: "
                 f"{entry.module_id} erwartet, aber {manifest.module_id} gefunden."
             )
+        if manifest.name != entry.name:
+            issues.append(
+                "Manifest-Name passt nicht zur Modul-Konfiguration: "
+                f"{entry.module_id} erwartet '{entry.name}', aber '{manifest.name}' gefunden."
+            )
 
     issues.extend(module_checker.check_modules(entries))
     if run_selftests:

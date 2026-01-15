@@ -15,12 +15,13 @@ class ModuleIntegrationChecksTests(unittest.TestCase):
         root: Path,
         module_id: str,
         manifest_id: str | None = None,
+        manifest_name: str | None = None,
     ) -> Path:
         module_dir = root / "modules" / module_id
         module_dir.mkdir(parents=True, exist_ok=True)
         manifest = {
             "id": manifest_id or module_id,
-            "name": f"{module_id}-name",
+            "name": manifest_name or f"{module_id}-name",
             "version": "1.0.0",
             "description": "Testmodul",
             "entry": "module.py",
@@ -62,7 +63,7 @@ class ModuleIntegrationChecksTests(unittest.TestCase):
     def test_integration_checks_ok(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
-            self._write_module(root, "mod_a")
+            self._write_module(root, "mod_a", manifest_name="Modul A")
             modules = [
                 {
                     "id": "mod_a",
@@ -85,7 +86,7 @@ class ModuleIntegrationChecksTests(unittest.TestCase):
     def test_reports_missing_selftest(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
-            self._write_module(root, "mod_a")
+            self._write_module(root, "mod_a", manifest_name="Modul A")
             modules = [
                 {
                     "id": "mod_a",
@@ -107,7 +108,7 @@ class ModuleIntegrationChecksTests(unittest.TestCase):
     def test_reports_manifest_id_mismatch(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
-            self._write_module(root, "mod_a", manifest_id="mod_b")
+            self._write_module(root, "mod_a", manifest_id="mod_b", manifest_name="Modul A")
             modules = [
                 {
                     "id": "mod_a",
@@ -136,7 +137,7 @@ class ModuleIntegrationChecksTests(unittest.TestCase):
     def test_reports_selftest_failure(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
-            module_dir = self._write_module(root, "mod_a")
+            module_dir = self._write_module(root, "mod_a", manifest_name="Modul A")
             (module_dir / "module.py").write_text(
                 "\n".join(
                     [
@@ -171,6 +172,31 @@ class ModuleIntegrationChecksTests(unittest.TestCase):
             )
 
             self.assertTrue(any("Selftest fehlgeschlagen" in issue for issue in result.issues))
+
+    def test_reports_manifest_name_mismatch(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            self._write_module(root, "mod_a", manifest_name="Anderer Name")
+            modules = [
+                {
+                    "id": "mod_a",
+                    "name": "Modul A",
+                    "path": "modules/mod_a",
+                    "enabled": True,
+                    "description": "Test",
+                }
+            ]
+            testcases = {"mod_a": {"text": "ok"}}
+            self._write_configs(root, modules, testcases)
+
+            result = run_integration_checks(
+                root / "config" / "modules.json",
+                root / "config" / "module_selftests.json",
+            )
+
+            self.assertTrue(
+                any("Manifest-Name passt nicht" in issue for issue in result.issues)
+            )
 
 
 if __name__ == "__main__":
