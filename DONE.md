@@ -275,3 +275,9 @@
 - [x] 2026-02-09 | REL-05 | .deb-Paket mit postinst-Initialisierung.
 - [x] 2026-02-09 | REL-06 | AppImage mit integriertem Self-Check.
 - [x] 2026-02-09 | END-01 | Logout: Save-All + sauberes Schließen.
+
+## 2026-02-11
+- [x] 2026-02-11 | FLOW-01 | Globales Drag-and-Drop für Dateien/Module ergänzt.
+- [x] 2026-02-11 | FLOW-02 | Undo-/Redo-System global eingeführt.
+- [x] 2026-02-11 | IO-01 | Export-Center (JSON/TXT/PDF/ZIP) ergänzt.
+- [x] 2026-02-11 | IO-02 | Backup-System vollständig integriert.

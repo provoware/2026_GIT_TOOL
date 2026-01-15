@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
 import autosave_manager
+import backup_center
 import diagnostics_runner
 import end_audit
 import error_simulation
@@ -18,9 +19,11 @@ import module_selftests
 import qa_checks
 from config_models import ConfigModelError, GuiConfigModel
 from config_models import load_gui_config as load_gui_config_model
+from drag_drop import DragDropManager
 from launcher import LauncherError, filter_modules, load_modules
 from logging_center import get_logger
 from logging_center import setup_logging as setup_logging_center
+from undo_redo import UndoRedoAction, UndoRedoError, UndoRedoManager
 
 DEFAULT_MODULE_CONFIG = Path(__file__).resolve().parents[1] / "config" / "modules.json"
 DEFAULT_GUI_CONFIG = Path(__file__).resolve().parents[1] / "config" / "launcher_gui.json"
@@ -39,6 +42,9 @@ ICON_SET = {
     "standards": "📏",
     "logs": "📂",
     "export": "📦",
+    "export_center": "📤",
+    "backup": "🗄️",
+    "drop": "🧲",
 }
 
 
@@ -262,6 +268,8 @@ class LauncherGui:
         self.standards_button = None
         self.logs_button = None
         self.export_button = None
+        self.export_center_button = None
+        self.backup_button = None
         self.diagnostics_running = False
         self.maintenance_running = False
         self.refresh_job = None
@@ -271,8 +279,10 @@ class LauncherGui:
         self.status_label = None
         self.status_indicator = None
         self.footer_label = None
+        self.help_section = None
         self.help_label = None
         self.context_help_label = None
+        self.drop_zone_label = None
         self.context_help_default = (
             "Kontext-Hilfe: Wähle ein Feld oder einen Knopf, "
             "dann erscheint hier eine kurze Erklärung."
@@ -282,6 +292,8 @@ class LauncherGui:
         self.tooltips: List[Tooltip] = []
         self.tooltip_style: Dict[str, str] = {}
         self.developer_hint = None
+        self.controls_frame = None
+        self.developer_frame = None
         self.header_font = None
         self.output_font = None
         self.button_font = None
@@ -300,6 +312,9 @@ class LauncherGui:
         self.autosave_config: autosave_manager.AutosaveConfig | None = None
         self.autosave_job = None
         self.logout_running = False
+        self.undo_manager = UndoRedoManager(limit=50)
+        self.drag_drop_manager = None
+        self.current_theme = self.gui_config.default_theme
 
         self.root.title(f"{BRAND_NAME} – Startübersicht")
         self.root.minsize(640, 420)
@@ -329,6 +344,7 @@ class LauncherGui:
         controls_section.pack(fill="x", padx=self.layout.gap_lg, pady=(0, self.layout.gap_md))
         controls = tk.Frame(controls_section)
         controls.pack(fill="x", padx=self.layout.gap_md, pady=self.layout.gap_sm)
+        self.controls_frame = controls
 
         tk.Label(controls, text=f"{ICON_SET['theme']} Farbschema:").grid(
             row=0, column=0, sticky="w"
@@ -338,7 +354,7 @@ class LauncherGui:
             controls,
             self.theme_var,
             *self.gui_config.themes.keys(),
-            command=lambda _value: self.apply_theme(self.theme_var.get()),
+            command=lambda _value: self._on_theme_changed(self.theme_var.get()),
         )
         if self.button_font is not None:
             self.theme_menu.configure(font=self.button_font)
@@ -456,6 +472,9 @@ class LauncherGui:
 
         help_section = tk.LabelFrame(self.root, text="Hilfe (Kurzinfo)")
         help_section.pack(fill="x", padx=self.layout.gap_lg, pady=(0, self.layout.gap_md))
+        help_section.columnconfigure(0, weight=1)
+        help_section.columnconfigure(1, weight=1)
+        self.help_section = help_section
         self.help_label = tk.Label(
             help_section,
             text=(
@@ -463,17 +482,25 @@ class LauncherGui:
                 "„Übersicht aktualisieren“ prüfen. "
                 "Diagnose: „Diagnose starten“ führt Tests und Codeprüfungen aus. "
                 "Entwicklerbereich: System-Scan (Prüfung), Standards (Regeln) und "
-                "Log-Ordner (Protokolle) sowie selektiver Export (Teil-Export). "
+                "Log-Ordner (Protokolle), Backup (Sicherung) und Export-Center "
+                "(Export = Ausgabedatei) sowie selektiver Export (Teil-Export). "
                 "Kontrastmodus: Alt+K. Zoom: Strg + Mausrad. "
                 "Tastatur: Tab für Fokus, F1 für Kontext-Hilfe. "
                 "Kurzbefehle: Alt+A (alle Module), Alt+D (Debug), Alt+R (aktualisieren), "
                 "Alt+G (Diagnose), Alt+S (System-Scan), Alt+P (Standards), "
-                "Alt+L (Logs), Alt+E (Export), Alt+T (Theme), Alt+Q (abmelden & sichern)."
+                "Alt+L (Logs), Alt+E (Export), Alt+X (Export-Center), Alt+B (Backup), "
+                "Alt+T (Theme), Alt+Q (abmelden & sichern), Strg+Z (Undo), Strg+Y (Redo)."
             ),
             anchor="w",
             justify="left",
         )
-        self.help_label.pack(fill="x", padx=self.layout.gap_md, pady=self.layout.gap_sm)
+        self.help_label.grid(
+            row=0,
+            column=0,
+            sticky="w",
+            padx=self.layout.gap_md,
+            pady=self.layout.gap_sm,
+        )
 
         self.context_help_label = tk.Label(
             help_section,
@@ -481,8 +508,31 @@ class LauncherGui:
             anchor="w",
             justify="left",
         )
-        self.context_help_label.pack(
-            fill="x",
+        self.context_help_label.grid(
+            row=0,
+            column=1,
+            sticky="w",
+            padx=self.layout.gap_md,
+            pady=self.layout.gap_sm,
+        )
+
+        self.drop_zone_label = tk.Label(
+            help_section,
+            text=(
+                f"{ICON_SET['drop']} Dateien/Module hierher ziehen "
+                "(Drag-and-Drop = Ziehen & Ablegen)."
+            ),
+            anchor="w",
+            justify="left",
+            relief="ridge",
+            padx=self.layout.gap_sm,
+            pady=self.layout.gap_sm,
+        )
+        self.drop_zone_label.grid(
+            row=1,
+            column=0,
+            columnspan=2,
+            sticky="ew",
             padx=self.layout.gap_md,
             pady=(0, self.layout.gap_sm),
         )
@@ -493,13 +543,15 @@ class LauncherGui:
         developer_section.pack(fill="x", padx=self.layout.gap_lg, pady=(0, self.layout.gap_md))
         developer_frame = tk.Frame(developer_section)
         developer_frame.pack(fill="x", padx=self.layout.gap_md, pady=self.layout.gap_sm)
+        self.developer_frame = developer_frame
 
         self.developer_hint = tk.Label(
             developer_frame,
             text=(
                 "Hier findest du technische Hilfen: System-Scan (Prüfung), "
                 "Standards-Liste (Regeln), Log-Ordner (Protokolle) und "
-                "selektive Exporte (Teil-Exporte)."
+                "selektive Exporte (Teil-Exporte), Export-Center (Mehrformat) "
+                "sowie Backups (Sicherungen)."
             ),
             anchor="w",
             justify="left",
@@ -566,6 +618,36 @@ class LauncherGui:
         self.export_button.configure(takefocus=1, underline=0)
         self.export_button.grid(row=1, column=3, sticky="w", padx=(self.layout.gap_md, 0))
 
+        self.export_center_button = tk.Button(
+            developer_frame,
+            text=f"{ICON_SET['export_center']} Export-Center",
+            command=self.start_export_center,
+        )
+        if self.button_font is not None:
+            self.export_center_button.configure(font=self.button_font)
+        self.export_center_button.configure(
+            padx=self.layout.button_padx,
+            pady=self.layout.button_pady,
+            width=self.button_min_width,
+        )
+        self.export_center_button.configure(takefocus=1, underline=0)
+        self.export_center_button.grid(row=2, column=0, sticky="w", padx=(0, self.layout.gap_md))
+
+        self.backup_button = tk.Button(
+            developer_frame,
+            text=f"{ICON_SET['backup']} Backup erstellen",
+            command=self.start_backup,
+        )
+        if self.button_font is not None:
+            self.backup_button.configure(font=self.button_font)
+        self.backup_button.configure(
+            padx=self.layout.button_padx,
+            pady=self.layout.button_pady,
+            width=self.button_min_width,
+        )
+        self.backup_button.configure(takefocus=1, underline=0)
+        self.backup_button.grid(row=2, column=1, sticky="w", padx=(0, self.layout.gap_md))
+
         developer_frame.columnconfigure(3, weight=1)
 
         self.status_var = tk.StringVar(value="Status: Bereit.")
@@ -617,8 +699,9 @@ class LauncherGui:
                 "Tipp: Mit Tabulator erreichst du alle Bedienelemente. "
                 "Kurzbefehle: F1 (Kontext-Hilfe), Alt+A (alle Module), Alt+D (Debug), Alt+R "
                 "(aktualisieren), Alt+G (Diagnose), Alt+S (System-Scan), "
-                "Alt+P (Standards), Alt+L (Logs), Alt+E (Export), Alt+T (Theme), Alt+K (Kontrast), "
-                "Strg + Mausrad (Zoom), Alt+Q (abmelden & sichern)."
+                "Alt+P (Standards), Alt+L (Logs), Alt+E (Export), Alt+X (Export-Center), "
+                "Alt+B (Backup), Alt+T (Theme), Alt+K (Kontrast), Strg+Z (Undo), "
+                "Strg+Y (Redo), Strg + Mausrad (Zoom), Alt+Q (abmelden & sichern)."
             ),
             anchor="w",
         )
@@ -629,6 +712,7 @@ class LauncherGui:
         self._bind_zoom_controls()
         self._bind_help_context()
         self._register_help_entries()
+        self._setup_drag_drop()
         self.root.protocol("WM_DELETE_WINDOW", self.request_logout)
         self.apply_theme(self.gui_config.default_theme)
         self.request_refresh()
@@ -660,8 +744,13 @@ class LauncherGui:
         self.root.bind_all("<Alt-p>", lambda _event: self.show_standards())
         self.root.bind_all("<Alt-l>", lambda _event: self.open_logs())
         self.root.bind_all("<Alt-e>", lambda _event: self.start_selective_export())
+        self.root.bind_all("<Alt-x>", lambda _event: self.start_export_center())
+        self.root.bind_all("<Alt-b>", lambda _event: self.start_backup())
         self.root.bind_all("<Alt-q>", lambda _event: self.request_logout())
         self.root.bind_all("<Control-r>", lambda _event: self._refresh_from_shortcut())
+        self.root.bind_all("<Control-z>", lambda _event: self.undo_action())
+        self.root.bind_all("<Control-y>", lambda _event: self.redo_action())
+        self.root.bind_all("<Control-Shift-Z>", lambda _event: self.redo_action())
         self.root.bind_all("<F1>", lambda _event: self._announce_context_help())
 
     def _bind_zoom_controls(self) -> None:
@@ -720,13 +809,15 @@ class LauncherGui:
             self.standards_button,
             self.logs_button,
             self.export_button,
+            self.export_center_button,
+            self.backup_button,
         ):
             if button is not None:
                 button.configure(width=width)
 
     def _bind_responsive_layout(self) -> None:
-        self.root.bind("<Configure>", lambda _event: self._update_wrap_length())
-        self._update_wrap_length()
+        self.root.bind("<Configure>", lambda _event: self._update_layout_by_width())
+        self._update_layout_by_width()
 
     def _update_wrap_length(self) -> None:
         width = max(self.root.winfo_width() - 32, 280)
@@ -738,6 +829,55 @@ class LauncherGui:
             self.context_help_label.configure(wraplength=width, justify="left")
         if self.developer_hint is not None:
             self.developer_hint.configure(wraplength=width, justify="left")
+        if self.drop_zone_label is not None:
+            self.drop_zone_label.configure(wraplength=width, justify="left")
+        if self.status_label is not None:
+            self.status_label.configure(wraplength=width, justify="left")
+
+    def _update_layout_by_width(self) -> None:
+        width = self.root.winfo_width()
+        self._update_wrap_length()
+        if (
+            self.help_section is not None
+            and self.help_label is not None
+            and self.context_help_label is not None
+        ):
+            if width >= 900:
+                self.help_label.grid_configure(row=0, column=0, columnspan=1, sticky="w")
+                self.context_help_label.grid_configure(
+                    row=0,
+                    column=1,
+                    columnspan=1,
+                    sticky="w",
+                )
+            else:
+                self.help_label.grid_configure(row=0, column=0, columnspan=2, sticky="w")
+                self.context_help_label.grid_configure(
+                    row=1,
+                    column=0,
+                    columnspan=2,
+                    sticky="w",
+                )
+        if self.drop_zone_label is not None:
+            row = 1 if width >= 900 else 2
+            self.drop_zone_label.grid_configure(row=row, column=0, columnspan=2, sticky="ew")
+        if self.developer_frame is not None and self.export_center_button is not None:
+            if width >= 900:
+                self.export_center_button.grid_configure(row=2, column=0)
+                if self.backup_button is not None:
+                    self.backup_button.grid_configure(row=2, column=1)
+            else:
+                self.export_center_button.grid_configure(
+                    row=3,
+                    column=0,
+                    padx=(0, self.layout.gap_md),
+                )
+                if self.backup_button is not None:
+                    self.backup_button.grid_configure(
+                        row=3,
+                        column=1,
+                        padx=(0, self.layout.gap_md),
+                    )
 
     def _bind_help_context(self) -> None:
         self.root.bind_all("<FocusIn>", self._handle_focus_in, add="+")
@@ -761,6 +901,39 @@ class LauncherGui:
         if not isinstance(self.current_help_text, str) or not self.current_help_text.strip():
             return
         self._set_status(f"Hilfe: {self.current_help_text}", state="success")
+
+    def _setup_drag_drop(self) -> None:
+        if self.drop_zone_label is None:
+            return
+        self.drag_drop_manager = DragDropManager(self.root, self._handle_drop_paths)
+        enabled = self.drag_drop_manager.enable([self.drop_zone_label, self.root])
+        status_text = (
+            "Drag-and-Drop bereit."
+            if enabled
+            else "Drag-and-Drop nicht verfügbar. Bitte per Datei-Dialog arbeiten."
+        )
+        self._set_status(status_text, state="success" if enabled else "error")
+
+    def _handle_drop_paths(self, paths: List[Path]) -> None:
+        if not paths:
+            self._set_status("Drop ohne Dateien erkannt.", state="error")
+            return
+        summary = self._summarize_drop(paths)
+        self._append_output(summary)
+        self._set_status("Drop verarbeitet.", state="success")
+
+    def _summarize_drop(self, paths: List[Path]) -> str:
+        lines = ["Drag-and-Drop erkannt:", ""]
+        for path in paths:
+            label = "Datei"
+            if path.is_dir():
+                label = "Ordner"
+            elif "modules" in path.parts:
+                label = "Modul"
+            lines.append(f"- {label}: {path}")
+        lines.append("")
+        lines.append("Tipp: Prüfe die Pfade und starte bei Bedarf den Export oder ein Backup.")
+        return "\n".join(lines) + "\n"
 
     def _tooltip_payload(self, text: str) -> Dict[str, str]:
         clean_text = _require_text(text, "tooltip_text")
@@ -849,6 +1022,18 @@ class LauncherGui:
                 "Erstellt einen Teil-Export (ZIP).",
                 "Selektiver Export: Erstellt ein ZIP mit ausgewählten Bereichen (z. B. Logs).",
             )
+        if self.export_center_button is not None:
+            self._register_help(
+                self.export_center_button,
+                "Exportiert JSON, TXT, PDF und ZIP.",
+                "Export-Center: Erstellt Exporte (Ausgabedateien) in mehreren Formaten.",
+            )
+        if self.backup_button is not None:
+            self._register_help(
+                self.backup_button,
+                "Erstellt ein vollständiges Backup (ZIP).",
+                "Backup: Erstellt eine vollständige Sicherung in data/backups.",
+            )
         if self.output_text is not None:
             self._register_help(
                 self.output_text,
@@ -861,18 +1046,22 @@ class LauncherGui:
                 "Zeigt Statusmeldungen (bereit, läuft, Fehler).",
                 "Status: Zeigt ob das Tool bereit ist, arbeitet oder einen Fehler meldet.",
             )
+        if self.drop_zone_label is not None:
+            self._register_help(
+                self.drop_zone_label,
+                "Dateien/Module per Drag-and-Drop ablegen.",
+                "Drag-and-Drop: Ziehe Dateien oder Module auf diese Fläche, um sie zu prüfen.",
+            )
 
     def _focus_widget(self, widget) -> None:
         if widget is not None:
             widget.focus_set()
 
     def _toggle_show_all(self) -> None:
-        self.show_all_var.set(not bool(self.show_all_var.get()))
-        self.request_refresh()
+        self._set_show_all(not bool(self.show_all_var.get()), record_action=True)
 
     def _toggle_debug(self) -> None:
-        self.debug_var.set(not bool(self.debug_var.get()))
-        self.request_refresh()
+        self._set_debug(not bool(self.debug_var.get()), record_action=True)
 
     def _refresh_from_shortcut(self) -> None:
         self.request_refresh()
@@ -912,6 +1101,22 @@ class LauncherGui:
                         "Lösung: In config/global_settings.json aktivieren, "
                         "wenn du Sicherungen willst."
                     ),
+                ]
+            )
+        try:
+            backup_config = backup_center.load_backup_config(
+                self.module_config.resolve().parents[1] / "config" / "backup.json"
+            )
+            backup_state = DEFAULT_DATA_ROOT / "backup_state.json"
+            backup_result = backup_center.create_backup(backup_config, backup_state)
+            report_lines.append(f"Erfolg: {backup_result.summary}")
+        except backup_center.BackupCenterError as exc:
+            success = False
+            report_lines.extend(
+                [
+                    "Fehler: Backup fehlgeschlagen.",
+                    f"Ursache: {exc}",
+                    "Lösung: config/backup.json prüfen und erneut versuchen.",
                 ]
             )
         report = "\n".join(report_lines).rstrip() + "\n"
@@ -965,6 +1170,35 @@ class LauncherGui:
         self._set_status("Aktualisierung wird vorbereitet…", state="busy")
         self.refresh_job = self.root.after(self.refresh_debounce_ms, self.refresh)
 
+    def _record_action(
+        self,
+        name: str,
+        undo_action,
+        redo_action,
+        metadata: dict | None = None,
+    ) -> None:
+        clean_name = _require_text(name, "action_name")
+        meta = metadata if isinstance(metadata, dict) else {}
+        self.undo_manager.record(
+            UndoRedoAction(name=clean_name, undo=undo_action, redo=redo_action, metadata=meta)
+        )
+
+    def undo_action(self) -> None:
+        try:
+            action = self.undo_manager.undo()
+        except UndoRedoError as exc:
+            self._set_status(f"Undo nicht möglich: {exc}", state="error")
+            return
+        self._set_status(f"Undo: {action.name}", state="success")
+
+    def redo_action(self) -> None:
+        try:
+            action = self.undo_manager.redo()
+        except UndoRedoError as exc:
+            self._set_status(f"Redo nicht möglich: {exc}", state="error")
+            return
+        self._set_status(f"Redo: {action.name}", state="success")
+
     def _set_theme(self, theme_name: str) -> None:
         clean_name = _require_text(theme_name, "theme_name")
         if clean_name not in self.gui_config.themes:
@@ -972,11 +1206,55 @@ class LauncherGui:
         self.theme_var.set(clean_name)
         self.apply_theme(clean_name)
 
+    def _on_theme_changed(self, theme_name: str) -> None:
+        previous = self.current_theme
+        target = _require_text(theme_name, "theme_name")
+        if previous == target:
+            return
+        self._set_theme(target)
+        self.current_theme = target
+        self._record_action(
+            f"Farbschema wechseln ({previous} → {target})",
+            undo_action=lambda: self._restore_theme(previous),
+            redo_action=lambda: self._restore_theme(target),
+        )
+        label = self.gui_config.themes[target].label
+        self._set_status(f"Farbschema aktiv: {label}", state="success")
+
+    def _restore_theme(self, theme_name: str) -> None:
+        self._set_theme(theme_name)
+        self.current_theme = theme_name
+
+    def _set_show_all(self, value: bool, record_action: bool) -> None:
+        previous = bool(self.show_all_var.get())
+        self.show_all_var.set(bool(value))
+        self.request_refresh()
+        if record_action:
+            self._record_action(
+                "Alle Module anzeigen",
+                undo_action=lambda: self._set_show_all(previous, record_action=False),
+                redo_action=lambda: self._set_show_all(bool(value), record_action=False),
+                metadata={"previous": previous, "current": bool(value)},
+            )
+
+    def _set_debug(self, value: bool, record_action: bool) -> None:
+        previous = bool(self.debug_var.get())
+        self.debug_var.set(bool(value))
+        self.request_refresh()
+        if record_action:
+            self._record_action(
+                "Debug-Details anzeigen",
+                undo_action=lambda: self._set_debug(previous, record_action=False),
+                redo_action=lambda: self._set_debug(bool(value), record_action=False),
+                metadata={"previous": previous, "current": bool(value)},
+            )
+
     def apply_theme(self, theme_name: str) -> None:
         clean_name = _require_text(theme_name, "theme_name")
         if clean_name not in self.gui_config.themes:
             raise GuiLauncherError("Unbekanntes Farbschema.")
         theme = self.gui_config.themes[clean_name]
+        self.current_theme = clean_name
 
         bg = theme.colors["background"]
         fg = theme.colors["foreground"]
@@ -1160,6 +1438,14 @@ class LauncherGui:
             ["python", str(script_path), "--preset", "support_pack"],
         )
 
+    def start_export_center(self) -> None:
+        script_path = self.module_config.resolve().parents[1] / "system" / "export_center.py"
+        self._run_maintenance_task("Export-Center", ["python", str(script_path)])
+
+    def start_backup(self) -> None:
+        script_path = self.module_config.resolve().parents[1] / "system" / "backup_center.py"
+        self._run_maintenance_task("Backup", ["python", str(script_path)])
+
     def _run_maintenance_task(self, title: str, command: List[str]) -> None:
         clean_title = _require_text(title, "maintenance_title")
         if not isinstance(command, list) or not all(isinstance(item, str) for item in command):
@@ -1168,6 +1454,12 @@ class LauncherGui:
             self._set_status("Wartung läuft bereits…", state="busy")
             return
         if command and command[0] == "bash":
+            script_path = Path(command[1])
+            if not script_path.exists():
+                self._set_status("Script nicht gefunden.", state="error")
+                self._append_output(f"{clean_title}:\nFehler: Script {script_path} fehlt.\n")
+                return
+        if command and command[0] == "python":
             script_path = Path(command[1])
             if not script_path.exists():
                 self._set_status("Script nicht gefunden.", state="error")
@@ -1246,6 +1538,8 @@ class LauncherGui:
             self.standards_button,
             self.logs_button,
             self.export_button,
+            self.export_center_button,
+            self.backup_button,
         ):
             if button is not None:
                 button.configure(state=clean_state)

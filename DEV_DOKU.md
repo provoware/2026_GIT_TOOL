@@ -21,6 +21,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - GUI-Launcher hat Hilfe-Kurzinfo und klar benannte Bereiche (Einstellungen, Status, Modulübersicht).
 - GUI-Launcher zeigt Tooltips (Kurz-Hinweise) und Kontext-Hilfe per Fokus + F1.
 - GUI-Launcher enthält einen Entwicklerbereich mit System-Scan, Standards-Liste und Log-Ordner.
+- GUI-Launcher enthält Export-Center (JSON/TXT/PDF/ZIP) und Backup-Center (Sicherung).
+- GUI-Launcher bietet Drag-and-Drop für Dateien/Module sowie Undo/Redo für Aktionen.
 - GUI-Launcher validiert Eingaben und Ausgaben mit klaren Fehlermeldungen.
 - GUI-Launcher zeigt farbige Statusmeldungen für Erfolg/Fehler/Busy.
 - GUI-Launcher nutzt größere Bedienelemente (Großbutton-UI) für bessere Bedienbarkeit.
@@ -97,12 +99,12 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Autosave schreibt Sicherungen in data/autosave/ und protokolliert nach logs/autosave.log.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-01-15)**
+**Auto-Status (aktualisiert: 2026-02-11)**
 
 - Gesamt: 157 Tasks
-- Erledigt: 153 Tasks
-- Offen: 4 Tasks
-- Fortschritt: 97,45 %
+- Erledigt: 157 Tasks
+- Offen: 0 Tasks
+- Fortschritt: 100 %
 <!-- AUTO-STATUS:END -->
 
 ## Struktur (aktuell)

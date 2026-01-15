@@ -1,0 +1,6 @@
+{
+  "output_dir": "data/backups",
+  "sources": ["config", "data", "logs", "reports"],
+  "exclude_dirs": ["autosave", "backups"],
+  "max_backups": 5
+}
