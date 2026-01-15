@@ -11,6 +11,12 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
 Nächste 4 kleinste Aufgaben (Runde 2026-01-15) – erledigt
+[x] REN-DE-01: Ordner dashboard-timeline-tool in dashboard_zeitachsen_werkzeug umbenennen. | fertig wenn: Ordnername ist deutsch und snake_case.
+[x] REN-DE-02: Ordner genrearchiv_tool_v1_2_3_2026_01_06 in genrearchiv_werkzeug_v1_2_3_2026_01_06 umbenennen. | fertig wenn: Ordnername ist deutsch und snake_case.
+[x] REN-DE-03: Doku-Verweise (STRUKTUR/PROJEKT_INFO/DEV_DOKU) auf neue Ordnernamen aktualisieren. | fertig wenn: Doku zeigt die neuen Pfade.
+[x] REN-DE-04: Strukturbaum und Standards-Beispiel auf neue Ordnernamen aktualisieren. | fertig wenn: baumstruktur.txt/standards.md sind konsistent.
+
+Nächste 4 kleinste Aufgaben (Runde 2026-01-15) – erledigt
 [x] START-02: PIN-Login implementieren (PIN = kurze Zahlen-Passwort). | fertig wenn: Anmeldung funktioniert.
 [x] IO-03: Testmodus (schreibgeschützt) einbauen. | fertig wenn: keine Schreibzugriffe.
 [x] FLOW-03: Autosave alle 10 Minuten. | fertig wenn: automatische Sicherung läuft.

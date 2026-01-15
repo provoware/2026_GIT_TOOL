@@ -56,6 +56,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Standards enthalten einen Benennungsstandard für Dateien/Module und eine Datenmodell-Referenz.
 - TODO.md ist strukturiert (IDs, Bereiche, klare Offen/Erledigt-Abschnitte).
 - todo.txt ist als laienfreundliche Kurzliste gepflegt und mit TODO.md synchronisiert.
+- Zusatzprojekte sind nach deutschem snake_case benannt (z. B. dashboard_zeitachsen_werkzeug, genrearchiv_werkzeug_v1_2_3_2026_01_06).
 - START-03/05/06/07 sind in TODO.md und todo.txt konsistent als erledigt markiert.
 - A–I-Backlog (Architektur bis Komfortfunktionen) ist strukturiert dokumentiert.
 - README ist um Architektur/Start/Tests/Barrierefreiheit ergänzt.
@@ -97,8 +98,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 <!-- AUTO-STATUS:START -->
 **Auto-Status (aktualisiert: 2026-01-15)**
 
-- Gesamt: 133 Tasks
-- Erledigt: 133 Tasks
+- Gesamt: 137 Tasks
+- Erledigt: 137 Tasks
 - Offen: 0 Tasks
 - Fortschritt: 100,00 %
 <!-- AUTO-STATUS:END -->
@@ -285,18 +286,18 @@ Hier nur die wichtigsten Bereiche:
 3. `./scripts/show_standards.sh --section styleguide`
 
 ### Lokaler Start (UI prüfen)
-1. `cd genrearchiv_tool_v1_2_3_2026_01_06`
+1. `cd genrearchiv_werkzeug_v1_2_3_2026_01_06`
 2. `npm install`
 3. `npm run dev`
 
 ### Build/Preview
-1. `cd genrearchiv_tool_v1_2_3_2026_01_06`
+1. `cd genrearchiv_werkzeug_v1_2_3_2026_01_06`
 2. `npm install`
 3. `npm run build`
 4. `npm run preview`
 
 ### Linting/Formatierung (UI-Projekt)
-1. `cd genrearchiv_tool_v1_2_3_2026_01_06`
+1. `cd genrearchiv_werkzeug_v1_2_3_2026_01_06`
 2. `npm install`
 3. `npm run lint`
 4. `npm run format`
