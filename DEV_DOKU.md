@@ -78,10 +78,10 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Recovery-Modus steht als separates Skript für Notfallstarts bereit.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-01-15)**
+**Auto-Status (aktualisiert: 2026-02-02)**
 
-- Gesamt: 105 Tasks
-- Erledigt: 105 Tasks
+- Gesamt: 109 Tasks
+- Erledigt: 109 Tasks
 - Offen: 0 Tasks
 - Fortschritt: 100,00 %
 <!-- AUTO-STATUS:END -->
@@ -252,18 +252,18 @@ Hier nur die wichtigsten Bereiche:
 3. `./scripts/show_standards.sh --section styleguide`
 
 ### Lokaler Start (UI prüfen)
-1. `cd gms_archiv_tool_v1_2_3_2026_01_06`
+1. `cd genrearchiv_tool_v1_2_3_2026_01_06`
 2. `npm install`
 3. `npm run dev`
 
 ### Build/Preview
-1. `cd gms_archiv_tool_v1_2_3_2026_01_06`
+1. `cd genrearchiv_tool_v1_2_3_2026_01_06`
 2. `npm install`
 3. `npm run build`
 4. `npm run preview`
 
 ### Linting/Formatierung (UI-Projekt)
-1. `cd gms_archiv_tool_v1_2_3_2026_01_06`
+1. `cd genrearchiv_tool_v1_2_3_2026_01_06`
 2. `npm install`
 3. `npm run lint`
 4. `npm run format`

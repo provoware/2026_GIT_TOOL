@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.43] – 2026-02-02
+- Branding: Genrearchiv-Frontend umbenannt (Ordner, Package, UI-Titel).
+- Daten: Storage-Keys und Export-Dateinamen auf Genrearchiv umgestellt, mit Legacy-Migration.
+- Doku: Pfade/Beispiele für das Genrearchiv-Frontend aktualisiert.
+
 ## [0.1.42] – 2026-01-15
 - Qualität: Modulverbund-Checks prüfen Modulnamen gegen Manifest-Namen.
 - Tests: Modulverbund-Checks mit Test für Namensabweichungen ergänzt.
@@ -10,9 +15,9 @@
 - Doku: Fortschritt und Auto-Status aktualisiert.
 
 ## [0.1.40] – 2026-02-01
-- Standards: GMS-Frontend-Pfad auf snake_case-Standard umgestellt.
-- Qualität: Linting- und Format-Skripte für das GMS-Frontend ergänzt.
-- Doku: GMS-Frontend-README und Entwicklerdoku aktualisiert.
+- Standards: Genrearchiv-Frontend-Pfad auf snake_case-Standard umgestellt.
+- Qualität: Linting- und Format-Skripte für das Genrearchiv-Frontend ergänzt.
+- Doku: Genrearchiv-Frontend-README und Entwicklerdoku aktualisiert.
 
 ## [0.1.39] – 2026-01-30
 - Qualität: Modulstruktur-Validator mit Pflicht-Entry + Konfig-Ausnahmen ergänzt.

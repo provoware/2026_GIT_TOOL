@@ -25,7 +25,7 @@ Diese Datei definiert verbindliche Standards für alle Module, den Launcher und 
 - Modul‑ID = Ordnername (z. B. `modules/datei_suche`).
 - Modul‑ID‑Regel: `^[a-z0-9]+(_[a-z0-9]+)*$` (nur Kleinbuchstaben, Zahlen, Unterstrich).
 - Zusatzprojekte im Repository folgen ebenfalls `snake_case` inkl. Version/Datum
-  (z. B. `gms_archiv_tool_v1_2_3_2026_01_06`).
+  (z. B. `genrearchiv_tool_v1_2_3_2026_01_06`).
 - Pflichtdateien pro Modul:
   - `modules/<modul_id>/manifest.json`
   - `modules/<modul_id>/module.py`

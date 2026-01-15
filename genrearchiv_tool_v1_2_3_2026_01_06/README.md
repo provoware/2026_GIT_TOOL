@@ -1,4 +1,4 @@
-# GMS Archiv Tool (Genres / Moods / Stile)
+# Genrearchiv Tool (Genres / Moods / Stile)
 
 ## Version
 

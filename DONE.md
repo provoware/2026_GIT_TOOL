@@ -1,10 +1,16 @@
 # DONE
 
+## 2026-02-02
+- Genrearchiv-Frontend: Ordner/Package/UI-Branding konsistent umbenannt.
+- Genrearchiv-Frontend: Storage-Keys und Export-Dateinamen inkl. Legacy-Migration aktualisiert.
+- Doku: PROJEKT_INFO/STRUKTUR/DEV_DOKU/Standards auf Genrearchiv aktualisiert.
+- Doku: Genrearchiv-Tool in Struktur und Kurzliste sauber einsortiert.
+
 ## 2026-02-01
-- Standards: GMS-Frontend-Ordner auf snake_case-Standard umbenannt.
-- Qualität: Linting- und Format-Skripte für das GMS-Frontend ergänzt.
-- Doku: GMS-Frontend-README um Build/Test/Logging/Barrierefreiheit ergänzt.
-- Doku: DEV_DOKU/PROJEKT_INFO/STRUKTUR auf neuen GMS-Pfad aktualisiert.
+- Standards: Genrearchiv-Frontend-Ordner auf snake_case-Standard umbenannt.
+- Qualität: Linting- und Format-Skripte für das Genrearchiv-Frontend ergänzt.
+- Doku: Genrearchiv-Frontend-README um Build/Test/Logging/Barrierefreiheit ergänzt.
+- Doku: DEV_DOKU/PROJEKT_INFO/STRUKTUR auf neuen Genrearchiv-Pfad aktualisiert.
 
 ## 2026-01-30
 - Qualität: Modulstruktur-Validator mit Pflicht-Entry und Ausnahmen ergänzt.
