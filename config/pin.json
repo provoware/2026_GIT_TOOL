@@ -1,0 +1,9 @@
+{
+  "enabled": false,
+  "pin_hint": "Standard-PIN: 0000 (bitte ändern).",
+  "pin_hash": "51438668b2cd007966b2f9887140fb75e5712fb53b42ae8f80eaed2ed32e2c6c",
+  "salt": "provoware_default",
+  "max_attempts": 3,
+  "lock_min_seconds": 2,
+  "lock_max_seconds": 7
+}

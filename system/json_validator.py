@@ -121,6 +121,31 @@ def validate_todo_config(data: dict) -> None:
     _require_text(data.get("archive_path"), "archive_path")
 
 
+def validate_filename_suffixes(data: dict) -> None:
+    defaults = _require_dict(data.get("defaults"), "defaults")
+    if not defaults:
+        raise JsonValidationError("defaults darf nicht leer sein.")
+    for key, value in defaults.items():
+        _require_text(key, "defaults.key")
+        suffix = _require_text(value, f"defaults.{key}")
+        if not suffix.startswith("."):
+            raise JsonValidationError(f"defaults.{key} muss mit '.' beginnen.")
+
+
+def validate_pin_config(data: dict) -> None:
+    enabled = data.get("enabled", False)
+    if not isinstance(enabled, bool):
+        raise JsonValidationError("enabled ist kein Wahrheitswert (bool).")
+    _require_text(data.get("pin_hint"), "pin_hint")
+    _require_text(data.get("pin_hash"), "pin_hash")
+    _require_text(data.get("salt"), "salt")
+    _require_int_min(data.get("max_attempts", 1), "max_attempts", 1)
+    _require_int_min(data.get("lock_min_seconds", 1), "lock_min_seconds", 1)
+    _require_int_min(data.get("lock_max_seconds", 1), "lock_max_seconds", 1)
+    if data.get("lock_min_seconds", 1) > data.get("lock_max_seconds", 1):
+        raise JsonValidationError("lock_min_seconds darf nicht größer als lock_max_seconds sein.")
+
+
 def validate_manifest(data: dict, path: Path) -> None:
     _require_module_id(data.get("id"), f"{path.name}.id")
     _require_text(data.get("name"), f"{path.name}.name")
@@ -173,6 +198,8 @@ VALIDATORS: Dict[str, Callable[[dict], None]] = {
     "launcher_gui.json": validate_launcher_gui_config,
     "test_gate.json": validate_test_gate_config,
     "todo_config.json": validate_todo_config,
+    "filename_suffixes.json": validate_filename_suffixes,
+    "pin.json": validate_pin_config,
 }
 
 

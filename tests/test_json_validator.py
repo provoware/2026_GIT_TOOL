@@ -71,6 +71,44 @@ class JsonValidatorTests(unittest.TestCase):
 
             self.assertTrue(result.issues)
 
+    def test_filename_suffixes_validates(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            config_dir = Path(tmpdir) / "config"
+            config_dir.mkdir(parents=True)
+            config_path = config_dir / "filename_suffixes.json"
+            config_path.write_text(
+                json.dumps({"defaults": {"data": ".json", "logs": ".log"}}),
+                encoding="utf-8",
+            )
+
+            result = validate_json_file(config_path)
+
+            self.assertEqual([], result.issues)
+
+    def test_pin_config_validates(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            config_dir = Path(tmpdir) / "config"
+            config_dir.mkdir(parents=True)
+            config_path = config_dir / "pin.json"
+            config_path.write_text(
+                json.dumps(
+                    {
+                        "enabled": False,
+                        "pin_hint": "Standard-PIN: 0000",
+                        "pin_hash": "hash",
+                        "salt": "salt",
+                        "max_attempts": 3,
+                        "lock_min_seconds": 2,
+                        "lock_max_seconds": 5,
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            result = validate_json_file(config_path)
+
+            self.assertEqual([], result.issues)
+
 
 if __name__ == "__main__":
     unittest.main()

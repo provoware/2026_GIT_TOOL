@@ -63,6 +63,12 @@ if [[ ! -x "${ROOT_DIR}/scripts/start.sh" ]]; then
   exit 1
 fi
 
+if [[ ! -f "${ROOT_DIR}/config/pin.json" ]]; then
+  echo "Fehler: PIN-Konfiguration fehlt: config/pin.json"
+  echo "Tipp: Self-Repair starten: python system/self_repair.py --root ."
+  exit 1
+fi
+
 START_ARGS=()
 GUI_ARGS=()
 if [[ "${DEBUG_MODE}" -eq 1 ]]; then
@@ -75,6 +81,10 @@ fi
 if [[ "${NO_LOG}" -eq 1 ]]; then
   START_ARGS+=(--no-log)
 fi
+
+echo "Klick&Start: PIN-Check läuft (falls aktiviert)."
+python "${ROOT_DIR}/system/pin_auth.py" --config "${ROOT_DIR}/config/pin.json" \
+  --state "${ROOT_DIR}/data/pin_state.json" "${GUI_ARGS[@]}"
 
 echo "Klick&Start: Startroutine läuft (automatische Prüfungen + Fortschritt)."
 "${ROOT_DIR}/scripts/start.sh" "${START_ARGS[@]}"

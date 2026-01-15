@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.44] – 2026-01-15
+- Sicherheit: PIN-Login mit Zufallssperre und Statusdatei ergänzt.
+- Start: Self-Repair-Bibliothek ergänzt und in die Start-Routine integriert.
+- Qualität: Self-Repair repariert fehlende Dateien, JSON und Rechte automatisch.
+- Daten: Suffix-Standards für data/logs ergänzt, Dateinamen-Fixer berücksichtigt diese Regeln.
+- Tests: PIN-Check und Suffix-Standards mit Unit-Tests abgesichert.
+
 ## [0.1.43] – 2026-02-02
 - Branding: Genrearchiv-Frontend umbenannt (Ordner, Package, UI-Titel).
 - Daten: Storage-Keys und Export-Dateinamen auf Genrearchiv umgestellt, mit Legacy-Migration.

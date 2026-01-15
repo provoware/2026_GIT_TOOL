@@ -1,0 +1,6 @@
+{
+  "defaults": {
+    "data": ".json",
+    "logs": ".log"
+  }
+}

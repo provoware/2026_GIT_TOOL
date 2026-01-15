@@ -214,9 +214,9 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 
 ### F. Sicherheit
 - [x] SEC-01: Rechteprobleme beim Start automatisch korrigieren. | fertig wenn: Self-Repair behebt Rechte.
-- [ ] SEC-02: PIN-Prozess mit Zufallssperre bei Fehleingabe. | fertig wenn: Sperre greift.
+- [x] SEC-02: PIN-Prozess mit Zufallssperre bei Fehleingabe. | fertig wenn: Sperre greift.
 - [x] SEC-03: Modul-Tests vor dem Laden erzwingen. | fertig wenn: defekte Module blockiert.
-- [ ] SEC-04: Self-Repair-Bibliothek programmieren (Dateinamen/JSON/Rechte). | fertig wenn: Fehler automatisch reparierbar.
+- [x] SEC-04: Self-Repair-Bibliothek programmieren (Dateinamen/JSON/Rechte). | fertig wenn: Fehler automatisch reparierbar.
 
 ### G. Medienmodule
 - [ ] MEDIA-01: Wavesurfer erweitern (Markers/Regions/Minimap/Exportprofil). | fertig wenn: Funktionen sichtbar.
@@ -259,7 +259,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [ ] START-01: GUI-Launcher erstellen (Fenster, Theme, Layout). | fertig wenn: Startfenster stabil geöffnet.
 - [ ] START-02: PIN-Login implementieren (PIN = kurze Zahlen-Passwort). | fertig wenn: Anmeldung funktioniert.
 - [x] START-03: Automatische Projektordner-Prüfung + Erzeugung. | fertig wenn: fehlende Ordner werden erstellt.
-- [ ] START-04: Vollständige Self-Repair-Routine integrieren (Self-Repair = Selbstreparatur). | fertig wenn: fehlende Dateien automatisch ergänzt.
+- [x] START-04: Vollständige Self-Repair-Routine integrieren (Self-Repair = Selbstreparatur). | fertig wenn: fehlende Dateien automatisch ergänzt.
 - [x] START-05: Visuelle Fortschrittsanzeige beim Start. | fertig wenn: Prozent sichtbar.
 - [x] START-06: Fehleralternativen statt Abbruch. | fertig wenn: Vorschläge statt Stop.
 - [x] START-07: Gesundheitsprüfung vor Start (Health-Check = Systemprüfung). | fertig wenn: wichtige Dateien geprüft.
@@ -279,7 +279,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [ ] DATA-02: Globale Settings als zentrale Datei. | fertig wenn: eine Settings-Datei existiert.
 - [ ] DATA-03: Versionierung pro Modul + Änderungsverläufe. | fertig wenn: Historie sichtbar.
 - [ ] DATA-04: Automatische Pflege von baumstruktur.txt/manifest.json/dummy_register.json. | fertig wenn: Dateien automatisch aktualisiert.
-- [ ] DATA-05: Dateinamen-Suffix-Standards implementieren. | fertig wenn: Endungen folgen Standard.
+- [x] DATA-05: Dateinamen-Suffix-Standards implementieren. | fertig wenn: Endungen folgen Standard.
 
 ### UX & Barrierefreiheit
 - [ ] UX-01: Barrierefreiheits-Set ergänzen (Kontrast, ARIA, Tastatur). | fertig wenn: Checkliste erfüllt.

@@ -39,7 +39,9 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Test-Automatik startet nach abgeschlossenen 4 Tasks (Runden-Logik).
 - Health-Check prüft wichtige Dateien/Ordner vor dem Start mit klaren Hinweisen.
 - Health-Check kann fehlende Basiselemente automatisch per Self-Repair anlegen.
-- Start-Routine ruft den Health-Check mit aktivem Self-Repair auf.
+- Start-Routine nutzt die Self-Repair-Bibliothek für vollständige Selbstreparatur vor dem Health-Check.
+- PIN-Login mit Zufallssperre ist optional aktivierbar (Konfig in `config/pin.json`).
+- Suffix-Standards für data/logs werden über `config/filename_suffixes.json` durchgesetzt.
 - Health-Check repariert Leserechte und Ausführrechte automatisch (Self-Repair aktiv).
 - Launcher/GUI nutzen gemeinsame Pfad- und JSON-Validierung, um Duplikate zu reduzieren.
 - Health-Check ist lauffähig, Ruff-konform und nutzt konsistente Datumswerte (Self-Repair aktiv).
@@ -78,10 +80,10 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Recovery-Modus steht als separates Skript für Notfallstarts bereit.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-02-02)**
+**Auto-Status (aktualisiert: 2026-01-15)**
 
-- Gesamt: 109 Tasks
-- Erledigt: 109 Tasks
+- Gesamt: 113 Tasks
+- Erledigt: 113 Tasks
 - Offen: 0 Tasks
 - Fortschritt: 100,00 %
 <!-- AUTO-STATUS:END -->
@@ -144,7 +146,7 @@ Hier nur die wichtigsten Bereiche:
 
 ### Start-Routine (Struktur + Fortschritt)
 1. `./scripts/start.sh`
-2. Die Start-Routine erstellt fehlende Ordner automatisch, führt den Health-Check mit Selbstreparatur aus, prüft JSONs, korrigiert Dateinamen, prüft Abhängigkeiten, prüft Module und zeigt den Fortschritt in Prozent.
+2. Die Start-Routine erstellt fehlende Ordner automatisch, führt die Self-Repair-Bibliothek aus, prüft JSONs, korrigiert Dateinamen, prüft Abhängigkeiten, prüft Module und zeigt den Fortschritt in Prozent.
 3. Tests laufen automatisch, sobald eine Runde (4 erledigte Tasks) erreicht ist.
 4. Optional: `./scripts/start.sh --debug` (Debugging = detaillierte Diagnoseausgaben).
 5. Optional: `./scripts/start.sh --log-file logs/start_run.log` (Logdatei festlegen).
