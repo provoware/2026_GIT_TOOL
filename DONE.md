@@ -1,5 +1,11 @@
 # DONE
 
+## 2026-01-15
+- Start: PIN-Login wird in der Start-Routine geprüft (optional über config/pin.json).
+- Start: Testmodus (--test-mode) als Alias für Safe-Mode ergänzt.
+- Autosave: Automatische Sicherungen schreiben ZIP-Archive in data/autosave/.
+- Autosave: Autosave-Status wird in data/autosave_state.json gespeichert und in logs/autosave.log protokolliert.
+
 ## 2026-02-05
 - Barrierefreiheit: ARIA-Beschreibungen, Tastaturhinweise und Kontrast für die Zeitachse ergänzt.
 - Timeline: Responsives Layout mit horizontalem Scroll und skalierbarer Höhe umgesetzt.

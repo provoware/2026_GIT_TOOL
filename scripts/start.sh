@@ -15,7 +15,7 @@ show_help() {
 Start-Routine (Struktur + Checks + Fortschritt)
 
 Nutzung:
-  ./scripts/start.sh [--debug] [--log-file <pfad>] [--no-log] [--safe-mode] [--ghost-mode] [--sandbox]
+  ./scripts/start.sh [--debug] [--log-file <pfad>] [--no-log] [--safe-mode] [--ghost-mode] [--test-mode] [--sandbox]
 
 Optionen:
   --debug           Debug-Modus aktivieren (mehr Diagnoseausgaben).
@@ -23,6 +23,7 @@ Optionen:
   --no-log          Keine Logdatei schreiben (nur Terminalausgabe).
   --safe-mode       Schreibgeschützter Start (keine Änderungen, nur Checks).
   --ghost-mode      Alias für --safe-mode (Testmodus ohne Schreiben).
+  --test-mode       Alias für --safe-mode (Testmodus ohne Schreiben).
   --sandbox         Start in isolierter Sandbox (writes nur in Sandbox).
   -h, --help        Diese Hilfe anzeigen.
 
@@ -54,6 +55,10 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     --ghost-mode)
+      SAFE_MODE=1
+      shift
+      ;;
+    --test-mode)
       SAFE_MODE=1
       shift
       ;;
@@ -128,7 +133,7 @@ else
   echo "Start-Routine: Logging deaktiviert (--no-log oder Safe-Mode)."
 fi
 
-TOTAL_STEPS=14
+TOTAL_STEPS=15
 CURRENT_STEP=0
 ERRORS=()
 PYTHON_BIN="python"
@@ -185,6 +190,21 @@ run_step "Virtuelle Umgebung wird vorbereitet" \
   prepare_venv
 
 CURRENT_STEP=3
+update_progress "PIN-Login wird geprüft"
+if [[ "${SAFE_MODE}" -eq 1 ]]; then
+  run_step "PIN-Login prüfen" \
+    "Safe-Mode aktiv: PIN-Check übersprungen (schreibgeschützt)." \
+    bash -c "echo 'Safe-Mode: PIN-Check übersprungen (keine Schreibzugriffe).'"
+else
+  run_step "PIN-Login prüfen" \
+    "Tipp: config/pin.json prüfen oder PIN-Check deaktivieren (enabled=false)." \
+    "${PYTHON_BIN}" "${ROOT_DIR}/system/pin_auth.py" \
+    --config "${ROOT_DIR}/config/pin.json" \
+    --state "${ROOT_DIR}/data/pin_state.json" \
+    "${DEBUG_ARGS[@]}"
+fi
+
+CURRENT_STEP=4
 update_progress "Projektstruktur wird vorbereitet"
 if [[ "${SAFE_MODE}" -eq 1 ]]; then
   run_step "Projektstruktur wird vorbereitet" \
@@ -196,13 +216,13 @@ else
     "${ROOT_DIR}/scripts/bootstrap.sh"
 fi
 
-CURRENT_STEP=4
+CURRENT_STEP=5
 update_progress "Strukturtrennung wird geprüft"
 run_step "Struktur-Check" \
   "Bitte Ordnerstruktur laut standards.md korrigieren." \
   "${PYTHON_BIN}" "${ROOT_DIR}/system/structure_checker.py" --root "${ROOT_DIR}" "${DEBUG_ARGS[@]}"
 
-CURRENT_STEP=5
+CURRENT_STEP=6
 update_progress "Self-Repair (Selbstreparatur) wird ausgeführt"
 SELF_REPAIR_ARGS=(--root "${ROOT_DIR}")
 if [[ "${SAFE_MODE}" -eq 1 ]]; then
@@ -212,19 +232,19 @@ run_step "Self-Repair" \
   "Tipp: python system/self_repair.py --root . ausführen." \
   "${PYTHON_BIN}" "${ROOT_DIR}/system/self_repair.py" "${SELF_REPAIR_ARGS[@]}" "${DEBUG_ARGS[@]}"
 
-CURRENT_STEP=6
+CURRENT_STEP=7
 update_progress "Health-Check (Sicherheitsprüfung) läuft"
 run_step "Health-Check" \
   "Tipp: python system/health_check.py --root . ausführen." \
   "${PYTHON_BIN}" "${ROOT_DIR}/system/health_check.py" --root "${ROOT_DIR}" "${DEBUG_ARGS[@]}"
 
-CURRENT_STEP=7
+CURRENT_STEP=8
 update_progress "JSON-Dateien werden geprüft"
 run_step "JSON-Validierung" \
   "Bitte JSON-Dateien in config/ und modules/ prüfen (Syntax/Struktur)." \
   "${PYTHON_BIN}" "${ROOT_DIR}/system/json_validator.py" --root "${ROOT_DIR}" "${DEBUG_ARGS[@]}"
 
-CURRENT_STEP=8
+CURRENT_STEP=9
 update_progress "Dateinamen werden korrigiert"
 FILENAME_ARGS=(--root "${ROOT_DIR}")
 if [[ "${SAFE_MODE}" -eq 1 ]]; then
@@ -234,7 +254,7 @@ run_step "Dateinamen-Korrektur" \
   "Tipp: Namen in data/ und logs/ prüfen (snake_case, keine Leerzeichen)." \
   "${PYTHON_BIN}" "${ROOT_DIR}/system/filename_fixer.py" "${FILENAME_ARGS[@]}" "${DEBUG_ARGS[@]}"
 
-CURRENT_STEP=9
+CURRENT_STEP=10
 update_progress "Abhängigkeiten werden geprüft"
 DEPENDENCY_ARGS=(--requirements "${ROOT_DIR}/config/requirements.txt")
 if [[ "${SAFE_MODE}" -eq 1 ]]; then
@@ -246,7 +266,7 @@ run_step "Abhängigkeiten prüfen" \
   "${DEPENDENCY_ARGS[@]}" \
   "${DEBUG_ARGS[@]}"
 
-CURRENT_STEP=10
+CURRENT_STEP=11
 update_progress "Fortschritt wird aus todo.txt berechnet"
 TODO_BASE_ARGS=(--config "${ROOT_DIR}/config/todo_config.json")
 TODO_PROGRESS_ARGS=()
@@ -260,7 +280,7 @@ run_step "Fortschritt berechnen" \
   "${PYTHON_BIN}" "${ROOT_DIR}/system/todo_manager.py" "${TODO_BASE_ARGS[@]}" progress \
   "${TODO_PROGRESS_ARGS[@]}" "${DEBUG_ARGS[@]}"
 
-CURRENT_STEP=11
+CURRENT_STEP=12
 update_progress "Module werden geprüft (inkl. Verbund-Checks)"
 run_step "Module prüfen (Verbund-Checks)" \
   "Bitte config/modules.json und module_selftests.json prüfen (id, path, manifest, tests)." \
@@ -269,7 +289,7 @@ run_step "Module prüfen (Verbund-Checks)" \
   --selftests "${ROOT_DIR}/config/module_selftests.json" \
   "${DEBUG_ARGS[@]}"
 
-CURRENT_STEP=12
+CURRENT_STEP=13
 update_progress "Tests werden geprüft (nur nach kompletter Runde)"
 if [[ "${SAFE_MODE}" -eq 1 ]]; then
   run_step "Test-Sperre" \
@@ -281,13 +301,13 @@ else
     "${PYTHON_BIN}" "${ROOT_DIR}/system/test_gate.py" --config "${ROOT_DIR}/config/test_gate.json" "${DEBUG_ARGS[@]}"
 fi
 
-CURRENT_STEP=13
+CURRENT_STEP=14
 update_progress "GUI-Voraussetzungen werden geprüft"
 run_step "GUI-Voraussetzungen prüfen" \
   "Tipp: Installieren Sie python3-tk (Tkinter) über Ihren Paketmanager." \
   "${PYTHON_BIN}" -c "import tkinter as tk"
 
-CURRENT_STEP=14
+CURRENT_STEP=15
 if [[ ${#ERRORS[@]} -gt 0 ]]; then
   update_progress "Start-Routine abgeschlossen (mit Hinweisen)"
   echo "Start-Routine: Es gab ${#ERRORS[@]} Hinweis(e)."

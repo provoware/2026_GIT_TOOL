@@ -64,10 +64,11 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Start-Routine unterstützt Debug- und Logging-Modus (Logdatei start_run.log).
 - Start-Routine zeigt Fehleralternativen statt sofortigem Abbruch und sammelt Hinweise.
 - Start-Routine prüft JSON-Dateien und korrigiert Dateinamen in data/ und logs/.
-- Start-Routine bietet Safe-Mode (schreibgeschützt), Ghost-Mode (Alias) und Sandbox-Modus.
+- Start-Routine bietet Safe-Mode (schreibgeschützt), Ghost-Mode (Alias), Test-Mode (Alias) und Sandbox-Modus.
 - Start-Routine nutzt automatisch eine virtuelle Umgebung (.venv) und meldet den aktiven Interpreter.
 - Start-Routine prüft GUI-Voraussetzungen (Tkinter) vor dem GUI-Start.
 - Start-Routine startet den GUI-Launcher automatisch nach erfolgreichen Checks.
+- Start-Routine prüft optional den PIN-Login (config/pin.json), wenn der PIN-Check aktiv ist.
 - Struktur-Check prüft die Trennung von Systemlogik, Config und Daten.
 - System-Scan kann als Vorabprüfung ohne Schreibzugriffe laufen.
 - Standards-Viewer zeigt interne Standards und Styleguide per CLI an.
@@ -91,14 +92,15 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Strukturpflege aktualisiert baumstruktur.txt, manifest.json und dummy_register.json automatisch.
 - Build-All-Skript bündelt Checks, Strukturpflege, Doku-Update und Tests.
 - Globale Settings liegen als zentrale Datei in config/global_settings.json vor.
+- Autosave schreibt Sicherungen in data/autosave/ und protokolliert nach logs/autosave.log.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-02-05)**
+**Auto-Status (aktualisiert: 2026-01-15)**
 
-- Gesamt: 244 Tasks
-- Erledigt: 195 Tasks
-- Offen: 49 Tasks
-- Fortschritt: 79,92 %
+- Gesamt: 133 Tasks
+- Erledigt: 133 Tasks
+- Offen: 0 Tasks
+- Fortschritt: 100,00 %
 <!-- AUTO-STATUS:END -->
 
 ## Struktur (aktuell)

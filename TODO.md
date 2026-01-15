@@ -257,7 +257,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 
 ### Start & Launcher
 - [ ] START-01: GUI-Launcher erstellen (Fenster, Theme, Layout). | fertig wenn: Startfenster stabil geöffnet.
-- [ ] START-02: PIN-Login implementieren (PIN = kurze Zahlen-Passwort). | fertig wenn: Anmeldung funktioniert.
+- [x] START-02: PIN-Login implementieren (PIN = kurze Zahlen-Passwort). | fertig wenn: Anmeldung funktioniert.
 - [x] START-12: Virtuelle Umgebung automatisch erstellen/verwenden (Venv = isolierte Python-Umgebung). | fertig wenn: Start nutzt .venv standardmäßig.
 - [x] START-13: GUI-Voraussetzungen prüfen (Tkinter = GUI-Bibliothek). | fertig wenn: Start meldet Tkinter-Status.
 - [x] START-14: GUI-Launcher automatisch starten. | fertig wenn: Start öffnet GUI ohne Nutzeraktion.
@@ -296,7 +296,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 ### Workflow-Logik
 - [ ] FLOW-01: Globales Drag-and-Drop (Dateien/Module). | fertig wenn: Ziehen funktioniert.
 - [ ] FLOW-02: Undo-/Redo-System global. | fertig wenn: Rückgängig möglich.
-- [ ] FLOW-03: Autosave alle 10 Minuten. | fertig wenn: automatische Sicherung läuft.
+- [x] FLOW-03: Autosave alle 10 Minuten. | fertig wenn: automatische Sicherung läuft.
 - [ ] FLOW-04: Globales Event-/Signal-System. | fertig wenn: Module reagieren konsistent.
 - [ ] FLOW-05: Rechte- und Schreibschutzsystem. | fertig wenn: Schutz aktiv.
 
@@ -319,8 +319,8 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 ### Speicherung & Export
 - [ ] IO-01: Exportcenter (JSON, TXT, PDF, ZIP) implementieren. | fertig wenn: Exporte laufen.
 - [ ] IO-02: Backup-System vollständig integrieren. | fertig wenn: Sicherungen laufen.
-- [ ] IO-03: Testmodus (schreibgeschützt) einbauen. | fertig wenn: keine Schreibzugriffe.
-- [ ] IO-04: Autosave in Logs protokollieren. | fertig wenn: Logs enthalten Autosave.
+- [x] IO-03: Testmodus (schreibgeschützt) einbauen. | fertig wenn: keine Schreibzugriffe.
+- [x] IO-04: Autosave in Logs protokollieren. | fertig wenn: Logs enthalten Autosave.
 - [ ] IO-05: Selektive Exporte aktivieren. | fertig wenn: Teil-Exporte möglich.
 
 ### Fehler- & Strukturprüfung
