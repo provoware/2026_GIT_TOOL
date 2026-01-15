@@ -1,5 +1,11 @@
 # DONE
 
+## 2026-02-01
+- Standards: GMS-Frontend-Ordner auf snake_case-Standard umbenannt.
+- Qualität: Linting- und Format-Skripte für das GMS-Frontend ergänzt.
+- Doku: GMS-Frontend-README um Build/Test/Logging/Barrierefreiheit ergänzt.
+- Doku: DEV_DOKU/PROJEKT_INFO/STRUKTUR auf neuen GMS-Pfad aktualisiert.
+
 ## 2026-01-30
 - Qualität: Modulstruktur-Validator mit Pflicht-Entry und Ausnahmen ergänzt.
 - Sicherheit: Modulverbund-Checks führen Selftests aus und blockieren Fehler.

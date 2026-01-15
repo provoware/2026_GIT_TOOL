@@ -10,6 +10,12 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Nächste 4 kleinste Aufgaben (Runde 2026-02-01) – erledigt
+[x] STD-02: GMS-Frontend-Ordner nach `snake_case`-Standard benennen. | fertig wenn: Pfad + Doku konsistent.
+[x] QA-10: Linting/Format-Skripte für das GMS-Frontend ergänzen. | fertig wenn: `npm run lint/format` verfügbar.
+[x] DOC-16: GMS-Frontend-README um Build/Test/Logging/Barrierefreiheit ergänzen. | fertig wenn: README vollständig.
+[x] DOC-17: DEV_DOKU/PROJEKT_INFO/STRUKTUR auf neuen GMS-Pfad aktualisieren. | fertig wenn: Doku konsistent.
+
 Nächste 4 kleinste Aufgaben (Runde 2026-01-30) – erledigt
 [x] CODE-01: Einheitliche Modulstruktur erzwingen (`manifest.json`, `module.py`). | fertig wenn: Validator blockiert Abweichung.
 [x] SEC-03: Modul-Tests vor dem Laden erzwingen. | fertig wenn: defekte Module blockiert.

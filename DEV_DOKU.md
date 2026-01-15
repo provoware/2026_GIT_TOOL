@@ -77,17 +77,10 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Recovery-Modus steht als separates Skript für Notfallstarts bereit.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-01-14)**
-- Dashboard-Tool bietet globale Suche über Module, Einträge und Notizen.
-- Dashboard-Tool bietet Favoritenleiste für oft genutzte Module (umschaltbar).
-- Dashboard-Tool enthält Mini-Panels für Export, Backup und Schnellnotizen.
-- Dashboard-Tool unterstützt Auto-Theming (Tag/Nacht-Erkennung) sowie manuelle Auswahl.
+**Auto-Status (aktualisiert: 2026-02-01)**
 
-<!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-01-30)**
-
-- Gesamt: 89 Tasks
-- Erledigt: 89 Tasks
+- Gesamt: 93 Tasks
+- Erledigt: 93 Tasks
 - Offen: 0 Tasks
 - Fortschritt: 100,00 %
 <!-- AUTO-STATUS:END -->
@@ -258,15 +251,22 @@ Hier nur die wichtigsten Bereiche:
 3. `./scripts/show_standards.sh --section styleguide`
 
 ### Lokaler Start (UI prüfen)
-1. `cd gms-archiv-tool_v1.2.3_2026-01-06`
+1. `cd gms_archiv_tool_v1_2_3_2026_01_06`
 2. `npm install`
 3. `npm run dev`
 
 ### Build/Preview
-1. `cd gms-archiv-tool_v1.2.3_2026-01-06`
+1. `cd gms_archiv_tool_v1_2_3_2026_01_06`
 2. `npm install`
 3. `npm run build`
 4. `npm run preview`
+
+### Linting/Formatierung (UI-Projekt)
+1. `cd gms_archiv_tool_v1_2_3_2026_01_06`
+2. `npm install`
+3. `npm run lint`
+4. `npm run format`
+5. Optional: `npm run format:fix` (Formatierung automatisch korrigieren)
 
 ### Manuelle UI-Checks (Barrierefreiheit)
 - Kontrast prüfen (Dark/Light-Theme vergleichen, Ziel ≥ 4,5:1).
