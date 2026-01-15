@@ -1,5 +1,11 @@
 # DONE
 
+## 2026-02-03
+- Start: Virtuelle Umgebung wird automatisch erstellt und genutzt (Venv).
+- Start: GUI-Voraussetzungen (Tkinter) werden geprüft.
+- Start: GUI-Launcher startet automatisch nach erfolgreichem Startlauf.
+- Tests: Start- und Testskripte nutzen den Venv-Interpreter.
+
 ## 2026-01-15
 - Sicherheit: PIN-Login mit Zufallssperre und Statusdatei ergänzt.
 - Sicherheit: Self-Repair-Bibliothek für Dateinamen/JSON/Rechte ergänzt.

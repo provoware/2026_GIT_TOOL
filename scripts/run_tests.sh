@@ -21,6 +21,9 @@ Schritt-für-Schritt:
    - "Erfolgreich abgeschlossen" bei Erfolg
    - Bei Fehlern: Details im Fehlerprotokoll (Log) unter logs/test_run.log
 
+Hinweis:
+  Der Testlauf nutzt automatisch die Venv (.venv), wenn vorhanden.
+
 Optionen:
   -h, --help  Diese Hilfe anzeigen
 EOF
@@ -48,6 +51,8 @@ if ! command -v python >/dev/null 2>&1; then
   exit 1
 fi
 
+PYTHON_BIN="$("${ROOT_DIR}/scripts/ensure_venv.sh" --root "${ROOT_DIR}")"
+
 mkdir -p "${LOG_DIR}"
 touch "${LOG_FILE}"
 exec > >(tee -a "${LOG_FILE}") 2>&1
@@ -74,20 +79,20 @@ fi
 
 echo "Hinweis: Details stehen im Fehlerprotokoll (Log) unter logs/test_run.log."
 echo "Tests: Abhängigkeiten prüfen und ggf. installieren."
-python "${ROOT_DIR}/system/dependency_checker.py" --requirements "${CONFIG_DIR}/requirements.txt"
+"${PYTHON_BIN}" "${ROOT_DIR}/system/dependency_checker.py" --requirements "${CONFIG_DIR}/requirements.txt"
 
 echo "Tests: Modulverbund-Checks werden gestartet."
-python "${ROOT_DIR}/system/module_integration_checks.py" \
+"${PYTHON_BIN}" "${ROOT_DIR}/system/module_integration_checks.py" \
   --config "${CONFIG_DIR}/modules.json" \
   --selftests "${CONFIG_DIR}/module_selftests.json"
 
 echo "Tests: Pytest wird gestartet."
-python -m pytest -c "${CONFIG_DIR}/pytest.ini"
+"${PYTHON_BIN}" -m pytest -c "${CONFIG_DIR}/pytest.ini"
 
 echo "Qualität: Ruff (Linting/Regelprüfung) wird gestartet."
-python -m ruff check "${ROOT_DIR}" --config "${CONFIG_DIR}/ruff.toml"
+"${PYTHON_BIN}" -m ruff check "${ROOT_DIR}" --config "${CONFIG_DIR}/ruff.toml"
 
 echo "Qualität: Black (Formatprüfung) wird gestartet."
-python -m black --check "${ROOT_DIR}" --config "${CONFIG_DIR}/black.toml"
+"${PYTHON_BIN}" -m black --check "${ROOT_DIR}" --config "${CONFIG_DIR}/black.toml"
 
 echo "Tests: Erfolgreich abgeschlossen."
