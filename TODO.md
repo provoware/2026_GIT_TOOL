@@ -242,6 +242,12 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [x] COM-02: Systemscanner vor Start (Rechte/JSON/Ordner). | fertig wenn: Scanner blockiert Fehler.
 - [x] COM-03: Recovery-Modus starten können. | fertig wenn: Start im Notfall.
 - [x] COM-04: Ghost-Mode (Testmodus ohne Schreiben). | fertig wenn: keine Writes.
+- [x] DOC-18: Info-Dateien und Auto-Status aktualisieren. | fertig wenn: README/DEV_DOKU/CHANGELOG/DONE/PROGRESS aktuell.
+
+### L. Betrieb & Pflege
+- [x] QA-11: Modulnamen-Abgleich zwischen Manifest und Modul-Config prüfen. | fertig wenn: Modulverbund-Check meldet Name-Mismatch.
+- [x] OPS-02: Safe-Mode-Startlauf prüfen und dokumentieren. | fertig wenn: Safe-Mode getestet.
+- [x] OPS-03: Fortschritt per todo_manager schreiben. | fertig wenn: PROGRESS aktualisiert.
 
 ### Start & Launcher
 - [ ] START-01: GUI-Launcher erstellen (Fenster, Theme, Layout). | fertig wenn: Startfenster stabil geöffnet.
@@ -252,8 +258,6 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [x] START-06: Fehleralternativen statt Abbruch. | fertig wenn: Vorschläge statt Stop.
 - [x] START-07: Gesundheitsprüfung vor Start (Health-Check = Systemprüfung). | fertig wenn: wichtige Dateien geprüft.
 - [x] START-08: Start-Routine mit Nutzerfeedback für Abhängigkeiten (Dependencies = Abhängigkeiten). | fertig wenn: klare Hinweise + automatische Installation.
-- [ ] START-09: Safe-Mode (schreibgeschützt) beim Start. | fertig wenn: Start ohne Schreibzugriffe möglich.
-- [ ] START-10: Sandbox-Modus (virtuelle Umgebung) implementieren. | fertig wenn: Start in isolierter Umgebung.
 - [x] START-11: Ampelstatus + Fortschrittsanzeige beim Start. | fertig wenn: Ampel/Fortschritt sichtbar.
 
 ### Hauptfenster & Module
@@ -270,14 +274,12 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [ ] DATA-03: Versionierung pro Modul + Änderungsverläufe. | fertig wenn: Historie sichtbar.
 - [ ] DATA-04: Automatische Pflege von baumstruktur.txt/manifest.json/dummy_register.json. | fertig wenn: Dateien automatisch aktualisiert.
 - [ ] DATA-05: Dateinamen-Suffix-Standards implementieren. | fertig wenn: Endungen folgen Standard.
-- [ ] DATA-06: Trennung von Systemlogik und variablen Daten/Configs (Config = Konfiguration). | fertig wenn: klare Ordnertrennung umgesetzt.
 
 ### UX & Barrierefreiheit
 - [ ] UX-01: Barrierefreiheits-Set ergänzen (Kontrast, ARIA, Tastatur). | fertig wenn: Checkliste erfüllt.
 - [ ] UX-02: Großbutton-UI realisieren (Großbutton = große Schaltflächen). | fertig wenn: große Buttons nutzbar.
 - [x] UX-03: Hilfetexte direkt in der GUI integrieren. | fertig wenn: Hilfe pro Ansicht.
 - [ ] UX-04: Farbiges Sofort-Feedbacksystem (Erfolg/Fehler). | fertig wenn: klare Farben.
-- [ ] UX-05: Perfektes Farb- und Kontrastverhalten mit mehreren Themes. | fertig wenn: Themes dokumentiert.
 - [ ] UX-10: Grundtheme + Trash-Design implementieren. | fertig wenn: Basis-Theme + Papierkorb-Design vorhanden.
 - [ ] UX-11: Basis-Iconset und Branding einfügen. | fertig wenn: Icons + Branding konsistent.
 

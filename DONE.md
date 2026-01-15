@@ -119,6 +119,9 @@
 - Start: Start-Routine nutzt Self-Repair und zeigt klaren Hinweis.
 - Doku: START-03/05/06/07 in TODO.md und todo.txt als erledigt synchronisiert.
 - Doku: Fortschritt und Auto-Status aktualisiert.
+- Qualität: Modulverbund-Checks prüfen Modulnamen gegen Manifest-Namen.
+- Tests: Modulverbund-Checks mit Namens-Mismatch-Test ergänzt.
+- Doku: TODO.md Dubletten für START-09/10, DATA-06 und UX-05 bereinigt.
 
 ## 2026-01-16
 - Doku: PROJEKT_INFO um Automatik, Barrierefreiheit und Laienhinweise ergänzt.

@@ -12,7 +12,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Start-Routine zeigt Fortschritt in Prozent je Schritt.
 - Launcher listet Module aus `config/modules.json` übersichtlich auf.
 - Modul-Check prüft registrierte Module über `config/modules.json`.
-- Modulverbund-Checks prüfen Selftests, Manifest-IDs und Modul-Konsistenz.
+- Modulverbund-Checks prüfen Selftests, Manifest-IDs, Modulnamen und Modul-Konsistenz.
 - GUI-Launcher führt beim Aktualisieren zusätzlich den Modul-Check aus und meldet Probleme direkt in der Übersicht.
 - GUI-Launcher nutzt zusätzliche Themes und sichtbare Fokusrahmen für bessere Tastaturbedienung.
 - GUI-Launcher zeigt eine Statuszeile inkl. Busy-Hinweis bei längeren Aktionen.
@@ -80,8 +80,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 <!-- AUTO-STATUS:START -->
 **Auto-Status (aktualisiert: 2026-01-15)**
 
-- Gesamt: 101 Tasks
-- Erledigt: 101 Tasks
+- Gesamt: 105 Tasks
+- Erledigt: 105 Tasks
 - Offen: 0 Tasks
 - Fortschritt: 100,00 %
 <!-- AUTO-STATUS:END -->
