@@ -1,5 +1,11 @@
 # DONE
 
+## 2026-02-12
+- Start: PIN-Login-Konfigurationscheck stabilisiert (kein Abbruch durch TypeError).
+- Dashboard: Design und Layout an Design_und_Layoutvorgabe angepasst (Topbar, Panels, Farben).
+- Dashboard: Zeitachse optisch an Vorlage angepasst (Gradient, Marker, Panel-Look).
+- UI: Hintergrund/Glas-Layer mit Sternenoptik und Kontrast verfeinert.
+
 ## 2026-02-11
 - Abschluss: End-Audit-Check mit Release-Status in der GUI ergänzt.
 - IO: Selektiver Export als ZIP inkl. Presets und Launcher-Aktion ergänzt.

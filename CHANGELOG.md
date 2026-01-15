@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased] – 2026-02-11
+## [Unreleased] – 2026-02-12
 - Automatisch ergänzt: REL-01: .deb-Paket bauen.
 - Automatisch ergänzt: REL-02: Offizielles Icon-Set (Provoware-Look) integrieren.
 - Automatisch ergänzt: REL-04: ZIP-Auto-Export alle fünf Entwicklungsschritte.
@@ -14,6 +14,9 @@
 - IO: Export-Center für JSON/TXT/PDF/ZIP ergänzt (inkl. Launcher-Start).
 - IO: Backup-Center mit ZIP-Sicherungen in der GUI integriert.
 - GUI: Hilfe- und Entwicklerbereich flexibler angeordnet und erweitert.
+- Start: PIN-Login-Konfigurationscheck stabilisiert (kein TypeError beim Start).
+- Dashboard: Layout, Farben und Hintergrund an Design_und_Layoutvorgabe angepasst.
+- Dashboard: Zeitachse mit kräftigerem Gradient und Glas-Panel-Stil überarbeitet.
 
 ## [0.1.53] – 2026-02-09
 - Release: AppImage-Builder mit integriertem Self-Check ergänzt.

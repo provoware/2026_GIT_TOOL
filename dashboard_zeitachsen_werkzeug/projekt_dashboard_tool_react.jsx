@@ -105,18 +105,18 @@ const TYPE_META: Record<EntryType, TypeMeta> = {
   Fund: {
     label: "Fund",
     key: "Fund",
-    chip: "bg-blue-600/25 border-blue-400/35 text-blue-100 hover:bg-blue-600/30",
-    glow: "shadow-[0_0_24px_rgba(59,130,246,0.35)]",
-    ring: "ring-blue-400/45",
+    chip: "bg-blue-500/30 border-blue-300/40 text-blue-100 hover:bg-blue-500/40",
+    glow: "shadow-[0_0_28px_rgba(59,130,246,0.45)]",
+    ring: "ring-blue-300/50",
     icon: <span aria-hidden className="inline-block size-2.5 rounded-sm bg-blue-400/90" />,
   },
   Studie: {
     label: "Studie",
     key: "Studie",
     chip:
-      "bg-emerald-600/25 border-emerald-400/35 text-emerald-100 hover:bg-emerald-600/30",
-    glow: "shadow-[0_0_24px_rgba(16,185,129,0.35)]",
-    ring: "ring-emerald-400/45",
+      "bg-emerald-500/30 border-emerald-300/40 text-emerald-100 hover:bg-emerald-500/40",
+    glow: "shadow-[0_0_28px_rgba(16,185,129,0.45)]",
+    ring: "ring-emerald-300/50",
     icon: (
       <span aria-hidden className="inline-block size-2.5 rounded-sm bg-emerald-400/90" />
     ),
@@ -125,17 +125,17 @@ const TYPE_META: Record<EntryType, TypeMeta> = {
     label: "Theorie",
     key: "Theorie",
     chip:
-      "bg-amber-600/25 border-amber-400/35 text-amber-100 hover:bg-amber-600/30",
-    glow: "shadow-[0_0_24px_rgba(245,158,11,0.35)]",
-    ring: "ring-amber-400/45",
+      "bg-amber-500/30 border-amber-300/40 text-amber-100 hover:bg-amber-500/40",
+    glow: "shadow-[0_0_28px_rgba(245,158,11,0.45)]",
+    ring: "ring-amber-300/50",
     icon: <span aria-hidden className="inline-block size-2.5 rounded-sm bg-amber-400/90" />,
   },
   Quelle: {
     label: "Quelle",
     key: "Quelle",
-    chip: "bg-rose-600/25 border-rose-400/35 text-rose-100 hover:bg-rose-600/30",
-    glow: "shadow-[0_0_24px_rgba(244,63,94,0.35)]",
-    ring: "ring-rose-400/45",
+    chip: "bg-rose-500/30 border-rose-300/40 text-rose-100 hover:bg-rose-500/40",
+    glow: "shadow-[0_0_28px_rgba(244,63,94,0.45)]",
+    ring: "ring-rose-300/50",
     icon: <span aria-hidden className="inline-block size-2.5 rounded-sm bg-rose-400/90" />,
   },
 };
@@ -499,8 +499,8 @@ function GlassCard({
     <Comp
       aria-label={ariaLabel}
       className={classNames(
-        "rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl",
-        "shadow-[0_20px_70px_rgba(0,0,0,0.55)]",
+        "rounded-2xl border border-white/12 bg-slate-950/45 backdrop-blur-2xl",
+        "shadow-[0_22px_65px_rgba(0,0,0,0.6)] ring-1 ring-white/8",
         className
       )}
     >
@@ -541,9 +541,9 @@ function IconButton({
       aria-current={ariaCurrent ? "page" : undefined}
       onClick={onClick}
       className={classNames(
-        "inline-flex items-center justify-center rounded-xl border border-white/10",
-        "bg-white/5 hover:bg-white/8 active:bg-white/10",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80",
+        "inline-flex items-center justify-center rounded-xl border border-white/12",
+        "bg-slate-900/45 hover:bg-slate-900/60 active:bg-slate-900/70",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90",
         "transition",
         active && "bg-blue-500/15 border-blue-300/25",
         className
@@ -576,8 +576,8 @@ function ChipToggle({
         "inline-flex items-center gap-2 rounded-xl border px-3",
         dense ? "py-1.5 text-xs" : "py-2 text-sm",
         "transition",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80",
-        pressed ? meta.chip : "bg-white/5 border-white/10 text-white/80 hover:bg-white/8"
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90",
+        pressed ? meta.chip : "bg-slate-900/45 border-white/12 text-white/80 hover:bg-slate-900/60"
       )}
     >
       <span className="inline-flex items-center">{meta.icon}</span>
@@ -626,9 +626,9 @@ function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
     <input
       {...props}
       className={classNames(
-        "w-full rounded-xl border border-white/12 bg-black/25 px-3 py-2 text-sm text-white/92",
+        "w-full rounded-xl border border-white/15 bg-slate-950/60 px-3 py-2 text-sm text-white/92",
         "placeholder:text-white/40",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90",
         "transition",
         props.className
       )}
@@ -641,9 +641,9 @@ function TextArea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
     <textarea
       {...props}
       className={classNames(
-        "w-full rounded-xl border border-white/12 bg-black/25 px-3 py-2 text-sm text-white/92",
+        "w-full rounded-xl border border-white/15 bg-slate-950/60 px-3 py-2 text-sm text-white/92",
         "placeholder:text-white/40",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90",
         "transition",
         props.className
       )}
@@ -671,7 +671,7 @@ function Select({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         aria-describedby={describedBy}
-        className="w-full appearance-none rounded-xl border border-white/12 bg-black/25 px-3 py-2 pr-10 text-sm text-white/92 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+        className="w-full appearance-none rounded-xl border border-white/15 bg-slate-950/60 px-3 py-2 pr-10 text-sm text-white/92 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value} className="bg-zinc-900">
@@ -700,9 +700,9 @@ function SidebarNav({
     <aside
       aria-label="Seitenleiste"
       className={classNames(
-        "w-[92px] shrink-0",
-        "rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl",
-        "shadow-[0_20px_70px_rgba(0,0,0,0.55)]",
+        "w-[88px] shrink-0",
+        "rounded-2xl border border-white/12 bg-slate-950/45 backdrop-blur-2xl",
+        "shadow-[0_22px_65px_rgba(0,0,0,0.6)] ring-1 ring-white/8",
         "overflow-hidden"
       )}
     >
@@ -787,9 +787,9 @@ function SideItem({
       aria-current={active ? "page" : undefined}
       onClick={onClick}
       className={classNames(
-        "group w-full rounded-2xl border border-white/10 bg-white/5",
-        "hover:bg-white/8 active:bgwhite/10",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80",
+        "group w-full rounded-2xl border border-white/12 bg-slate-900/45",
+        "hover:bg-slate-900/60 active:bg-slate-900/70",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90",
         "transition",
         active && "bg-blue-500/15 border-blue-300/25"
       )}
@@ -840,7 +840,7 @@ function StatusPill({
       role="status"
       aria-live="polite"
       className={classNames(
-        "hidden md:inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5",
+        "hidden md:inline-flex items-center gap-2 rounded-xl border border-white/12 bg-slate-900/45",
         "px-3 py-2 text-xs text-white/75"
       )}
     >
@@ -864,6 +864,7 @@ function TopBar({
   onSearch,
   onOpenData,
   onOpenHelp,
+  onCreateProject,
   saving,
   lastSavedAt,
 }: {
@@ -874,6 +875,7 @@ function TopBar({
   onSearch: (v: string) => void;
   onOpenData: () => void;
   onOpenHelp: () => void;
+  onCreateProject: () => void;
   saving: boolean;
   lastSavedAt: number | null;
 }) {
@@ -882,8 +884,8 @@ function TopBar({
   return (
     <header
       className={classNames(
-        "rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl",
-        "shadow-[0_20px_70px_rgba(0,0,0,0.55)]",
+        "rounded-2xl border border-white/12 bg-slate-950/45 backdrop-blur-2xl",
+        "shadow-[0_22px_65px_rgba(0,0,0,0.6)] ring-1 ring-white/8",
         "px-4 py-3"
       )}
     >
@@ -896,10 +898,10 @@ function TopBar({
             onClick={() => onView("Alle Einträge")}
             className={classNames(
               "inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90",
               view === "Alle Einträge"
-                ? "border-blue-300/25 bg-blue-500/15 text-blue-100"
-                : "border-white/10 bg-white/5 text-white/80 hover:bg-white/8"
+                ? "border-blue-300/25 bg-blue-500/20 text-blue-100"
+                : "border-white/12 bg-slate-900/45 text-white/80 hover:bg-slate-900/60"
             )}
           >
             <User className="h-4 w-4" aria-hidden />
@@ -910,10 +912,10 @@ function TopBar({
             onClick={() => onView("Filter")}
             className={classNames(
               "inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90",
               view === "Filter"
-                ? "border-white/15 bg-white/8 text-white/92"
-                : "border-white/10 bg-white/5 text-white/80 hover:bg-white/8"
+                ? "border-white/20 bg-slate-900/60 text-white/92"
+                : "border-white/12 bg-slate-900/45 text-white/80 hover:bg-slate-900/60"
             )}
           >
             <Filter className="h-4 w-4" aria-hidden />
@@ -937,9 +939,9 @@ function TopBar({
             onChange={(e) => onSearch(e.target.value)}
             placeholder="Suche: Titel, Kategorie, Kommentar, URL"
             className={classNames(
-              "w-full rounded-xl border border-white/12 bg-black/25 pl-10 pr-3 py-2 text-sm text-white/92",
+              "w-full rounded-xl border border-white/15 bg-slate-950/60 pl-10 pr-3 py-2 text-sm text-white/92",
               "placeholder:text-white/40",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90"
             )}
           />
         </div>
@@ -949,11 +951,23 @@ function TopBar({
         <div className="flex items-center gap-2">
           <button
             type="button"
+            onClick={onCreateProject}
+            className={classNames(
+              "inline-flex items-center gap-2 rounded-xl border border-white/12",
+              "bg-blue-500/25 px-3 py-2 text-sm text-blue-100 hover:bg-blue-500/35",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90"
+            )}
+          >
+            <Plus className="h-4 w-4" aria-hidden />
+            Projekt
+          </button>
+          <button
+            type="button"
             onClick={onOpenHelp}
             className={classNames(
-              "inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5",
-              "px-3 py-2 text-sm text-white/85 hover:bg-white/8",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+              "inline-flex items-center gap-2 rounded-xl border border-white/12 bg-slate-900/45",
+              "px-3 py-2 text-sm text-white/85 hover:bg-slate-900/60",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90"
             )}
           >
             <Info className="h-4 w-4" aria-hidden />
@@ -964,9 +978,9 @@ function TopBar({
             type="button"
             onClick={onOpenData}
             className={classNames(
-              "inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5",
-              "px-3 py-2 text-sm text-white/85 hover:bg-white/8",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+              "inline-flex items-center gap-2 rounded-xl border border-white/12 bg-slate-900/45",
+              "px-3 py-2 text-sm text-white/85 hover:bg-slate-900/60",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90"
             )}
           >
             <Download className="h-4 w-4" aria-hidden />
@@ -1644,10 +1658,10 @@ function RightFilterPanel({
               onClick={() => onTagMode("Alle")}
               className={classNames(
                 "inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold",
-                "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90",
                 tagMode === "Alle"
-                  ? "border-blue-300/25 bg-blue-500/15 text-blue-100"
-                  : "border-white/10 bg-white/5 text-white/80 hover:bg-white/8"
+                  ? "border-blue-300/25 bg-blue-500/20 text-blue-100"
+                  : "border-white/12 bg-slate-900/45 text-white/80 hover:bg-slate-900/60"
               )}
             >
               <Plus className="h-3.5 w-3.5" aria-hidden />
@@ -1662,10 +1676,10 @@ function RightFilterPanel({
                 onClick={() => onTagMode(t)}
                 className={classNames(
                   "inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90",
                   tagMode === t
                     ? TYPE_META[t].chip
-                    : "border-white/10 bg-white/5 text-white/80 hover:bg-white/8"
+                    : "border-white/12 bg-slate-900/45 text-white/80 hover:bg-slate-900/60"
                 )}
               >
                 <span aria-hidden className="text-white/65">
@@ -1690,22 +1704,22 @@ function RightFilterPanel({
               onChange={(e) => onSearch(e.target.value)}
               placeholder="Suche"
               className={classNames(
-                "w-full rounded-xl border border-white/12 bg-black/25 pl-10 pr-3 py-2 text-sm text-white/92",
+                "w-full rounded-xl border border-white/15 bg-slate-950/60 pl-10 pr-3 py-2 text-sm text-white/92",
                 "placeholder:text-white/40",
-                "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90"
               )}
             />
           </div>
         </div>
       </div>
 
-      <div className="border-t border-white/10 p-2">
+      <div className="border-t border-white/12 p-2">
         <button
           type="button"
           className={classNames(
             "ml-auto flex w-full items-center justify-center rounded-xl",
-            "border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/80",
-            "hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+            "border border-white/12 bg-slate-900/45 px-3 py-2 text-sm text-white/80",
+            "hover:bg-slate-900/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90"
           )}
           aria-label="Panel einklappen (Platzhalter)"
           disabled
@@ -1730,11 +1744,11 @@ function CenterHeaderArea({
     <GlassCard className="h-full p-0" ariaLabel="Übersicht und Filterchips">
       <div className="p-4">
         <div className="flex items-center gap-3">
-          <div className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/85">
+          <div className="inline-flex items-center gap-2 rounded-xl border border-white/12 bg-slate-900/50 px-3 py-2 text-sm text-white/85">
             <span className="font-semibold">Filter</span>
             <span aria-hidden className="text-white/45">▾</span>
           </div>
-          <div className="ml-2 flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/75">
+          <div className="ml-2 flex items-center gap-2 rounded-xl border border-white/12 bg-slate-900/50 px-3 py-2 text-sm text-white/75">
             <span aria-hidden>☰</span>
             <span aria-hidden className="text-white/45">▾</span>
           </div>
@@ -1813,7 +1827,7 @@ function Timeline({
   }
 
   const gradientLine =
-    "bg-[linear-gradient(90deg,rgba(59,130,246,0.75),rgba(16,185,129,0.75),rgba(245,158,11,0.75),rgba(244,63,94,0.75))]";
+    "bg-[linear-gradient(90deg,rgba(59,130,246,0.8),rgba(16,185,129,0.8),rgba(245,158,11,0.8),rgba(244,63,94,0.8))] shadow-[0_0_24px_rgba(96,165,250,0.45)]";
 
   return (
     <GlassCard className="p-0" ariaLabel="Zeitachse">
@@ -1823,7 +1837,7 @@ function Timeline({
             <button
               type="button"
               onClick={() => moveMonth(-12)}
-              className="rounded-xl border border-white/10 bg-white/5 px-2 py-2 text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+              className="rounded-xl border border-white/12 bg-slate-900/45 px-2 py-2 text-white/85 hover:bg-slate-900/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90"
               aria-label="Ein Jahr zurück"
             >
               <ChevronsLeft className="h-4 w-4" aria-hidden />
@@ -1831,7 +1845,7 @@ function Timeline({
             <button
               type="button"
               onClick={() => moveMonth(-1)}
-              className="rounded-xl border border-white/10 bg-white/5 px-2 py-2 text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+              className="rounded-xl border border-white/12 bg-slate-900/45 px-2 py-2 text-white/85 hover:bg-slate-900/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90"
               aria-label="Vormonat"
             >
               <ChevronLeft className="h-4 w-4" aria-hidden />
@@ -1846,7 +1860,7 @@ function Timeline({
             <button
               type="button"
               onClick={() => moveMonth(1)}
-              className="rounded-xl border border-white/10 bg-white/5 px-2 py-2 text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+              className="rounded-xl border border-white/12 bg-slate-900/45 px-2 py-2 text-white/85 hover:bg-slate-900/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90"
               aria-label="Nächster Monat"
             >
               <ChevronRight className="h-4 w-4" aria-hidden />
@@ -1854,7 +1868,7 @@ function Timeline({
             <button
               type="button"
               onClick={() => moveMonth(12)}
-              className="rounded-xl border border-white/10 bg-white/5 px-2 py-2 text-white/85 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+              className="rounded-xl border border-white/12 bg-slate-900/45 px-2 py-2 text-white/85 hover:bg-slate-900/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90"
               aria-label="Ein Jahr vor"
             >
               <ChevronsRight className="h-4 w-4" aria-hidden />
@@ -1862,7 +1876,7 @@ function Timeline({
           </div>
         </div>
 
-        <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-4">
+        <div className="mt-4 rounded-2xl border border-white/12 bg-slate-950/55 p-4">
           <div className="flex flex-wrap items-center gap-3 text-xs text-white/65" id={controlsId}>
             <span className="font-semibold text-white/85">Ansicht</span>
             <label className="flex items-center gap-2">
@@ -1875,7 +1889,7 @@ function Timeline({
                 value={safeZoom}
                 onChange={(event) => updateZoom(Number(event.target.value))}
                 aria-label="Zoom der Zeitachse"
-                className="h-1.5 w-28 accent-amber-300"
+                className="h-1.5 w-28 accent-amber-200"
               />
               <span className="tabular-nums text-white/80">{Math.round(safeZoom * 100)}%</span>
             </label>
@@ -1889,7 +1903,7 @@ function Timeline({
                 value={safeSpacing}
                 onChange={(event) => updateSpacing(Number(event.target.value))}
                 aria-label="Abstand zwischen den Einträgen"
-                className="h-1.5 w-28 accent-amber-300"
+                className="h-1.5 w-28 accent-amber-200"
               />
               <span className="tabular-nums text-white/80">{Math.round(safeSpacing * 100)}%</span>
             </label>
@@ -1899,7 +1913,7 @@ function Timeline({
                 updateZoom(1);
                 updateSpacing(1);
               }}
-              className="rounded-lg border border-white/10 bg-white/6 px-2 py-1 text-white/80 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+              className="rounded-lg border border-white/12 bg-slate-900/50 px-2 py-1 text-white/80 hover:bg-slate-900/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950/90"
             >
               Standard
             </button>
@@ -1909,8 +1923,8 @@ function Timeline({
           <div className="mt-4 overflow-x-auto pb-2" aria-describedby={controlsId}>
             <div className="relative min-w-[520px]" style={{ height: `${laneHeight}px`, width: trackWidth }}>
               <div className="absolute left-2 right-2 top-1/2 -translate-y-1/2">
-                <div className={classNames("h-[3px] rounded-full", gradientLine)} />
-                <div className="mt-2 h-[1px] w-full bg-white/10" />
+                <div className={classNames("h-[4px] rounded-full", gradientLine)} />
+                <div className="mt-2 h-[1px] w-full bg-white/12" />
               </div>
 
               <div className="absolute inset-0" role="list" aria-label="Zeitachse mit Einträgen" aria-describedby={detailId}>
@@ -1972,7 +1986,7 @@ function Timeline({
                           <div
                             className={classNames(
                               "min-w-[180px] max-w-[260px] rounded-xl border",
-                              "bg-white/8 backdrop-blur-xl",
+                              "bg-slate-900/60 backdrop-blur-2xl",
                               "px-3 py-2",
                               "shadow-[0_18px_55px_rgba(0,0,0,0.55)]",
                               "ring-1",
@@ -2567,8 +2581,8 @@ export default function ProjektDashboardTool() {
       ({
         "--page-bg":
           resolvedTheme === "dunkel"
-            ? "radial-gradient(1200px 800px at 20% 10%, rgba(96,165,250,0.18), transparent 55%), radial-gradient(900px 700px at 80% 70%, rgba(244,63,94,0.16), transparent 55%), radial-gradient(1000px 800px at 55% 40%, rgba(16,185,129,0.10), transparent 60%), linear-gradient(180deg, rgba(9,9,11,1), rgba(2,6,23,1))"
-            : "radial-gradient(1000px 700px at 15% 15%, rgba(191,219,254,0.45), transparent 60%), radial-gradient(900px 600px at 85% 65%, rgba(252,231,243,0.35), transparent 55%), linear-gradient(180deg, rgba(15,23,42,1), rgba(2,6,23,1))",
+            ? "radial-gradient(1200px 820px at 18% 8%, rgba(59,130,246,0.26), transparent 55%), radial-gradient(980px 780px at 82% 76%, rgba(244,63,94,0.22), transparent 55%), radial-gradient(900px 700px at 55% 38%, rgba(16,185,129,0.16), transparent 60%), linear-gradient(180deg, rgba(8,10,20,1), rgba(3,6,16,1))"
+            : "radial-gradient(1000px 720px at 15% 12%, rgba(191,219,254,0.5), transparent 60%), radial-gradient(900px 650px at 85% 68%, rgba(252,231,243,0.38), transparent 55%), linear-gradient(180deg, rgba(15,23,42,1), rgba(2,6,23,1))",
       }) as React.CSSProperties,
     [resolvedTheme]
   );
@@ -2949,6 +2963,15 @@ export default function ProjektDashboardTool() {
             "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"220\" height=\"220\"><filter id=\"n\"><feTurbulence type=\"fractalNoise\" baseFrequency=\"0.85\" numOctaves=\"3\" stitchTiles=\"stitch\"/></filter><rect width=\"220\" height=\"220\" filter=\"url(%23n)\" opacity=\"0.45\"/></svg>')",
         }}
       />
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 opacity-[0.12]"
+        style={{
+          backgroundImage:
+            "radial-gradient(rgba(255,255,255,0.35) 1px, transparent 1px)",
+          backgroundSize: "160px 160px",
+        }}
+      />
 
       <a
         href={`#${mainId}`}
@@ -2974,6 +2997,10 @@ export default function ProjektDashboardTool() {
               onSearch={setSearch}
               onOpenData={() => setOpenData(true)}
               onOpenHelp={() => setOpenHelp(true)}
+              onCreateProject={() => {
+                setOpenData(true);
+                announce("Projekt-Optionen geöffnet.");
+              }}
               saving={saving}
               lastSavedAt={lastSavedAt}
             />

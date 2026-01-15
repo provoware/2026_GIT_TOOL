@@ -33,6 +33,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - GUI-Launcher zeigt Fehler-Simulationen mit klaren Hinweisen.
 - Timeline-Tool bietet responsive Zeitachse mit Zoom, Abstandregler und Hover-Details.
 - Timeline-Tool verbessert Lesbarkeit und ergänzt ARIA-Texte sowie Tastaturhinweise.
+- Dashboard-Layout ist an Design_und_Layoutvorgabe angepasst (Topbar, Panels, Hintergrund).
+- Timeline-Look ist an die Designvorlage angeglichen (Gradient, Marker, Glas-Look).
 - Kontrastprüfung für Launcher-Themes ist dokumentiert und automatisch testbar.
 - Download-Ordner-Aufräum-Modul bietet Scan, Plan, Undo und Protokoll.
 - Datei-Suche-Modul bietet Filter, Organisation und Undo.
@@ -73,6 +75,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Start-Routine prüft GUI-Voraussetzungen (Tkinter) vor dem GUI-Start.
 - Start-Routine startet den GUI-Launcher automatisch nach erfolgreichen Checks.
 - Start-Routine prüft optional den PIN-Login (config/pin.json), wenn der PIN-Check aktiv ist.
+- PIN-Login-Konfigurationscheck ist stabilisiert, sodass kein TypeError den Start stoppt.
 - Struktur-Check prüft die Trennung von Systemlogik, Config und Daten.
 - System-Scan kann als Vorabprüfung ohne Schreibzugriffe laufen.
 - Standards-Viewer zeigt interne Standards und Styleguide per CLI an.
@@ -99,12 +102,12 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Autosave schreibt Sicherungen in data/autosave/ und protokolliert nach logs/autosave.log.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-02-11)**
+**Auto-Status (aktualisiert: 2026-01-15)**
 
-- Gesamt: 157 Tasks
-- Erledigt: 157 Tasks
-- Offen: 0 Tasks
-- Fortschritt: 100 %
+- Gesamt: 165 Tasks
+- Erledigt: 161 Tasks
+- Offen: 4 Tasks
+- Fortschritt: 97,58 %
 <!-- AUTO-STATUS:END -->
 
 ## Struktur (aktuell)
