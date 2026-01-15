@@ -19,6 +19,7 @@ from src.core.data_model import (
     parse_iso_date,
 )
 from src.core.todo_parser import TodoFormatError, parse_todo_line
+from system.permission_guard import PermissionGuardError, require_write_access
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CONFIG_PATH = REPO_ROOT / "config" / "todo_kalender.json"
@@ -36,13 +37,16 @@ class ModuleConfig:
 
 
 def init(context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    config = load_config(context)
-    ensure_data_file(config.data_path)
-    return build_response(
-        status="ok",
-        message="Modul initialisiert. Datenablage ist bereit.",
-        data={"data_path": str(config.data_path)},
-    )
+    try:
+        config = load_config(context)
+        ensure_data_file(config.data_path)
+        return build_response(
+            status="ok",
+            message="Modul initialisiert. Datenablage ist bereit.",
+            data={"data_path": str(config.data_path)},
+        )
+    except (ModuleError, PermissionGuardError) as exc:
+        return build_response(status="error", message=str(exc), data={})
 
 
 def run(input_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -91,7 +95,13 @@ def run(input_data: Dict[str, Any]) -> Dict[str, Any]:
             )
         else:
             raise ModuleError("Unbekannte Aktion.")
-    except (ModuleError, DataModelError, TodoFormatError, FileNotFoundError) as exc:
+    except (
+        ModuleError,
+        DataModelError,
+        TodoFormatError,
+        FileNotFoundError,
+        PermissionGuardError,
+    ) as exc:
         response = build_response(status="error", message=str(exc), data={})
 
     validateOutput(response)
@@ -163,6 +173,7 @@ def load_config(context: Optional[Dict[str, Any]] = None) -> ModuleConfig:
 def ensure_data_file(data_path: Path) -> None:
     data_path.parent.mkdir(parents=True, exist_ok=True)
     if not data_path.exists():
+        require_write_access(Path(__file__), data_path, "To-Do-Daten anlegen")
         data_path.write_text(json.dumps({"items": []}, indent=2), encoding="utf-8")
 
 
@@ -179,6 +190,7 @@ def load_items(data_path: Path) -> List[TodoItem]:
 def save_items(data_path: Path, items: Iterable[TodoItem]) -> None:
     ensure_data_file(data_path)
     data = {"items": [item.to_dict() for item in items]}
+    require_write_access(Path(__file__), data_path, "To-Do-Daten speichern")
     data_path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
     if not data_path.exists():
         raise ModuleError("Daten konnten nicht geschrieben werden.")

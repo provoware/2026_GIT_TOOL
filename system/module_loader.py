@@ -6,6 +6,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict
 
+from event_bus import EVENT_BUS
+
 
 class ModuleLoaderError(ValueError):
     pass
@@ -46,6 +48,10 @@ class ModuleLoader:
         except Exception:
             sys.modules.pop(module_id, None)
             raise
+        module.EVENT_BUS = EVENT_BUS
+        if hasattr(module, "on_event") and callable(getattr(module, "on_event")):
+            EVENT_BUS.subscribe("*", module.on_event)
+        EVENT_BUS.emit("module_loaded", {"module_id": module_id, "entry": str(entry_path)})
         self._cache[cache_key] = module
         return module
 

@@ -13,12 +13,12 @@ Dieses Projekt ist ein sauberer Neuaufbau mit Fokus auf Robustheit, Nachvollzieh
 - Komfortfunktionen wie globale Suche, Favoritenleiste, Mini-Panels und Auto-Theming sind umgesetzt.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-02-09)**
+**Auto-Status (aktualisiert: 2026-01-15)**
 
-- Gesamt: 149 Tasks
-- Erledigt: 149 Tasks
-- Offen: 0 Tasks
-- Fortschritt: 100,00 %
+- Gesamt: 157 Tasks
+- Erledigt: 153 Tasks
+- Offen: 4 Tasks
+- Fortschritt: 97,45 %
 <!-- AUTO-STATUS:END -->
 
 ## Ziele (in Arbeit)
@@ -38,6 +38,8 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 - `./scripts/system_scan.sh` (System-Scan = Vorabprüfung ohne Schreiben)
 - `./scripts/run_tests.sh` (Tests + Codequalität = automatische Prüfung von Funktionen und Stil)
 - `python system/diagnostics_runner.py` (Diagnose = Tests und Codequalität mit Zusammenfassung)
+- `python system/end_audit.py` (End-Audit = Release-Status prüfen)
+- `python system/selective_exporter.py --preset support_pack` (Selektiver Export = Teil-Export als ZIP)
 - `./scripts/update_docs.sh` (Doku-Update = Auto-Status in README/DEV_DOKU aktualisieren)
 - `./scripts/update_records.sh` (Changelog-Automatik = DONE/CHANGELOG aus todo.txt aktualisieren)
 - `./scripts/update_structure.sh` (Strukturpflege = Baumstruktur/Manifest/Register aktualisieren)
@@ -53,6 +55,7 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 - **Test-Automatik** startet Tests automatisch nach einer abgeschlossenen Runde (4 erledigte Tasks).
 - **Modulverbund-Checks** prüfen konsistente Moduleinträge, Selftests und Manifest-IDs.
 - **Codequalität & Formatierung** laufen automatisch über Ruff (Linting = Regelprüfung) und Black (Formatierung).
+- **End-Audit** zeigt den Release-Status inkl. offener Hinweise.
 
 ## Architektur & Struktur (umgesetzt)
 - **Plugin-System** mit Registry (Registry = zentrale Modul-Liste) ist aktiv.
@@ -80,6 +83,7 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 ## Robustheit & Self-Repair
 - Der Health-Check kann fehlende Dateien/Ordner automatisch anlegen.
 - Rechteprobleme (Lesen/Ausführen) werden bei Self-Repair automatisch korrigiert.
+- Safe-Mode setzt Schreibschutz für Module (read-only = schreibgeschützt).
 - Tipp: `python system/health_check.py --root . --self-repair` (Self-Repair = Selbstreparatur).
 
 ## Modul-API (Typen/Verträge)

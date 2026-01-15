@@ -10,11 +10,17 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
-Nächste 4 kleinste Aufgaben (Runde 2026-02-10) – offen
-[ ] END-02: End-Audit-Check (Release-Status) integrieren. | fertig wenn: Audit sichtbar.
-[ ] IO-05: Selektive Exporte aktivieren. | fertig wenn: Teil-Exporte möglich.
-[ ] FLOW-04: Globales Event-/Signal-System. | fertig wenn: Module reagieren konsistent.
-[ ] FLOW-05: Rechte- und Schreibschutzsystem. | fertig wenn: Schutz aktiv.
+Nächste 4 kleinste Aufgaben (Runde 2026-02-11) – offen
+[ ] FLOW-01: Globales Drag-and-Drop (Dateien/Module). | fertig wenn: Ziehen funktioniert.
+[ ] FLOW-02: Undo-/Redo-System global. | fertig wenn: Rückgängig möglich.
+[ ] IO-01: Exportcenter (JSON, TXT, PDF, ZIP) implementieren. | fertig wenn: Exporte laufen.
+[ ] IO-02: Backup-System vollständig integrieren. | fertig wenn: Sicherungen laufen.
+
+Nächste 4 kleinste Aufgaben (Runde 2026-02-10) – erledigt
+[x] END-02: End-Audit-Check (Release-Status) integrieren. | fertig wenn: Audit sichtbar.
+[x] IO-05: Selektive Exporte aktivieren. | fertig wenn: Teil-Exporte möglich.
+[x] FLOW-04: Globales Event-/Signal-System. | fertig wenn: Module reagieren konsistent.
+[x] FLOW-05: Rechte- und Schreibschutzsystem. | fertig wenn: Schutz aktiv.
 
 Nächste 4 kleinste Aufgaben (Runde 2026-02-09) – erledigt
 [x] REL-03: One-File-Distribution (AppImage/PyInstaller). | fertig wenn: Ein-Datei-Build.

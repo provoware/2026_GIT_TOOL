@@ -23,6 +23,23 @@ class QualityChecksTests(unittest.TestCase):
             (root / "config" / "modules.json").write_text(
                 json.dumps({"modules": []}), encoding="utf-8"
             )
+            (root / "config" / "selective_export.json").write_text(
+                json.dumps(
+                    {
+                        "default_preset": "logs_only",
+                        "output_dir": "data/exports",
+                        "base_name": "selective_export",
+                        "presets": {
+                            "logs_only": {
+                                "label": "Nur Logs",
+                                "includes": ["logs"],
+                                "excludes": [],
+                            }
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
             report = qa_checks.check_release_files(root)
             self.assertEqual("rot", report.traffic_light)
             self.assertTrue(report.issues)

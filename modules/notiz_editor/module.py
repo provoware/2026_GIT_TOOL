@@ -15,6 +15,7 @@ from src.core.data_model import (
     make_note_id,
     parse_iso_datetime,
 )
+from system.permission_guard import PermissionGuardError, require_write_access
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CONFIG_PATH = REPO_ROOT / "config" / "notiz_editor.json"
@@ -40,14 +41,17 @@ class ModuleContext:
 
 
 def init(context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    config = load_config(context)
-    ensure_data_file(config.data_path)
-    return build_response(
-        status="ok",
-        message="Notiz-Editor ist startbereit.",
-        data={"data_path": str(config.data_path)},
-        ui=build_ui(config),
-    )
+    try:
+        config = load_config(context)
+        ensure_data_file(config.data_path)
+        return build_response(
+            status="ok",
+            message="Notiz-Editor ist startbereit.",
+            data={"data_path": str(config.data_path)},
+            ui=build_ui(config),
+        )
+    except (ModuleError, PermissionGuardError) as exc:
+        return build_response(status="error", message=str(exc), data={}, ui={})
 
 
 def run(input_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -57,7 +61,7 @@ def run(input_data: Dict[str, Any]) -> Dict[str, Any]:
         config = load_config(input_data.get("context"))
         notes = load_notes(config.data_path)
         response = handle_action(action, input_data, config, notes)
-    except (ModuleError, DataModelError, FileNotFoundError) as exc:
+    except (ModuleError, DataModelError, FileNotFoundError, PermissionGuardError) as exc:
         response = build_response(status="error", message=str(exc), data={}, ui={})
 
     validateOutput(response)
@@ -239,6 +243,7 @@ def build_ui(config: ModuleConfig) -> Dict[str, Any]:
 def ensure_data_file(data_path: Path) -> None:
     data_path.parent.mkdir(parents=True, exist_ok=True)
     if not data_path.exists():
+        require_write_access(Path(__file__), data_path, "Notizdaten anlegen")
         data_path.write_text(json.dumps({"notes": []}, indent=2), encoding="utf-8")
 
 
@@ -254,6 +259,7 @@ def load_notes(data_path: Path) -> List[NoteEntry]:
 def save_notes(data_path: Path, notes: List[NoteEntry]) -> None:
     ensure_data_file(data_path)
     payload = {"notes": [note.to_dict() for note in notes]}
+    require_write_access(Path(__file__), data_path, "Notizdaten speichern")
     data_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
     if not data_path.exists():
         raise ModuleError("Daten konnten nicht geschrieben werden.")

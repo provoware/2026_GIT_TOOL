@@ -97,12 +97,12 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Autosave schreibt Sicherungen in data/autosave/ und protokolliert nach logs/autosave.log.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-02-09)**
+**Auto-Status (aktualisiert: 2026-01-15)**
 
-- Gesamt: 149 Tasks
-- Erledigt: 149 Tasks
-- Offen: 0 Tasks
-- Fortschritt: 100,00 %
+- Gesamt: 157 Tasks
+- Erledigt: 153 Tasks
+- Offen: 4 Tasks
+- Fortschritt: 97,45 %
 <!-- AUTO-STATUS:END -->
 
 ## Struktur (aktuell)
@@ -304,10 +304,23 @@ Hier nur die wichtigsten Bereiche:
 1. `python system/log_exporter.py`
 2. Optional: `python system/log_exporter.py --logs-dir logs --export-dir data/log_exports`
 
+### Selektiver Export (Teil-Export)
+1. `python system/selective_exporter.py --preset support_pack`
+2. Optional: `python system/selective_exporter.py --preset logs_only`
+3. Presets liegen in `config/selective_export.json` (Preset = vordefinierte Auswahl).
+
 ### ZIP-Auto-Export (Entwicklungsstände)
 1. Die Changelog-Automatik (`./scripts/update_records.sh`) prüft neue erledigte Aufgaben.
 2. Nach jeweils fünf neuen Aufgaben entsteht automatisch ein ZIP-Archiv im Ordner `data/exports/`.
 3. Status wird in `data/zip_export_state.json` gespeichert.
+
+### End-Audit (Release-Status)
+1. `python system/end_audit.py`
+2. Ergebnis zeigt Release-Status (bereit/nicht bereit) und offene Hinweise.
+
+### Rechte & Schreibschutz (Module)
+- Schreibzugriffe werden anhand der Manifest-Rechte geprüft (permissions = Rechte).
+- Safe-Mode setzt `GENREARCHIV_WRITE_MODE=read-only` (read-only = schreibgeschützt).
 
 ### Standards anzeigen (im Tool)
 1. `./scripts/show_standards.sh --list`

@@ -33,6 +33,7 @@ class ModuleManifest:
     name: str
     version: str
     entry: str
+    permissions: tuple[str, ...]
 
 
 class ModuleRegistry:
@@ -78,12 +79,19 @@ def load_manifest(module_dir: Path) -> ModuleManifest:
     name = _require_text(data.get("name"), "manifest.name")
     version = _require_text(data.get("version"), "manifest.version")
     entry = _require_text(data.get("entry"), "manifest.entry")
+    permissions = _require_permissions(data.get("permissions", []), "manifest.permissions")
     if module_dir.name != module_id:
         raise ModuleRegistryError(
             "Manifest: id muss dem Modulordner entsprechen "
             f"({module_dir.name} erwartet, gefunden: {module_id})."
         )
-    return ModuleManifest(module_id=module_id, name=name, version=version, entry=entry)
+    return ModuleManifest(
+        module_id=module_id,
+        name=name,
+        version=version,
+        entry=entry,
+        permissions=permissions,
+    )
 
 
 def resolve_entry_path(module_dir: Path, entry: str) -> Path:
@@ -156,3 +164,19 @@ def _require_module_id(value: object, field: str) -> str:
     if not re.fullmatch(r"[a-z0-9]+(?:_[a-z0-9]+)*", module_id):
         raise ModuleRegistryError(f"{field} muss snake_case sein (z. B. modul_name_1).")
     return module_id
+
+
+def _require_permissions(value: object, field: str) -> tuple[str, ...]:
+    if value is None:
+        return tuple()
+    if not isinstance(value, list):
+        raise ModuleRegistryError(f"{field} ist keine Liste.")
+    entries: List[str] = []
+    for entry in value:
+        if not isinstance(entry, str) or not entry.strip():
+            raise ModuleRegistryError(f"{field} enthält ungültige Einträge.")
+        text = entry.strip().lower()
+        if not re.fullmatch(r"(read|write)(:[a-z0-9_]+)?", text):
+            raise ModuleRegistryError(f"{field} enthält ungültige Rechte: {text}")
+        entries.append(text)
+    return tuple(dict.fromkeys(entries))

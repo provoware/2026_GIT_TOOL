@@ -10,6 +10,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
+from system.permission_guard import PermissionGuardError, require_write_access
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CONFIG_PATH = REPO_ROOT / "config" / "download_aufraeumen.json"
 
@@ -35,14 +37,17 @@ class ModuleContext:
 
 
 def init(context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    config = load_config(context)
-    ensure_log_file(config.log_path)
-    return build_response(
-        status="ok",
-        message="Download-Ordner ist bereit für die Aufräumübersicht.",
-        data={"download_path": str(config.download_path)},
-        ui=build_ui(config),
-    )
+    try:
+        config = load_config(context)
+        ensure_log_file(config.log_path)
+        return build_response(
+            status="ok",
+            message="Download-Ordner ist bereit für die Aufräumübersicht.",
+            data={"download_path": str(config.download_path)},
+            ui=build_ui(config),
+        )
+    except (ModuleError, PermissionGuardError) as exc:
+        return build_response(status="error", message=str(exc), data={}, ui={})
 
 
 def run(input_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -71,7 +76,7 @@ def run(input_data: Dict[str, Any]) -> Dict[str, Any]:
             data=result["data"],
             ui=build_ui(config),
         )
-    except (ModuleError, FileNotFoundError, PermissionError) as exc:
+    except (ModuleError, FileNotFoundError, PermissionError, PermissionGuardError) as exc:
         response = build_response(status="error", message=str(exc), data={}, ui={})
 
     validateOutput(response)
@@ -351,6 +356,7 @@ def load_log(log_path: Path) -> List[Dict[str, Any]]:
 
 def save_log(log_path: Path, entries: List[Dict[str, Any]]) -> None:
     log_path.parent.mkdir(parents=True, exist_ok=True)
+    require_write_access(Path(__file__), log_path, "Aufräum-Log speichern")
     log_path.write_text(json.dumps(entries, ensure_ascii=False, indent=2), encoding="utf-8")
 
 

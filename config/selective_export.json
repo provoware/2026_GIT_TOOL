@@ -1,0 +1,17 @@
+{
+  "default_preset": "support_pack",
+  "output_dir": "data/exports",
+  "base_name": "selective_export",
+  "presets": {
+    "support_pack": {
+      "label": "Support-Paket (Logs, Config, Reports)",
+      "includes": ["logs", "config", "reports"],
+      "excludes": ["logs/*.old", "logs/*.bak"]
+    },
+    "logs_only": {
+      "label": "Nur Logs",
+      "includes": ["logs"],
+      "excludes": ["logs/*.old", "logs/*.bak"]
+    }
+  }
+}

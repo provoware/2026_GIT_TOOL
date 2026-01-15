@@ -11,6 +11,7 @@ from typing import Dict, Iterable, List, Optional
 
 import autosave_manager
 import diagnostics_runner
+import end_audit
 import error_simulation
 import module_checker
 import module_selftests
@@ -37,6 +38,7 @@ ICON_SET = {
     "scan": "🩺",
     "standards": "📏",
     "logs": "📂",
+    "export": "📦",
 }
 
 
@@ -259,6 +261,7 @@ class LauncherGui:
         self.scan_button = None
         self.standards_button = None
         self.logs_button = None
+        self.export_button = None
         self.diagnostics_running = False
         self.maintenance_running = False
         self.refresh_job = None
@@ -460,12 +463,12 @@ class LauncherGui:
                 "„Übersicht aktualisieren“ prüfen. "
                 "Diagnose: „Diagnose starten“ führt Tests und Codeprüfungen aus. "
                 "Entwicklerbereich: System-Scan (Prüfung), Standards (Regeln) und "
-                "Log-Ordner (Protokolle). "
+                "Log-Ordner (Protokolle) sowie selektiver Export (Teil-Export). "
                 "Kontrastmodus: Alt+K. Zoom: Strg + Mausrad. "
                 "Tastatur: Tab für Fokus, F1 für Kontext-Hilfe. "
                 "Kurzbefehle: Alt+A (alle Module), Alt+D (Debug), Alt+R (aktualisieren), "
                 "Alt+G (Diagnose), Alt+S (System-Scan), Alt+P (Standards), "
-                "Alt+L (Logs), Alt+T (Theme), Alt+Q (abmelden & sichern)."
+                "Alt+L (Logs), Alt+E (Export), Alt+T (Theme), Alt+Q (abmelden & sichern)."
             ),
             anchor="w",
             justify="left",
@@ -495,12 +498,13 @@ class LauncherGui:
             developer_frame,
             text=(
                 "Hier findest du technische Hilfen: System-Scan (Prüfung), "
-                "Standards-Liste (Regeln) und Log-Ordner (Protokolle)."
+                "Standards-Liste (Regeln), Log-Ordner (Protokolle) und "
+                "selektive Exporte (Teil-Exporte)."
             ),
             anchor="w",
             justify="left",
         )
-        self.developer_hint.grid(row=0, column=0, columnspan=3, sticky="w")
+        self.developer_hint.grid(row=0, column=0, columnspan=4, sticky="w")
 
         self.scan_button = tk.Button(
             developer_frame,
@@ -547,7 +551,22 @@ class LauncherGui:
         self.logs_button.configure(takefocus=1, underline=0)
         self.logs_button.grid(row=1, column=2, sticky="w")
 
-        developer_frame.columnconfigure(2, weight=1)
+        self.export_button = tk.Button(
+            developer_frame,
+            text=f"{ICON_SET['export']} Selektiver Export",
+            command=self.start_selective_export,
+        )
+        if self.button_font is not None:
+            self.export_button.configure(font=self.button_font)
+        self.export_button.configure(
+            padx=self.layout.button_padx,
+            pady=self.layout.button_pady,
+            width=self.button_min_width,
+        )
+        self.export_button.configure(takefocus=1, underline=0)
+        self.export_button.grid(row=1, column=3, sticky="w", padx=(self.layout.gap_md, 0))
+
+        developer_frame.columnconfigure(3, weight=1)
 
         self.status_var = tk.StringVar(value="Status: Bereit.")
         status_section = tk.LabelFrame(self.root, text="Status")
@@ -598,7 +617,7 @@ class LauncherGui:
                 "Tipp: Mit Tabulator erreichst du alle Bedienelemente. "
                 "Kurzbefehle: F1 (Kontext-Hilfe), Alt+A (alle Module), Alt+D (Debug), Alt+R "
                 "(aktualisieren), Alt+G (Diagnose), Alt+S (System-Scan), "
-                "Alt+P (Standards), Alt+L (Logs), Alt+T (Theme), Alt+K (Kontrast), "
+                "Alt+P (Standards), Alt+L (Logs), Alt+E (Export), Alt+T (Theme), Alt+K (Kontrast), "
                 "Strg + Mausrad (Zoom), Alt+Q (abmelden & sichern)."
             ),
             anchor="w",
@@ -640,6 +659,7 @@ class LauncherGui:
         self.root.bind_all("<Alt-s>", lambda _event: self.start_system_scan())
         self.root.bind_all("<Alt-p>", lambda _event: self.show_standards())
         self.root.bind_all("<Alt-l>", lambda _event: self.open_logs())
+        self.root.bind_all("<Alt-e>", lambda _event: self.start_selective_export())
         self.root.bind_all("<Alt-q>", lambda _event: self.request_logout())
         self.root.bind_all("<Control-r>", lambda _event: self._refresh_from_shortcut())
         self.root.bind_all("<F1>", lambda _event: self._announce_context_help())
@@ -699,6 +719,7 @@ class LauncherGui:
             self.scan_button,
             self.standards_button,
             self.logs_button,
+            self.export_button,
         ):
             if button is not None:
                 button.configure(width=width)
@@ -821,6 +842,12 @@ class LauncherGui:
                 self.logs_button,
                 "Öffnet den Log-Ordner (Protokolle).",
                 "Log-Ordner öffnen: Zeigt Protokolle (Logs), falls etwas schiefgeht.",
+            )
+        if self.export_button is not None:
+            self._register_help(
+                self.export_button,
+                "Erstellt einen Teil-Export (ZIP).",
+                "Selektiver Export: Erstellt ein ZIP mit ausgewählten Bereichen (z. B. Logs).",
             )
         if self.output_text is not None:
             self._register_help(
@@ -1082,6 +1109,8 @@ class LauncherGui:
             text = self._append_module_check(text, issues)
             file_report = qa_checks.check_release_files(root_dir)
             text = self._append_file_status(text, file_report)
+            audit_report = end_audit.run_end_audit(root_dir)
+            text = self._append_end_audit(text, audit_report)
             selftests = module_selftests.run_selftests(self.module_config)
             text = self._append_selftests(text, selftests)
             simulations = error_simulation.run_simulations()
@@ -1123,6 +1152,13 @@ class LauncherGui:
     def open_logs(self) -> None:
         logs_path = self.module_config.resolve().parents[1] / "logs"
         self._run_maintenance_task("Log-Ordner öffnen", ["xdg-open", str(logs_path)])
+
+    def start_selective_export(self) -> None:
+        script_path = self.module_config.resolve().parents[1] / "system" / "selective_exporter.py"
+        self._run_maintenance_task(
+            "Selektiver Export",
+            ["python", str(script_path), "--preset", "support_pack"],
+        )
 
     def _run_maintenance_task(self, title: str, command: List[str]) -> None:
         clean_title = _require_text(title, "maintenance_title")
@@ -1205,7 +1241,12 @@ class LauncherGui:
 
     def _set_maintenance_buttons(self, state: str) -> None:
         clean_state = _require_text(state, "maintenance_state")
-        for button in (self.scan_button, self.standards_button, self.logs_button):
+        for button in (
+            self.scan_button,
+            self.standards_button,
+            self.logs_button,
+            self.export_button,
+        ):
             if button is not None:
                 button.configure(state=clean_state)
 
@@ -1338,6 +1379,20 @@ class LauncherGui:
                 lines.append(f"- {issue.message} (Stufe: {issue.severity})")
         else:
             lines.append("Keine Datei-Probleme gefunden.")
+        return "\n".join(lines).rstrip() + "\n"
+
+    def _append_end_audit(self, text: str, report: end_audit.AuditReport) -> str:
+        if not isinstance(text, str) or not text.strip():
+            raise GuiLauncherError("Ausgabetext ist leer.")
+        lines = [text.rstrip(), "", "End-Audit (Release-Status):"]
+        lines.append(f"Status: {report.status}")
+        lines.append(f"Offene Aufgaben: {report.open_tasks}")
+        if report.issues:
+            lines.append("Hinweise:")
+            for issue in report.issues:
+                lines.append(f"- {issue.message} (Stufe: {issue.severity})")
+        else:
+            lines.append("Keine offenen Hinweise. Release-Status ist grün.")
         return "\n".join(lines).rstrip() + "\n"
 
     def _append_selftests(self, text: str, results: List[module_selftests.SelftestResult]) -> str:
