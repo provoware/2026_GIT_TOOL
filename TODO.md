@@ -246,11 +246,11 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 ### Start & Launcher
 - [ ] START-01: GUI-Launcher erstellen (Fenster, Theme, Layout). | fertig wenn: Startfenster stabil geöffnet.
 - [ ] START-02: PIN-Login implementieren (PIN = kurze Zahlen-Passwort). | fertig wenn: Anmeldung funktioniert.
-- [ ] START-03: Automatische Projektordner-Prüfung + Erzeugung. | fertig wenn: fehlende Ordner werden erstellt.
+- [x] START-03: Automatische Projektordner-Prüfung + Erzeugung. | fertig wenn: fehlende Ordner werden erstellt.
 - [ ] START-04: Vollständige Self-Repair-Routine integrieren (Self-Repair = Selbstreparatur). | fertig wenn: fehlende Dateien automatisch ergänzt.
-- [ ] START-05: Visuelle Fortschrittsanzeige beim Start. | fertig wenn: Prozent sichtbar.
-- [ ] START-06: Fehleralternativen statt Abbruch. | fertig wenn: Vorschläge statt Stop.
-- [ ] START-07: Gesundheitsprüfung vor Start (Health-Check = Systemprüfung). | fertig wenn: wichtige Dateien geprüft.
+- [x] START-05: Visuelle Fortschrittsanzeige beim Start. | fertig wenn: Prozent sichtbar.
+- [x] START-06: Fehleralternativen statt Abbruch. | fertig wenn: Vorschläge statt Stop.
+- [x] START-07: Gesundheitsprüfung vor Start (Health-Check = Systemprüfung). | fertig wenn: wichtige Dateien geprüft.
 - [x] START-08: Start-Routine mit Nutzerfeedback für Abhängigkeiten (Dependencies = Abhängigkeiten). | fertig wenn: klare Hinweise + automatische Installation.
 - [ ] START-09: Safe-Mode (schreibgeschützt) beim Start. | fertig wenn: Start ohne Schreibzugriffe möglich.
 - [ ] START-10: Sandbox-Modus (virtuelle Umgebung) implementieren. | fertig wenn: Start in isolierter Umgebung.

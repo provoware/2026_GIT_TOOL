@@ -10,6 +10,12 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Nächste 4 kleinste Aufgaben (Runde 2026-01-15) – erledigt
+[x] START-03: Automatische Projektordner-Prüfung + Erzeugung. | fertig wenn: fehlende Ordner werden erstellt.
+[x] START-05: Visuelle Fortschrittsanzeige beim Start. | fertig wenn: Prozent sichtbar.
+[x] START-06: Fehleralternativen statt Abbruch. | fertig wenn: Vorschläge statt Stop.
+[x] START-07: Gesundheitsprüfung vor Start (Health-Check = Systemprüfung). | fertig wenn: wichtige Dateien geprüft.
+
 Nächste 4 kleinste Aufgaben (Runde 2026-02-01) – erledigt
 [x] STD-02: GMS-Frontend-Ordner nach `snake_case`-Standard benennen. | fertig wenn: Pfad + Doku konsistent.
 [x] QA-10: Linting/Format-Skripte für das GMS-Frontend ergänzen. | fertig wenn: `npm run lint/format` verfügbar.

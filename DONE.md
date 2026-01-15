@@ -117,6 +117,8 @@
 - Qualität: Pfad-Validierung zentralisiert, Duplikate über `config_utils.ensure_path` entfernt.
 - Start: Health-Check um Self-Repair für fehlende Basiselemente ergänzt.
 - Start: Start-Routine nutzt Self-Repair und zeigt klaren Hinweis.
+- Doku: START-03/05/06/07 in TODO.md und todo.txt als erledigt synchronisiert.
+- Doku: Fortschritt und Auto-Status aktualisiert.
 
 ## 2026-01-16
 - Doku: PROJEKT_INFO um Automatik, Barrierefreiheit und Laienhinweise ergänzt.

@@ -49,6 +49,7 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Standards enthalten einen Benennungsstandard für Dateien/Module und eine Datenmodell-Referenz.
 - TODO.md ist strukturiert (IDs, Bereiche, klare Offen/Erledigt-Abschnitte).
 - todo.txt ist als laienfreundliche Kurzliste gepflegt und mit TODO.md synchronisiert.
+- START-03/05/06/07 sind in TODO.md und todo.txt konsistent als erledigt markiert.
 - A–I-Backlog (Architektur bis Komfortfunktionen) ist strukturiert dokumentiert.
 - README ist um Architektur/Start/Tests/Barrierefreiheit ergänzt.
 - Styleguide (PEP8 + Projektregeln) liegt als Markdown-Datei vor.
@@ -77,10 +78,10 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Recovery-Modus steht als separates Skript für Notfallstarts bereit.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-02-01)**
+**Auto-Status (aktualisiert: 2026-01-15)**
 
-- Gesamt: 93 Tasks
-- Erledigt: 93 Tasks
+- Gesamt: 101 Tasks
+- Erledigt: 101 Tasks
 - Offen: 0 Tasks
 - Fortschritt: 100,00 %
 <!-- AUTO-STATUS:END -->
