@@ -1,5 +1,10 @@
 # DONE
 
+## 2026-02-04
+- GUI: Entwicklerbereich im Launcher ergänzt (System-Scan, Standards, Log-Ordner).
+- GUI: Sofort-Feedback über Status-Punkt und klarere Statusfarben ergänzt.
+- GUI: Basis-Branding und Papierkorb-Theme ergänzt.
+
 ## 2026-02-03
 - Start: Virtuelle Umgebung wird automatisch erstellt und genutzt (Venv).
 - Start: GUI-Voraussetzungen (Tkinter) werden geprüft.
