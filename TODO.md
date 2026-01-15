@@ -262,7 +262,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [x] REN-04: Genrearchiv-Tool optimal einsortieren (Struktur + Doku). | fertig wenn: Struktur und Doku listen Genrearchiv sauber.
 
 ### Start & Launcher
-- [ ] START-01: GUI-Launcher erstellen (Fenster, Theme, Layout). | fertig wenn: Startfenster stabil geöffnet.
+- [x] START-01: GUI-Launcher erstellen (Fenster, Theme, Layout). | fertig wenn: Startfenster stabil geöffnet.
 - [x] START-02: PIN-Login implementieren (PIN = kurze Zahlen-Passwort). | fertig wenn: Anmeldung funktioniert.
 - [x] START-12: Virtuelle Umgebung automatisch erstellen/verwenden (Venv = isolierte Python-Umgebung). | fertig wenn: Start nutzt .venv standardmäßig.
 - [x] START-13: GUI-Voraussetzungen prüfen (Tkinter = GUI-Bibliothek). | fertig wenn: Start meldet Tkinter-Status.
@@ -293,7 +293,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 
 ### UX & Barrierefreiheit
 - [x] UX-01: Barrierefreiheits-Set ergänzen (Kontrast, ARIA, Tastatur). | fertig wenn: Checkliste erfüllt.
-- [ ] UX-02: Großbutton-UI realisieren (Großbutton = große Schaltflächen). | fertig wenn: große Buttons nutzbar.
+- [x] UX-02: Großbutton-UI realisieren (Großbutton = große Schaltflächen). | fertig wenn: große Buttons nutzbar.
 - [x] UX-03: Hilfetexte direkt in der GUI integrieren. | fertig wenn: Hilfe pro Ansicht.
 - [x] UX-04: Farbiges Sofort-Feedbacksystem (Erfolg/Fehler). | fertig wenn: klare Farben.
 - [x] UX-10: Grundtheme + Trash-Design implementieren. | fertig wenn: Basis-Theme + Papierkorb-Design vorhanden.
@@ -330,8 +330,8 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [ ] IO-05: Selektive Exporte aktivieren. | fertig wenn: Teil-Exporte möglich.
 
 ### Fehler- & Strukturprüfung
-- [ ] QA-01: JSON-Validator einbauen. | fertig wenn: JSON geprüft.
-- [ ] QA-02: Automatische Dateinamenkorrektur. | fertig wenn: falsche Namen korrigiert.
+- [x] QA-01: JSON-Validator einbauen. | fertig wenn: JSON geprüft.
+- [x] QA-02: Automatische Dateinamenkorrektur. | fertig wenn: falsche Namen korrigiert.
 - [x] QA-03: Fehlerklassifizierung (leicht/mittel/schwer). | fertig wenn: Fehlerstufe angezeigt.
 - [x] QA-04: Ampelsystem für Dateifehler. | fertig wenn: Ampelstatus sichtbar.
 - [x] QA-05: Modul-Selbsttests mit GUI-Ausgabe. | fertig wenn: Teststatus sichtbar.

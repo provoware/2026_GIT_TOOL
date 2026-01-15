@@ -1,5 +1,11 @@
 # DONE
 
+## 2026-02-06
+- GUI: Großbutton-UI über neue Layout-Parameter (Button-Breite + Schriftgröße) umgesetzt.
+- GUI: Button-Breite skaliert mit Zoom für bessere Bedienbarkeit.
+- Start: GUI-Launcher als erledigt in TODO-Listen synchronisiert.
+- Qualität: JSON-Validator und Dateinamenkorrektur als erledigt in TODO-Listen synchronisiert.
+
 ## 2026-01-15
 - Start: PIN-Login wird in der Start-Routine geprüft (optional über config/pin.json).
 - Start: Testmodus (--test-mode) als Alias für Safe-Mode ergänzt.

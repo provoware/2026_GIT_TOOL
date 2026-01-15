@@ -48,6 +48,8 @@ class GuiLayoutConfig:
     gap_xl: int
     button_padx: int
     button_pady: int
+    button_min_width: int
+    button_font_size: int
     field_padx: int
     field_pady: int
     text_spacing: GuiTextSpacingConfig
@@ -136,6 +138,12 @@ def _load_gui_layout(data: dict) -> GuiLayoutConfig:
         gap_xl=_require_int_min(layout_raw.get("gap_xl"), "layout.gap_xl", 0),
         button_padx=_require_int_min(layout_raw.get("button_padx"), "layout.button_padx", 0),
         button_pady=_require_int_min(layout_raw.get("button_pady"), "layout.button_pady", 0),
+        button_min_width=_require_int_min(
+            layout_raw.get("button_min_width"), "layout.button_min_width", 0
+        ),
+        button_font_size=_require_int_min(
+            layout_raw.get("button_font_size"), "layout.button_font_size", 8
+        ),
         field_padx=_require_int_min(layout_raw.get("field_padx"), "layout.field_padx", 0),
         field_pady=_require_int_min(layout_raw.get("field_pady"), "layout.field_pady", 0),
         text_spacing=spacing_config,

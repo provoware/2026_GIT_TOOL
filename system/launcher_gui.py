@@ -190,11 +190,14 @@ class LauncherGui:
         self.base_header_size = 18
         self.base_output_size = 14
         self.base_button_size = 14
+        self.button_min_width = 0
         self.zoom_level = 1.0
         self.last_non_contrast_theme = self.gui_config.default_theme
         self.contrast_theme = self._resolve_contrast_theme()
         self.status_palette: Dict[str, str] = {}
         self.layout = self.gui_config.layout
+        self.base_button_size = self.layout.button_font_size
+        self.button_min_width = self.layout.button_min_width
         self.autosave_config: autosave_manager.AutosaveConfig | None = None
         self.autosave_job = None
 
@@ -293,7 +296,11 @@ class LauncherGui:
         )
         if self.button_font is not None:
             self.refresh_button.configure(font=self.button_font)
-        self.refresh_button.configure(padx=self.layout.button_padx, pady=self.layout.button_pady)
+        self.refresh_button.configure(
+            padx=self.layout.button_padx,
+            pady=self.layout.button_pady,
+            width=self.button_min_width,
+        )
         self.refresh_button.configure(takefocus=1, underline=0)
         self.refresh_button.grid(
             row=1,
@@ -311,7 +318,9 @@ class LauncherGui:
         if self.button_font is not None:
             self.diagnostics_button.configure(font=self.button_font)
         self.diagnostics_button.configure(
-            padx=self.layout.button_padx, pady=self.layout.button_pady
+            padx=self.layout.button_padx,
+            pady=self.layout.button_pady,
+            width=self.button_min_width,
         )
         self.diagnostics_button.configure(takefocus=1, underline=0)
         self.diagnostics_button.grid(
@@ -369,7 +378,11 @@ class LauncherGui:
         )
         if self.button_font is not None:
             self.scan_button.configure(font=self.button_font)
-        self.scan_button.configure(padx=self.layout.button_padx, pady=self.layout.button_pady)
+        self.scan_button.configure(
+            padx=self.layout.button_padx,
+            pady=self.layout.button_pady,
+            width=self.button_min_width,
+        )
         self.scan_button.configure(takefocus=1, underline=0)
         self.scan_button.grid(row=1, column=0, sticky="w", padx=(0, self.layout.gap_md))
 
@@ -380,7 +393,11 @@ class LauncherGui:
         )
         if self.button_font is not None:
             self.standards_button.configure(font=self.button_font)
-        self.standards_button.configure(padx=self.layout.button_padx, pady=self.layout.button_pady)
+        self.standards_button.configure(
+            padx=self.layout.button_padx,
+            pady=self.layout.button_pady,
+            width=self.button_min_width,
+        )
         self.standards_button.configure(takefocus=1, underline=0)
         self.standards_button.grid(row=1, column=1, sticky="w", padx=(0, self.layout.gap_md))
 
@@ -391,7 +408,11 @@ class LauncherGui:
         )
         if self.button_font is not None:
             self.logs_button.configure(font=self.button_font)
-        self.logs_button.configure(padx=self.layout.button_padx, pady=self.layout.button_pady)
+        self.logs_button.configure(
+            padx=self.layout.button_padx,
+            pady=self.layout.button_pady,
+            width=self.button_min_width,
+        )
         self.logs_button.configure(takefocus=1, underline=0)
         self.logs_button.grid(row=1, column=2, sticky="w")
 
@@ -532,6 +553,19 @@ class LauncherGui:
         if self.button_font is not None:
             button_size = max(12, int(round(self.base_button_size * self.zoom_level)))
             self.button_font.configure(size=button_size)
+        self._apply_button_widths()
+
+    def _apply_button_widths(self) -> None:
+        width = max(0, int(round(self.button_min_width * self.zoom_level)))
+        for button in (
+            self.refresh_button,
+            self.diagnostics_button,
+            self.scan_button,
+            self.standards_button,
+            self.logs_button,
+        ):
+            if button is not None:
+                button.configure(width=width)
 
     def _bind_responsive_layout(self) -> None:
         self.root.bind("<Configure>", lambda _event: self._update_wrap_length())
