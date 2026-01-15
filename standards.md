@@ -34,6 +34,7 @@ Diese Datei definiert verbindliche Standards für alle Module, den Launcher und 
 - Konfig‑Dateien tragen den Modul‑ID‑Namen (z. B. `config/datei_suche.json`).
 - Daten‑Dateien tragen den Modul‑ID‑Namen (z. B. `data/datei_suche_log.json`).
 - Modul‑Pfad in `config/modules.json` muss **genau** `modules/<modul_id>` sein.
+- Zusätzliche **Suffix-Standards** für `data/` und `logs/` liegen in `config/filename_suffixes.json`.
 
 ## Gemeinsames Datenmodell
 - Zentrales Schema in `src/core/data_model.py` ist **verbindlich**.
@@ -66,6 +67,7 @@ Die Startroutine erledigt vollständig und selbstständig:
 3. **Feedback an Nutzende**: Fortschritt in Prozent + klare Meldungen.
 4. **Fehlerbehandlung**: Verständliche Hinweise und Lösungsvorschläge.
 5. **Modul-Check**: Prüft aktivierte Module, Manifest und Entry-Dateien vor dem Start der Übersicht.
+6. **Self-Repair**: `python system/self_repair.py --root .` repariert fehlende Dateien, JSON und Rechte.
 
 ## Logging & Debugging
 - Einheitliches Logformat: Zeitstempel, Modul, Ebene, Nachricht.
@@ -115,6 +117,7 @@ Beispiel (einfach, laienverständlich):
 ## Dateinamen & Sicherheit
 - Dateinamen sind Linux‑konform, eindeutig und ohne Leerzeichen.
 - Keine Überschreibungen ohne Bestätigung.
+- PIN-Login (optional) ist über `config/pin.json` aktivierbar und sperrt bei Fehlversuchen zufällig.
 
 ## Laienhilfe (einfache Sprache)
 - **Status prüfen**: `git status` (zeigt Änderungen).

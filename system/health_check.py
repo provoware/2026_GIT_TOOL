@@ -9,12 +9,12 @@ import logging
 import os
 import stat
 from dataclasses import dataclass
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable, List
 
 from config_utils import ensure_path
 from logging_center import setup_logging as setup_logging_center
+from self_repair import build_default_files
 
 DEFAULT_ROOT = Path(__file__).resolve().parents[1]
 
@@ -153,132 +153,6 @@ def _check_executable(
         )
 
 
-def _build_default_files(root: Path) -> dict[Path, str]:
-    today = datetime.now(timezone.utc).date().isoformat()
-    modules_payload = {
-        "modules": [
-            {
-                "id": "platzhalter",
-                "name": "Platzhalter (deaktiviert)",
-                "path": "modules/platzhalter",
-                "enabled": False,
-                "description": "Dieser Eintrag ist deaktiviert und kann entfernt werden.",
-            }
-        ]
-    }
-    gui_payload = {
-        "default_theme": "hell",
-        "themes": {
-            "hell": {
-                "label": "Hell",
-                "colors": {
-                    "background": "#ffffff",
-                    "foreground": "#1a1a1a",
-                    "accent": "#005ea5",
-                    "button_background": "#e6f0fb",
-                    "button_foreground": "#0b2d4d",
-                    "status_success": "#1b5e20",
-                    "status_error": "#b00020",
-                    "status_busy": "#005ea5",
-                    "status_foreground": "#ffffff",
-                },
-            },
-            "kontrast": {
-                "label": "Kontrast",
-                "colors": {
-                    "background": "#000000",
-                    "foreground": "#ffffff",
-                    "accent": "#ffcc00",
-                    "button_background": "#1a1a1a",
-                    "button_foreground": "#ffffff",
-                    "status_success": "#00ff00",
-                    "status_error": "#ff0033",
-                    "status_busy": "#ffcc00",
-                    "status_foreground": "#000000",
-                },
-            },
-        },
-        "layout": {
-            "gap_xs": 4,
-            "gap_sm": 8,
-            "gap_md": 12,
-            "gap_lg": 16,
-            "gap_xl": 24,
-            "button_padx": 12,
-            "button_pady": 6,
-            "field_padx": 6,
-            "field_pady": 4,
-            "text_spacing": {"before": 4, "line": 2, "after": 4},
-            "focus_thickness": 2,
-        },
-    }
-    test_gate_payload = {
-        "threshold": 9,
-        "todo_path": "todo.txt",
-        "state_path": "data/test_state.json",
-        "tests_command": ["bash", "scripts/run_tests.sh"],
-    }
-    selftest_payload = {
-        "testcases": {
-            "beispiel_modul": {"text": "Selbsttest"},
-            "status": {"request": "Selbsttest"},
-        }
-    }
-    structure_payload = {
-        "required_entry": "module.py",
-        "entry_exceptions": [],
-        "required_files": ["manifest.json", "module.py"],
-    }
-
-    return {
-        root / "config" / "modules.json": json.dumps(modules_payload, indent=2, ensure_ascii=False)
-        + "\n",
-        root / "config" / "launcher_gui.json": json.dumps(gui_payload, indent=2, ensure_ascii=False)
-        + "\n",
-        root
-        / "config"
-        / "requirements.txt": (
-            "# Python-Abhängigkeiten (pip-Pakete)\n"
-            "# Beispiel: requests>=2.32.0\n"
-            "# Hinweis: Leere Datei bedeutet, dass aktuell keine externen Pakete nötig sind.\n"
-            "pytest>=8.0.0\n"
-            "ruff>=0.5.0\n"
-            "black>=24.0.0\n"
-        ),
-        root
-        / "config"
-        / "test_gate.json": json.dumps(test_gate_payload, indent=2, ensure_ascii=False)
-        + "\n",
-        root
-        / "config"
-        / "module_selftests.json": json.dumps(selftest_payload, indent=2, ensure_ascii=False)
-        + "\n",
-        root
-        / "config"
-        / "module_structure.json": json.dumps(structure_payload, indent=2, ensure_ascii=False)
-        + "\n",
-        root
-        / "todo.txt": (
-            "# To-Do-Liste\n"
-            "# Format: [ ] JJJJ-MM-TT | Bereich | Titel | prüfen: ... | fertig wenn: ...\n"
-        ),
-        root / "CHANGELOG.md": "# Changelog\n\n## [Unreleased]\n- Platzhalter.\n",
-        root
-        / "DEV_DOKU.md": (
-            "# DEV_DOKU\n\n## Zweck\nPlatzhalter für die Entwickler-Dokumentation.\n"
-        ),
-        root / "DONE.md": f"# DONE\n\n## {today}\n- Platzhalter.\n",
-        root
-        / "PROGRESS.md": (
-            "# PROGRESS\n\n"
-            f"Stand: {today}\n\n"
-            "- Gesamt: 0 Tasks\n"
-            "- Erledigt: 0 Tasks\n"
-            "- Offen: 0 Tasks\n"
-            "- Fortschritt: 0,00 %\n"
-        ),
-    }
-
 
 def run_health_check(root: Path, self_repair: bool = False) -> tuple[List[str], List[str]]:
     ensure_path(root, "root", HealthCheckError)
@@ -289,7 +163,7 @@ def run_health_check(root: Path, self_repair: bool = False) -> tuple[List[str], 
 
     issues: List[str] = []
     repairs: List[str] = []
-    defaults = _build_default_files(root) if self_repair else {}
+    defaults = build_default_files(root) if self_repair else {}
 
     dir_items = _ensure_items(
         [
@@ -313,6 +187,11 @@ def run_health_check(root: Path, self_repair: bool = False) -> tuple[List[str], 
             CheckItem(root / "config" / "launcher_gui.json", "GUI-Konfiguration"),
             CheckItem(root / "config" / "requirements.txt", "Abhängigkeiten"),
             CheckItem(root / "config" / "test_gate.json", "Test-Sperre"),
+            CheckItem(root / "config" / "module_selftests.json", "Modul-Selbsttests"),
+            CheckItem(root / "config" / "module_structure.json", "Modul-Struktur"),
+            CheckItem(root / "config" / "todo_config.json", "To-Do-Konfig"),
+            CheckItem(root / "config" / "filename_suffixes.json", "Suffix-Standards"),
+            CheckItem(root / "config" / "pin.json", "PIN-Konfiguration"),
             CheckItem(root / "todo.txt", "To-Do-Liste"),
             CheckItem(root / "CHANGELOG.md", "Changelog"),
             CheckItem(root / "DEV_DOKU.md", "Entwickler-Dokumentation"),
@@ -329,6 +208,11 @@ def run_health_check(root: Path, self_repair: bool = False) -> tuple[List[str], 
             CheckItem(root / "config" / "modules.json", "Modul-Liste"),
             CheckItem(root / "config" / "launcher_gui.json", "GUI-Konfiguration"),
             CheckItem(root / "config" / "test_gate.json", "Test-Sperre"),
+            CheckItem(root / "config" / "module_selftests.json", "Modul-Selbsttests"),
+            CheckItem(root / "config" / "module_structure.json", "Modul-Struktur"),
+            CheckItem(root / "config" / "todo_config.json", "To-Do-Konfig"),
+            CheckItem(root / "config" / "filename_suffixes.json", "Suffix-Standards"),
+            CheckItem(root / "config" / "pin.json", "PIN-Konfiguration"),
         ],
         "JSON-Liste",
     )

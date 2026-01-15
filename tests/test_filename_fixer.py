@@ -21,6 +21,12 @@ class FilenameFixerTests(unittest.TestCase):
             root = Path(tmpdir)
             data_dir = root / "data"
             data_dir.mkdir(parents=True)
+            config_dir = root / "config"
+            config_dir.mkdir(parents=True)
+            (config_dir / "filename_suffixes.json").write_text(
+                '{\n  "defaults": {"data": ".json", "logs": ".log"}\n}\n',
+                encoding="utf-8",
+            )
             source = data_dir / "Mein Bericht 2026.TXT"
             source.write_text("ok", encoding="utf-8")
 
@@ -28,6 +34,26 @@ class FilenameFixerTests(unittest.TestCase):
 
             self.assertTrue(actions)
             expected = data_dir / "mein_bericht_2026.txt"
+            self.assertTrue(expected.exists())
+
+    def test_run_fix_adds_suffix_rule(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            data_dir = root / "data"
+            data_dir.mkdir(parents=True)
+            config_dir = root / "config"
+            config_dir.mkdir(parents=True)
+            (config_dir / "filename_suffixes.json").write_text(
+                '{\n  "defaults": {"data": ".json", "logs": ".log"}\n}\n',
+                encoding="utf-8",
+            )
+            source = data_dir / "Bericht_2026"
+            source.write_text("ok", encoding="utf-8")
+
+            actions = run_fix(root, dry_run=False)
+
+            self.assertTrue(actions)
+            expected = data_dir / "bericht_2026.json"
             self.assertTrue(expected.exists())
 
 

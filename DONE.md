@@ -1,5 +1,11 @@
 # DONE
 
+## 2026-01-15
+- Sicherheit: PIN-Login mit Zufallssperre und Statusdatei ergänzt.
+- Sicherheit: Self-Repair-Bibliothek für Dateinamen/JSON/Rechte ergänzt.
+- Start: Vollständige Self-Repair-Routine in der Start-Routine integriert.
+- Daten: Dateinamen-Suffix-Standards für data/logs implementiert.
+
 ## 2026-02-02
 - Genrearchiv-Frontend: Ordner/Package/UI-Branding konsistent umbenannt.
 - Genrearchiv-Frontend: Storage-Keys und Export-Dateinamen inkl. Legacy-Migration aktualisiert.

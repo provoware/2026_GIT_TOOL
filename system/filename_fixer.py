@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, List
 
-from config_utils import ensure_path
+from config_utils import ensure_path, load_json
 
 
 class FilenameFixerError(Exception):
@@ -76,7 +76,53 @@ def collect_targets(root: Path, folders: Iterable[Path]) -> List[Path]:
     return targets
 
 
-def build_rename_actions(paths: Iterable[Path]) -> List[RenameAction]:
+def _load_suffix_rules(config_path: Path) -> dict[str, str]:
+    try:
+        data = load_json(
+            config_path,
+            FilenameFixerError,
+            "Suffix-Standard fehlt",
+            "Suffix-Standard ungültig",
+        )
+    except FilenameFixerError:
+        return {}
+    defaults = data.get("defaults", {})
+    if not isinstance(defaults, dict):
+        raise FilenameFixerError("Suffix-Standard: defaults ist kein Objekt.")
+    rules: dict[str, str] = {}
+    for key, value in defaults.items():
+        if not isinstance(key, str) or not key.strip():
+            raise FilenameFixerError("Suffix-Standard: Ordnername ist leer.")
+        if not isinstance(value, str) or not value.strip():
+            raise FilenameFixerError("Suffix-Standard: Suffix ist leer.")
+        suffix = value.strip()
+        if not suffix.startswith("."):
+            raise FilenameFixerError("Suffix-Standard: Suffix muss mit '.' beginnen.")
+        rules[key.strip()] = suffix
+    return rules
+
+
+def _apply_suffix_rule(path: Path, root: Path, rules: dict[str, str]) -> Path:
+    if path.suffix:
+        return path
+    try:
+        relative = path.relative_to(root)
+    except ValueError:
+        return path
+    if not relative.parts:
+        return path
+    top_folder = relative.parts[0]
+    suffix = rules.get(top_folder)
+    if not suffix:
+        return path
+    return path.with_name(f"{path.name}{suffix}")
+
+
+def build_rename_actions(
+    paths: Iterable[Path],
+    root: Path,
+    suffix_rules: dict[str, str],
+) -> List[RenameAction]:
     actions: List[RenameAction] = []
     for path in paths:
         if not path.name:
@@ -84,6 +130,7 @@ def build_rename_actions(paths: Iterable[Path]) -> List[RenameAction]:
         if path.name.startswith("."):
             continue
         candidate = normalize_filename(path)
+        candidate = _apply_suffix_rule(candidate, root, suffix_rules)
         if candidate.name == path.name:
             continue
         target = resolve_target(path, candidate)
@@ -106,8 +153,9 @@ def apply_actions(actions: Iterable[RenameAction], dry_run: bool) -> List[str]:
 def run_fix(root: Path, dry_run: bool) -> List[str]:
     ensure_path(root, "root", FilenameFixerError)
     target_dirs = [root / "data", root / "logs"]
+    suffix_rules = _load_suffix_rules(root / "config" / "filename_suffixes.json")
     paths = collect_targets(root, target_dirs)
-    actions = build_rename_actions(paths)
+    actions = build_rename_actions(paths, root, suffix_rules)
     return apply_actions(actions, dry_run)
 
 

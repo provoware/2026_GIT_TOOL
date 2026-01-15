@@ -10,6 +10,12 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Nächste 4 kleinste Aufgaben (Runde 2026-01-15) – erledigt
+[x] SEC-02: PIN-Prozess mit Zufallssperre bei Fehleingabe. | fertig wenn: Sperre greift.
+[x] SEC-04: Self-Repair-Bibliothek programmieren (Dateinamen/JSON/Rechte). | fertig wenn: Fehler automatisch reparierbar.
+[x] START-04: Vollständige Self-Repair-Routine integrieren (Self-Repair = Selbstreparatur). | fertig wenn: fehlende Dateien automatisch ergänzt.
+[x] DATA-05: Dateinamen-Suffix-Standards implementieren. | fertig wenn: Endungen folgen Standard.
+
 Nächste 4 kleinste Aufgaben (Runde 2026-02-02) – erledigt
 [x] REN-01: Genrearchiv-Frontend zu Genrearchiv umbenennen (Ordner/Branding/Package). | fertig wenn: Name/Ordner/Title konsistent.
 [x] REN-02: Storage- und Exportnamen auf Genrearchiv umstellen inkl. Migration. | fertig wenn: Keys/Dateinamen + Legacy-Fallback.
