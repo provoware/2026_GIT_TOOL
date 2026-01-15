@@ -101,7 +101,12 @@ def validateOutput(output: Dict[str, Any]) -> None:
         raise ModuleError("Ausgabe enthält keine data- oder ui-Daten.")
 
 
-def build_response(status: str, message: str, data: Dict[str, Any], ui: Dict[str, Any]) -> Dict[str, Any]:
+def build_response(
+    status: str,
+    message: str,
+    data: Dict[str, Any],
+    ui: Dict[str, Any],
+) -> Dict[str, Any]:
     response = {"status": status, "message": message, "data": data, "ui": ui}
     validateOutput(response)
     return response
@@ -230,7 +235,10 @@ def ensure_state(config: ModuleConfig) -> None:
     require_write_access(Path(__file__), config.state_path, "state_init")
     config.state_path.parent.mkdir(parents=True, exist_ok=True)
     payload = {"active_profile": None, "profiles": {}, "updated_at": _now_iso()}
-    config.state_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    config.state_path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
 
 
 def load_state(config: ModuleConfig) -> Dict[str, Any]:
@@ -258,7 +266,11 @@ def _create_profile(config: ModuleConfig, state: Dict[str, Any], name: str) -> D
     state["profiles"][name] = {"created_at": _now_iso()}
     if not state.get("active_profile"):
         state["active_profile"] = name
-    return {"name": name, "path": str(profile_dir), "active": state.get("active_profile") == name}
+    return {
+        "name": name,
+        "path": str(profile_dir),
+        "active": state.get("active_profile") == name,
+    }
 
 
 def _set_active_profile(config: ModuleConfig, state: Dict[str, Any], name: str) -> Dict[str, Any]:
@@ -269,7 +281,12 @@ def _set_active_profile(config: ModuleConfig, state: Dict[str, Any], name: str) 
     return {"name": name, "path": str(profile_dir), "active": True}
 
 
-def _rename_profile(config: ModuleConfig, state: Dict[str, Any], old: str, new: str) -> Dict[str, Any]:
+def _rename_profile(
+    config: ModuleConfig,
+    state: Dict[str, Any],
+    old: str,
+    new: str,
+) -> Dict[str, Any]:
     if old == new:
         raise ModuleError("Neuer Name ist identisch.")
     old_dir = _profile_path(config.base_dir, old)
@@ -327,9 +344,7 @@ def _profile_path(base_dir: Path, name: str) -> Path:
 def _normalize_profile_name(value: object) -> str:
     text = _require_text(value, "name")
     if not re.fullmatch(r"[a-z0-9]+(?:_[a-z0-9]+)*", text):
-        raise ModuleError(
-            "Profilname muss snake_case sein (z. B. projekt_01)."
-        )
+        raise ModuleError("Profilname muss snake_case sein (z. B. projekt_01).")
     return text
 
 

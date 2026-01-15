@@ -72,7 +72,13 @@ def validateInput(input_data: Dict[str, Any]) -> None:
     if not isinstance(input_data, dict):
         raise ModuleError("Eingabe fehlt oder ist kein Objekt (dict).")
     action = input_data.get("action")
-    if action not in {"quick_rename", "tag_items", "toggle_favorite", "list_favorites", "list_tags"}:
+    if action not in {
+        "quick_rename",
+        "tag_items",
+        "toggle_favorite",
+        "list_favorites",
+        "list_tags",
+    }:
         raise ModuleError("action ist ungültig oder fehlt.")
 
     if action == "quick_rename":
@@ -98,7 +104,12 @@ def validateOutput(output: Dict[str, Any]) -> None:
         raise ModuleError("Ausgabe enthält keine data- oder ui-Daten.")
 
 
-def build_response(status: str, message: str, data: Dict[str, Any], ui: Dict[str, Any]) -> Dict[str, Any]:
+def build_response(
+    status: str,
+    message: str,
+    data: Dict[str, Any],
+    ui: Dict[str, Any],
+) -> Dict[str, Any]:
     response = {"status": status, "message": message, "data": data, "ui": ui}
     validateOutput(response)
     return response

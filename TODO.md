@@ -295,10 +295,10 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [x] START-11: Ampelstatus + Fortschrittsanzeige beim Start. | fertig wenn: Ampel/Fortschritt sichtbar.
 
 ### Hauptfenster & Module
-- [ ] MOD-01: Zentrales Hauptfenster bauen (Grid/9 Module = Raster mit 9 Bereichen). | fertig wenn: Module sichtbar.
-- [ ] MOD-02: Modulmanager implementieren (laden/aktivieren/deaktivieren). | fertig wenn: Module steuerbar.
-- [ ] MOD-03: Verschiebbare und skalierbare Modulfenster realisieren. | fertig wenn: Fenster ziehen/größern.
-- [ ] MOD-04: Kollisionserkennung für Module (keine Überlappung). | fertig wenn: Kollision verhindert.
+- [x] MOD-01: Zentrales Hauptfenster bauen (Grid/9 Module = Raster mit 9 Bereichen). | fertig wenn: Module sichtbar.
+- [x] MOD-02: Modulmanager implementieren (laden/aktivieren/deaktivieren). | fertig wenn: Module steuerbar.
+- [x] MOD-03: Verschiebbare und skalierbare Modulfenster realisieren. | fertig wenn: Fenster ziehen/größern.
+- [x] MOD-04: Kollisionserkennung für Module (keine Überlappung). | fertig wenn: Kollision verhindert.
 - [ ] MOD-05: Standardgrößen + Auto-Layout definieren. | fertig wenn: Module ordnen sich.
 - [ ] MOD-06: Modul-Status visuell anzeigen (Ampel = grün/gelb/rot). | fertig wenn: Status sichtbar.
 

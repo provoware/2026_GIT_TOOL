@@ -108,7 +108,12 @@ def validateOutput(output: Dict[str, Any]) -> None:
         raise ModuleError("Ausgabe enthält keine data- oder ui-Daten.")
 
 
-def build_response(status: str, message: str, data: Dict[str, Any], ui: Dict[str, Any]) -> Dict[str, Any]:
+def build_response(
+    status: str,
+    message: str,
+    data: Dict[str, Any],
+    ui: Dict[str, Any],
+) -> Dict[str, Any]:
     response = {"status": status, "message": message, "data": data, "ui": ui}
     validateOutput(response)
     return response

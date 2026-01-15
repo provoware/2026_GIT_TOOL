@@ -10,6 +10,18 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Nächste 4 kleinste Aufgaben (Runde 2026-02-13 – Hauptfenster) – erledigt
+[x] MOD-01: Zentrales Hauptfenster bauen (Grid/9 Module = Raster mit 9 Bereichen). | fertig wenn: Module sichtbar.
+[x] MOD-02: Modulmanager implementieren (laden/aktivieren/deaktivieren). | fertig wenn: Module steuerbar.
+[x] MOD-03: Verschiebbare und skalierbare Modulfenster realisieren. | fertig wenn: Fenster ziehen/größern.
+[x] MOD-04: Kollisionserkennung für Module (keine Überlappung). | fertig wenn: Kollision verhindert.
+
+Nächste 4 kleinste Aufgaben (Runde 2026-02-14 – Module/Daten)
+[ ] MOD-05: Standardgrößen + Auto-Layout definieren. | fertig wenn: Module ordnen sich.
+[ ] MOD-06: Modul-Status visuell anzeigen (Ampel = grün/gelb/rot). | fertig wenn: Status sichtbar.
+[ ] DATA-03: Versionierung pro Modul + Änderungsverläufe. | fertig wenn: Historie sichtbar.
+[ ] CORE-01: Dateimanager-Modul finalisieren. | fertig wenn: Kernfunktionen stabil.
+
 Nächste 4 kleinste Aufgaben (Runde 2026-02-12 – UI) – erledigt
 [x] START-16: PIN-Login-Config-Check stabilisieren (kein Abbruch bei leerer Konfiguration). | fertig wenn: Start läuft ohne TypeError.
 [x] VIS-04: Dashboard-Layout an Design_und_Layoutvorgabe angleichen (Topbar, Panels, Farben). | fertig wenn: UI entspricht Vorgabe.

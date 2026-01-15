@@ -293,3 +293,9 @@
 - [x] 2026-02-12 | MEDIA-02 | FFmpeg-Wrapper mit Presets, Auto-Name und Fortschrittsanzeige ergänzt.
 - [x] 2026-02-12 | MEDIA-03 | Datei-Manager mit Quick-Rename, Tagging und Favoriten ergänzt.
 - [x] 2026-02-12 | DATA-01 | Profil-Manager mit getrennten Projektordnern integriert.
+
+## 2026-02-13
+- [x] 2026-02-13 | MOD-01 | Hauptfenster mit 3x3-Modulraster umgesetzt.
+- [x] 2026-02-13 | MOD-02 | Modulmanager für Laden/Aktivieren/Deaktivieren ergänzt.
+- [x] 2026-02-13 | MOD-03 | Modulfenster verschieb- und skalierbar gemacht.
+- [x] 2026-02-13 | MOD-04 | Kollisionserkennung verhindert Überlappungen.
