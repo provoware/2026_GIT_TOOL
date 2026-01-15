@@ -257,3 +257,9 @@
 - Performance: Debounce für GUI-Aktualisierung ergänzt.
 - Qualität: Konfigurationen über geprüfte Modelle zentral validiert.
 - Doku: Laien-Tool-Anleitung mit Fragen/Problemlösungen ergänzt.
+
+## 2026-02-08
+- [x] 2026-02-08 | REL-01 | .deb-Paket bauen.
+- [x] 2026-02-08 | REL-02 | Offizielles Icon-Set (Provoware-Look) integrieren.
+- [x] 2026-02-08 | REL-04 | ZIP-Auto-Export alle fünf Entwicklungsschritte.
+- [x] 2026-02-08 | REL-08 | Desktop-File + Icon-Integration für Linux.

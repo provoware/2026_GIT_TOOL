@@ -1,6 +1,6 @@
 # STRUKTUR (Verzeichnisbaum + Pflichtdateien)
 
-Stand: 2026-02-01
+Stand: 2026-02-08
 
 ## Zweck
 Diese Datei ist die **Single Source of Truth** für den Projektaufbau.
@@ -30,6 +30,8 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 │   ├── black.toml
 │   ├── charakter_modul.json
 │   ├── datei_suche.json
+│   ├── deb_package.json
+│   ├── desktop_entry.json
 │   ├── download_aufraeumen.json
 │   ├── filename_suffixes.json
 │   ├── global_settings.json
@@ -48,7 +50,14 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 ├── dashboard_zeitachsen_werkzeug
 │   ├── projekt_dashboard_tool_react.jsx
 │   └── projekt_dashboard_tool_react.txt
+├── assets
+│   └── icons
+│       └── provoware.svg
 ├── data
+│   ├── desktop_entries
+│   │   └── .gitkeep
+│   ├── exports
+│   │   └── .gitkeep
 │   ├── log_exports
 │   │   └── .gitkeep
 │   ├── .gitkeep
@@ -57,7 +66,8 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 │   ├── manifest.json
 │   ├── test_state.json
 │   ├── todo_archive.txt
-│   └── todo_kalender.json
+│   ├── todo_kalender.json
+│   └── zip_export_state.json
 ├── docs
 │   └── MODUL_API.md
 ├── genrearchiv_werkzeug_v1_2_3_2026_01_06
@@ -120,9 +130,11 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 ├── scripts
 │   ├── assign_agent.py
 │   ├── bootstrap.sh
+│   ├── build_deb.sh
 │   ├── check_env.sh
 │   ├── ensure_venv.sh
 │   ├── generate_launcher_gui_contrast_report.py
+│   ├── install_desktop_entry.sh
 │   ├── progress.js
 │   ├── repo_basis_check.sh
 │   ├── recovery.sh
@@ -141,14 +153,17 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 │   │   └── todo_parser.py
 │   ├── records
 │   │   ├── __init__.py
-│   │   └── record_updater.py
+│   │   ├── record_updater.py
+│   │   └── zip_exporter.py
 │   └── __init__.py
 ├── system
+│   ├── deb_builder.py
 │   ├── color_utils.py
 │   ├── config_models.py
 │   ├── config_utils.py
 │   ├── dependency_checker.py
 │   ├── diagnostics_runner.py
+│   ├── desktop_entry.py
 │   ├── doc_updater.py
 │   ├── error_simulation.py
 │   ├── filename_fixer.py
@@ -175,6 +190,8 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 │   ├── test_charakter_modul_module.py
 │   ├── test_data_model.py
 │   ├── test_datei_suche_module.py
+│   ├── test_deb_builder.py
+│   ├── test_desktop_entry.py
 │   ├── test_dependency_checker.py
 │   ├── test_diagnostics_runner.py
 │   ├── test_doc_updater.py
@@ -193,7 +210,8 @@ Bitte **bei jeder neuen Datei/jedem neuen Ordner** aktualisieren.
 │   ├── test_qa_checks.py
 │   ├── test_robustness_checks.py
 │   ├── test_todo_kalender_module.py
-│   └── test_todo_manager.py
+│   ├── test_todo_manager.py
+│   └── test_zip_exporter.py
 ├── .gitignore
 ├── AGENTS.md
 ├── ANALYSE_BERICHT.md
