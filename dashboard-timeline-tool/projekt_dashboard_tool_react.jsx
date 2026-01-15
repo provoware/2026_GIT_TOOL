@@ -1772,6 +1772,11 @@ function Timeline({
   onOpen: (e: Entry) => void;
 }) {
   const reducedMotion = usePrefersReducedMotion();
+  const detailId = useId();
+  const controlsId = useId();
+  const [zoom, setZoom] = useState(1);
+  const [rowSpacing, setRowSpacing] = useState(1);
+  const [activeEntryId, setActiveEntryId] = useState<string | null>(null);
 
   const mk = isMonthKey(monthKey) ? monthKey : toYMD(new Date()).slice(0, 7);
 
@@ -1785,6 +1790,23 @@ function Timeline({
   const year = Number(mk.slice(0, 4));
   const monthIndex0 = Number(mk.slice(5, 7)) - 1;
   const dim = daysInMonth(year, monthIndex0);
+  const safeZoom = clamp(zoom, 0.8, 1.6);
+  const safeSpacing = clamp(rowSpacing, 0.8, 1.4);
+  const trackWidth = `${Math.round(safeZoom * 100)}%`;
+  const laneHeight = Math.round(130 * safeSpacing);
+  const detailEntry = monthEntries.find((entry) => entry.id === activeEntryId) ?? null;
+  const offsetTop = Math.round(-46 * safeSpacing);
+  const offsetBottom = Math.round(18 * safeSpacing);
+
+  function updateZoom(value: number) {
+    if (!Number.isFinite(value)) return;
+    setZoom(clamp(value, 0.8, 1.6));
+  }
+
+  function updateSpacing(value: number) {
+    if (!Number.isFinite(value)) return;
+    setRowSpacing(clamp(value, 0.8, 1.4));
+  }
 
   function moveMonth(delta: number) {
     onMonthKey(addMonths(mk, delta));
@@ -1796,7 +1818,7 @@ function Timeline({
   return (
     <GlassCard className="p-0" ariaLabel="Zeitachse">
       <div className="p-4">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -1816,7 +1838,7 @@ function Timeline({
             </button>
           </div>
 
-          <div className="text-sm font-semibold text-white/85">
+          <div className="text-sm font-semibold text-white/90">
             <span className="text-white/55">·</span> {monthLabelDE(mk)}
           </div>
 
@@ -1840,85 +1862,143 @@ function Timeline({
           </div>
         </div>
 
-        <div className="mt-4 rounded-2xl border border-white/10 bg-black/15 p-4">
-          <div className="relative h-[130px]">
-            <div className="absolute left-2 right-2 top-1/2 -translate-y-1/2">
-              <div className={classNames("h-[3px] rounded-full", gradientLine)} />
-              <div className="mt-2 h-[1px] w-full bg-white/10" />
-            </div>
+        <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-4">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-white/65" id={controlsId}>
+            <span className="font-semibold text-white/85">Ansicht</span>
+            <label className="flex items-center gap-2">
+              <span>Zoom</span>
+              <input
+                type="range"
+                min={0.8}
+                max={1.6}
+                step={0.05}
+                value={safeZoom}
+                onChange={(event) => updateZoom(Number(event.target.value))}
+                aria-label="Zoom der Zeitachse"
+                className="h-1.5 w-28 accent-amber-300"
+              />
+              <span className="tabular-nums text-white/80">{Math.round(safeZoom * 100)}%</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <span>Abstand</span>
+              <input
+                type="range"
+                min={0.8}
+                max={1.4}
+                step={0.05}
+                value={safeSpacing}
+                onChange={(event) => updateSpacing(Number(event.target.value))}
+                aria-label="Abstand zwischen den Einträgen"
+                className="h-1.5 w-28 accent-amber-300"
+              />
+              <span className="tabular-nums text-white/80">{Math.round(safeSpacing * 100)}%</span>
+            </label>
+            <button
+              type="button"
+              onClick={() => {
+                updateZoom(1);
+                updateSpacing(1);
+              }}
+              className="rounded-lg border border-white/10 bg-white/6 px-2 py-1 text-white/80 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+            >
+              Standard
+            </button>
+            <span className="text-white/50">Tipp: Mit Tab erreichst du jeden Punkt.</span>
+          </div>
 
-            <div className="absolute inset-0">
-              {monthEntries.length === 0 ? (
-                <div className="flex h-full items-center justify-center text-sm text-white/50">
-                  Keine Einträge in diesem Monat.
-                </div>
-              ) : (
-                monthEntries.map((e, idx) => {
-                  const day = dayOfMonthFromYMD(e.date);
-                  const pos = dim <= 1 ? 50 : clamp(((day - 1) / (dim - 1)) * 100, 0, 100);
-                  const meta = TYPE_META[e.type];
-                  const isTop = idx % 2 === 0;
+          <div className="mt-4 overflow-x-auto pb-2" aria-describedby={controlsId}>
+            <div className="relative min-w-[520px]" style={{ height: `${laneHeight}px`, width: trackWidth }}>
+              <div className="absolute left-2 right-2 top-1/2 -translate-y-1/2">
+                <div className={classNames("h-[3px] rounded-full", gradientLine)} />
+                <div className="mt-2 h-[1px] w-full bg-white/10" />
+              </div>
 
-                  return (
-                    <button
-                      key={e.id}
-                      type="button"
-                      onClick={() => onOpen(e)}
-                      className="absolute rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
-                      style={{ left: `calc(${pos}% - 10px)` }}
-                      aria-label={`Eintrag öffnen: ${e.title}, ${e.type}, ${formatDE(e.date)}`}
-                    >
-                      <div className={classNames("relative", isTop ? "-translate-y-[6px]" : "translate-y-[64px]")}>
-                        <div
-                          aria-hidden
-                          className={classNames(
-                            "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
-                            "size-4 rounded-full border border-white/30",
-                            "bg-white/10",
-                            meta.glow
-                          )}
-                        >
+              <div className="absolute inset-0" role="list" aria-label="Zeitachse mit Einträgen" aria-describedby={detailId}>
+                {monthEntries.length === 0 ? (
+                  <div className="flex h-full items-center justify-center text-sm text-white/60">
+                    Keine Einträge in diesem Monat.
+                  </div>
+                ) : (
+                  monthEntries.map((e, idx) => {
+                    const day = dayOfMonthFromYMD(e.date);
+                    const pos = dim <= 1 ? 50 : clamp(((day - 1) / (dim - 1)) * 100, 0, 100);
+                    const meta = TYPE_META[e.type];
+                    const isTop = idx % 2 === 0;
+
+                    return (
+                      <button
+                        key={e.id}
+                        type="button"
+                        onClick={() => {
+                          setActiveEntryId(e.id);
+                          onOpen(e);
+                        }}
+                        onMouseEnter={() => setActiveEntryId(e.id)}
+                        onMouseLeave={() => setActiveEntryId(null)}
+                        onFocus={() => setActiveEntryId(e.id)}
+                        onBlur={() => setActiveEntryId(null)}
+                        className={classNames(
+                          "absolute rounded-full focus:outline-none focus-visible:ring-2",
+                          "focus-visible:ring-amber-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950/80"
+                        )}
+                        style={{ left: `calc(${pos}% - 10px)` }}
+                        role="listitem"
+                        aria-label={`Eintrag öffnen: ${e.title}, ${e.type}, ${formatDE(e.date)}`}
+                      >
+                        <div className={classNames("relative", isTop ? "-translate-y-[6px]" : "translate-y-[64px]")}>
+                          <div
+                            aria-hidden
+                            className={classNames(
+                              "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
+                              "size-4 rounded-full border border-white/30",
+                              "bg-white/10",
+                              meta.glow
+                            )}
+                          >
+                            <div
+                              className={classNames(
+                                "absolute inset-[3px] rounded-full",
+                                e.type === "Fund"
+                                  ? "bg-blue-400"
+                                  : e.type === "Studie"
+                                  ? "bg-emerald-400"
+                                  : e.type === "Theorie"
+                                  ? "bg-amber-400"
+                                  : "bg-rose-400"
+                              )}
+                            />
+                          </div>
+
                           <div
                             className={classNames(
-                              "absolute inset-[3px] rounded-full",
-                              e.type === "Fund"
-                                ? "bg-blue-400"
-                                : e.type === "Studie"
-                                ? "bg-emerald-400"
-                                : e.type === "Theorie"
-                                ? "bg-amber-400"
-                                : "bg-rose-400"
+                              "min-w-[180px] max-w-[260px] rounded-xl border",
+                              "bg-white/8 backdrop-blur-xl",
+                              "px-3 py-2",
+                              "shadow-[0_18px_55px_rgba(0,0,0,0.55)]",
+                              "ring-1",
+                              meta.ring,
+                              reducedMotion ? "" : "transition hover:translate-y-[-1px]"
                             )}
-                          />
-                        </div>
-
-                        <div
-                          className={classNames(
-                            "min-w-[180px] max-w-[260px] rounded-xl border",
-                            "bg-white/6 backdrop-blur-xl",
-                            "px-3 py-2",
-                            "shadow-[0_18px_55px_rgba(0,0,0,0.55)]",
-                            "ring-1",
-                            meta.ring,
-                            reducedMotion ? "" : "transition hover:translate-y-[-1px]"
-                          )}
-                          style={{
-                            transform: isTop ? "translate(-50%, -44px)" : "translate(-50%, 18px)",
-                          }}
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="text-sm font-semibold text-white/92">{e.title || `${e.type} Eintrag`}</div>
-                            <div className="text-[11px] text-white/60 whitespace-nowrap">{formatDE(e.date)}</div>
+                            style={{
+                              transform: isTop
+                                ? `translate(-50%, ${offsetTop}px)`
+                                : `translate(-50%, ${offsetBottom}px)`,
+                            }}
+                          >
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="text-sm font-semibold text-white/95">{e.title || `${e.type} Eintrag`}</div>
+                              <div className="text-[11px] text-white/70 whitespace-nowrap">{formatDE(e.date)}</div>
+                            </div>
+                            {e.comment ? (
+                              <div className="mt-1 line-clamp-2 text-xs text-white/75">{e.comment}</div>
+                            ) : null}
                           </div>
-                          {e.comment ? (
-                            <div className="mt-1 line-clamp-2 text-xs text-white/65">{e.comment}</div>
-                          ) : null}
                         </div>
-                      </div>
-                    </button>
-                  );
-                })
-              )}
+                      </button>
+                    );
+                  })
+                )}
+              </div>
             </div>
           </div>
 
@@ -1926,6 +2006,21 @@ function Timeline({
             <span>{`01. ${pad2(monthIndex0 + 1)} ${year}`}</span>
             <span>{`${pad2(Math.floor(dim / 2))}. ${pad2(monthIndex0 + 1)} ${year}`}</span>
             <span>{`${pad2(dim)}. ${pad2(monthIndex0 + 1)} ${year}`}</span>
+          </div>
+
+          <div className="mt-3 rounded-xl border border-white/10 bg-white/5 p-3 text-xs text-white/70" id={detailId}>
+            {detailEntry ? (
+              <div className="grid gap-1">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-semibold text-white/90">{detailEntry.title || `${detailEntry.type} Eintrag`}</span>
+                  <span className="text-white/60">{formatDE(detailEntry.date)}</span>
+                </div>
+                <div>{detailEntry.comment || "Kein Kommentar vorhanden."}</div>
+                <div className="text-white/55">Kategorie: {detailEntry.category || "–"}</div>
+              </div>
+            ) : (
+              <span>Hover oder fokussiere einen Punkt, um Details zu lesen.</span>
+            )}
           </div>
         </div>
       </div>

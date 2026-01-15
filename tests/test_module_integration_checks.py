@@ -194,9 +194,7 @@ class ModuleIntegrationChecksTests(unittest.TestCase):
                 root / "config" / "module_selftests.json",
             )
 
-            self.assertTrue(
-                any("Manifest-Name passt nicht" in issue for issue in result.issues)
-            )
+            self.assertTrue(any("Manifest-Name passt nicht" in issue for issue in result.issues))
 
 
 if __name__ == "__main__":

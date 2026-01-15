@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.48] – 2026-02-05
+- Timeline: Zeitachse responsiv mit horizontalem Scroll und anpassbarer Höhe umgesetzt.
+- Timeline: Hover-Details, Zoom-Regler und flexibler Abstand integriert.
+- Timeline: Lesbarkeit durch bessere Kontraste, klare Detailbox und Tastaturhinweise verbessert.
+- Barrierefreiheit: Zusätzliche ARIA-Beschreibungen und Fokusführung in der Zeitachse ergänzt.
+- System: Modul-Loader setzt Root-Pfad und stabile Registrierung für Selftests.
+- Tooling: Black-Konfiguration erweitert und betroffene Dateien formatiert.
+
 ## [0.1.47] – 2026-02-04
 - GUI: Entwicklerbereich im Launcher ergänzt (System-Scan, Standards-Liste, Log-Ordner).
 - GUI: Sofort-Feedback über Status-Punkt und klarere Statusfarben erweitert.

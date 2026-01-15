@@ -169,7 +169,12 @@ def _write_json(path: Path, payload: Dict[str, object], write: bool) -> None:
         path.write_text(content, encoding="utf-8")
 
 
-def run_update(root: Path, write: bool, skip: Sequence[str], logger: logging.Logger) -> UpdateResult:
+def run_update(
+    root: Path,
+    write: bool,
+    skip: Sequence[str],
+    logger: logging.Logger,
+) -> UpdateResult:
     ensure_path(root, "root", StructureUpdaterError)
     tree_lines = build_tree(root, skip)
     module_snapshots = _load_module_snapshots(root)

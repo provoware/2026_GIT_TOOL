@@ -1,5 +1,13 @@
 # DONE
 
+## 2026-02-05
+- Barrierefreiheit: ARIA-Beschreibungen, Tastaturhinweise und Kontrast für die Zeitachse ergänzt.
+- Timeline: Responsives Layout mit horizontalem Scroll und skalierbarer Höhe umgesetzt.
+- Timeline: Hover-Details sowie Zoom- und Abstandregler integriert.
+- Timeline: Lesbarkeit durch Detailbox und klarere Typo verbessert.
+- System: Modul-Loader stabilisiert (Root-Pfad + Modul-Registrierung).
+- Tooling: Black-Formatierung und Ausschlüsse für Fremdabhängigkeiten aktualisiert.
+
 ## 2026-02-04
 - GUI: Entwicklerbereich im Launcher ergänzt (System-Scan, Standards, Log-Ordner).
 - GUI: Sofort-Feedback über Status-Punkt und klarere Statusfarben ergänzt.

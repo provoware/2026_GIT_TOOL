@@ -153,7 +153,6 @@ def _check_executable(
         )
 
 
-
 def run_health_check(root: Path, self_repair: bool = False) -> tuple[List[str], List[str]]:
     ensure_path(root, "root", HealthCheckError)
     if not root.exists():

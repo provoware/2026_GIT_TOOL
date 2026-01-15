@@ -10,6 +10,12 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Nächste 4 kleinste Aufgaben (Runde 2026-02-05) – erledigt
+[x] UX-01: Barrierefreiheits-Set ergänzen (Kontrast, ARIA, Tastatur). | fertig wenn: Checkliste erfüllt.
+[x] VIS-01: Timeline-Tool responsiv überarbeiten. | fertig wenn: passt sich an.
+[x] VIS-02: Hover-Details, Zoom + flexible Abstände integrieren. | fertig wenn: Details und Zoom.
+[x] VIS-03: Lesbarkeit + skalierende Elemente verbessern. | fertig wenn: besser lesbar.
+
 Nächste 4 kleinste Aufgaben (Runde 2026-02-04) – erledigt
 [x] UX-04: Farbiges Sofort-Feedbacksystem (Erfolg/Fehler). | fertig wenn: klare Farben.
 [x] UX-10: Grundtheme + Trash-Design implementieren. | fertig wenn: Basis-Theme + Papierkorb-Design vorhanden.
