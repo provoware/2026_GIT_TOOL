@@ -13,12 +13,12 @@ Dieses Projekt ist ein sauberer Neuaufbau mit Fokus auf Robustheit, Nachvollzieh
 - Komfortfunktionen wie globale Suche, Favoritenleiste, Mini-Panels und Auto-Theming sind umgesetzt.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-01-15)**
+**Auto-Status (aktualisiert: 2026-02-12)**
 
 - Gesamt: 165 Tasks
-- Erledigt: 161 Tasks
-- Offen: 4 Tasks
-- Fortschritt: 97,58 %
+- Erledigt: 165 Tasks
+- Offen: 0 Tasks
+- Fortschritt: 100 %
 <!-- AUTO-STATUS:END -->
 
 ## Ziele (in Arbeit)
@@ -131,6 +131,8 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 - Nutze `python system/health_check.py --root . --self-repair` (Self-Repair = Selbstreparatur), wenn Ordner fehlen.
 - Diagnose für Einsteiger: `python system/diagnostics_runner.py` (Diagnose = Tests + Codequalität).
 - Doku-Aktualisierung: `./scripts/update_docs.sh` (Auto-Status = automatisch erzeugter Statusblock).
+- Profile nutzen: Lege ein neues Profil an (Profil = eigener Projektordner), damit Daten getrennt bleiben.
+- Datei-Manager nutzen: Quick-Rename (schnelles Umbenennen) und Tagging (Schlagworte) helfen beim Aufräumen.
 
 ## Dateiübersicht
 - `README.md`: Einfache Projekt-Anleitung.

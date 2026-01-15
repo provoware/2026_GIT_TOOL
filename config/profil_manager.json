@@ -1,0 +1,36 @@
+{
+  "base_dir": "data/profiles",
+  "state_path": "data/profil_state.json",
+  "default_theme": "dunkel",
+  "themes": {
+    "dunkel": {
+      "background": "#0f172a",
+      "foreground": "#f8fafc",
+      "accent": "#8b5cf6",
+      "panel": "#111827"
+    },
+    "hochkontrast": {
+      "background": "#000000",
+      "foreground": "#ffffff",
+      "accent": "#a855f7",
+      "panel": "#0a0a0a"
+    }
+  },
+  "ui": {
+    "title": "Profil-Manager",
+    "menus": [
+      {"id": "profiles", "label": "Profile"},
+      {"id": "active", "label": "Aktives Profil"}
+    ],
+    "actions": [
+      {"id": "create_profile", "label": "Profil anlegen", "hint": "Profil = getrennter Projektordner"},
+      {"id": "set_active", "label": "Profil aktivieren", "hint": "Aktiv = aktuell genutzt"},
+      {"id": "rename_profile", "label": "Profil umbenennen", "hint": "Name muss snake_case sein"}
+    ],
+    "hints": [
+      "Profile trennen Daten in eigenen Ordnern.",
+      "Name ohne Leerzeichen: z. B. projekt_01."
+    ]
+  },
+  "debug": false
+}

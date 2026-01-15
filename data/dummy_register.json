@@ -1,6 +1,6 @@
 {
   "_hinweis": "Automatisch gepflegt. Bitte nicht manuell bearbeiten.",
-  "generated_at": "2026-01-15T12:38:09+00:00",
+  "generated_at": "2026-01-15T17:57:24+00:00",
   "entries": [
     {
       "id": "status",
@@ -57,6 +57,38 @@
       "entry": "module.py",
       "enabled": true,
       "description": "Dateien nach Name, Inhalt, Größe und Datum finden und direkt organisieren."
+    },
+    {
+      "id": "datei_manager",
+      "name": "Datei-Manager",
+      "path": "modules/datei_manager",
+      "entry": "module.py",
+      "enabled": true,
+      "description": "Datei-Manager mit Quick-Rename, Tagging und Favoriten."
+    },
+    {
+      "id": "media_wavesurfer",
+      "name": "Wavesurfer-Toolkit",
+      "path": "modules/media_wavesurfer",
+      "entry": "module.py",
+      "enabled": true,
+      "description": "Wellenform-Toolkit mit Markern, Regionen, Minimap und Exportprofilen."
+    },
+    {
+      "id": "media_ffmpeg_wrapper",
+      "name": "FFmpeg-Wrapper",
+      "path": "modules/media_ffmpeg_wrapper",
+      "entry": "module.py",
+      "enabled": true,
+      "description": "FFmpeg-Wrapper mit Presets, Auto-Name und Fortschrittsanzeige."
+    },
+    {
+      "id": "profil_manager",
+      "name": "Profil-Manager",
+      "path": "modules/profil_manager",
+      "entry": "module.py",
+      "enabled": true,
+      "description": "Profil-System mit getrennten Projektordnern und aktivem Profil."
     }
   ]
 }

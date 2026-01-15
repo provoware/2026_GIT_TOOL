@@ -1,0 +1,36 @@
+{
+  "data_path": "data/datei_manager.json",
+  "default_theme": "dunkel",
+  "themes": {
+    "dunkel": {
+      "background": "#0f172a",
+      "foreground": "#f8fafc",
+      "accent": "#f59e0b",
+      "panel": "#111827"
+    },
+    "hochkontrast": {
+      "background": "#000000",
+      "foreground": "#ffffff",
+      "accent": "#ffcc00",
+      "panel": "#0a0a0a"
+    }
+  },
+  "ui": {
+    "title": "Datei-Manager",
+    "menus": [
+      {"id": "rename", "label": "Quick-Rename"},
+      {"id": "tags", "label": "Tagging"},
+      {"id": "favorites", "label": "Favoriten"}
+    ],
+    "actions": [
+      {"id": "quick_rename", "label": "Schnell umbenennen", "hint": "Quick-Rename = schneller Dateiname"},
+      {"id": "tag_items", "label": "Tags speichern", "hint": "Tagging = Schlagworte"},
+      {"id": "toggle_favorite", "label": "Favorit merken", "hint": "Favorit = schnell wiederfinden"}
+    ],
+    "hints": [
+      "Quick-Rename normalisiert Namen für Linux (snake_case).",
+      "Tagging hilft beim schnellen Filtern der Dateien."
+    ]
+  },
+  "debug": false
+}

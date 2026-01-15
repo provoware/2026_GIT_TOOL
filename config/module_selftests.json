@@ -12,8 +12,20 @@
     "download_aufraeumen": {
       "action": "history"
     },
+    "datei_manager": {
+      "action": "list_tags"
+    },
+    "media_ffmpeg_wrapper": {
+      "action": "list_presets"
+    },
+    "media_wavesurfer": {
+      "action": "list_features"
+    },
     "notiz_editor": {
       "action": "list_templates"
+    },
+    "profil_manager": {
+      "action": "list_profiles"
     },
     "todo_kalender": {
       "action": "list"

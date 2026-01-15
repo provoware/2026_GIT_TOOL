@@ -102,12 +102,12 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Autosave schreibt Sicherungen in data/autosave/ und protokolliert nach logs/autosave.log.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-01-15)**
+**Auto-Status (aktualisiert: 2026-02-12)**
 
 - Gesamt: 165 Tasks
-- Erledigt: 161 Tasks
-- Offen: 4 Tasks
-- Fortschritt: 97,58 %
+- Erledigt: 165 Tasks
+- Offen: 0 Tasks
+- Fortschritt: 100 %
 <!-- AUTO-STATUS:END -->
 
 ## Struktur (aktuell)
@@ -128,7 +128,16 @@ Hier nur die wichtigsten Bereiche:
 - `src/` und `system/`: Kernlogik und System-Tools.
 - `tests/`: Automatisierte Tests.
 - `modules/datei_suche/`: Datei-Suche mit Filter und Organisationsfunktionen.
+- `modules/datei_manager/`: Datei-Manager mit Quick-Rename, Tagging und Favoriten.
+- `modules/media_wavesurfer/`: Wavesurfer-Toolkit mit Markern, Regionen, Minimap und Exportprofilen.
+- `modules/media_ffmpeg_wrapper/`: FFmpeg-Wrapper mit Presets, Auto-Name und Fortschrittsanzeige.
+- `modules/profil_manager/`: Profil-Manager mit getrennten Projektordnern.
 - `modules/`: Module nach Standard (Manifest + Entry).
+- `config/media_wavesurfer.json`: Konfiguration für Marker/Regionen/Minimap/Exportprofile.
+- `config/media_ffmpeg_wrapper.json`: Presets und Ausgabeordner für den FFmpeg-Wrapper.
+- `config/datei_manager.json`: UI- und Theme-Config für Quick-Rename, Tagging, Favoriten.
+- `config/profil_manager.json`: Profile-Config mit Basisordner und Statusdatei.
+- `data/profiles/`: Projektordner pro Profil (getrennte Datenbereiche).
 
 ## Standards (aktuell)
 - Einheitliche To-Do-Validierung (Formatprüfung).
@@ -141,6 +150,12 @@ Hier nur die wichtigsten Bereiche:
 - Einheitliche Benennung für Dateien/Module (snake_case, Modul-ID = Ordnername, Pflichtdateien manifest.json + module.py).
 - Modul-Pfade in `config/modules.json` zeigen auf Modulordner (nicht auf einzelne Dateien).
 - Notiz-Editor und Charakter-Modul nutzen Templates, Themes und Dashboard-Statistiken.
+
+## Medien- und Profilmodule (Best Practices)
+- Wavesurfer-Toolkit zeigt Marker, Regionen, Minimap und Exportprofile klar getrennt an (Marker = Zeitmarke).
+- FFmpeg-Wrapper nutzt Presets (Voreinstellungen) mit Auto-Name (automatischer Dateiname) und Fortschritt.
+- Datei-Manager bietet Quick-Rename (schnelles Umbenennen), Tagging (Schlagworte) und Favoriten.
+- Profil-Manager speichert Daten getrennt pro Profilordner, damit Projekte sauber getrennt bleiben.
 
 ## Qualitätssicherung
 - **Tests**: Automatische Tests für Kernfunktionen (Start erst nach kompletter Runde).

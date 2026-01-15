@@ -1,0 +1,8 @@
+{
+  "id": "media_ffmpeg_wrapper",
+  "name": "FFmpeg-Wrapper",
+  "version": "1.0.0",
+  "description": "FFmpeg-Wrapper mit Presets, Auto-Name und Fortschrittsanzeige.",
+  "entry": "module.py",
+  "permissions": ["read", "write:data"]
+}

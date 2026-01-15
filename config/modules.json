@@ -49,6 +49,34 @@
       "path": "modules/datei_suche",
       "enabled": true,
       "description": "Dateien nach Name, Inhalt, Größe und Datum finden und direkt organisieren."
+    },
+    {
+      "id": "datei_manager",
+      "name": "Datei-Manager",
+      "path": "modules/datei_manager",
+      "enabled": true,
+      "description": "Datei-Manager mit Quick-Rename, Tagging und Favoriten."
+    },
+    {
+      "id": "media_wavesurfer",
+      "name": "Wavesurfer-Toolkit",
+      "path": "modules/media_wavesurfer",
+      "enabled": true,
+      "description": "Wellenform-Toolkit mit Markern, Regionen, Minimap und Exportprofilen."
+    },
+    {
+      "id": "media_ffmpeg_wrapper",
+      "name": "FFmpeg-Wrapper",
+      "path": "modules/media_ffmpeg_wrapper",
+      "enabled": true,
+      "description": "FFmpeg-Wrapper mit Presets, Auto-Name und Fortschrittsanzeige."
+    },
+    {
+      "id": "profil_manager",
+      "name": "Profil-Manager",
+      "path": "modules/profil_manager",
+      "enabled": true,
+      "description": "Profil-System mit getrennten Projektordnern und aktivem Profil."
     }
   ]
 }
