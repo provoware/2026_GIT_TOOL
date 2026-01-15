@@ -287,3 +287,9 @@
 - [x] 2026-02-11 | FLOW-02 | Undo-/Redo-System global eingeführt.
 - [x] 2026-02-11 | IO-01 | Export-Center (JSON/TXT/PDF/ZIP) ergänzt.
 - [x] 2026-02-11 | IO-02 | Backup-System vollständig integriert.
+
+## 2026-02-12
+- [x] 2026-02-12 | MEDIA-01 | Wavesurfer-Toolkit mit Markern, Regionen, Minimap und Exportprofilen ergänzt.
+- [x] 2026-02-12 | MEDIA-02 | FFmpeg-Wrapper mit Presets, Auto-Name und Fortschrittsanzeige ergänzt.
+- [x] 2026-02-12 | MEDIA-03 | Datei-Manager mit Quick-Rename, Tagging und Favoriten ergänzt.
+- [x] 2026-02-12 | DATA-01 | Profil-Manager mit getrennten Projektordnern integriert.

@@ -10,17 +10,20 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
-Nächste 4 kleinste Aufgaben (Runde 2026-02-12) – erledigt
+Nächste 4 kleinste Aufgaben (Runde 2026-02-12 – UI) – erledigt
 [x] START-16: PIN-Login-Config-Check stabilisieren (kein Abbruch bei leerer Konfiguration). | fertig wenn: Start läuft ohne TypeError.
 [x] VIS-04: Dashboard-Layout an Design_und_Layoutvorgabe angleichen (Topbar, Panels, Farben). | fertig wenn: UI entspricht Vorgabe.
 [x] VIS-05: Zeitachsen-Optik an Vorgabe anpassen (Gradient, Marker, Panel-Look). | fertig wenn: Timeline wirkt wie Vorlage.
 [x] UI-17: Hintergrund/Glas-Layer an Designvorgabe anpassen (Sterne, Kontrast). | fertig wenn: Look konsistent.
 
+Nächste 4 kleinste Aufgaben (Runde 2026-02-12 – Medien/Daten) – erledigt
+[x] MEDIA-01: Wavesurfer erweitern (Markers/Regions/Minimap/Exportprofil). | fertig wenn: Funktionen sichtbar.
+[x] MEDIA-02: FFmpeg-Wrapper verbessern (Presets/Auto-Name/Fortschritt). | fertig wenn: Komfortfunktionen aktiv.
+[x] MEDIA-03: Dateimanager erweitern (Quick-Rename/Tagging/Favoriten). | fertig wenn: Features vorhanden.
+[x] DATA-01: Profil-System mit getrennten Projektordnern. | fertig wenn: Profile trennen Daten.
+
 Weitere offene Aufgaben (größerer Aufwand)
-[ ] MEDIA-01: Wavesurfer erweitern (Markers/Regions/Minimap/Exportprofil). | fertig wenn: Funktionen sichtbar.
-[ ] MEDIA-02: FFmpeg-Wrapper verbessern (Presets/Auto-Name/Fortschritt). | fertig wenn: Komfortfunktionen aktiv.
-[ ] MEDIA-03: Dateimanager erweitern (Quick-Rename/Tagging/Favoriten). | fertig wenn: Features vorhanden.
-[ ] DATA-01: Profil-System mit getrennten Projektordnern. | fertig wenn: Profile trennen Daten.
+- Keine offenen Aufgaben mehr in dieser Runde.
 
 Nächste 4 kleinste Aufgaben (Runde 2026-02-11) – erledigt
 [x] FLOW-01: Globales Drag-and-Drop (Dateien/Module). | fertig wenn: Ziehen funktioniert.

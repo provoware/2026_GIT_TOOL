@@ -1,0 +1,39 @@
+{
+  "data_path": "data/media_ffmpeg_jobs.json",
+  "output_dir": "data/ffmpeg_exports",
+  "default_theme": "dunkel",
+  "themes": {
+    "dunkel": {
+      "background": "#0f172a",
+      "foreground": "#f8fafc",
+      "accent": "#22c55e",
+      "panel": "#111827"
+    },
+    "hochkontrast": {
+      "background": "#000000",
+      "foreground": "#ffffff",
+      "accent": "#00ffa0",
+      "panel": "#0a0a0a"
+    }
+  },
+  "ui": {
+    "title": "FFmpeg-Wrapper",
+    "menus": [
+      {"id": "presets", "label": "Presets"},
+      {"id": "jobs", "label": "Jobs"}
+    ],
+    "actions": [
+      {"id": "build_command", "label": "Befehl erzeugen", "hint": "Auto-Name = automatischer Dateiname"},
+      {"id": "simulate_progress", "label": "Fortschritt prüfen", "hint": "Fortschritt = Fortschrittsanzeige"}
+    ],
+    "tips": [
+      "Preset = gespeicherte Umwandlungsregeln.",
+      "Auto-Name erstellt automatisch eindeutige Dateinamen."
+    ]
+  },
+  "presets": [
+    {"id": "mp3_standard", "label": "MP3 Standard", "extension": ".mp3", "args": ["-vn", "-b:a", "192k"]},
+    {"id": "wav_master", "label": "WAV Master", "extension": ".wav", "args": ["-vn", "-ar", "48000"]}
+  ],
+  "debug": false
+}

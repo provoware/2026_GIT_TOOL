@@ -1,0 +1,49 @@
+{
+  "data_path": "data/media_wavesurfer.json",
+  "default_theme": "dunkel",
+  "themes": {
+    "dunkel": {
+      "background": "#0f172a",
+      "foreground": "#f8fafc",
+      "accent": "#38bdf8",
+      "panel": "#111827"
+    },
+    "hochkontrast": {
+      "background": "#000000",
+      "foreground": "#ffffff",
+      "accent": "#00ffff",
+      "panel": "#0a0a0a"
+    }
+  },
+  "ui": {
+    "title": "Wavesurfer-Toolkit",
+    "menus": [
+      {"id": "markers", "label": "Marker"},
+      {"id": "regions", "label": "Regionen"},
+      {"id": "minimap", "label": "Minimap"},
+      {"id": "exports", "label": "Exportprofile"}
+    ],
+    "actions": [
+      {"id": "add_marker", "label": "Marker setzen", "hint": "Marker = Zeitsprungmarke"},
+      {"id": "add_region", "label": "Region markieren", "hint": "Region = markierter Abschnitt"},
+      {"id": "set_minimap", "label": "Minimap anpassen", "hint": "Minimap = kleine Vorschau"},
+      {"id": "export_profile", "label": "Exportprofil wählen", "hint": "Profil = voreingestellte Ausgaberegel"}
+    ],
+    "sections": [
+      {"id": "markers", "title": "Marker", "description": "Marker setzen und beschriften."},
+      {"id": "regions", "title": "Regionen", "description": "Bereiche markieren und farblich hervorheben."},
+      {"id": "minimap", "title": "Minimap", "description": "Kleine Vorschau mit Zoom (Vergrößerung)."},
+      {"id": "exports", "title": "Exportprofile", "description": "Voreinstellungen für den Export."}
+    ]
+  },
+  "export_profiles": [
+    {"id": "wav_44100", "label": "WAV 44,1 kHz", "format": "wav", "sample_rate": 44100, "bit_depth": 16},
+    {"id": "mp3_high", "label": "MP3 Hoch", "format": "mp3", "sample_rate": 48000, "bitrate": "320k"}
+  ],
+  "minimap": {
+    "height": 48,
+    "zoom": 1.0,
+    "color": "#38bdf8"
+  },
+  "debug": false
+}

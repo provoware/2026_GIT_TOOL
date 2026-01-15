@@ -1,0 +1,8 @@
+{
+  "id": "media_wavesurfer",
+  "name": "Wavesurfer-Toolkit",
+  "version": "1.0.0",
+  "description": "Wellenform-Toolkit mit Markern, Regionen, Minimap und Exportprofilen.",
+  "entry": "module.py",
+  "permissions": ["read", "write:data"]
+}

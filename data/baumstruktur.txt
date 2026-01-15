@@ -1,23 +1,37 @@
 Projektstruktur (2026_GIT_TOOL)
 
+├── assets/
+│   └── icons/
+│       └── provoware.svg
 ├── config/
 │   ├── agent_rules.json
+│   ├── appimage_package.json
+│   ├── backup.json
 │   ├── black.toml
 │   ├── charakter_modul.json
+│   ├── datei_manager.json
 │   ├── datei_suche.json
+│   ├── deb_package.json
+│   ├── desktop_entry.json
 │   ├── download_aufraeumen.json
+│   ├── export_center.json
 │   ├── filename_suffixes.json
 │   ├── global_settings.json
 │   ├── launcher_gui.json
+│   ├── media_ffmpeg_wrapper.json
+│   ├── media_wavesurfer.json
 │   ├── module_selftests.json
 │   ├── module_structure.json
 │   ├── modules.json
 │   ├── notiz_editor.json
+│   ├── onefile_package.json
 │   ├── pin.json
+│   ├── profil_manager.json
 │   ├── pytest.ini
 │   ├── records.json
 │   ├── requirements.txt
 │   ├── ruff.toml
+│   ├── selective_export.json
 │   ├── test_gate.json
 │   ├── todo_config.json
 │   └── todo_kalender.json
@@ -25,14 +39,22 @@ Projektstruktur (2026_GIT_TOOL)
 │   ├── projekt_dashboard_tool_react.jsx
 │   └── projekt_dashboard_tool_react.txt
 ├── data/
+│   ├── desktop_entries/
+│   ├── exports/
 │   ├── log_exports/
+│   ├── profiles/
 │   ├── baumstruktur.txt
+│   ├── datei_manager.json
 │   ├── dummy_register.json
 │   ├── manifest.json
+│   ├── media_ffmpeg_jobs.json
+│   ├── media_wavesurfer.json
 │   ├── pin_state.json
+│   ├── profil_state.json
 │   ├── test_state.json
 │   ├── todo_archive.txt
-│   └── todo_kalender.json
+│   ├── todo_kalender.json
+│   └── zip_export_state.json
 ├── docs/
 │   └── MODUL_API.md
 ├── genrearchiv_werkzeug_v1_2_3_2026_01_06/
@@ -69,13 +91,25 @@ Projektstruktur (2026_GIT_TOOL)
 │   ├── charakter_modul/
 │   │   ├── manifest.json
 │   │   └── module.py
+│   ├── datei_manager/
+│   │   ├── manifest.json
+│   │   └── module.py
 │   ├── datei_suche/
 │   │   ├── manifest.json
 │   │   └── module.py
 │   ├── download_aufraeumen/
 │   │   ├── manifest.json
 │   │   └── module.py
+│   ├── media_ffmpeg_wrapper/
+│   │   ├── manifest.json
+│   │   └── module.py
+│   ├── media_wavesurfer/
+│   │   ├── manifest.json
+│   │   └── module.py
 │   ├── notiz_editor/
+│   │   ├── manifest.json
+│   │   └── module.py
+│   ├── profil_manager/
 │   │   ├── manifest.json
 │   │   └── module.py
 │   ├── status/
@@ -91,9 +125,13 @@ Projektstruktur (2026_GIT_TOOL)
 │   ├── assign_agent.py
 │   ├── bootstrap.sh
 │   ├── build_all.sh
+│   ├── build_appimage.sh
+│   ├── build_deb.sh
+│   ├── build_onefile.sh
 │   ├── check_env.sh
 │   ├── ensure_venv.sh
 │   ├── generate_launcher_gui_contrast_report.py
+│   ├── install_desktop_entry.sh
 │   ├── progress.js
 │   ├── recovery.sh
 │   ├── repo_basis_check.sh
@@ -114,16 +152,27 @@ Projektstruktur (2026_GIT_TOOL)
 │   │   └── todo_parser.py
 │   ├── records/
 │   │   ├── __init__.py
-│   │   └── record_updater.py
+│   │   ├── record_updater.py
+│   │   └── zip_exporter.py
 │   └── __init__.py
 ├── system/
+│   ├── appimage_builder.py
+│   ├── autosave_manager.py
+│   ├── backup_center.py
 │   ├── color_utils.py
 │   ├── config_models.py
 │   ├── config_utils.py
+│   ├── deb_builder.py
+│   ├── deb_postinst.sh
 │   ├── dependency_checker.py
+│   ├── desktop_entry.py
 │   ├── diagnostics_runner.py
 │   ├── doc_updater.py
+│   ├── drag_drop.py
+│   ├── end_audit.py
 │   ├── error_simulation.py
+│   ├── event_bus.py
+│   ├── export_center.py
 │   ├── filename_fixer.py
 │   ├── health_check.py
 │   ├── json_validator.py
@@ -138,45 +187,66 @@ Projektstruktur (2026_GIT_TOOL)
 │   ├── module_loader.py
 │   ├── module_registry.py
 │   ├── module_selftests.py
+│   ├── onefile_builder.py
+│   ├── onefile_entry.py
+│   ├── permission_guard.py
 │   ├── pin_auth.py
 │   ├── qa_checks.py
+│   ├── selective_exporter.py
 │   ├── self_repair.py
 │   ├── standards_viewer.py
 │   ├── store.py
 │   ├── structure_checker.py
 │   ├── structure_updater.py
 │   ├── test_gate.py
-│   └── todo_manager.py
+│   ├── todo_manager.py
+│   └── undo_redo.py
 ├── tests/
 │   ├── test_agent_assignment.py
+│   ├── test_backup_center.py
 │   ├── test_charakter_modul_module.py
 │   ├── test_data_model.py
+│   ├── test_datei_manager_module.py
 │   ├── test_datei_suche_module.py
+│   ├── test_deb_builder.py
 │   ├── test_dependency_checker.py
+│   ├── test_desktop_entry.py
 │   ├── test_diagnostics_runner.py
 │   ├── test_doc_updater.py
 │   ├── test_download_aufraeumen_module.py
+│   ├── test_drag_drop.py
+│   ├── test_end_audit.py
 │   ├── test_error_simulation.py
+│   ├── test_event_bus.py
+│   ├── test_export_center.py
 │   ├── test_filename_fixer.py
 │   ├── test_json_validator.py
 │   ├── test_launcher.py
 │   ├── test_launcher_gui.py
 │   ├── test_launcher_gui_contrast.py
 │   ├── test_log_exporter.py
+│   ├── test_media_ffmpeg_wrapper_module.py
+│   ├── test_media_wavesurfer_module.py
 │   ├── test_module_api_validator.py
 │   ├── test_module_checker.py
 │   ├── test_module_integration_checks.py
 │   ├── test_module_selftests.py
 │   ├── test_notiz_editor_module.py
+│   ├── test_permission_guard.py
 │   ├── test_pin_auth.py
+│   ├── test_profil_manager_module.py
 │   ├── test_qa_checks.py
 │   ├── test_robustness_checks.py
+│   ├── test_selective_exporter.py
 │   ├── test_todo_kalender_module.py
-│   └── test_todo_manager.py
+│   ├── test_todo_manager.py
+│   ├── test_undo_redo.py
+│   └── test_zip_exporter.py
 ├── AGENTS.md
 ├── ANALYSE_BERICHT.md
 ├── ANLEITUNG_TOOL.md
 ├── CHANGELOG.md
+├── Design_und_Layoutvorgabe.png
 ├── DEV_DOKU.md
 ├── DONE.md
 ├── klick_start.sh
@@ -189,4 +259,4 @@ Projektstruktur (2026_GIT_TOOL)
 ├── TODO.md
 └── todo.txt
 
-Stand: 2026-01-15T12:38:09+00:00
+Stand: 2026-01-15T17:57:24+00:00

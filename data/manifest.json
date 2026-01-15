@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-01-15T12:38:09+00:00",
+  "generated_at": "2026-01-15T17:57:24+00:00",
   "modules": [
     {
       "id": "status",
@@ -49,6 +49,34 @@
       "version": "1.0.0",
       "entry": "module.py",
       "path": "modules/datei_suche"
+    },
+    {
+      "id": "datei_manager",
+      "name": "Datei-Manager",
+      "version": "1.0.0",
+      "entry": "module.py",
+      "path": "modules/datei_manager"
+    },
+    {
+      "id": "media_wavesurfer",
+      "name": "Wavesurfer-Toolkit",
+      "version": "1.0.0",
+      "entry": "module.py",
+      "path": "modules/media_wavesurfer"
+    },
+    {
+      "id": "media_ffmpeg_wrapper",
+      "name": "FFmpeg-Wrapper",
+      "version": "1.0.0",
+      "entry": "module.py",
+      "path": "modules/media_ffmpeg_wrapper"
+    },
+    {
+      "id": "profil_manager",
+      "name": "Profil-Manager",
+      "version": "1.0.0",
+      "entry": "module.py",
+      "path": "modules/profil_manager"
     }
   ]
 }

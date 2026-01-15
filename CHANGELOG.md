@@ -18,6 +18,13 @@
 - Dashboard: Layout, Farben und Hintergrund an Design_und_Layoutvorgabe angepasst.
 - Dashboard: Zeitachse mit kräftigerem Gradient und Glas-Panel-Stil überarbeitet.
 
+## [0.1.12] – 2026-02-12
+- Medien: Wavesurfer-Toolkit mit Markern, Regionen, Minimap und Exportprofilen ergänzt.
+- Medien: FFmpeg-Wrapper mit Presets, Auto-Name und Fortschrittsanzeige ergänzt.
+- Medien: Datei-Manager mit Quick-Rename, Tagging und Favoriten ergänzt.
+- Daten: Profil-Manager mit getrennten Projektordnern integriert.
+- Tests: Modul-Tests für neue Medien- und Profil-Module ergänzt.
+
 ## [0.1.53] – 2026-02-09
 - Release: AppImage-Builder mit integriertem Self-Check ergänzt.
 - Release: One-File-Build (PyInstaller) mit Konfig und Entry-Skript ergänzt.

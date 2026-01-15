@@ -1,0 +1,8 @@
+{
+  "id": "datei_manager",
+  "name": "Datei-Manager",
+  "version": "1.0.0",
+  "description": "Datei-Manager mit Quick-Rename, Tagging und Favoriten.",
+  "entry": "module.py",
+  "permissions": ["read", "write:data"]
+}

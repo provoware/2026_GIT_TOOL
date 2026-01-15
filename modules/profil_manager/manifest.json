@@ -1,0 +1,8 @@
+{
+  "id": "profil_manager",
+  "name": "Profil-Manager",
+  "version": "1.0.0",
+  "description": "Profil-System mit getrennten Projektordnern und aktivem Profil.",
+  "entry": "module.py",
+  "permissions": ["read", "write:data"]
+}
