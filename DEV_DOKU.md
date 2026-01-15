@@ -98,8 +98,8 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 <!-- AUTO-STATUS:START -->
 **Auto-Status (aktualisiert: 2026-01-15)**
 
-- Gesamt: 137 Tasks
-- Erledigt: 137 Tasks
+- Gesamt: 141 Tasks
+- Erledigt: 141 Tasks
 - Offen: 0 Tasks
 - Fortschritt: 100,00 %
 <!-- AUTO-STATUS:END -->
@@ -267,6 +267,7 @@ Hier nur die wichtigsten Bereiche:
 4. Zoom: Strg + Mausrad (Zoom = Schriftgröße vergrößern/verkleinern).
 5. Modul-Check: Wird bei jeder Aktualisierung automatisch ausgeführt (Status steht in der Übersicht).
 6. UI-Abstände anpassen: `config/launcher_gui.json` → `layout.*` (Spacing = Abstände).
+7. Großbutton-UI anpassen: `layout.button_min_width` (Button-Breite) und `layout.button_font_size` (Schriftgröße).
 ### Modul-Check (manuell)
 1. `python system/module_checker.py --config config/modules.json`
 2. Modul-IDs sind `snake_case` und Pfade müssen `modules/<modul_id>` entsprechen.

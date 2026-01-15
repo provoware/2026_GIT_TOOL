@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.51] – 2026-02-06
+- GUI: Großbutton-UI über neue Layout-Parameter (Breite + Schriftgröße) verstärkt.
+- Qualität: GUI-Konfig-Modelle und JSON-Validator prüfen neue Button-Felder.
+- Doku: DEV_DOKU und To-Do-Listen mit aktualisierten Launcher-Parametern synchronisiert.
+
 ## [0.1.50] – 2026-01-15
 - Struktur: Zusatzprojekt dashboard-timeline-tool in dashboard_zeitachsen_werkzeug umbenannt.
 - Struktur: Zusatzprojekt genrearchiv_tool_v1_2_3_2026_01_06 in genrearchiv_werkzeug_v1_2_3_2026_01_06 umbenannt.

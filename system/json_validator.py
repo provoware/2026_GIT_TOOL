@@ -184,6 +184,8 @@ def _validate_layout(layout: dict) -> None:
     _require_int_min(layout.get("gap_xl"), "layout.gap_xl", 0)
     _require_int_min(layout.get("button_padx"), "layout.button_padx", 0)
     _require_int_min(layout.get("button_pady"), "layout.button_pady", 0)
+    _require_int_min(layout.get("button_min_width"), "layout.button_min_width", 0)
+    _require_int_min(layout.get("button_font_size"), "layout.button_font_size", 8)
     _require_int_min(layout.get("field_padx"), "layout.field_padx", 0)
     _require_int_min(layout.get("field_pady"), "layout.field_pady", 0)
     _require_int_min(layout.get("focus_thickness"), "layout.focus_thickness", 0)

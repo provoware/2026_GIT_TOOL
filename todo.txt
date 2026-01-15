@@ -10,6 +10,12 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Nächste 4 kleinste Aufgaben (Runde 2026-02-06) – erledigt
+[x] START-01: GUI-Launcher erstellen (Fenster, Theme, Layout). | fertig wenn: Startfenster stabil geöffnet.
+[x] UX-02: Großbutton-UI realisieren (Großbutton = große Schaltflächen). | fertig wenn: große Buttons nutzbar.
+[x] QA-01: JSON-Validator einbauen. | fertig wenn: JSON geprüft.
+[x] QA-02: Automatische Dateinamenkorrektur. | fertig wenn: falsche Namen korrigiert.
+
 Nächste 4 kleinste Aufgaben (Runde 2026-01-15) – erledigt
 [x] REN-DE-01: Ordner dashboard-timeline-tool in dashboard_zeitachsen_werkzeug umbenennen. | fertig wenn: Ordnername ist deutsch und snake_case.
 [x] REN-DE-02: Ordner genrearchiv_tool_v1_2_3_2026_01_06 in genrearchiv_werkzeug_v1_2_3_2026_01_06 umbenennen. | fertig wenn: Ordnername ist deutsch und snake_case.
