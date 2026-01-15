@@ -9,6 +9,7 @@ import threading
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
+import autosave_manager
 import diagnostics_runner
 import error_simulation
 import module_checker
@@ -22,6 +23,9 @@ from logging_center import setup_logging as setup_logging_center
 
 DEFAULT_MODULE_CONFIG = Path(__file__).resolve().parents[1] / "config" / "modules.json"
 DEFAULT_GUI_CONFIG = Path(__file__).resolve().parents[1] / "config" / "launcher_gui.json"
+DEFAULT_SETTINGS_CONFIG = Path(__file__).resolve().parents[1] / "config" / "global_settings.json"
+DEFAULT_DATA_ROOT = Path(__file__).resolve().parents[1] / "data"
+DEFAULT_LOG_ROOT = Path(__file__).resolve().parents[1] / "logs"
 BRAND_NAME = "Genrearchiv"
 ICON_SET = {
     "header": "🧭",
@@ -191,10 +195,13 @@ class LauncherGui:
         self.contrast_theme = self._resolve_contrast_theme()
         self.status_palette: Dict[str, str] = {}
         self.layout = self.gui_config.layout
+        self.autosave_config: autosave_manager.AutosaveConfig | None = None
+        self.autosave_job = None
 
         self.root.title(f"{BRAND_NAME} – Startübersicht")
         self.root.minsize(640, 420)
         self._build_ui(show_all)
+        self._setup_autosave()
 
     def _build_ui(self, show_all: bool) -> None:
         import tkinter as tk
@@ -677,6 +684,39 @@ class LauncherGui:
 
         for child in widget.winfo_children():
             self._apply_widget_style(child, background, foreground, accent, button_bg, button_fg)
+
+    def _setup_autosave(self) -> None:
+        try:
+            config = autosave_manager.load_autosave_config(DEFAULT_SETTINGS_CONFIG)
+        except autosave_manager.AutosaveError as exc:
+            self.logger.error("Autosave: Konfiguration ungültig: %s", exc)
+            return
+
+        if not config.enabled:
+            self.logger.info("Autosave: Deaktiviert.")
+            return
+
+        self.autosave_config = config
+        self._schedule_autosave()
+
+    def _schedule_autosave(self) -> None:
+        if self.autosave_config is None:
+            return
+        autosave_manager.schedule_next_autosave(
+            self.autosave_config.interval_minutes,
+            self.root.after,
+            self._run_autosave,
+        )
+
+    def _run_autosave(self) -> None:
+        if self.autosave_config is None:
+            return
+        try:
+            autosave_manager.create_autosave(DEFAULT_DATA_ROOT, DEFAULT_LOG_ROOT, self.logger)
+        except autosave_manager.AutosaveError as exc:
+            self.logger.error("Autosave fehlgeschlagen: %s", exc)
+        finally:
+            self._schedule_autosave()
 
     def refresh(self) -> None:
         self.refresh_job = None

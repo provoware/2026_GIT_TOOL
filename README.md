@@ -13,12 +13,12 @@ Dieses Projekt ist ein sauberer Neuaufbau mit Fokus auf Robustheit, Nachvollzieh
 - Komfortfunktionen wie globale Suche, Favoritenleiste, Mini-Panels und Auto-Theming sind umgesetzt.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-02-05)**
+**Auto-Status (aktualisiert: 2026-01-15)**
 
-- Gesamt: 244 Tasks
-- Erledigt: 195 Tasks
-- Offen: 49 Tasks
-- Fortschritt: 79,92 %
+- Gesamt: 133 Tasks
+- Erledigt: 133 Tasks
+- Offen: 0 Tasks
+- Fortschritt: 100,00 %
 <!-- AUTO-STATUS:END -->
 
 ## Ziele (in Arbeit)
@@ -32,6 +32,7 @@ Dieses Projekt ist ein sauberer Neuaufbau mit Fokus auf Robustheit, Nachvollzieh
 Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweisung):
 - `./scripts/start.sh` (Start-Routine = automatischer Projektstart mit Prüfungen und Feedback)
 - `./scripts/start.sh --safe-mode` (Safe-Mode = nur prüfen, nichts schreiben)
+- `./scripts/start.sh --test-mode` (Testmodus = nur prüfen, nichts schreiben)
 - `./scripts/start.sh --sandbox` (Sandbox = isolierte Kopie für Testläufe)
 - `./scripts/ensure_venv.sh` (Venv = isolierte Python-Umgebung vorbereiten/prüfen)
 - `./scripts/system_scan.sh` (System-Scan = Vorabprüfung ohne Schreiben)
@@ -105,6 +106,7 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 ## Logging und Debugging
 - **Logging (Protokollierung)**: Jede Aktion soll protokolliert werden.
 - **Debugging (Fehlersuche)**: Optionaler Modus mit mehr Details.
+- **Autosave-Log (Sicherungs-Log)**: `logs/autosave.log` zeigt automatische Sicherungen.
 
 ## Sandbox-Analyse (Kurzfassung)
 - **Risiko**: Ohne Sandbox-Regeln können Module zu viele Rechte erhalten.
@@ -129,7 +131,9 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 - `STRUKTUR.md`: Verzeichnisbaum + Pflichtdateien (inkl. Dummy-Platzhalter).
 - `CHANGELOG.md`: Änderungen je Version.
 - `config/global_settings.json`: Zentrale Settings (Einstellungen) für UI/Logging/Autosave.
+- `config/pin.json`: PIN-Login-Einstellungen (PIN = kurze Zahlen-Passwort).
 - `data/manifest.json`: Automatisch gepflegter Manifest-Überblick.
+- `data/autosave_state.json`: Status der letzten Autosave-Sicherung.
 
 ## Lizenz
 Noch nicht festgelegt.

@@ -10,6 +10,12 @@ Release-Checkliste GUI (Barrierefreiheit)
 [x] REL-GUI-05: Ladeanzeige zeigen (Busy-Indikator = sichtbare Ladeanzeige).
 [x] REL-GUI-06: Responsives Layout prüfen (passt sich kleinen Fenstern an).
 
+Nächste 4 kleinste Aufgaben (Runde 2026-01-15) – erledigt
+[x] START-02: PIN-Login implementieren (PIN = kurze Zahlen-Passwort). | fertig wenn: Anmeldung funktioniert.
+[x] IO-03: Testmodus (schreibgeschützt) einbauen. | fertig wenn: keine Schreibzugriffe.
+[x] FLOW-03: Autosave alle 10 Minuten. | fertig wenn: automatische Sicherung läuft.
+[x] IO-04: Autosave in Logs protokollieren. | fertig wenn: Logs enthalten Autosave.
+
 Nächste 4 kleinste Aufgaben (Runde 2026-02-05) – erledigt
 [x] UX-01: Barrierefreiheits-Set ergänzen (Kontrast, ARIA, Tastatur). | fertig wenn: Checkliste erfüllt.
 [x] VIS-01: Timeline-Tool responsiv überarbeiten. | fertig wenn: passt sich an.

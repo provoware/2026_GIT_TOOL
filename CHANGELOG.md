@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.49] – 2026-01-15
+- Start: PIN-Login wird in der Start-Routine geprüft (optional über config/pin.json).
+- Start: Testmodus (--test-mode) als Alias für Safe-Mode ergänzt.
+- Autosave: Automatische Sicherungen schreiben ZIP-Archive in data/autosave/ und loggen nach logs/autosave.log.
+- Autosave: Autosave-Status wird in data/autosave_state.json gesichert.
+
 ## [0.1.48] – 2026-02-05
 - Timeline: Zeitachse responsiv mit horizontalem Scroll und anpassbarer Höhe umgesetzt.
 - Timeline: Hover-Details, Zoom-Regler und flexibler Abstand integriert.
