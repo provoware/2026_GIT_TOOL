@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.41] – 2026-01-15
+- Doku: Start-Tasks (START-03/05/06/07) in TODO.md und todo.txt synchronisiert.
+- Doku: Fortschritt und Auto-Status aktualisiert.
+
 ## [0.1.40] – 2026-02-01
 - Standards: GMS-Frontend-Pfad auf snake_case-Standard umgestellt.
 - Qualität: Linting- und Format-Skripte für das GMS-Frontend ergänzt.
