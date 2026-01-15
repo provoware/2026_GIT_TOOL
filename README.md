@@ -15,10 +15,10 @@ Dieses Projekt ist ein sauberer Neuaufbau mit Fokus auf Robustheit, Nachvollzieh
 <!-- AUTO-STATUS:START -->
 **Auto-Status (aktualisiert: 2026-01-15)**
 
-- Gesamt: 145 Tasks
+- Gesamt: 149 Tasks
 - Erledigt: 145 Tasks
-- Offen: 0 Tasks
-- Fortschritt: 100,00 %
+- Offen: 4 Tasks
+- Fortschritt: 97,32 %
 <!-- AUTO-STATUS:END -->
 
 ## Ziele (in Arbeit)
@@ -42,6 +42,8 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 - `./scripts/update_records.sh` (Changelog-Automatik = DONE/CHANGELOG aus todo.txt aktualisieren)
 - `./scripts/update_structure.sh` (Strukturpflege = Baumstruktur/Manifest/Register aktualisieren)
 - `./scripts/build_all.sh` (Ein-Befehl-Build = Checks, Strukturpflege, Doku, Tests)
+- `./scripts/install_desktop_entry.sh` (Desktop-Entry = Startdatei für Linux-Menü)
+- `./scripts/build_deb.sh` (Deb-Paket = Installationspaket für Linux)
 - `./scripts/repo_basis_check.sh` (Repo-Check = Basisprüfung für Git-Remote)
 
 ## Release-Checks & Test-Automatik
@@ -71,6 +73,7 @@ Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweis
 ## Design & Branding
 - Der GUI-Launcher zeigt ein klares Basis-Branding mit kleinen Symbolen (Icons).
 - Zusätzlich gibt es ein „Papierkorb“-Theme für einen warmen, kontrastreichen Look.
+- Ein offizielles Icon-Set ist in `assets/icons` hinterlegt und wird für Desktop-Startdateien genutzt.
 
 ## Robustheit & Self-Repair
 - Der Health-Check kann fehlende Dateien/Ordner automatisch anlegen.

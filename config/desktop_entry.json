@@ -1,0 +1,10 @@
+{
+  "app_name": "2026 Git Tool",
+  "app_id": "2026_git_tool",
+  "comment": "Barrierefreies Tool mit klarer Start-Routine und automatischen Checks.",
+  "exec": "./scripts/start.sh",
+  "icon_name": "2026_git_tool",
+  "categories": ["Utility", "Development"],
+  "keywords": ["barrierefrei", "tool", "projekt"],
+  "terminal": false
+}

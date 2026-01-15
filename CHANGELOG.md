@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased] – 2026-01-15
+- Automatisch ergänzt: REL-01: .deb-Paket bauen.
+- Automatisch ergänzt: REL-02: Offizielles Icon-Set (Provoware-Look) integrieren.
+- Automatisch ergänzt: REL-04: ZIP-Auto-Export alle fünf Entwicklungsschritte.
+- Automatisch ergänzt: REL-08: Desktop-File + Icon-Integration für Linux.
+
 ## [0.1.52] – 2026-02-07
 - GUI: Tooltips für Launcher-Steuerung ergänzt und barrierearm platziert.
 - GUI: Kontext-Hilfe im Launcher ergänzt (Fokus + F1).

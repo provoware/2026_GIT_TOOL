@@ -1,5 +1,18 @@
 {
   "changelog_section_label": "Unreleased",
   "changelog_entry_prefix": "Automatisch ergänzt",
-  "done_entry_prefix": "[x]"
+  "done_entry_prefix": "[x]",
+  "zip_export_enabled": true,
+  "zip_export_step_count": 5,
+  "zip_export_state_path": "data/zip_export_state.json",
+  "zip_export_dir": "data/exports",
+  "zip_export_excludes": [
+    ".git",
+    ".venv",
+    "logs",
+    "data/exports",
+    "data/log_exports",
+    "__pycache__",
+    "node_modules"
+  ]
 }

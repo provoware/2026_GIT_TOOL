@@ -10,12 +10,14 @@ from datetime import date
 from pathlib import Path
 from typing import Iterable, List
 
+from zip_exporter import ZipExportConfig, load_zip_config, run_zip_export
+
 DATED_TASK_PATTERN = re.compile(
     r"^\[(?P<status>[ xX])\]\s+(?P<date>\d{4}-\d{2}-\d{2})\s+\|\s+"
     r"(?P<area>[^|]+?)\s+\|\s+(?P<title>[^|]+?)\s+\|"
 )
 ROUND_HEADER_PATTERN = re.compile(
-    r"^Nächste 4 kleinste Aufgaben \\(Runde (?P<date>\d{4}-\d{2}-\d{2})\\)"
+    r"^Nächste 4 kleinste Aufgaben \(Runde (?P<date>\d{4}-\d{2}-\d{2})\)" r"(?:\s+–\s+.*)?$"
 )
 ROUND_TASK_PATTERN = re.compile(r"^\[(?P<status>[ xX])\]\s+(?P<text>.+)$")
 DONE_ENTRY_PATTERN = re.compile(
@@ -53,6 +55,7 @@ class RecordConfig:
     changelog_section_label: str
     changelog_entry_prefix: str
     done_entry_prefix: str
+    zip_export: ZipExportConfig
 
 
 def load_config(config_path: Path) -> RecordConfig:
@@ -61,6 +64,7 @@ def load_config(config_path: Path) -> RecordConfig:
         changelog_section_label=data["changelog_section_label"],
         changelog_entry_prefix=data["changelog_entry_prefix"],
         done_entry_prefix=data["done_entry_prefix"],
+        zip_export=load_zip_config(data),
     )
     validate_config(config)
     return config
@@ -73,6 +77,8 @@ def validate_config(config: RecordConfig) -> None:
         raise ValueError("Konfiguration: Prefix für Changelog-Einträge fehlt.")
     if not config.done_entry_prefix:
         raise ValueError("Konfiguration: Prefix für DONE-Einträge fehlt.")
+    if not isinstance(config.zip_export, ZipExportConfig):
+        raise ValueError("Konfiguration: ZIP-Export ist ungültig.")
 
 
 def _parse_round_task(text: str, date: str, raw_line: str) -> TodoTask | None:
@@ -341,6 +347,7 @@ def run_update(
     todo_path.write_text("".join(updated_todo_lines), encoding="utf-8")
     done_path.write_text("".join(updated_done_lines), encoding="utf-8")
     changelog_path.write_text("".join(updated_changelog_lines), encoding="utf-8")
+    run_zip_export(repo_root, len(archived_tasks), config.zip_export, logger)
 
     return UpdateResult(archived_tasks=archived_tasks, removed_done_lines=removed_done_lines)
 

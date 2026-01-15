@@ -99,10 +99,10 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 <!-- AUTO-STATUS:START -->
 **Auto-Status (aktualisiert: 2026-01-15)**
 
-- Gesamt: 145 Tasks
+- Gesamt: 149 Tasks
 - Erledigt: 145 Tasks
-- Offen: 0 Tasks
-- Fortschritt: 100,00 %
+- Offen: 4 Tasks
+- Fortschritt: 97,32 %
 <!-- AUTO-STATUS:END -->
 
 ## Struktur (aktuell)
@@ -217,6 +217,16 @@ Hier nur die wichtigsten Bereiche:
 1. `./scripts/build_all.sh`
 2. Führt Checks, Strukturpflege, Doku-Update und Tests in einem Schritt aus.
 
+### Desktop-Entry installieren (Linux)
+1. `./scripts/install_desktop_entry.sh`
+2. Erstellt eine Desktop-Startdatei und installiert das Icon in dein Benutzerprofil.
+3. Optional: `./scripts/install_desktop_entry.sh --debug` (Debugging = detaillierte Diagnoseausgaben).
+
+### Deb-Paket bauen (Linux)
+1. `./scripts/build_deb.sh`
+2. Das Paket landet im Ordner `dist/` (falls `dpkg-deb` installiert ist).
+3. Optional: `./scripts/build_deb.sh --debug` (Debugging = detaillierte Diagnoseausgaben).
+
 ### Modul-Selbsttests (manuell)
 1. `python system/module_selftests.py`
 2. Zeigt pro Modul einen Status (ok/fehler/übersprungen) an.
@@ -281,6 +291,11 @@ Hier nur die wichtigsten Bereiche:
 ### Log-Export (ZIP)
 1. `python system/log_exporter.py`
 2. Optional: `python system/log_exporter.py --logs-dir logs --export-dir data/log_exports`
+
+### ZIP-Auto-Export (Entwicklungsstände)
+1. Die Changelog-Automatik (`./scripts/update_records.sh`) prüft neue erledigte Aufgaben.
+2. Nach jeweils fünf neuen Aufgaben entsteht automatisch ein ZIP-Archiv im Ordner `data/exports/`.
+3. Status wird in `data/zip_export_state.json` gespeichert.
 
 ### Standards anzeigen (im Tool)
 1. `./scripts/show_standards.sh --list`

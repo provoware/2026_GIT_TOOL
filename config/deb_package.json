@@ -1,0 +1,13 @@
+{
+  "package_name": "2026-git-tool",
+  "version": "0.1.0",
+  "maintainer": "Provoware <support@example.local>",
+  "description": "Barrierefreies Tool mit automatischer Start-Routine, Prüfungen und klarer Struktur.",
+  "architecture": "amd64",
+  "depends": ["python3", "python3-tk"],
+  "install_root": "/opt/2026_git_tool",
+  "desktop_entry_config": "config/desktop_entry.json",
+  "icon_source": "assets/icons/provoware.svg",
+  "exclude_paths": [".git", ".venv", "logs", "data/exports", "data/log_exports", "__pycache__", "node_modules"],
+  "output_dir": "dist"
+}

@@ -370,11 +370,11 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [x] TEST-06: Vollautomatische Testausführung über Startroutine (Test-Automatik). | fertig wenn: Tests starten selbst.
 
 ### Release-Build
-- [ ] REL-01: .deb-Paket bauen. | fertig wenn: Paket erzeugt.
-- [ ] REL-02: Offizielles Icon-Set (Provoware-Look) integrieren. | fertig wenn: Icons vorhanden.
+- [x] REL-01: .deb-Paket bauen. | fertig wenn: Paket erzeugt.
+- [x] REL-02: Offizielles Icon-Set (Provoware-Look) integrieren. | fertig wenn: Icons vorhanden.
 - [ ] REL-03: One-File-Distribution (AppImage/PyInstaller). | fertig wenn: Ein-Datei-Build.
-- [ ] REL-04: ZIP-Auto-Export alle fünf Entwicklungsschritte. | fertig wenn: ZIP-Automatik läuft.
-- [ ] REL-08: Desktop-File + Icon-Integration für Linux. | fertig wenn: Desktop-Startdatei vorhanden.
+- [x] REL-04: ZIP-Auto-Export alle fünf Entwicklungsschritte. | fertig wenn: ZIP-Automatik läuft.
+- [x] REL-08: Desktop-File + Icon-Integration für Linux. | fertig wenn: Desktop-Startdatei vorhanden.
 
 ### Abschlusslogik
 - [ ] END-01: Logout: Save-All + sauberes Schließen. | fertig wenn: Daten gespeichert.
