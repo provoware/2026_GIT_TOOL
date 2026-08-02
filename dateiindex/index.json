@@ -56,9 +56,10 @@
       ],
       "completed_gates": [
         "Gate 1: Berichtformatierer",
-        "Gate 2: Workspace-Geometrie"
+        "Gate 2: Workspace-Geometrie",
+        "Gate 3: Themeadapter"
       ],
-      "next_gate": "Gate 3: Themeadapter"
+      "next_gate": "Gate 4: Task-Runner"
     }
   ],
   "hardened": [
@@ -86,6 +87,13 @@
       "evidence": "Gate-2-Tests, kanonischer idempotenter Codemod, reale Integration und Python-Kompilierungsprüfung erfolgreich",
       "canonical_codemod": "scripts/apply_gate2_workspace_geometry_v2.py",
       "limitations": "Responsive Reflow-Policy und Modul-Lebenszyklus bleiben in späteren Gates"
+    },
+    {
+      "path": "system/ui_theme_adapter.py",
+      "role": "Gemeinsamer Themevertrag und Tkinter-Themeadapter",
+      "evidence": "Sieben Themevertragstests, idempotente Codemods für beide Fenster, reale Integration, Kompilierungsprüfung sowie erneute Gates 1 und 2 erfolgreich",
+      "canonical_codemod": "scripts/apply_gate3_ui_theme_adapter.py",
+      "limitations": "Physische visuelle Abnahme und Task-Orchestrierung bleiben separate Gates"
     }
   ],
   "generated": [
