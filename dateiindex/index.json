@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-08-03",
+  "source_branch": "agent/design-tokens-blocks-1-2",
+  "entry_points": [
+    {
+      "path": "scripts/start.sh",
+      "role": "Linux-Startpfad und Vorprüfungen",
+      "status": "entdeckt"
+    },
+    {
+      "path": "system/launcher.py",
+      "role": "Kommandozeilen-Launcher und Modulübersicht",
+      "status": "entdeckt"
+    },
+    {
+      "path": "system/launcher_gui.py",
+      "role": "Produktiver Tkinter-GUI-Launcher",
+      "status": "kandidat"
+    },
+    {
+      "path": "system/main_window.py",
+      "role": "Tkinter-Hauptfenster und Modulraster",
+      "status": "kandidat"
+    },
+    {
+      "path": "genrearchiv_werkzeug_v1_2_3_2026_01_06/src/main.jsx",
+      "role": "Historischer React/Vite-Einstiegspunkt",
+      "status": "historisch"
+    }
+  ],
+  "hardened": [
+    {
+      "path": "config/design-tokens.json",
+      "role": "Zentrale Design-Token-Quelle",
+      "evidence": "Pflichtgruppen und Theme-Farbvertrag werden durch den Generator validiert",
+      "limitations": "Laufzeittest muss in CI oder lokaler Projektumgebung erfolgen"
+    },
+    {
+      "path": "system/generate_design_tokens.py",
+      "role": "Deterministische Generierung und Drift-Prüfung",
+      "evidence": "Validierung, definierte Exitcodes, --check-Modus und automatisch gekennzeichnete Ausgaben",
+      "limitations": "In der Connector-Umgebung war keine direkte Programmausführung möglich"
+    }
+  ],
+  "generated": [
+    "generated/design-tokens.css",
+    "generated/design-tokens-webmanifest.json",
+    "generated/design-tokens-module-manifest.json",
+    "docs/DESIGN_TOKENS.generated.md"
+  ],
+  "refactoring_candidates": [
+    "system/launcher_gui.py",
+    "system/main_window.py",
+    "system/module_manager.py",
+    "system/store.py",
+    "system/module_loader.py",
+    "genrearchiv_werkzeug_v1_2_3_2026_01_06/src/App.jsx",
+    "genrearchiv_werkzeug_v1_2_3_2026_01_06/src/index.css"
+  ]
+}
