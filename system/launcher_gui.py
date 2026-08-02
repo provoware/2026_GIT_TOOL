@@ -33,6 +33,15 @@ from launcher_reports import (
     format_maintenance_report,
 )
 from module_manager import ModuleManagerError
+from ui_theme_adapter import (
+    UiThemeError,
+    apply_theme_tree,
+    apply_widget_style,
+    build_status_palette,
+    build_tooltip_style,
+    resolve_contrast_theme,
+    resolve_theme,
+)
 from undo_redo import UndoRedoAction, UndoRedoError, UndoRedoManager
 
 DEFAULT_MODULE_CONFIG = Path(__file__).resolve().parents[1] / "config" / "modules.json"
@@ -1179,14 +1188,10 @@ class LauncherGui:
             self.autosave_job = None
 
     def _resolve_contrast_theme(self) -> Optional[str]:
-        if not isinstance(self.gui_config, GuiConfigModel):
-            raise GuiLauncherError("gui_config ist ungültig.")
-        if "kontrast" in self.gui_config.themes:
-            return "kontrast"
-        for name, theme in self.gui_config.themes.items():
-            if "kontrast" in theme.label.lower():
-                return name
-        return None
+        try:
+            return resolve_contrast_theme(self.gui_config)
+        except UiThemeError as exc:
+            raise GuiLauncherError(str(exc)) from exc
 
     def _toggle_contrast_theme(self) -> None:
         if self.theme_var is None:
@@ -1291,32 +1296,14 @@ class LauncherGui:
 
     def apply_theme(self, theme_name: str) -> None:
         clean_name = _require_text(theme_name, "theme_name")
-        if clean_name not in self.gui_config.themes:
-            raise GuiLauncherError("Unbekanntes Farbschema.")
-        theme = self.gui_config.themes[clean_name]
-        self.current_theme = clean_name
-
-        bg = theme.colors["background"]
-        fg = theme.colors["foreground"]
-        accent = theme.colors["accent"]
-        button_bg = theme.colors["button_background"]
-        button_fg = theme.colors["button_foreground"]
-        self.status_palette = {
-            "success": theme.colors["status_success"],
-            "error": theme.colors["status_error"],
-            "busy": theme.colors["status_busy"],
-            "foreground": theme.colors["status_foreground"],
-        }
-        self.tooltip_style = {
-            "bg": theme.colors["button_background"],
-            "fg": theme.colors["button_foreground"],
-            "border": theme.colors["accent"],
-        }
-
-        widgets = self.root.winfo_children()
-        self.root.configure(background=bg)
-        for widget in widgets:
-            self._apply_widget_style(widget, bg, fg, accent, button_bg, button_fg)
+        try:
+            theme = resolve_theme(self.gui_config, clean_name, strict=True)
+        except UiThemeError as exc:
+            raise GuiLauncherError(str(exc)) from exc
+        self.current_theme = theme.name
+        self.status_palette = build_status_palette(theme)
+        self.tooltip_style = build_tooltip_style(theme)
+        apply_theme_tree(self.root, theme, button_font=self.button_font)
         self._apply_status_style("success")
 
     def _apply_widget_style(
@@ -1328,57 +1315,17 @@ class LauncherGui:
         button_bg: str,
         button_fg: str,
     ) -> None:
-        import tkinter as tk
-
-        widget_type = widget.winfo_class()
-        if widget_type == "Frame":
-            widget.configure(bg=background)
-        elif widget_type == "Label":
-            widget.configure(bg=background, fg=foreground)
-        elif widget_type == "Labelframe":
-            widget.configure(
-                bg=background,
-                fg=foreground,
-                highlightbackground=accent,
-                highlightcolor=accent,
-            )
-        elif widget_type in {"Checkbutton", "Button", "Menubutton"}:
-            widget.configure(
-                bg=button_bg,
-                fg=button_fg,
-                activebackground=accent,
-                activeforeground=button_fg,
-                highlightbackground=accent,
-                highlightcolor=accent,
-                highlightthickness=2,
-            )
-        elif widget_type == "Text":
-            widget.configure(bg=background, fg=foreground, insertbackground=foreground)
-        elif widget_type == "OptionMenu":
-            widget.configure(bg=button_bg, fg=button_fg, activebackground=accent)
-
-        if isinstance(widget, tk.Text):
-            widget.configure(highlightbackground=accent, highlightcolor=accent)
-        if isinstance(widget, tk.OptionMenu):
-            if self.button_font is not None:
-                widget.configure(font=self.button_font)
-            widget.configure(
-                highlightbackground=accent,
-                highlightcolor=accent,
-                highlightthickness=2,
-            )
-            menu = widget["menu"]
-            menu.configure(
-                bg=button_bg,
-                fg=button_fg,
-                activebackground=accent,
-                activeforeground=button_fg,
-            )
-            if self.button_font is not None:
-                menu.configure(font=self.button_font)
-
-        for child in widget.winfo_children():
-            self._apply_widget_style(child, background, foreground, accent, button_bg, button_fg)
+        colors = {
+            "background": background,
+            "foreground": foreground,
+            "accent": accent,
+            "button_background": button_bg,
+            "button_foreground": button_fg,
+        }
+        try:
+            apply_widget_style(widget, colors, button_font=self.button_font)
+        except UiThemeError as exc:
+            raise GuiLauncherError(str(exc)) from exc
 
     def _setup_autosave(self) -> None:
         try:
