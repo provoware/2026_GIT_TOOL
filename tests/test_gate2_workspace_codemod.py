@@ -4,7 +4,7 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parents[1] / "scripts"))
 
-from apply_gate2_workspace_geometry import transform
+from apply_gate2_workspace_geometry_v2 import transform
 
 
 def test_codemod_is_idempotent():
