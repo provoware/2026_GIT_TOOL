@@ -1,0 +1,88 @@
+/* AUTO-GENERATED. DO NOT EDIT. Source: config/design-tokens.json */
+:root {
+  --pw-breakpoint-desktop: 1200px;
+  --pw-breakpoint-phone: 430px;
+  --pw-breakpoint-tablet: 768px;
+  --pw-color-accent: #C7FF00;
+  --pw-color-accent-text: #101500;
+  --pw-color-background: #F2E8C9;
+  --pw-color-border: #2A261D;
+  --pw-color-danger: #B42318;
+  --pw-color-info: #1261A0;
+  --pw-color-success: #2B8A3E;
+  --pw-color-surface: #FFF8DE;
+  --pw-color-surface-elevated: #FFFDF3;
+  --pw-color-text: #17150F;
+  --pw-color-text-muted: #5C5648;
+  --pw-color-warning: #C56A00;
+  --pw-layout-content-max: 1440px;
+  --pw-layout-header-height: 4rem;
+  --pw-layout-sidebar-width: 17rem;
+  --pw-layout-tile-min: 13rem;
+  --pw-layout-touch-target: 44px;
+  --pw-motion-fast: 120ms;
+  --pw-motion-normal: 200ms;
+  --pw-motion-slow: 320ms;
+  --pw-radius-lg: 0.75rem;
+  --pw-radius-md: 0.5rem;
+  --pw-radius-pill: 999px;
+  --pw-radius-sm: 0.25rem;
+  --pw-shadow-md: 0 6px 18px rgba(0,0,0,.22);
+  --pw-shadow-sm: 0 1px 2px rgba(0,0,0,.18);
+  --pw-spacing-0: 0;
+  --pw-spacing-1: 0.25rem;
+  --pw-spacing-2: 0.5rem;
+  --pw-spacing-3: 0.75rem;
+  --pw-spacing-4: 1rem;
+  --pw-spacing-5: 1.5rem;
+  --pw-spacing-6: 2rem;
+  --pw-spacing-7: 3rem;
+  --pw-typography-font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --pw-typography-font-family-sans: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --pw-typography-font-size-2xl: 2rem;
+  --pw-typography-font-size-lg: 1.25rem;
+  --pw-typography-font-size-md: 1rem;
+  --pw-typography-font-size-sm: 0.875rem;
+  --pw-typography-font-size-xl: 1.5rem;
+  --pw-typography-font-size-xs: 0.75rem;
+  --pw-typography-font-weight-bold: 700;
+  --pw-typography-font-weight-medium: 500;
+  --pw-typography-font-weight-normal: 400;
+  --pw-typography-line-height-normal: 1.5;
+  --pw-typography-line-height-tight: 1.2;
+  --pw-z-index-base: 0;
+  --pw-z-index-dialog: 1000;
+  --pw-z-index-header: 100;
+  --pw-z-index-sidebar: 200;
+  --pw-z-index-toast: 1100;
+}
+
+[data-theme="acid-paper"] {
+  --pw-color-accent: #C7FF00;
+  --pw-color-accent-text: #101500;
+  --pw-color-background: #F2E8C9;
+  --pw-color-border: #2A261D;
+  --pw-color-danger: #B42318;
+  --pw-color-info: #1261A0;
+  --pw-color-success: #2B8A3E;
+  --pw-color-surface: #FFF8DE;
+  --pw-color-surface-elevated: #FFFDF3;
+  --pw-color-text: #17150F;
+  --pw-color-text-muted: #5C5648;
+  --pw-color-warning: #C56A00;
+}
+
+[data-theme="neon-scrap"] {
+  --pw-color-accent: #D8FF00;
+  --pw-color-accent-text: #111500;
+  --pw-color-background: #0F1115;
+  --pw-color-border: #5B6472;
+  --pw-color-danger: #FF4D5E;
+  --pw-color-info: #36A3FF;
+  --pw-color-success: #46D369;
+  --pw-color-surface: #171A21;
+  --pw-color-surface-elevated: #20242D;
+  --pw-color-text: #F5F7FA;
+  --pw-color-text-muted: #B5BDC9;
+  --pw-color-warning: #FFB020;
+}

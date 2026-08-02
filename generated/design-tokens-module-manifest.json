@@ -1,0 +1,21 @@
+{
+  "generated": true,
+  "design_tokens_version": 1,
+  "default_theme": "acid-paper",
+  "available_themes": [
+    "acid-paper",
+    "neon-scrap"
+  ],
+  "breakpoints": {
+    "phone": "430px",
+    "tablet": "768px",
+    "desktop": "1200px"
+  },
+  "layout": {
+    "contentMax": "1440px",
+    "headerHeight": "4rem",
+    "sidebarWidth": "17rem",
+    "tileMin": "13rem",
+    "touchTarget": "44px"
+  }
+}
