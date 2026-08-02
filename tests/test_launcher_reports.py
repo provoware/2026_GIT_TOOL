@@ -1,6 +1,10 @@
+import sys
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+
+sys.path.append(str(Path(__file__).resolve().parents[1] / "system"))
 
 from launcher_reports import (
     LauncherReportError,
