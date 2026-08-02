@@ -24,6 +24,14 @@ from drag_drop import DragDropManager
 from launcher import LauncherError, filter_modules, load_modules
 from logging_center import get_logger
 from logging_center import setup_logging as setup_logging_center
+from launcher_reports import (
+    append_end_audit,
+    append_error_simulation,
+    append_file_status,
+    append_selftests,
+    format_diagnostics_report,
+    format_maintenance_report,
+)
 from module_manager import ModuleManagerError
 from undo_redo import UndoRedoAction, UndoRedoError, UndoRedoManager
 
@@ -1565,23 +1573,7 @@ class LauncherGui:
     def _format_maintenance_report(
         self, title: str, command: List[str], output: str, return_code: int
     ) -> str:
-        clean_title = _require_text(title, "maintenance_title")
-        if not isinstance(command, list) or not all(isinstance(item, str) for item in command):
-            raise GuiLauncherError("Maintenance-Kommando ist ungültig.")
-        if not isinstance(output, str) or not output.strip():
-            raise GuiLauncherError("Maintenance-Ausgabe ist leer.")
-        if not isinstance(return_code, int):
-            raise GuiLauncherError("Maintenance-Exit-Code ist ungültig.")
-        lines = [
-            f"{clean_title}:",
-            f"Kommando: {' '.join(command)}",
-            f"Exit-Code: {return_code}",
-            "",
-            "Ausgabe:",
-            output,
-            "",
-        ]
-        return "\n".join(lines)
+        return format_maintenance_report(title, command, output, return_code)
 
     def _set_maintenance_buttons(self, state: str) -> None:
         clean_state = _require_text(state, "maintenance_state")
@@ -1628,18 +1620,7 @@ class LauncherGui:
             self._set_status("Diagnose mit Problemen abgeschlossen.", state="error")
 
     def _format_diagnostics_report(self, result: diagnostics_runner.DiagnosticsResult) -> str:
-        duration = f"{result.duration_seconds:.1f}"
-        lines = [
-            "Diagnose (Tests + Codequalität):",
-            f"Status: {result.status}",
-            f"Dauer: {duration} Sekunden",
-            f"Exit-Code: {result.exit_code}",
-            f"Kommando: {' '.join(result.command)}",
-            "",
-            "Ausgabe:",
-            result.output or "Keine Ausgabe erhalten.",
-        ]
-        return "\n".join(lines).rstrip() + "\n"
+        return format_diagnostics_report(result)
 
     def _set_output(self, text: str) -> None:
         clean_text = _require_text(text, "output_text")
@@ -1715,54 +1696,18 @@ class LauncherGui:
         return "\n".join(lines).rstrip() + "\n"
 
     def _append_file_status(self, text: str, report: qa_checks.FileStatusReport) -> str:
-        if not isinstance(text, str) or not text.strip():
-            raise GuiLauncherError("Ausgabetext ist leer.")
-        lines = [text.rstrip(), "", "Datei-Status (Ampel):"]
-        lines.append(f"Ampelstatus: {report.traffic_light}")
-        if report.issues:
-            lines.append("Datei-Probleme:")
-            for issue in report.issues:
-                lines.append(f"- {issue.message} (Stufe: {issue.severity})")
-        else:
-            lines.append("Keine Datei-Probleme gefunden.")
-        return "\n".join(lines).rstrip() + "\n"
+        return append_file_status(text, report)
 
     def _append_end_audit(self, text: str, report: end_audit.AuditReport) -> str:
-        if not isinstance(text, str) or not text.strip():
-            raise GuiLauncherError("Ausgabetext ist leer.")
-        lines = [text.rstrip(), "", "End-Audit (Release-Status):"]
-        lines.append(f"Status: {report.status}")
-        lines.append(f"Offene Aufgaben: {report.open_tasks}")
-        if report.issues:
-            lines.append("Hinweise:")
-            for issue in report.issues:
-                lines.append(f"- {issue.message} (Stufe: {issue.severity})")
-        else:
-            lines.append("Keine offenen Hinweise. Release-Status ist grün.")
-        return "\n".join(lines).rstrip() + "\n"
+        return append_end_audit(text, report)
 
     def _append_selftests(self, text: str, results: List[module_selftests.SelftestResult]) -> str:
-        if not isinstance(text, str) or not text.strip():
-            raise GuiLauncherError("Ausgabetext ist leer.")
-        lines = [text.rstrip(), "", "Modul-Selbsttests:"]
-        for result in results:
-            lines.append(
-                f"- {result.name} ({result.module_id}): {result.status} – {result.message}"
-            )
-        return "\n".join(lines).rstrip() + "\n"
+        return append_selftests(text, results)
 
     def _append_error_simulation(
         self, text: str, results: List[error_simulation.SimulationResult]
     ) -> str:
-        if not isinstance(text, str) or not text.strip():
-            raise GuiLauncherError("Ausgabetext ist leer.")
-        lines = [text.rstrip(), "", "Fehler-Simulation (Laienfehler):"]
-        for result in results:
-            lines.append(f"- Fall: {result.title}")
-            lines.append(f"  Ergebnis: {result.status}")
-            lines.append(f"  Meldung: {result.message}")
-            lines.append(f"  Hinweis: {result.hint}")
-        return "\n".join(lines).rstrip() + "\n"
+        return append_error_simulation(text, results)
 
 
 def run_gui(
