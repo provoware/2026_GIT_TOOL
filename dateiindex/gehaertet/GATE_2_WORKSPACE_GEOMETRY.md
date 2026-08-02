@@ -7,19 +7,30 @@ Status: gehärtet
 - `system/workspace_geometry.py`: reine Raster-, Bounds-, Move-, Resize- und Kollisionsberechnungen
 - `tests/test_workspace_geometry.py`: Sicherung der mathematischen Verträge
 - `tests/test_gate2_workspace_codemod.py`: Syntax- und Idempotenzsicherung
-- `scripts/apply_gate2_workspace_geometry.py`: ursprünglicher deterministischer Codemod
-- `scripts/apply_gate2_workspace_geometry_v2.py`: normalisierte, idempotente Ausführung
+- `scripts/apply_gate2_workspace_geometry.py`: unveränderte Basisimplementierung
+- `scripts/apply_gate2_workspace_geometry_v2.py`: kanonische idempotente Gate-2-Ausführung
 - `system/main_window.py`: dünne Adapter auf die ausgelagerte Geometriebibliothek
 
 ## Nachweise
 
 1. Geometrietests erfolgreich
-2. Codemod-Test nach Zeilenendenormalisierung erfolgreich und idempotent
+2. Idempotenztest nach Zeilenendenormalisierung erfolgreich
 3. Codemod auf einer vollständigen Arbeitskopie zweimal geprüft
 4. transformierte `main_window.py` erfolgreich kompiliert
-5. Codemod auf dem realen Integrationsbranch erfolgreich angewendet
+5. kanonischer Codemod auf dem realen Integrationsbranch erfolgreich angewendet
 6. finaler Produktionsdiff auf `Rect`, Raster, Bounds, Drag, Resize und Kollision begrenzt
 7. Workflow-Schreibrecht und gezielter Push auf den internen PR-Head erfolgreich
+
+## Verbindliche Verwendung
+
+Für Gate 2 ist ausschließlich folgender Aufruf vorgesehen:
+
+```bash
+python scripts/apply_gate2_workspace_geometry_v2.py
+python scripts/apply_gate2_workspace_geometry_v2.py --check
+```
+
+Die Basisimplementierung wird nicht direkt ausgeführt. Ihre Methodentemplates werden durch den kanonischen Wrapper vor der Transformation normalisiert.
 
 ## Abgrenzung
 
