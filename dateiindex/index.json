@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "updated_at": "2026-08-03",
-  "source_branch": "agent/design-tokens-blocks-1-2",
+  "source_branch": "main",
   "entry_points": [
     {
       "path": "scripts/start.sh",
@@ -16,17 +16,31 @@
     {
       "path": "system/launcher_gui.py",
       "role": "Produktiver Tkinter-GUI-Launcher",
-      "status": "kandidat"
+      "status": "in_pruefung"
     },
     {
       "path": "system/main_window.py",
       "role": "Tkinter-Hauptfenster und Modulraster",
-      "status": "kandidat"
+      "status": "in_pruefung"
     },
     {
       "path": "genrearchiv_werkzeug_v1_2_3_2026_01_06/src/main.jsx",
       "role": "Historischer React/Vite-Einstiegspunkt",
       "status": "historisch"
+    }
+  ],
+  "analysis_documents": [
+    {
+      "path": "dateiindex/struktur/UI_EINSTIEGSPUNKTE.md",
+      "status": "abgeschlossen"
+    },
+    {
+      "path": "dateiindex/struktur/VERANTWORTLICHKEITS_ABHAENGIGKEITSMATRIX_UI.md",
+      "status": "abgeschlossen",
+      "scope": [
+        "system/launcher_gui.py",
+        "system/main_window.py"
+      ]
     }
   ],
   "hardened": [
