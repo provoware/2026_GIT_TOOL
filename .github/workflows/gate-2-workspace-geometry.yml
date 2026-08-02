@@ -11,7 +11,7 @@ on:
       - ".github/workflows/gate-2-workspace-geometry.yml"
   push:
     branches:
-      - "agent/gate-2-workspace-geometry"
+      - "agent/gate-2-workspace-geometry*"
 
 permissions:
   contents: write
