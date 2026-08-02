@@ -4,7 +4,8 @@ from types import SimpleNamespace
 
 import pytest
 
-sys.path.append(str(Path(__file__).resolve().parents[1] / "system"))
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.append(str(ROOT / "system"))
 
 from launcher_reports import (
     LauncherReportError,
