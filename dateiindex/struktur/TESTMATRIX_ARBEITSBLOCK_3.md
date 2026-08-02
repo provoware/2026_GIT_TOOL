@@ -1,7 +1,7 @@
 # Testmatrix Arbeitsblock 3
 
 Stand: 2026-08-03
-Status: Gate 1 in Umsetzung
+Status: Gates 1 bis 3 abgeschlossen; Gate 4 ist der nächste zulässige Schritt
 
 ## Zweck
 
@@ -9,10 +9,10 @@ Vor jeder Auslagerung aus `system/launcher_gui.py` oder `system/main_window.py` 
 
 ## Verbindliche Reihenfolge
 
-1. Berichtformatierer
-2. Workspace-Geometrie und Kollision
-3. Einheitlicher Themeadapter
-4. Task-Runner für Threads und Prozesse
+1. Berichtformatierer – abgeschlossen
+2. Workspace-Geometrie und Kollision – abgeschlossen
+3. Einheitlicher Themeadapter – abgeschlossen
+4. Task-Runner für Threads und Prozesse – als Nächstes
 5. Autosave und Shutdown
 6. Modulkarten und Modul-Lebenszyklus
 7. Launcher-Controller und Teilviews
@@ -40,22 +40,9 @@ Nur Funktionen ohne UI-, Thread-, Prozess-, Logging- oder Dialogseiteneffekte:
 - `tests/test_gate1_launcher_codemod.py`
 - `.github/workflows/gate-1-launcher-reports.yml`
 
-### Integrationsstrategie
-
-Die große Datei `system/launcher_gui.py` wird nicht manuell rekonstruiert. Ein deterministischer, AST-validierter Codemod:
-
-1. prüft, ob `LauncherGui` und alle sechs erwarteten Methoden vorhanden sind,
-2. ergänzt genau einen Importblock,
-3. ersetzt ausschließlich die sechs freigegebenen Methodenkörper,
-4. validiert die resultierende Python-Syntax,
-5. ist idempotent und unterstützt `--check`,
-6. bricht bei abweichender Ausgangsstruktur ab.
-
-CI wendet den Codemod zunächst auf eine temporäre Arbeitskopie an und führt danach Syntax- und Gate-Tests aus. Erst bei grünem Gate wird die echte Datei mit demselben Codemod geändert.
-
 ## Gate 2 – Geometrie und Kollision
 
-Erforderlich vor Auslagerung:
+### Abgeschlossen
 
 - Rechtecküberschneidung an allen Kanten
 - Berührung ohne Überschneidung
@@ -63,27 +50,49 @@ Erforderlich vor Auslagerung:
 - Mindestgrößen
 - 3×3-Initiallayout
 - Verhalten bei kleinen Workspaces
-- Reflow nach Größenänderung
+- Drag-, Resize- und Kollisionsdelegation
+
+### Sicherung
+
+- `system/workspace_geometry.py`
+- `tests/test_workspace_geometry.py`
+- `tests/test_gate2_workspace_codemod.py`
+- `scripts/apply_gate2_workspace_geometry_v2.py`
+- `.github/workflows/gate-2-workspace-geometry.yml`
 
 ## Gate 3 – Themeadapter
 
-Erforderlich:
+### Abgeschlossen
 
 - identische Tokenauflösung in beiden Fenstern
-- Fallback auf Standard-Theme
-- vollständige Statusfarben
+- strikte Launcher-Auflösung und Standard-Fallback im Hauptfenster
+- vollständige Status- und Tooltipfarben
+- Kontrast-Theme-Auflösung
 - rekursive Widgetanwendung
-- kein Zugriff auf fehlende Farbschlüssel
+- OptionMenu-/Menügestaltung
+- modulkartenspezifische Akzente
+- Fehler bei fehlenden Farbschlüsseln vor Widgetmutation
+
+### Sicherung
+
+- `system/ui_theme_adapter.py`
+- `tests/test_ui_theme_adapter.py`
+- `tests/test_gate3_ui_theme_codemod.py`
+- `scripts/apply_gate3_ui_theme_adapter.py`
+- `.github/workflows/gate-3-ui-theme-adapter.yml`
+- `dateiindex/gehaertet/GATE_3_UI_THEME_ADAPTER.md`
 
 ## Gate 4 – Task-Runner
 
-Erforderlich:
+Vor der Auslagerung erforderlich:
 
 - genau ein paralleler Task pro Kategorie
-- UI-Callback über `root.after`
+- UI-Callback ausschließlich über `root.after`
 - Erfolgs-, Fehler- und Ausnahmezustand
 - Wiederherstellung deaktivierter Buttons
 - Kommando- und Pfadvalidierung
+- kein Tkinter-Zugriff aus Worker-Threads
+- deterministisches Abschlussresultat für Wartung und Diagnose
 
 ## Gate 5 – Autosave und Shutdown
 

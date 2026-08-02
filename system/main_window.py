@@ -11,6 +11,12 @@ from config_models import ConfigModelError, GuiConfigModel, load_gui_config
 from logging_center import get_logger, setup_logging
 from module_manager import ModuleActionResult, ModuleManager, ModuleManagerError, ModuleState
 from workspace_geometry import Rect, build_grid, clamp_rect, has_collision, move_rect, rect_overlap, resize_rect
+from ui_theme_adapter import (
+    UiThemeError,
+    apply_module_card_theme,
+    apply_theme_tree,
+    resolve_theme,
+)
 
 DEFAULT_GUI_CONFIG = Path(__file__).resolve().parents[1] / "config" / "launcher_gui.json"
 DEFAULT_MODULE_CONFIG = Path(__file__).resolve().parents[1] / "config" / "modules.json"
@@ -94,19 +100,10 @@ class ModuleWidget:
         self._bind_resize(tk)
 
     def _apply_theme(self, theme: Dict[str, str]) -> None:
-        self.frame.configure(background=theme["background"], highlightbackground=theme["accent"])
-        self.header.configure(background=theme["background"])
-        self.title_label.configure(background=theme["background"], foreground=theme["foreground"])
-        self.drag_label.configure(background=theme["background"], foreground=theme["accent"])
-        self.description.configure(background=theme["background"], foreground=theme["foreground"])
-        self.status_label.configure(background=theme["background"], foreground=theme["foreground"])
-        self.activate_button.configure(
-            background=theme["button_background"], foreground=theme["button_foreground"]
-        )
-        self.deactivate_button.configure(
-            background=theme["button_background"], foreground=theme["button_foreground"]
-        )
-        self.resize_handle.configure(background=theme["background"], foreground=theme["accent"])
+        try:
+            apply_module_card_theme(self, theme)
+        except UiThemeError as exc:
+            raise MainWindowError(str(exc)) from exc
 
     def update_status(self, text: str, color: str) -> None:
         self.status_label.configure(text=text, foreground=color)
@@ -336,19 +333,17 @@ class MainWindow:
 
     def _theme_colors(self) -> Dict[str, str]:
         theme_key = self.theme_var.get() if self.theme_var is not None else self.theme_name
-        theme = self.gui_config.themes.get(theme_key, None)
-        if theme is None:
-            theme = self.gui_config.themes[self.gui_config.default_theme]
-        return theme.colors
+        try:
+            return dict(resolve_theme(self.gui_config, theme_key, strict=False).colors)
+        except UiThemeError as exc:
+            raise MainWindowError(str(exc)) from exc
 
     def _apply_theme(self) -> None:
         theme = self._theme_colors()
-        self.root.configure(background=theme["background"])
-        for widget in self.root.winfo_children():
-            if hasattr(widget, "configure"):
-                widget.configure(background=theme["background"])
-                if widget.winfo_class() == "Label":
-                    widget.configure(foreground=theme["foreground"])
+        try:
+            apply_theme_tree(self.root, theme)
+        except UiThemeError as exc:
+            raise MainWindowError(str(exc)) from exc
         for module_widget in self.module_widgets:
             module_widget._apply_theme(theme)
 
