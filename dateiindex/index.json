@@ -54,7 +54,11 @@
         "Modulkarten und Modul-Lebenszyklus",
         "Launcher-Controller"
       ],
-      "next_gate": "Gate 1: Berichtformatierer"
+      "completed_gates": [
+        "Gate 1: Berichtformatierer",
+        "Gate 2: Workspace-Geometrie"
+      ],
+      "next_gate": "Gate 3: Themeadapter"
     }
   ],
   "hardened": [
@@ -69,6 +73,19 @@
       "role": "Deterministische Generierung und Drift-Prüfung",
       "evidence": "Validierung, definierte Exitcodes, --check-Modus und automatisch gekennzeichnete Ausgaben",
       "limitations": "In der Connector-Umgebung war keine direkte Programmausführung möglich"
+    },
+    {
+      "path": "system/launcher_reports.py",
+      "role": "Reine Launcher-Berichtformatierer",
+      "evidence": "Gate-1-Tests, idempotenter Codemod und Python-Kompilierungsprüfung erfolgreich",
+      "limitations": "Modulprüfung mit Dialog- und Logging-Seiteneffekten bleibt im Launcher-Controller"
+    },
+    {
+      "path": "system/workspace_geometry.py",
+      "role": "Reine Raster-, Bounds-, Move-, Resize- und Kollisionsberechnungen",
+      "evidence": "Gate-2-Tests, kanonischer idempotenter Codemod, reale Integration und Python-Kompilierungsprüfung erfolgreich",
+      "canonical_codemod": "scripts/apply_gate2_workspace_geometry_v2.py",
+      "limitations": "Responsive Reflow-Policy und Modul-Lebenszyklus bleiben in späteren Gates"
     }
   ],
   "generated": [
