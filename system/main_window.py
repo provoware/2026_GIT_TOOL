@@ -4,13 +4,13 @@
 from __future__ import annotations
 
 import argparse
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Optional
 
 from config_models import ConfigModelError, GuiConfigModel, load_gui_config
 from logging_center import get_logger, setup_logging
 from module_manager import ModuleActionResult, ModuleManager, ModuleManagerError, ModuleState
+from workspace_geometry import Rect, build_grid, clamp_rect, has_collision, move_rect, rect_overlap, resize_rect
 
 DEFAULT_GUI_CONFIG = Path(__file__).resolve().parents[1] / "config" / "launcher_gui.json"
 DEFAULT_MODULE_CONFIG = Path(__file__).resolve().parents[1] / "config" / "modules.json"
@@ -20,12 +20,6 @@ class MainWindowError(ValueError):
     """Fehler im Hauptfenster."""
 
 
-@dataclass
-class Rect:
-    x: int
-    y: int
-    width: int
-    height: int
 
 
 class ModuleWidget:
@@ -271,106 +265,47 @@ class MainWindow:
         if self._layout_ready:
             self._ensure_within_bounds(width, height)
             return
-        gap = 12
-        rows, cols = 3, 3
-        cell_width = max(200, (width - gap * (cols + 1)) // cols)
-        cell_height = max(160, (height - gap * (rows + 1)) // rows)
-        for index, widget in enumerate(self.module_widgets):
-            row = index // cols
-            col = index % cols
-            x = gap + col * (cell_width + gap)
-            y = gap + row * (cell_height + gap)
-            widget.rect = Rect(x, y, cell_width, cell_height)
-            widget.last_valid_rect = Rect(x, y, cell_width, cell_height)
-            widget.frame.place(x=x, y=y, width=cell_width, height=cell_height)
+        rects = build_grid(len(self.module_widgets), width, height, rows=3, cols=3, gap=12, min_width=200, min_height=160)
+        for widget, rect in zip(self.module_widgets, rects):
+            widget.rect = rect
+            widget.last_valid_rect = rect
+            widget.frame.place(x=rect.x, y=rect.y, width=rect.width, height=rect.height)
         self._layout_ready = True
 
     def _ensure_within_bounds(self, width: int, height: int) -> None:
         for widget in self.module_widgets:
-            rect = widget.rect
-            new_x = min(max(rect.x, 0), max(0, width - rect.width))
-            new_y = min(max(rect.y, 0), max(0, height - rect.height))
-            if new_x != rect.x or new_y != rect.y:
-                rect.x = new_x
-                rect.y = new_y
-                widget.frame.place(x=rect.x, y=rect.y, width=rect.width, height=rect.height)
+            candidate = clamp_rect(widget.rect, width, height)
+            if candidate != widget.rect:
+                widget.rect = candidate
+                widget.last_valid_rect = candidate
+                widget.frame.place(x=candidate.x, y=candidate.y, width=candidate.width, height=candidate.height)
 
     def _drag_widget(self, widget: ModuleWidget, delta_x: int, delta_y: int) -> None:
-        rect = widget.rect
-        new_x = rect.x + delta_x
-        new_y = rect.y + delta_y
-        width = self.workspace.winfo_width()
-        height = self.workspace.winfo_height()
-        new_x = min(max(new_x, 0), max(0, width - rect.width))
-        new_y = min(max(new_y, 0), max(0, height - rect.height))
-        candidate = Rect(new_x, new_y, rect.width, rect.height)
+        candidate = move_rect(widget.rect, delta_x, delta_y, self.workspace.winfo_width(), self.workspace.winfo_height())
         if self._is_collision(candidate, widget):
-            widget.frame.place(
-                x=widget.last_valid_rect.x,
-                y=widget.last_valid_rect.y,
-                width=widget.last_valid_rect.width,
-                height=widget.last_valid_rect.height,
-            )
-            self._set_status(
-                "Position blockiert: Module dürfen sich nicht überlappen.",
-                self._theme_colors()["status_error"],
-            )
+            widget.frame.place(x=widget.last_valid_rect.x, y=widget.last_valid_rect.y, width=widget.last_valid_rect.width, height=widget.last_valid_rect.height)
+            self._set_status("Position blockiert: Module dürfen sich nicht überlappen.", self._theme_colors()["status_error"])
             return
         widget.rect = candidate
-        widget.last_valid_rect = Rect(candidate.x, candidate.y, candidate.width, candidate.height)
-        widget.frame.place(
-            x=candidate.x,
-            y=candidate.y,
-            width=candidate.width,
-            height=candidate.height,
-        )
+        widget.last_valid_rect = candidate
+        widget.frame.place(x=candidate.x, y=candidate.y, width=candidate.width, height=candidate.height)
 
     def _resize_widget(self, widget: ModuleWidget, width: int, height: int) -> None:
-        width = max(widget.min_width, width)
-        height = max(widget.min_height, height)
-        workspace_width = self.workspace.winfo_width()
-        workspace_height = self.workspace.winfo_height()
-        width = min(width, workspace_width - widget.rect.x)
-        height = min(height, workspace_height - widget.rect.y)
-        candidate = Rect(widget.rect.x, widget.rect.y, width, height)
+        candidate = resize_rect(widget.rect, width, height, self.workspace.winfo_width(), self.workspace.winfo_height(), widget.min_width, widget.min_height)
         if self._is_collision(candidate, widget):
-            widget.frame.place(
-                x=widget.last_valid_rect.x,
-                y=widget.last_valid_rect.y,
-                width=widget.last_valid_rect.width,
-                height=widget.last_valid_rect.height,
-            )
-            self._set_status(
-                "Größe blockiert: Module dürfen sich nicht überlappen.",
-                self._theme_colors()["status_error"],
-            )
+            widget.frame.place(x=widget.last_valid_rect.x, y=widget.last_valid_rect.y, width=widget.last_valid_rect.width, height=widget.last_valid_rect.height)
+            self._set_status("Größe blockiert: Module dürfen sich nicht überlappen.", self._theme_colors()["status_error"])
             return
         widget.rect = candidate
-        widget.last_valid_rect = Rect(candidate.x, candidate.y, candidate.width, candidate.height)
-        widget.frame.place(
-            x=candidate.x,
-            y=candidate.y,
-            width=candidate.width,
-            height=candidate.height,
-        )
+        widget.last_valid_rect = candidate
+        widget.frame.place(x=candidate.x, y=candidate.y, width=candidate.width, height=candidate.height)
 
     def _is_collision(self, candidate: Rect, current: ModuleWidget) -> bool:
-        for widget in self.module_widgets:
-            if widget is current:
-                continue
-            rect = widget.rect
-            if self._rect_overlap(candidate, rect):
-                return True
-        return False
+        return has_collision(candidate, (widget.rect for widget in self.module_widgets if widget is not current))
 
     @staticmethod
     def _rect_overlap(a: Rect, b: Rect) -> bool:
-        return (
-            a.x < b.x + b.width
-            and a.x + a.width > b.x
-            and a.y < b.y + b.height
-            and a.y + a.height > b.y
-        )
+        return rect_overlap(a, b)
 
     def _activate_widget(self, widget: ModuleWidget) -> None:
         result = self.manager.activate_module(widget.state.entry.module_id)
