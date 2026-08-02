@@ -83,7 +83,8 @@
     {
       "path": "system/workspace_geometry.py",
       "role": "Reine Raster-, Bounds-, Move-, Resize- und Kollisionsberechnungen",
-      "evidence": "Gate-2-Tests, idempotenter Codemod, reale Integration und Python-Kompilierungsprüfung erfolgreich",
+      "evidence": "Gate-2-Tests, kanonischer idempotenter Codemod, reale Integration und Python-Kompilierungsprüfung erfolgreich",
+      "canonical_codemod": "scripts/apply_gate2_workspace_geometry_v2.py",
       "limitations": "Responsive Reflow-Policy und Modul-Lebenszyklus bleiben in späteren Gates"
     }
   ],
