@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import subprocess
 import threading
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
@@ -41,6 +40,15 @@ from ui_theme_adapter import (
     build_tooltip_style,
     resolve_contrast_theme,
     resolve_theme,
+)
+from task_runner import (
+    CommandResult,
+    CommandValidationError,
+    TaskOutcome,
+    TaskRunner,
+    TaskRunnerError,
+    execute_command,
+    validate_command,
 )
 from undo_redo import UndoRedoAction, UndoRedoError, UndoRedoManager
 
@@ -291,8 +299,7 @@ class LauncherGui:
         self.export_button = None
         self.export_center_button = None
         self.backup_button = None
-        self.diagnostics_running = False
-        self.maintenance_running = False
+        self.task_runner = TaskRunner(self.root.after)
         self.refresh_job = None
         self.refresh_debounce_ms = gui_config.refresh_debounce_ms
         self.logger = get_logger("launcher_gui")
@@ -1396,15 +1403,27 @@ class LauncherGui:
         self._set_output(text)
 
     def start_diagnostics(self) -> None:
-        if self.diagnostics_running:
+        if self.task_runner.is_running("diagnostics"):
             self._set_status("Diagnose läuft bereits…", state="busy")
             return
-        self.diagnostics_running = True
         if self.diagnostics_button is not None:
             self.diagnostics_button.configure(state="disabled")
         self._set_status("Diagnose wird gestartet…", state="busy")
-        thread = threading.Thread(target=self._run_diagnostics, daemon=True)
-        thread.start()
+        try:
+            started = self.task_runner.start(
+                "diagnostics",
+                self._run_diagnostics,
+                self._finish_diagnostics,
+            )
+        except TaskRunnerError as exc:
+            if self.diagnostics_button is not None:
+                self.diagnostics_button.configure(state="normal")
+            self._set_status(f"Diagnose konnte nicht starten: {exc}", state="error")
+            return
+        if not started:
+            if self.diagnostics_button is not None:
+                self.diagnostics_button.configure(state="normal")
+            self._set_status("Diagnose läuft bereits…", state="busy")
 
     def open_main_window(self) -> None:
         import tkinter as tk
@@ -1455,62 +1474,62 @@ class LauncherGui:
 
     def _run_maintenance_task(self, title: str, command: List[str]) -> None:
         clean_title = _require_text(title, "maintenance_title")
-        if not isinstance(command, list) or not all(isinstance(item, str) for item in command):
-            raise GuiLauncherError("Maintenance-Kommando ist ungültig.")
-        if self.maintenance_running:
+        try:
+            clean_command = validate_command(command)
+        except CommandValidationError as exc:
+            self._set_status(exc.status_message, state="error")
+            self._append_output(f"{clean_title}:\nFehler: {exc}\n")
+            return
+        if self.task_runner.is_running("maintenance"):
             self._set_status("Wartung läuft bereits…", state="busy")
             return
-        if command and command[0] == "bash":
-            script_path = Path(command[1])
-            if not script_path.exists():
-                self._set_status("Script nicht gefunden.", state="error")
-                self._append_output(f"{clean_title}:\nFehler: Script {script_path} fehlt.\n")
-                return
-        if command and command[0] == "python":
-            script_path = Path(command[1])
-            if not script_path.exists():
-                self._set_status("Script nicht gefunden.", state="error")
-                self._append_output(f"{clean_title}:\nFehler: Script {script_path} fehlt.\n")
-                return
-        if command and command[0] == "xdg-open":
-            target_path = Path(command[1])
-            if not target_path.exists():
-                self._set_status("Pfad nicht gefunden.", state="error")
-                self._append_output(f"{clean_title}:\nFehler: Pfad {target_path} fehlt.\n")
-                return
-        self.maintenance_running = True
         self._set_maintenance_buttons("disabled")
         self._set_status(f"{clean_title} läuft…", state="busy")
-        thread = threading.Thread(
-            target=self._execute_maintenance, args=(clean_title, command), daemon=True
-        )
-        thread.start()
-
-    def _execute_maintenance(self, title: str, command: List[str]) -> None:
         try:
-            result = subprocess.run(
-                command,
-                capture_output=True,
-                text=True,
-                check=False,
+            started = self.task_runner.start(
+                "maintenance",
+                lambda: self._execute_maintenance(clean_command),
+                lambda outcome: self._finish_maintenance(clean_title, outcome),
             )
-            output = result.stdout.strip() or result.stderr.strip()
-            if not output:
-                output = "Keine Ausgabe erhalten."
-            status = "success" if result.returncode == 0 else "error"
-            report = self._format_maintenance_report(title, command, output, result.returncode)
-        except Exception as exc:
+        except TaskRunnerError as exc:
+            self._set_maintenance_buttons("normal")
+            self._append_output(
+                f"{clean_title}:\nFehler: {exc}\n"
+                "Lösung: Bitte das Skript prüfen und erneut versuchen.\n"
+            )
+            self._set_status(f"{clean_title} konnte nicht starten.", state="error")
+            return
+        if not started:
+            self._set_maintenance_buttons("normal")
+            self._set_status("Wartung läuft bereits…", state="busy")
+
+    def _execute_maintenance(self, command: List[str]) -> CommandResult:
+        return execute_command(command)
+
+    def _finish_maintenance(
+        self,
+        title: str,
+        outcome: TaskOutcome[CommandResult],
+    ) -> None:
+        self._set_maintenance_buttons("normal")
+        if outcome.error is not None:
             status = "error"
             report = (
                 f"{title}:\n"
-                f"Fehler: {exc}\n"
+                f"Fehler: {outcome.error}\n"
                 "Lösung: Bitte das Skript prüfen und erneut versuchen.\n"
             )
-        self.root.after(0, lambda: self._finish_maintenance(title, report, status))
-
-    def _finish_maintenance(self, title: str, report: str, status: str) -> None:
-        self.maintenance_running = False
-        self._set_maintenance_buttons("normal")
+        else:
+            result = outcome.value
+            if not isinstance(result, CommandResult):
+                raise GuiLauncherError("Wartungs-Ergebnis ist ungültig.")
+            status = "success" if result.return_code == 0 else "error"
+            report = self._format_maintenance_report(
+                title,
+                result.command,
+                result.output,
+                result.return_code,
+            )
         self._append_output(report)
         if status == "success":
             self._set_status(f"{title} abgeschlossen.", state="success")
@@ -1535,26 +1554,38 @@ class LauncherGui:
             if button is not None:
                 button.configure(state=clean_state)
 
-    def _run_diagnostics(self) -> None:
+    def _run_diagnostics(self) -> diagnostics_runner.DiagnosticsResult:
         script_path = self.module_config.resolve().parents[1] / "scripts" / "run_tests.sh"
         try:
-            result = diagnostics_runner.run_diagnostics(script_path)
+            return diagnostics_runner.run_diagnostics(script_path)
         except diagnostics_runner.DiagnosticsError as exc:
-            result = diagnostics_runner.DiagnosticsResult(
+            return diagnostics_runner.DiagnosticsResult(
                 status="error",
                 output=f"Diagnose fehlgeschlagen: {exc}",
                 exit_code=2,
                 duration_seconds=0.0,
                 command=["bash", str(script_path)],
             )
-        self.root.after(0, lambda: self._finish_diagnostics(result))
 
-    def _finish_diagnostics(self, result: diagnostics_runner.DiagnosticsResult) -> None:
-        if not isinstance(result, diagnostics_runner.DiagnosticsResult):
-            raise GuiLauncherError("Diagnose-Ergebnis ist ungültig.")
-        self.diagnostics_running = False
+    def _finish_diagnostics(
+        self,
+        outcome: TaskOutcome[diagnostics_runner.DiagnosticsResult],
+    ) -> None:
         if self.diagnostics_button is not None:
             self.diagnostics_button.configure(state="normal")
+        if outcome.error is not None:
+            script_path = self.module_config.resolve().parents[1] / "scripts" / "run_tests.sh"
+            result = diagnostics_runner.DiagnosticsResult(
+                status="error",
+                output=f"Diagnose fehlgeschlagen: {outcome.error}",
+                exit_code=2,
+                duration_seconds=0.0,
+                command=["bash", str(script_path)],
+            )
+        else:
+            result = outcome.value
+        if not isinstance(result, diagnostics_runner.DiagnosticsResult):
+            raise GuiLauncherError("Diagnose-Ergebnis ist ungültig.")
         report = self._format_diagnostics_report(result)
         current = ""
         if self.output_text is not None:

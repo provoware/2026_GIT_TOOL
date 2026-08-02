@@ -1,7 +1,7 @@
 # Testmatrix Arbeitsblock 3
 
 Stand: 2026-08-03
-Status: Gates 1 bis 3 abgeschlossen; Gate 4 ist der nächste zulässige Schritt
+Status: Gates 1 bis 4 abgeschlossen; Gate 5 ist der nächste zulässige Schritt
 
 ## Zweck
 
@@ -12,8 +12,8 @@ Vor jeder Auslagerung aus `system/launcher_gui.py` oder `system/main_window.py` 
 1. Berichtformatierer – abgeschlossen
 2. Workspace-Geometrie und Kollision – abgeschlossen
 3. Einheitlicher Themeadapter – abgeschlossen
-4. Task-Runner für Threads und Prozesse – als Nächstes
-5. Autosave und Shutdown
+4. Task-Runner für Threads und Prozesse – abgeschlossen
+5. Autosave und Shutdown – als Nächstes
 6. Modulkarten und Modul-Lebenszyklus
 7. Launcher-Controller und Teilviews
 
@@ -84,19 +84,32 @@ Nur Funktionen ohne UI-, Thread-, Prozess-, Logging- oder Dialogseiteneffekte:
 
 ## Gate 4 – Task-Runner
 
-Vor der Auslagerung erforderlich:
+### Abgeschlossen
 
-- genau ein paralleler Task pro Kategorie
-- UI-Callback ausschließlich über `root.after`
-- Erfolgs-, Fehler- und Ausnahmezustand
-- Wiederherstellung deaktivierter Buttons
-- Kommando- und Pfadvalidierung
+- höchstens ein paralleler Task pro Kategorie
+- unterschiedliche Kategorien dürfen parallel laufen
+- UI-Callback ausschließlich über den injizierten `root.after`-Scheduler
+- Erfolgs-, Fehler- und Ausnahmezustand über `TaskOutcome`
+- Kategorie wird vor dem Abschluss-Callback freigegeben
+- Wiederherstellung deaktivierter Diagnose- und Wartungsschaltflächen
+- kontrollierte Thread-Start- und Schedulerfehler
+- zentrale Kommando- und Pfadvalidierung
+- zentrale Wartungsprozessausführung
 - kein Tkinter-Zugriff aus Worker-Threads
-- deterministisches Abschlussresultat für Wartung und Diagnose
+- deterministische Abschlussresultate für Wartung und Diagnose
+
+### Sicherung
+
+- `system/task_runner.py`
+- `tests/test_task_runner.py`
+- `tests/test_gate4_task_runner_codemod.py`
+- `scripts/apply_gate4_task_runner.py`
+- `.github/workflows/gate-4-task-runner.yml`
+- `dateiindex/gehaertet/GATE_4_TASK_RUNNER.md`
 
 ## Gate 5 – Autosave und Shutdown
 
-Erforderlich:
+Vor der Auslagerung erforderlich:
 
 - Autosave aktiviert/deaktiviert
 - Autosave-Fehler
@@ -104,6 +117,8 @@ Erforderlich:
 - kombinierter Logoutbericht
 - Job-Abbruch
 - Fensterzerstörung erst nach Abschluss
+- kein doppelter Logout-Lauf
+- klare Policy bei Teilerfolg von Autosave und Backup
 
 ## Gate 6 – Modulkarten und Lebenszyklus
 
