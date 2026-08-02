@@ -6,6 +6,7 @@ on:
       - "system/main_window.py"
       - "system/workspace_geometry.py"
       - "scripts/apply_gate2_workspace_geometry.py"
+      - "scripts/apply_gate2_workspace_geometry_v2.py"
       - "tests/test_workspace_geometry.py"
       - "tests/test_gate2_workspace_codemod.py"
       - ".github/workflows/gate-2-workspace-geometry.yml"
@@ -32,14 +33,14 @@ jobs:
       - name: Codemod auf Arbeitskopie prüfen
         run: |
           cp system/main_window.py /tmp/main_window.py
-          python scripts/apply_gate2_workspace_geometry.py --path /tmp/main_window.py
-          python scripts/apply_gate2_workspace_geometry.py --check --path /tmp/main_window.py
+          python scripts/apply_gate2_workspace_geometry_v2.py --path /tmp/main_window.py
+          python scripts/apply_gate2_workspace_geometry_v2.py --check --path /tmp/main_window.py
           python -m py_compile /tmp/main_window.py system/workspace_geometry.py
       - name: Codemod in Integrationsbranch anwenden
         if: >-
           github.event_name == 'push' ||
           (github.event_name == 'pull_request' && github.head_ref == 'agent/gate-2-workspace-geometry-integration')
-        run: python scripts/apply_gate2_workspace_geometry.py
+        run: python scripts/apply_gate2_workspace_geometry_v2.py
       - name: Minimalen Integrationscommit veröffentlichen
         if: >-
           github.event_name == 'push' ||
