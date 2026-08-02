@@ -41,6 +41,20 @@
         "system/launcher_gui.py",
         "system/main_window.py"
       ]
+    },
+    {
+      "path": "dateiindex/struktur/TESTMATRIX_ARBEITSBLOCK_3.md",
+      "status": "abgeschlossen",
+      "scope": [
+        "Berichtformatierer",
+        "Workspace-Geometrie",
+        "Themeadapter",
+        "Task-Runner",
+        "Autosave und Shutdown",
+        "Modulkarten und Modul-Lebenszyklus",
+        "Launcher-Controller"
+      ],
+      "next_gate": "Gate 1: Berichtformatierer"
     }
   ],
   "hardened": [
