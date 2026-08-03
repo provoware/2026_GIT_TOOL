@@ -8,11 +8,14 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "system"))
 
 from ui_responsive import (
+    LAUNCHER_FOOTER_COMPACT,
+    LAUNCHER_FOOTER_FULL,
     LAUNCHER_HELP_COMPACT,
     LAUNCHER_HELP_FULL,
     MAIN_WINDOW_MIN_HEIGHT,
     MAIN_WINDOW_MIN_WIDTH,
     UiResponsiveError,
+    resolve_launcher_footer_text,
     resolve_launcher_help_text,
     resolve_launcher_layout,
     resolve_workspace_grid,
@@ -41,6 +44,15 @@ def test_help_text_is_compact_below_wide_breakpoint_without_losing_help_paths():
     assert "F1" in LAUNCHER_HELP_COMPACT
     assert "Tooltips" in LAUNCHER_HELP_COMPACT
     assert len(LAUNCHER_HELP_COMPACT) < len(LAUNCHER_HELP_FULL) / 2
+
+
+def test_footer_is_compact_below_wide_breakpoint_and_keeps_core_shortcuts():
+    assert resolve_launcher_footer_text(1440) == LAUNCHER_FOOTER_FULL
+    assert resolve_launcher_footer_text(1024) == LAUNCHER_FOOTER_COMPACT
+    assert resolve_launcher_footer_text(768) == LAUNCHER_FOOTER_COMPACT
+    for shortcut in ("F1", "Alt+R", "Alt+G", "Alt+M", "Alt+Q", "Strg+Z/Y"):
+        assert shortcut in LAUNCHER_FOOTER_COMPACT
+    assert len(LAUNCHER_FOOTER_COMPACT) < len(LAUNCHER_FOOTER_FULL) / 2
 
 
 def test_developer_actions_use_three_by_two_grid_at_1024_pixels():
