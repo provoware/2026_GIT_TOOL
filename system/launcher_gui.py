@@ -41,7 +41,7 @@ from launcher_controller import (
     record_state_change,
 )
 from module_manager import ModuleManagerError
-from ui_responsive import resolve_launcher_layout
+from ui_responsive import resolve_launcher_help_text, resolve_launcher_layout
 from ui_theme_adapter import (
     UiThemeError,
     apply_theme_tree,
@@ -964,6 +964,8 @@ class LauncherGui:
     def _update_layout_by_width(self) -> None:
         width = max(self.root.winfo_width(), 1)
         layout = resolve_launcher_layout(width)
+        if self.help_label is not None:
+            self.help_label.configure(text=resolve_launcher_help_text(width))
         self._update_wrap_length()
 
         if (
