@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import threading
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
@@ -40,6 +39,13 @@ from ui_theme_adapter import (
     build_tooltip_style,
     resolve_contrast_theme,
     resolve_theme,
+)
+from autostart_manager import AutostartError, AutostartManager
+from session_lifecycle import (
+    AutosaveSession,
+    ShutdownOutcome,
+    complete_shutdown,
+    run_shutdown_sequence,
 )
 from task_runner import (
     CommandResult,
@@ -285,10 +291,12 @@ class LauncherGui:
         self.theme_var = None
         self.show_all_var = None
         self.debug_var = None
+        self.autostart_var = None
         self.output_text = None
         self.theme_menu = None
         self.show_all_check = None
         self.debug_check = None
+        self.autostart_check = None
         self.refresh_button = None
         self.diagnostics_button = None
         self.main_window_button = None
@@ -337,9 +345,16 @@ class LauncherGui:
         self.layout = self.gui_config.layout
         self.base_button_size = self.layout.button_font_size
         self.button_min_width = self.layout.button_min_width
+        project_root = self.module_config.resolve().parents[1]
+        self.autostart_manager = AutostartManager(
+            project_root / "scripts" / "start.sh"
+        )
         self.autosave_config: autosave_manager.AutosaveConfig | None = None
-        self.autosave_job = None
-        self.logout_running = False
+        self.autosave_session = AutosaveSession(
+            self.root.after,
+            self.root.after_cancel,
+            self._run_autosave,
+        )
         self.undo_manager = UndoRedoManager(limit=50)
         self.drag_drop_manager = None
         self.current_theme = self.gui_config.default_theme
@@ -427,6 +442,29 @@ class LauncherGui:
         self.debug_check.configure(takefocus=1, underline=0)
         self.debug_check.grid(
             row=1,
+            column=0,
+            sticky="w",
+            pady=(self.layout.gap_sm, 0),
+            padx=(0, self.layout.gap_md),
+        )
+
+        self.autostart_var = tk.BooleanVar(value=self.autostart_manager.is_enabled())
+        self.autostart_check = tk.Checkbutton(
+            controls,
+            text="Beim Hochfahren automatisch starten",
+            variable=self.autostart_var,
+            command=self._toggle_autostart,
+        )
+        if self.button_font is not None:
+            self.autostart_check.configure(font=self.button_font)
+        self.autostart_check.configure(
+            padx=self.layout.field_padx,
+            pady=self.layout.field_pady,
+            takefocus=1,
+            underline=0,
+        )
+        self.autostart_check.grid(
+            row=2,
             column=0,
             sticky="w",
             pady=(self.layout.gap_sm, 0),
@@ -1030,6 +1068,12 @@ class LauncherGui:
                 "Zeigt technische Details (Debugging = Fehlersuche).",
                 "Debug-Details: Zeigt technische Zusatzinfos (Debugging = Fehlersuche).",
             )
+        if self.autostart_check is not None:
+            self._register_help(
+                self.autostart_check,
+                "Startet das Tool nach der Linux-Anmeldung automatisch.",
+                "Autostart: Aktiviert oder deaktiviert den benutzerspezifischen Linux-Autostart.",
+            )
         if self.refresh_button is not None:
             self._register_help(
                 self.refresh_button,
@@ -1119,80 +1163,84 @@ class LauncherGui:
     def _toggle_debug(self) -> None:
         self._set_debug(not bool(self.debug_var.get()), record_action=True)
 
+    def _toggle_autostart(self) -> None:
+        if self.autostart_var is None:
+            raise GuiLauncherError("Autostart-Auswahl ist nicht verfügbar.")
+        enabled = bool(self.autostart_var.get())
+        try:
+            active = self.autostart_manager.set_enabled(enabled)
+        except AutostartError as exc:
+            self.autostart_var.set(self.autostart_manager.is_enabled())
+            self._append_output(f"Autostart:\nFehler: {exc}\n")
+            self._set_status("Autostart konnte nicht geändert werden.", state="error")
+            return
+        label = "aktiviert" if active else "deaktiviert"
+        self._set_status(f"Autostart beim Hochfahren: {label}.", state="success")
+
     def _refresh_from_shortcut(self) -> None:
         self.request_refresh()
 
     def request_logout(self) -> None:
-        if self.logout_running:
+        if self.task_runner.is_running("shutdown"):
             self._set_status("Abmelden läuft bereits…", state="busy")
             return
-        self.logout_running = True
+        if self.logout_button is not None:
+            self.logout_button.configure(state="disabled")
         self._set_status("Abmelden: Sicherung wird vorbereitet…", state="busy")
-        thread = threading.Thread(target=self._execute_logout, daemon=True)
-        thread.start()
-
-    def _execute_logout(self) -> None:
-        report_lines = ["Abmelden: Sicherung und sauberes Schließen"]
-        success = True
-        if self.autosave_config and self.autosave_config.enabled:
-            try:
-                result = autosave_manager.create_autosave(
-                    DEFAULT_DATA_ROOT, DEFAULT_LOG_ROOT, self.logger
-                )
-                report_lines.append(f"Erfolg: {result.summary}")
-            except autosave_manager.AutosaveError as exc:
-                success = False
-                report_lines.extend(
-                    [
-                        "Fehler: Autosave fehlgeschlagen.",
-                        f"Ursache: {exc}",
-                        "Lösung: logs/autosave.log prüfen oder Safe-Mode nutzen.",
-                    ]
-                )
-        else:
-            report_lines.extend(
-                [
-                    "Hinweis: Autosave ist deaktiviert.",
-                    (
-                        "Lösung: In config/global_settings.json aktivieren, "
-                        "wenn du Sicherungen willst."
-                    ),
-                ]
-            )
         try:
-            backup_config = backup_center.load_backup_config(
-                self.module_config.resolve().parents[1] / "config" / "backup.json"
+            started = self.task_runner.start(
+                "shutdown",
+                self._execute_logout,
+                self._finish_logout,
             )
-            backup_state = DEFAULT_DATA_ROOT / "backup_state.json"
-            backup_result = backup_center.create_backup(backup_config, backup_state)
-            report_lines.append(f"Erfolg: {backup_result.summary}")
-        except backup_center.BackupCenterError as exc:
-            success = False
-            report_lines.extend(
-                [
-                    "Fehler: Backup fehlgeschlagen.",
-                    f"Ursache: {exc}",
-                    "Lösung: config/backup.json prüfen und erneut versuchen.",
-                ]
-            )
-        report = "\n".join(report_lines).rstrip() + "\n"
-        self.root.after(0, lambda: self._finish_logout(report, success))
+        except TaskRunnerError as exc:
+            if self.logout_button is not None:
+                self.logout_button.configure(state="normal")
+            self._set_status(f"Abmelden konnte nicht starten: {exc}", state="error")
+            return
+        if not started:
+            if self.logout_button is not None:
+                self.logout_button.configure(state="normal")
+            self._set_status("Abmelden läuft bereits…", state="busy")
 
-    def _finish_logout(self, report: str, success: bool) -> None:
-        if report:
-            self._append_output(report)
-        status = "Abmelden abgeschlossen." if success else "Abmelden mit Problemen."
-        self._set_status(status, state="success" if success else "error")
-        self._cancel_autosave_job()
-        self.root.after(200, self.root.destroy)
+    def _execute_logout(self) -> ShutdownOutcome:
+        project_root = self.module_config.resolve().parents[1]
+        return run_shutdown_sequence(
+            autosave_config=self.autosave_config,
+            data_root=DEFAULT_DATA_ROOT,
+            logs_root=DEFAULT_LOG_ROOT,
+            logger=self.logger,
+            backup_config_path=project_root / "config" / "backup.json",
+            backup_state_path=DEFAULT_DATA_ROOT / "backup_state.json",
+        )
+
+    def _finish_logout(self, outcome: TaskOutcome[ShutdownOutcome]) -> None:
+        if self.logout_button is not None:
+            self.logout_button.configure(state="normal")
+        if outcome.error is not None:
+            result = ShutdownOutcome(
+                report=(
+                    "Abmelden: Sicherung und sauberes Schließen\n"
+                    "Fehler: Shutdown konnte nicht vollständig ausgeführt werden.\n"
+                    f"Ursache: {outcome.error}\n"
+                ),
+                success=False,
+            )
+        else:
+            result = outcome.value
+        if not isinstance(result, ShutdownOutcome):
+            raise GuiLauncherError("Shutdown-Ergebnis ist ungültig.")
+        complete_shutdown(
+            result,
+            append_report=self._append_output,
+            set_status=lambda message, state: self._set_status(message, state=state),
+            cancel_autosave=self._cancel_autosave_job,
+            schedule=self.root.after,
+            destroy=self.root.destroy,
+        )
 
     def _cancel_autosave_job(self) -> None:
-        if self.autosave_job is not None:
-            try:
-                self.root.after_cancel(self.autosave_job)
-            except Exception:
-                pass
-            self.autosave_job = None
+        self.autosave_session.cancel()
 
     def _resolve_contrast_theme(self) -> Optional[str]:
         try:
@@ -1340,22 +1388,16 @@ class LauncherGui:
         except autosave_manager.AutosaveError as exc:
             self.logger.error("Autosave: Konfiguration ungültig: %s", exc)
             return
-
+        self.autosave_config = config
         if not config.enabled:
             self.logger.info("Autosave: Deaktiviert.")
             return
-
-        self.autosave_config = config
         self._schedule_autosave()
 
     def _schedule_autosave(self) -> None:
         if self.autosave_config is None:
             return
-        autosave_manager.schedule_next_autosave(
-            self.autosave_config.interval_minutes,
-            self.root.after,
-            self._run_autosave,
-        )
+        self.autosave_session.start(self.autosave_config)
 
     def _run_autosave(self) -> None:
         if self.autosave_config is None:
@@ -1364,8 +1406,6 @@ class LauncherGui:
             autosave_manager.create_autosave(DEFAULT_DATA_ROOT, DEFAULT_LOG_ROOT, self.logger)
         except autosave_manager.AutosaveError as exc:
             self.logger.error("Autosave fehlgeschlagen: %s", exc)
-        finally:
-            self._schedule_autosave()
 
     def refresh(self) -> None:
         self.refresh_job = None
