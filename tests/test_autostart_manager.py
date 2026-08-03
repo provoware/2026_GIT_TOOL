@@ -29,8 +29,9 @@ def test_desktop_entry_uses_absolute_project_paths(tmp_path):
     content = build_desktop_entry(script)
 
     assert "[Desktop Entry]" in content
+    assert "TryExec=/bin/bash" in content
     assert f'Exec=/bin/bash "{script.resolve()}"' in content
-    assert f'Path="{script.resolve().parent.parent}"' in content
+    assert f"Path={script.resolve().parent.parent}" in content
     assert "X-GNOME-Autostart-enabled=true" in content
     assert MANAGED_MARKER in content
 
