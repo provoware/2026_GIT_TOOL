@@ -49,7 +49,19 @@ LAUNCHER_HELP_COMPACT = (
     "Bedienung: Farbschema und Filter wählen, dann „Übersicht aktualisieren“. "
     "Tab wechselt den Fokus; F1 zeigt die Hilfe zum aktuellen Element. "
     "Alt+K aktiviert Kontrast, Strg + Mausrad ändert den Zoom. "
-    "Weitere Kurzbefehle stehen im Footer und in den Tooltips."
+    "Weitere Details stehen in den Tooltips."
+)
+LAUNCHER_FOOTER_FULL = (
+    "Tipp: Mit Tabulator erreichst du alle Bedienelemente. Kurzbefehle: F1 "
+    "(Kontext-Hilfe), Alt+A (alle Module), Alt+D (Debug), Alt+R (aktualisieren), "
+    "Alt+G (Diagnose), Alt+S (System-Scan), Alt+P (Standards), Alt+L (Logs), "
+    "Alt+E (Export), Alt+X (Export-Center), Alt+B (Backup), Alt+T (Theme), "
+    "Alt+K (Kontrast), Strg+Z (Undo), Strg+Y (Redo), Strg + Mausrad (Zoom), "
+    "Alt+Q (abmelden & sichern)."
+)
+LAUNCHER_FOOTER_COMPACT = (
+    "Tastatur: Tab · F1 Hilfe · Alt+R Aktualisieren · Alt+G Diagnose · "
+    "Alt+M Hauptfenster · Alt+Q Abmelden · Strg+Z/Y Undo/Redo."
 )
 
 
@@ -73,6 +85,11 @@ def resolve_launcher_layout(width: int) -> LauncherLayout:
 def resolve_launcher_help_text(width: int) -> str:
     layout = resolve_launcher_layout(width)
     return LAUNCHER_HELP_FULL if layout.mode == "wide" else LAUNCHER_HELP_COMPACT
+
+
+def resolve_launcher_footer_text(width: int) -> str:
+    layout = resolve_launcher_layout(width)
+    return LAUNCHER_FOOTER_FULL if layout.mode == "wide" else LAUNCHER_FOOTER_COMPACT
 
 
 def resolve_workspace_grid(
