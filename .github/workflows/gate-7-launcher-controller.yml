@@ -13,13 +13,15 @@ on:
       - ".github/workflows/gate-7-launcher-controller.yml"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   gate-7:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -35,5 +37,19 @@ jobs:
           python scripts/apply_gate7_launcher_controller_v2.py --path /tmp/launcher_gui.py
           python scripts/apply_gate7_launcher_controller_v2.py --check --path /tmp/launcher_gui.py
           python -m py_compile /tmp/launcher_gui.py system/launcher_controller.py
-      - name: Repository unverändert halten
+      - name: Launcher-Controller integrieren
+        if: github.head_ref == 'agent/gate-7-launcher-controller'
+        run: python scripts/apply_gate7_launcher_controller_v2.py
+      - name: Minimalen Integrationscommit veröffentlichen
+        if: github.head_ref == 'agent/gate-7-launcher-controller'
+        run: |
+          if git diff --quiet -- system/launcher_gui.py; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add system/launcher_gui.py
+          git commit -m "Gate 7: Launcher-Controller integrieren [skip ci]"
+          git push origin HEAD:${{ github.head_ref }}
+      - name: Repository sauber halten
         run: git diff --exit-code
