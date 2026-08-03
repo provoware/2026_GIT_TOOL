@@ -16,12 +16,17 @@
     {
       "path": "system/launcher_gui.py",
       "role": "Produktiver Tkinter-GUI-Launcher",
-      "status": "gehaertet_mit_ui_abnahme_offen"
+      "status": "gehaertet_ui_abnahme_automatisiert_physical_pending"
     },
     {
       "path": "system/main_window.py",
       "role": "Tkinter-Hauptfenster und Modulraster",
-      "status": "gehaertet_mit_ui_abnahme_offen"
+      "status": "gehaertet_ui_abnahme_automatisiert_physical_pending"
+    },
+    {
+      "path": "modules/datei_manager/entry.py",
+      "role": "Modul-Einstieg für Dateibrowser, sortierbare Liste und Bildvorschau",
+      "status": "gehaertet_mit_xvfb_beleg"
     },
     {
       "path": "genrearchiv_werkzeug_v1_2_3_2026_01_06/src/main.jsx",
@@ -63,7 +68,23 @@
         "Gate 6: Modulkarten und Modul-Lebenszyklus",
         "Gate 7: Launcher-Controller und Teilviews"
       ],
-      "next_gate": "Arbeitsblock 3 abgeschlossen; nächste Phase: physische UI-Abnahme"
+      "next_gate": "Arbeitsblock 3 und automatisierte UI-Abnahme abgeschlossen; physische Geräteabnahme bleibt offen"
+    },
+    {
+      "path": "dateiindex/struktur/UI_MODERNISIERUNG_BLOCK_1.md",
+      "status": "abgeschlossen",
+      "scope": [
+        "Governance",
+        "Verantwortlichkeiten",
+        "Duplikatinventar",
+        "Codesparsamkeitsregeln",
+        "Nicht-Ziele"
+      ]
+    },
+    {
+      "path": "dateiindex/struktur/TESTMATRIX_UI_MODERNISIERUNG.md",
+      "status": "abgeschlossen",
+      "next_gate": "Block 2: zentrale Token-Laufzeitabbildung"
     }
   ],
   "hardened": [
@@ -77,7 +98,7 @@
       "path": "system/generate_design_tokens.py",
       "role": "Deterministische Generierung und Drift-Prüfung",
       "evidence": "Validierung, definierte Exitcodes, --check-Modus und automatisch gekennzeichnete Ausgaben",
-      "limitations": "Physische visuelle Abnahme bleibt separat"
+      "limitations": "Python-Laufzeitabbildung folgt in UI-Modernisierung Block 2"
     },
     {
       "path": "system/launcher_reports.py",
@@ -95,9 +116,21 @@
     {
       "path": "system/ui_theme_adapter.py",
       "role": "Gemeinsamer Themevertrag und Tkinter-Themeadapter",
-      "evidence": "Sieben Themevertragstests, idempotente Codemods für beide Fenster, reale Integration und Kompilierungsprüfung erfolgreich",
+      "evidence": "Themevertragstests, idempotente Codemods, reale Integration, Kontrastprüfung und Kompilierungsprüfung erfolgreich",
       "canonical_codemod": "scripts/apply_gate3_ui_theme_adapter.py",
-      "limitations": "Physische Kontrast- und Themeabnahme bleibt separat"
+      "limitations": "Tokenbasierte Laufzeitabbildung folgt in Block 2"
+    },
+    {
+      "path": "system/ui_responsive.py",
+      "role": "Reine responsive Regeln für Launcher und Hauptfenster",
+      "evidence": "Regeltests, idempotente Integration und reale Xvfb-Vermessung erfolgreich",
+      "limitations": "Mobile Profile sind Viewportsimulationen"
+    },
+    {
+      "path": "system/ui_acceptance.py",
+      "role": "Kontrast-, Viewport-, Überlauf-, Fokus- und Pflichtsichtbarkeitsvertrag",
+      "evidence": "Isolierte Tkinter-Messprozesse, JSON-/Markdownbericht und Screenshotartefakte erfolgreich",
+      "limitations": "Physische Tablet- und iPhone-Abnahme bleibt offen"
     },
     {
       "path": "system/task_runner.py",
@@ -129,9 +162,33 @@
     {
       "path": "system/launcher_controller.py",
       "role": "Autoritativer Launcherzustand, Refresh-Debounce, Status-, Hilfe- und Shortcut-Teilviews",
-      "evidence": "14 Controller- und Viewtests, 7 Codemod-Grenzen, reale Integration, read-only Abschlussprüfung sowie Regression-Gates 1, 3, 4 und 5 erfolgreich",
+      "evidence": "Controller- und Viewtests, Codemod-Grenzen, reale Integration, read-only Abschlussprüfung und Regression-Gates erfolgreich",
       "canonical_codemod": "scripts/apply_gate7_launcher_controller_v2.py",
-      "limitations": "Physische Bedien-, Responsive- und Barrierefreiheitsabnahme bleibt separat"
+      "limitations": "Physische Bedienabnahme bleibt separat"
+    },
+    {
+      "path": "modules/datei_manager/browser.py",
+      "role": "Reine Ordner-, Sortier-, Metadaten- und Vorschauberechnung",
+      "evidence": "Browser-, Sortier-, Format- und Skalierungstests erfolgreich",
+      "limitations": "Bleibt featurelokal, bis ein zweiter realer Verbraucher existiert"
+    },
+    {
+      "path": "modules/datei_manager/window.py",
+      "role": "Sortierbare Dateiliste und große responsive Bildvorschau",
+      "evidence": "Echte Tkinter-Tests unter Xvfb, Screenshotbeleg, Syntax- und Repository-Sauberkeitsprüfung erfolgreich",
+      "limitations": "Visuelle Modernisierung folgt in Block 7"
+    },
+    {
+      "path": "config/ui-governance.json",
+      "role": "Maschinenlesbarer Governance- und Modernisierungsvertrag",
+      "evidence": "Eindeutige Eigentümer, Schutzverträge, Duplikatentscheidungen, Nicht-Ziele und Migrationsreihenfolge werden validiert",
+      "limitations": "Regelwerk ersetzt keine spätere visuelle Abnahme"
+    },
+    {
+      "path": "system/validate_ui_governance.py",
+      "role": "Read-only Validierung von Governance, Pfaden, Evidence und zulässigem Block-Diff",
+      "evidence": "Positive und negative Governance-Tests sowie read-only Workflow",
+      "limitations": "Keine Laufzeitkomponente der Oberfläche"
     }
   ],
   "generated": [
@@ -140,7 +197,21 @@
     "generated/design-tokens-module-manifest.json",
     "docs/DESIGN_TOKENS.generated.md"
   ],
+  "ui_modernization": {
+    "status": "block_1_abgeschlossen",
+    "completed_blocks": [
+      "Block 1: Entwicklungs- und Designregeln"
+    ],
+    "next_block": "Block 2: zentrale Token-Laufzeitabbildung",
+    "governance": "config/ui-governance.json",
+    "test_matrix": "dateiindex/struktur/TESTMATRIX_UI_MODERNISIERUNG.md"
+  },
   "refactoring_candidates": [
+    "config/launcher_gui.json",
+    "config/datei_manager.json",
+    "system/launcher_gui.py",
+    "system/main_window.py",
+    "modules/datei_manager/window.py",
     "system/module_manager.py",
     "system/store.py",
     "system/module_loader.py",
