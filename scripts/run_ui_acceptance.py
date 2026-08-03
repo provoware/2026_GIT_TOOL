@@ -29,6 +29,37 @@ def _read_json(path: Path) -> dict[str, Any]:
     return payload
 
 
+def _native_text_clipping_findings(
+    records: Sequence[Mapping[str, Any]],
+) -> list[Finding]:
+    native_profiles = {
+        profile.key for profile in DEVICE_PROFILES if profile.native_tk_supported
+    }
+    findings: list[Finding] = []
+    for record in records:
+        profile_key = str(record.get("profile", "")).strip()
+        surface = str(record.get("surface", "")).strip()
+        if profile_key not in native_profiles:
+            continue
+        clipped = list(record.get("clipped_text_widgets", []))
+        findings.append(
+            Finding(
+                check="text_clipping",
+                status="passed" if not clipped else "failed",
+                severity="info" if not clipped else "major",
+                message=(
+                    f"{surface}/{profile_key}: keine abgeschnittenen Bedienelementtexte."
+                    if not clipped
+                    else f"{surface}/{profile_key}: {len(clipped)} Bedienelementtext(e) sind abgeschnitten."
+                ),
+                profile=profile_key,
+                surface=surface,
+                details={"widgets": clipped},
+            )
+        )
+    return findings
+
+
 def _mobile_runtime_findings(records: Sequence[Mapping[str, Any]]) -> list[Finding]:
     profiles = {profile.key: profile for profile in DEVICE_PROFILES}
     findings: list[Finding] = []
@@ -40,8 +71,14 @@ def _mobile_runtime_findings(records: Sequence[Mapping[str, Any]]) -> list[Findi
             continue
         requested = list(record.get("requested_size", []))
         actual = list(record.get("actual_size", []))
-        honored = len(requested) == 2 and len(actual) == 2 and actual[0] <= requested[0] and actual[1] <= requested[1]
+        honored = (
+            len(requested) == 2
+            and len(actual) == 2
+            and actual[0] <= requested[0]
+            and actual[1] <= requested[1]
+        )
         overflow = list(record.get("overflow_widgets", []))
+        clipped = list(record.get("clipped_text_widgets", []))
         undersized = list(record.get("undersized_touch_targets", []))
         findings.extend(
             [
@@ -70,6 +107,19 @@ def _mobile_runtime_findings(records: Sequence[Mapping[str, Any]]) -> list[Findi
                     profile=profile_key,
                     surface=surface,
                     details={"widgets": overflow},
+                ),
+                Finding(
+                    check="mobile_text_simulation",
+                    status="simulated" if not clipped else "blocked",
+                    severity="minor" if not clipped else "critical",
+                    message=(
+                        f"{surface}/{profile_key}: keine abgeschnittenen Bedienelementtexte in der Simulation."
+                        if not clipped
+                        else f"{surface}/{profile_key}: {len(clipped)} Bedienelementtext(e) sind abgeschnitten."
+                    ),
+                    profile=profile_key,
+                    surface=surface,
+                    details={"widgets": clipped},
                 ),
                 Finding(
                     check="mobile_touch_simulation",
@@ -159,6 +209,7 @@ def main() -> int:
             if isinstance(record, Mapping) and record.get("profile") in native_profiles
         ]
         findings.extend(evaluate_runtime_probe(native_records))
+        findings.extend(_native_text_clipping_findings(records))
         findings.extend(_mobile_runtime_findings(records))
 
     result = summarize(findings)
