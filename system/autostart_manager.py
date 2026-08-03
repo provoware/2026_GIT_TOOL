@@ -21,6 +21,10 @@ def default_autostart_dir() -> Path:
     return base / "autostart"
 
 
+def _write_mode_allows_changes() -> bool:
+    return os.environ.get("GENREARCHIV_WRITE_MODE", "normal").strip().lower() != "read-only"
+
+
 def _exec_quote(value: Path) -> str:
     text = str(value)
     escaped = (
@@ -82,6 +86,8 @@ class AutostartManager:
     def set_enabled(self, enabled: bool) -> bool:
         if not isinstance(enabled, bool):
             raise AutostartError("enabled ist kein boolescher Wert.")
+        if not _write_mode_allows_changes():
+            raise AutostartError("Autostart kann im schreibgeschützten Modus nicht geändert werden.")
         if enabled:
             self._enable()
             return True
