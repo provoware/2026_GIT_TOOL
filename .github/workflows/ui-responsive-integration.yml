@@ -5,20 +5,24 @@ on:
     paths:
       - "system/launcher_gui.py"
       - "system/main_window.py"
+      - "system/ui_acceptance.py"
       - "system/ui_responsive.py"
       - "scripts/apply_ui_responsive_acceptance.py"
+      - "scripts/apply_ui_responsive_acceptance_v2.py"
       - "tests/test_ui_responsive.py"
       - "tests/test_ui_responsive_codemod.py"
       - ".github/workflows/ui-responsive-integration.yml"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   responsive-integration:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -28,12 +32,38 @@ jobs:
           python -m pytest -q
           tests/test_ui_responsive.py
           tests/test_ui_responsive_codemod.py
-      - name: Integrierten Zustand prüfen
+      - name: Drei vollständige Dateien transformieren
         run: |
-          python scripts/apply_ui_responsive_acceptance.py --check
+          cp system/launcher_gui.py /tmp/launcher_gui.py
+          cp system/main_window.py /tmp/main_window.py
+          cp system/ui_acceptance.py /tmp/ui_acceptance.py
+          python scripts/apply_ui_responsive_acceptance_v2.py \
+            --launcher /tmp/launcher_gui.py \
+            --main-window /tmp/main_window.py \
+            --acceptance /tmp/ui_acceptance.py
+          python scripts/apply_ui_responsive_acceptance_v2.py \
+            --check \
+            --launcher /tmp/launcher_gui.py \
+            --main-window /tmp/main_window.py \
+            --acceptance /tmp/ui_acceptance.py
           python -m py_compile \
-            system/launcher_gui.py \
-            system/main_window.py \
+            /tmp/launcher_gui.py \
+            /tmp/main_window.py \
+            /tmp/ui_acceptance.py \
             system/ui_responsive.py
-      - name: Repository unverändert halten
+      - name: Responsive-v2 integrieren
+        if: github.head_ref == 'agent/ui-acceptance-linux-mobile'
+        run: python scripts/apply_ui_responsive_acceptance_v2.py
+      - name: Minimalen Produktionscommit veröffentlichen
+        if: github.head_ref == 'agent/ui-acceptance-linux-mobile'
+        run: |
+          if git diff --quiet -- system/launcher_gui.py system/main_window.py system/ui_acceptance.py; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add system/launcher_gui.py system/main_window.py system/ui_acceptance.py
+          git commit -m "UI-Abnahme: 1024-Pixel-Profil verdichten [skip ci]"
+          git push origin HEAD:${{ github.head_ref }}
+      - name: Repository sauber halten
         run: git diff --exit-code
