@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "phase": "ui-modernization",
-  "current_block": 1,
-  "title": "Globale UI-Governance und codesparsame Modernisierung",
+  "current_block": 2,
+  "title": "Zentrale Design-Token-Laufzeitabbildung",
   "principles": {
     "single_authoritative_owner": true,
     "tests_before_visual_migration": true,
@@ -15,6 +15,7 @@
       "measurable_reduction_of_high_risk_window_complexity"
     ],
     "forbid_visual_runtime_migration_in_block_1": true,
+    "forbid_visual_runtime_migration_in_block_2": true,
     "forbid_parallel_token_sources": true
   },
   "authoritative_sources": [
@@ -27,6 +28,11 @@
       "responsibility": "design_token_generation",
       "owner": "system/generate_design_tokens.py",
       "status": "hardened"
+    },
+    {
+      "responsibility": "python_design_token_runtime",
+      "owner": "generated/design_tokens.py",
+      "status": "generated"
     },
     {
       "responsibility": "tk_theme_resolution_and_application",
@@ -82,126 +88,201 @@
   "transitional_sources": [
     {
       "path": "config/launcher_gui.json",
-      "duplicates": ["theme_colors", "spacing", "button_metrics", "typography"],
-      "retain": ["refresh_debounce_ms", "theme_labels", "runtime_compatibility"],
-      "target_block": 2
+      "duplicates": [
+        "theme_colors",
+        "spacing",
+        "button_metrics",
+        "typography"
+      ],
+      "retain": [
+        "refresh_debounce_ms",
+        "theme_labels",
+        "runtime_compatibility"
+      ],
+      "target_block": 3
     },
     {
       "path": "config/datei_manager.json",
-      "duplicates": ["theme_colors"],
-      "retain": ["module_actions", "module_hints", "module_data_path"],
-      "target_block": 2
+      "duplicates": [
+        "theme_colors"
+      ],
+      "retain": [
+        "module_actions",
+        "module_hints",
+        "module_data_path"
+      ],
+      "target_block": 7
     },
     {
       "path": "system/launcher_gui.py",
-      "duplicates": ["button_configuration", "section_composition", "help_presentation"],
-      "retain": ["launcher_view_composition", "framework_bindings"],
+      "duplicates": [
+        "button_configuration",
+        "section_composition",
+        "help_presentation"
+      ],
+      "retain": [
+        "launcher_view_composition",
+        "framework_bindings"
+      ],
       "target_block": 3
     },
     {
       "path": "system/main_window.py",
-      "duplicates": ["button_configuration", "hardcoded_spacing", "hardcoded_typography"],
-      "retain": ["module_card_view", "workspace_bindings"],
+      "duplicates": [
+        "button_configuration",
+        "hardcoded_spacing",
+        "hardcoded_typography"
+      ],
+      "retain": [
+        "module_card_view",
+        "workspace_bindings"
+      ],
       "target_block": 3
     },
     {
       "path": "modules/datei_manager/window.py",
-      "duplicates": ["hardcoded_surface_colors", "hardcoded_window_metrics", "ttk_widget_styling"],
-      "retain": ["file_manager_view", "treeview_and_preview_bindings"],
+      "duplicates": [
+        "hardcoded_surface_colors",
+        "hardcoded_window_metrics",
+        "ttk_widget_styling"
+      ],
+      "retain": [
+        "file_manager_view",
+        "treeview_and_preview_bindings"
+      ],
       "target_block": 7
     }
   ],
   "planned_responsibilities": [
     {
-      "responsibility": "python_design_token_artifact",
-      "target": "generated/design-tokens.py",
-      "target_block": 2,
-      "condition": "always",
-      "note": "Deterministisch aus config/design-tokens.json erzeugen; kein handgepflegtes ui_tokens.py."
-    },
-    {
       "responsibility": "shared_tk_components",
       "target": "system/ui_components.py",
       "target_block": 3,
       "condition": "at_least_two_real_consumers",
-      "current_consumers": ["system/launcher_gui.py", "system/main_window.py", "modules/datei_manager/window.py"]
+      "current_consumers": [
+        "system/launcher_gui.py",
+        "system/main_window.py",
+        "modules/datei_manager/window.py"
+      ]
     },
     {
       "responsibility": "shared_table_policy",
       "target": "system/ui_tables.py",
       "target_block": 4,
       "condition": "second_real_treeview_consumer_exists",
-      "current_consumers": ["modules/datei_manager/window.py"]
+      "current_consumers": [
+        "modules/datei_manager/window.py"
+      ]
     },
     {
       "responsibility": "shared_preview_policy",
       "target": "system/ui_preview.py",
       "target_block": 5,
       "condition": "second_real_preview_consumer_exists",
-      "current_consumers": ["modules/datei_manager/window.py"]
+      "current_consumers": [
+        "modules/datei_manager/window.py"
+      ]
     },
     {
       "responsibility": "shared_accessibility_helpers",
       "target": "system/ui_accessibility.py",
       "target_block": 3,
       "condition": "duplicated_cross_surface_behavior_is_demonstrated",
-      "current_consumers": ["system/launcher_gui.py", "system/main_window.py", "modules/datei_manager/window.py"]
+      "current_consumers": [
+        "system/launcher_gui.py",
+        "system/main_window.py",
+        "modules/datei_manager/window.py"
+      ]
     }
   ],
   "forbidden_parallel_sources": [
     "system/ui_tokens.py",
     "config/ui-tokens.json",
     "config/design_tokens_runtime.json",
-    "modules/datei_manager/ui_tokens.py"
+    "modules/datei_manager/ui_tokens.py",
+    "generated/design-tokens.py"
   ],
   "protected_contracts": [
     {
       "path": "system/launcher_reports.py",
-      "evidence": ["tests/test_launcher_reports.py"]
+      "evidence": [
+        "tests/test_launcher_reports.py"
+      ]
     },
     {
       "path": "system/workspace_geometry.py",
-      "evidence": ["tests/test_workspace_geometry.py"]
+      "evidence": [
+        "tests/test_workspace_geometry.py"
+      ]
     },
     {
       "path": "system/ui_theme_adapter.py",
-      "evidence": ["tests/test_ui_theme_adapter.py"]
+      "evidence": [
+        "tests/test_ui_theme_adapter.py"
+      ]
     },
     {
       "path": "system/task_runner.py",
-      "evidence": ["tests/test_task_runner.py"]
+      "evidence": [
+        "tests/test_task_runner.py"
+      ]
     },
     {
       "path": "system/session_lifecycle.py",
-      "evidence": ["tests/test_session_lifecycle.py", "tests/test_gate5_safe_mode.py"]
+      "evidence": [
+        "tests/test_session_lifecycle.py",
+        "tests/test_gate5_safe_mode.py"
+      ]
     },
     {
       "path": "system/autostart_manager.py",
-      "evidence": ["tests/test_autostart_manager.py"]
+      "evidence": [
+        "tests/test_autostart_manager.py"
+      ]
     },
     {
       "path": "system/module_lifecycle.py",
-      "evidence": ["tests/test_module_lifecycle.py"]
+      "evidence": [
+        "tests/test_module_lifecycle.py"
+      ]
     },
     {
       "path": "system/launcher_controller.py",
-      "evidence": ["tests/test_launcher_controller.py"]
+      "evidence": [
+        "tests/test_launcher_controller.py"
+      ]
     },
     {
       "path": "system/ui_responsive.py",
-      "evidence": ["tests/test_ui_responsive.py"]
+      "evidence": [
+        "tests/test_ui_responsive.py"
+      ]
     },
     {
       "path": "system/ui_acceptance.py",
-      "evidence": ["tests/test_ui_acceptance.py", "tests/test_ui_acceptance_report.py"]
+      "evidence": [
+        "tests/test_ui_acceptance.py",
+        "tests/test_ui_acceptance_report.py"
+      ]
     },
     {
       "path": "modules/datei_manager/browser.py",
-      "evidence": ["tests/test_datei_manager_browser.py"]
+      "evidence": [
+        "tests/test_datei_manager_browser.py"
+      ]
     },
     {
       "path": "modules/datei_manager/window.py",
-      "evidence": ["tests/test_datei_manager_window.py", "tests/test_datei_manager_entry.py"]
+      "evidence": [
+        "tests/test_datei_manager_window.py",
+        "tests/test_datei_manager_entry.py"
+      ]
+    },
+    {
+      "path": "generated/design_tokens.py",
+      "evidence": [
+        "tests/test_design_token_runtime.py"
+      ]
     }
   ],
   "duplication_register": [
@@ -209,86 +290,131 @@
       "id": "DUP-001",
       "topic": "theme_palette",
       "severity": "high",
-      "locations": ["config/design-tokens.json", "config/launcher_gui.json", "config/datei_manager.json"],
-      "decision": "generate_runtime_theme_payload_from_design_tokens",
-      "target_block": 2
+      "locations": [
+        "config/design-tokens.json",
+        "config/launcher_gui.json",
+        "config/datei_manager.json"
+      ],
+      "decision": "runtime token artifact completed; migrate launcher in block 3 and file manager in block 7",
+      "target_block": 3
     },
     {
       "id": "DUP-002",
       "topic": "spacing_and_widget_metrics",
       "severity": "high",
-      "locations": ["config/design-tokens.json", "config/launcher_gui.json", "system/main_window.py", "modules/datei_manager/window.py"],
-      "decision": "map_generated_tokens_to_tk_metrics_then_remove_hardcoded_values",
-      "target_block": 2
+      "locations": [
+        "config/design-tokens.json",
+        "config/launcher_gui.json",
+        "system/main_window.py",
+        "modules/datei_manager/window.py"
+      ],
+      "decision": "pixel runtime mapping completed; consume through shared components from block 3",
+      "target_block": 3
     },
     {
       "id": "DUP-003",
       "topic": "typography",
       "severity": "high",
-      "locations": ["config/design-tokens.json", "system/launcher_gui.py", "system/main_window.py", "modules/datei_manager/window.py"],
-      "decision": "introduce_generated_tk_typography_mapping",
-      "target_block": 2
+      "locations": [
+        "config/design-tokens.json",
+        "system/launcher_gui.py",
+        "system/main_window.py",
+        "modules/datei_manager/window.py"
+      ],
+      "decision": "font runtime mapping completed; migrate platform fallbacks through shared components",
+      "target_block": 3
     },
     {
       "id": "DUP-004",
       "topic": "button_configuration",
       "severity": "high",
-      "locations": ["system/launcher_gui.py", "system/main_window.py", "modules/datei_manager/window.py"],
-      "decision": "centralize_shared_button_states_and_metrics_without_changing_commands",
+      "locations": [
+        "system/launcher_gui.py",
+        "system/main_window.py",
+        "modules/datei_manager/window.py"
+      ],
+      "decision": "centralize shared button states and metrics without changing commands",
       "target_block": 3
     },
     {
       "id": "DUP-005",
       "topic": "panel_card_surface_styling",
       "severity": "medium",
-      "locations": ["system/launcher_gui.py", "system/main_window.py", "modules/datei_manager/window.py", "system/ui_theme_adapter.py"],
-      "decision": "extend_existing_theme_adapter_and_add_minimal_shared_components",
+      "locations": [
+        "system/launcher_gui.py",
+        "system/main_window.py",
+        "modules/datei_manager/window.py",
+        "system/ui_theme_adapter.py"
+      ],
+      "decision": "extend existing theme adapter and add minimal shared components",
       "target_block": 3
     },
     {
       "id": "DUP-006",
       "topic": "status_presentation",
       "severity": "medium",
-      "locations": ["system/launcher_controller.py", "system/ui_theme_adapter.py", "system/module_lifecycle.py", "modules/datei_manager/window.py"],
-      "decision": "share_visual_status_tokens_only; preserve_domain_specific_state_models",
+      "locations": [
+        "system/launcher_controller.py",
+        "system/ui_theme_adapter.py",
+        "system/module_lifecycle.py",
+        "modules/datei_manager/window.py"
+      ],
+      "decision": "share visual status tokens only; preserve domain-specific state models",
       "target_block": 3
     },
     {
       "id": "DUP-007",
       "topic": "responsive_breakpoints_and_minimums",
       "severity": "high",
-      "locations": ["config/design-tokens.json", "system/ui_responsive.py", "system/launcher_gui.py", "modules/datei_manager/window.py"],
-      "decision": "derive_python_breakpoints_and_window_metrics_from_generated_tokens",
-      "target_block": 2
+      "locations": [
+        "config/design-tokens.json",
+        "system/ui_responsive.py",
+        "system/launcher_gui.py",
+        "modules/datei_manager/window.py"
+      ],
+      "decision": "breakpoint and layout runtime mappings completed; consume from block 3",
+      "target_block": 3
     },
     {
       "id": "DUP-008",
       "topic": "icons_and_action_labels",
       "severity": "medium",
-      "locations": ["system/launcher_gui.py", "system/main_window.py", "modules/datei_manager/window.py"],
-      "decision": "centralize_only_cross_surface_semantics; keep feature-specific icons local",
+      "locations": [
+        "system/launcher_gui.py",
+        "system/main_window.py",
+        "modules/datei_manager/window.py"
+      ],
+      "decision": "centralize only cross-surface semantics; keep feature-specific icons local",
       "target_block": 3
     },
     {
       "id": "DUP-009",
       "topic": "help_focus_and_keyboard_bindings",
       "severity": "medium",
-      "locations": ["system/launcher_gui.py", "system/launcher_controller.py", "system/main_window.py", "modules/datei_manager/window.py"],
-      "decision": "extract_only_repeated_binding_and_focus_rules after contract tests",
+      "locations": [
+        "system/launcher_gui.py",
+        "system/launcher_controller.py",
+        "system/main_window.py",
+        "modules/datei_manager/window.py"
+      ],
+      "decision": "extract only repeated binding and focus rules after contract tests",
       "target_block": 3
     },
     {
       "id": "DUP-010",
       "topic": "treeview_and_image_preview",
       "severity": "info",
-      "locations": ["modules/datei_manager/browser.py", "modules/datei_manager/window.py"],
-      "decision": "keep_feature_local_until_a_second_real_consumer_exists",
+      "locations": [
+        "modules/datei_manager/browser.py",
+        "modules/datei_manager/window.py"
+      ],
+      "decision": "keep feature-local until a second real consumer exists",
       "target_block": 4
     }
   ],
   "non_goals": [
     "No GUI framework replacement.",
-    "No visual production migration in block 1.",
+    "No visual production migration in block 2.",
     "No new cloud, synchronization or image-editing feature.",
     "No change to module activation, deactivation or close policy.",
     "No change to task execution, autosave, backup, logout or autostart contracts.",
@@ -297,26 +423,83 @@
     "No decorative animation without a real application state."
   ],
   "acceptance_criteria": [
-    {"id": "AC-001", "text": "Every current responsibility has exactly one owner."},
-    {"id": "AC-002", "text": "config/design-tokens.json is the only hand-maintained design-token source."},
-    {"id": "AC-003", "text": "All protected contracts and evidence files exist."},
-    {"id": "AC-004", "text": "All duplication entries have a decision and target block."},
-    {"id": "AC-005", "text": "Conditional shared components declare current consumers."},
-    {"id": "AC-006", "text": "No forbidden parallel token source exists."},
-    {"id": "AC-007", "text": "Block 1 changes no visual runtime implementation."},
-    {"id": "AC-008", "text": "The design-token generator reports no drift."},
-    {"id": "AC-009", "text": "Governance validation and unit tests pass in a read-only workflow."},
-    {"id": "AC-010", "text": "The next permitted block is central token runtime mapping."}
+    {
+      "id": "AC-001",
+      "text": "config/design-tokens.json remains the only hand-maintained design-token source."
+    },
+    {
+      "id": "AC-002",
+      "text": "generated/design_tokens.py is deterministic, importable and deeply read-only."
+    },
+    {
+      "id": "AC-003",
+      "text": "rem, px and ms values are converted with explicit unit validation."
+    },
+    {
+      "id": "AC-004",
+      "text": "Unsupported and fractional runtime units fail early."
+    },
+    {
+      "id": "AC-005",
+      "text": "All previous generated artifacts remain byte-identical."
+    },
+    {
+      "id": "AC-006",
+      "text": "All protected contracts and evidence files exist."
+    },
+    {
+      "id": "AC-007",
+      "text": "Block 2 changes no productive visual surface."
+    },
+    {
+      "id": "AC-008",
+      "text": "The design-token generator reports no drift."
+    },
+    {
+      "id": "AC-009",
+      "text": "Governance and runtime-token tests pass in read-only workflows."
+    },
+    {
+      "id": "AC-010",
+      "text": "The next permitted block is shared Tk components and visual states."
+    }
   ],
   "migration_order": [
-    {"block": 2, "name": "Central token runtime mapping", "visual_migration": false},
-    {"block": 3, "name": "Shared Tk components and state styles", "visual_migration": true},
-    {"block": 4, "name": "Table policy if reuse threshold is met", "visual_migration": true},
-    {"block": 5, "name": "Preview policy if reuse threshold is met", "visual_migration": true},
-    {"block": 7, "name": "File-manager visual refinement", "visual_migration": true},
-    {"block": 8, "name": "Launcher visual refinement", "visual_migration": true},
-    {"block": 9, "name": "Main-window visual refinement", "visual_migration": true},
-    {"block": 10, "name": "Full responsive and accessibility acceptance", "visual_migration": false}
+    {
+      "block": 3,
+      "name": "Shared Tk components and state styles",
+      "visual_migration": true
+    },
+    {
+      "block": 4,
+      "name": "Table policy if reuse threshold is met",
+      "visual_migration": true
+    },
+    {
+      "block": 5,
+      "name": "Preview policy if reuse threshold is met",
+      "visual_migration": true
+    },
+    {
+      "block": 7,
+      "name": "File-manager visual refinement",
+      "visual_migration": true
+    },
+    {
+      "block": 8,
+      "name": "Launcher visual refinement",
+      "visual_migration": true
+    },
+    {
+      "block": 9,
+      "name": "Main-window visual refinement",
+      "visual_migration": true
+    },
+    {
+      "block": 10,
+      "name": "Full responsive and accessibility acceptance",
+      "visual_migration": false
+    }
   ],
-  "next_permitted_block": 2
+  "next_permitted_block": 3
 }

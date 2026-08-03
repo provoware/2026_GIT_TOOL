@@ -50,15 +50,6 @@
     {
       "path": "dateiindex/struktur/TESTMATRIX_ARBEITSBLOCK_3.md",
       "status": "abgeschlossen",
-      "scope": [
-        "Berichtformatierer",
-        "Workspace-Geometrie",
-        "Themeadapter",
-        "Task-Runner",
-        "Autosave und Shutdown",
-        "Modulkarten und Modul-Lebenszyklus",
-        "Launcher-Controller"
-      ],
       "completed_gates": [
         "Gate 1: Berichtformatierer",
         "Gate 2: Workspace-Geometrie",
@@ -68,7 +59,7 @@
         "Gate 6: Modulkarten und Modul-Lebenszyklus",
         "Gate 7: Launcher-Controller und Teilviews"
       ],
-      "next_gate": "Arbeitsblock 3 und automatisierte UI-Abnahme abgeschlossen; physische Geräteabnahme bleibt offen"
+      "next_gate": "Automatisierte UI-Abnahme abgeschlossen; physische Geräteabnahme bleibt offen"
     },
     {
       "path": "dateiindex/struktur/UI_MODERNISIERUNG_BLOCK_1.md",
@@ -82,23 +73,39 @@
       ]
     },
     {
-      "path": "dateiindex/struktur/TESTMATRIX_UI_MODERNISIERUNG.md",
+      "path": "dateiindex/struktur/UI_MODERNISIERUNG_BLOCK_2.md",
       "status": "abgeschlossen",
-      "next_gate": "Block 2: zentrale Token-Laufzeitabbildung"
+      "scope": [
+        "Python-Token-Runtime",
+        "Einheitenvertrag",
+        "Unveränderlichkeit",
+        "Generator-Drift"
+      ]
+    },
+    {
+      "path": "dateiindex/struktur/TESTMATRIX_UI_MODERNISIERUNG.md",
+      "status": "abgeschlossen_bis_block_2",
+      "next_gate": "Block 3: gemeinsame Tk-Komponenten und visuelle Zustände"
     }
   ],
   "hardened": [
     {
       "path": "config/design-tokens.json",
-      "role": "Zentrale Design-Token-Quelle",
-      "evidence": "Pflichtgruppen und Theme-Farbvertrag werden durch den Generator validiert",
-      "limitations": "Physische visuelle Abnahme bleibt separat"
+      "role": "Einzige handgepflegte Design-Token-Quelle",
+      "evidence": "Pflichtgruppen, Theme-Farbvertrag und alle generierten Ausgaben werden validiert",
+      "limitations": "Sichtbare Nutzung in den Tkinter-Oberflächen folgt ab Block 3"
     },
     {
       "path": "system/generate_design_tokens.py",
-      "role": "Deterministische Generierung und Drift-Prüfung",
-      "evidence": "Validierung, definierte Exitcodes, --check-Modus und automatisch gekennzeichnete Ausgaben",
-      "limitations": "Python-Laufzeitabbildung folgt in UI-Modernisierung Block 2"
+      "role": "Deterministische Generierung, Einheitenkonvertierung und Drift-Prüfung",
+      "evidence": "CSS, Manifestdaten, Dokumentation und tief unveränderliche Python-Runtime werden gemeinsam erzeugt und mit --check geprüft",
+      "limitations": "Keine visuelle Oberflächenmigration in Block 2"
+    },
+    {
+      "path": "generated/design_tokens.py",
+      "role": "Importierbare Python-Runtime für Themes, Abstände, Radien, Typografie, Bewegung, Ebenen, Breakpoints und Layout",
+      "evidence": "Generatorgleichheit, regulärer Import, Deep-Readonly, Themeauflösung und konkrete Runtimewerte getestet",
+      "limitations": "Automatisch erzeugt; direkte Bearbeitung ist verboten"
     },
     {
       "path": "system/launcher_reports.py",
@@ -116,9 +123,9 @@
     {
       "path": "system/ui_theme_adapter.py",
       "role": "Gemeinsamer Themevertrag und Tkinter-Themeadapter",
-      "evidence": "Themevertragstests, idempotente Codemods, reale Integration, Kontrastprüfung und Kompilierungsprüfung erfolgreich",
+      "evidence": "Themevertragstests, reale Integration, Kontrastprüfung und Kompilierungsprüfung erfolgreich",
       "canonical_codemod": "scripts/apply_gate3_ui_theme_adapter.py",
-      "limitations": "Tokenbasierte Laufzeitabbildung folgt in Block 2"
+      "limitations": "Konsum der neuen Runtime-Tokens folgt in Block 3"
     },
     {
       "path": "system/ui_responsive.py",
@@ -155,14 +162,14 @@
     {
       "path": "system/module_lifecycle.py",
       "role": "Autoritative Modulkarten-Zustände und sichere Close-Policy des Hauptfensters",
-      "evidence": "Aktivierungs-, Deaktivierungs-, Status- und Close-Policy-Tests, idempotenter Codemod, reale Integration und Kompilierungsprüfung erfolgreich",
+      "evidence": "Aktivierungs-, Deaktivierungs-, Status- und Close-Policy-Tests, reale Integration und Kompilierungsprüfung erfolgreich",
       "canonical_codemod": "scripts/apply_gate6_module_lifecycle.py",
       "limitations": "Physische Modulkarten- und Close-Abnahme bleibt separat"
     },
     {
       "path": "system/launcher_controller.py",
       "role": "Autoritativer Launcherzustand, Refresh-Debounce, Status-, Hilfe- und Shortcut-Teilviews",
-      "evidence": "Controller- und Viewtests, Codemod-Grenzen, reale Integration, read-only Abschlussprüfung und Regression-Gates erfolgreich",
+      "evidence": "Controller- und Viewtests, reale Integration, read-only Abschlussprüfung und Regression-Gates erfolgreich",
       "canonical_codemod": "scripts/apply_gate7_launcher_controller_v2.py",
       "limitations": "Physische Bedienabnahme bleibt separat"
     },
@@ -181,13 +188,13 @@
     {
       "path": "config/ui-governance.json",
       "role": "Maschinenlesbarer Governance- und Modernisierungsvertrag",
-      "evidence": "Eindeutige Eigentümer, Schutzverträge, Duplikatentscheidungen, Nicht-Ziele und Migrationsreihenfolge werden validiert",
+      "evidence": "Eindeutige Eigentümer, blockabhängige Schutzgrenzen, Duplikatentscheidungen und Migrationsreihenfolge werden validiert",
       "limitations": "Regelwerk ersetzt keine spätere visuelle Abnahme"
     },
     {
       "path": "system/validate_ui_governance.py",
-      "role": "Read-only Validierung von Governance, Pfaden, Evidence und zulässigem Block-Diff",
-      "evidence": "Positive und negative Governance-Tests sowie read-only Workflow",
+      "role": "Read-only Validierung von Governance, Pfaden, Evidence und blockabhängigen Diffs",
+      "evidence": "Positive und negative Governance-Tests sowie Block-1- und Block-2-Whitelists erfolgreich",
       "limitations": "Keine Laufzeitkomponente der Oberfläche"
     }
   ],
@@ -195,14 +202,16 @@
     "generated/design-tokens.css",
     "generated/design-tokens-webmanifest.json",
     "generated/design-tokens-module-manifest.json",
+    "generated/design_tokens.py",
     "docs/DESIGN_TOKENS.generated.md"
   ],
   "ui_modernization": {
-    "status": "block_1_abgeschlossen",
+    "status": "block_2_abgeschlossen",
     "completed_blocks": [
-      "Block 1: Entwicklungs- und Designregeln"
+      "Block 1: Entwicklungs- und Designregeln",
+      "Block 2: zentrale Token-Laufzeitabbildung"
     ],
-    "next_block": "Block 2: zentrale Token-Laufzeitabbildung",
+    "next_block": "Block 3: gemeinsame Tk-Komponenten und visuelle Zustände",
     "governance": "config/ui-governance.json",
     "test_matrix": "dateiindex/struktur/TESTMATRIX_UI_MODERNISIERUNG.md"
   },
