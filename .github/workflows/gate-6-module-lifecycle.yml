@@ -1,0 +1,36 @@
+name: Gate 6 Module Lifecycle
+
+on:
+  pull_request:
+    paths:
+      - "system/main_window.py"
+      - "system/module_lifecycle.py"
+      - "system/module_manager.py"
+      - "scripts/apply_gate6_module_lifecycle.py"
+      - "tests/test_module_lifecycle.py"
+      - "tests/test_gate6_module_lifecycle_codemod.py"
+      - ".github/workflows/gate-6-module-lifecycle.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  gate-6:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --disable-pip-version-check pytest
+      - name: Modulkarten und Close-Policy testen
+        run: >-
+          python -m pytest -q
+          tests/test_module_lifecycle.py
+          tests/test_gate6_module_lifecycle_codemod.py
+      - name: Integrierten Zustand prüfen
+        run: |
+          python scripts/apply_gate6_module_lifecycle.py --check
+          python -m py_compile system/main_window.py system/module_lifecycle.py
+      - name: Repository unverändert halten
+        run: git diff --exit-code

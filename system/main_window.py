@@ -10,6 +10,14 @@ from typing import Dict, Optional
 from config_models import ConfigModelError, GuiConfigModel, load_gui_config
 from logging_center import get_logger, setup_logging
 from module_manager import ModuleActionResult, ModuleManager, ModuleManagerError, ModuleState
+from module_lifecycle import (
+    ModuleActionOutcome,
+    ModuleCardPresentation,
+    ModuleLifecycleError,
+    perform_module_action,
+    prepare_close,
+    resolve_card_presentation,
+)
 from workspace_geometry import Rect, build_grid, clamp_rect, has_collision, move_rect, rect_overlap, resize_rect
 from ui_theme_adapter import (
     UiThemeError,
@@ -108,6 +116,21 @@ class ModuleWidget:
     def update_status(self, text: str, color: str) -> None:
         self.status_label.configure(text=text, foreground=color)
 
+    def apply_presentation(
+        self,
+        presentation: ModuleCardPresentation,
+        color: str,
+    ) -> None:
+        if not isinstance(presentation, ModuleCardPresentation):
+            raise MainWindowError("Modulkarten-Darstellung ist ungültig.")
+        self.update_status(presentation.status_text, color)
+        self.activate_button.configure(
+            state="normal" if presentation.activate_enabled else "disabled"
+        )
+        self.deactivate_button.configure(
+            state="normal" if presentation.deactivate_enabled else "disabled"
+        )
+
     def _bind_drag(self, tk) -> None:
         for widget in (self.header, self.title_label, self.drag_label):
             widget.bind("<ButtonPress-1>", self._start_drag, add="+")
@@ -205,7 +228,7 @@ class MainWindow:
             controls,
             self.theme_var,
             *self.gui_config.themes.keys(),
-            command=lambda _value: self._apply_theme(),
+            command=lambda _value: self._apply_theme_and_sync(),
         )
         menu.pack(side="left", padx=(8, 16))
 
@@ -251,6 +274,7 @@ class MainWindow:
                 on_status=self._set_status,
             )
             self.module_widgets.append(widget)
+            self._sync_widget_state(widget)
 
     def _layout_modules(self) -> None:
         if self.workspace is None:
@@ -305,22 +329,45 @@ class MainWindow:
         return rect_overlap(a, b)
 
     def _activate_widget(self, widget: ModuleWidget) -> None:
-        result = self.manager.activate_module(widget.state.entry.module_id)
-        self._apply_action_result(widget, result, active=True)
+        outcome = perform_module_action(
+            self.manager,
+            widget.state.entry.module_id,
+            "activate",
+        )
+        self._apply_action_outcome(widget, outcome)
 
     def _deactivate_widget(self, widget: ModuleWidget) -> None:
-        result = self.manager.deactivate_module(widget.state.entry.module_id)
-        active = self.manager.get_state(widget.state.entry.module_id).active
-        self._apply_action_result(widget, result, active=active)
+        outcome = perform_module_action(
+            self.manager,
+            widget.state.entry.module_id,
+            "deactivate",
+        )
+        self._apply_action_outcome(widget, outcome)
 
-    def _apply_action_result(
-        self, widget: ModuleWidget, result: ModuleActionResult, active: bool
+    def _sync_widget_state(self, widget: ModuleWidget) -> None:
+        presentation = resolve_card_presentation(widget.state)
+        color = self._theme_colors()[presentation.color_key]
+        widget.apply_presentation(presentation, color)
+
+    def _sync_all_widgets(self) -> None:
+        for widget in self.module_widgets:
+            self._sync_widget_state(widget)
+
+    def _apply_action_outcome(
+        self,
+        widget: ModuleWidget,
+        outcome: ModuleActionOutcome,
     ) -> None:
-        theme = self._theme_colors()
-        color = theme["status_success"] if result.status == "ok" else theme["status_error"]
-        status_text = "Status: aktiv" if active else "Status: inaktiv"
-        widget.update_status(status_text, color)
-        self._set_status(result.message, color)
+        if not isinstance(outcome, ModuleActionOutcome):
+            raise MainWindowError("Modulaktion lieferte kein gültiges Ergebnis.")
+        widget.state = outcome.state
+        color = self._theme_colors()[outcome.presentation.color_key]
+        widget.apply_presentation(outcome.presentation, color)
+        self._set_status(outcome.result.message, color)
+
+    def _apply_theme_and_sync(self) -> None:
+        self._apply_theme()
+        self._sync_all_widgets()
 
     def _set_status(self, message: str, color: str) -> None:
         if self.status_label is None:
@@ -328,8 +375,24 @@ class MainWindow:
         self.status_label.configure(text=message, foreground=color)
 
     def _on_close(self) -> None:
-        self.manager.deactivate_all()
-        self.root.destroy()
+        try:
+            decision = prepare_close(self.manager)
+        except (ModuleLifecycleError, ModuleManagerError) as exc:
+            self.logger.error("Hauptfenster: Schließen fehlgeschlagen: %s", exc)
+            self._set_status(
+                f"Schließen fehlgeschlagen: {exc}",
+                self._theme_colors()["status_error"],
+            )
+            return
+
+        self._sync_all_widgets()
+        color = self._theme_colors()[decision.color_key]
+        self._set_status(decision.message, color)
+        if decision.allow_close:
+            self.logger.info(decision.report.rstrip())
+            self.root.destroy()
+            return
+        self.logger.error(decision.report.rstrip())
 
     def _theme_colors(self) -> Dict[str, str]:
         theme_key = self.theme_var.get() if self.theme_var is not None else self.theme_name

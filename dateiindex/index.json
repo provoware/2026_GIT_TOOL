@@ -59,9 +59,10 @@
         "Gate 2: Workspace-Geometrie",
         "Gate 3: Themeadapter",
         "Gate 4: Task-Runner",
-        "Gate 5: Autosave, Shutdown und Autostart"
+        "Gate 5: Autosave, Shutdown und Autostart",
+        "Gate 6: Modulkarten und Modul-Lebenszyklus"
       ],
-      "next_gate": "Gate 6: Modulkarten und Modul-Lebenszyklus"
+      "next_gate": "Gate 7: Launcher-Controller und Teilviews"
     }
   ],
   "hardened": [
@@ -88,7 +89,7 @@
       "role": "Reine Raster-, Bounds-, Move-, Resize- und Kollisionsberechnungen",
       "evidence": "Gate-2-Tests, kanonischer idempotenter Codemod, reale Integration und Python-Kompilierungsprüfung erfolgreich",
       "canonical_codemod": "scripts/apply_gate2_workspace_geometry_v2.py",
-      "limitations": "Responsive Reflow-Policy und Modul-Lebenszyklus bleiben in späteren Gates"
+      "limitations": "Responsive Reflow-Policy bleibt für die abschließende Controllerprüfung offen"
     },
     {
       "path": "system/ui_theme_adapter.py",
@@ -102,20 +103,27 @@
       "role": "Kategorisierte Hintergrundtasks, UI-Callbacks und Wartungsprozessausführung",
       "evidence": "Task-Runner- und Codemodtests, reale Integration, Python-Kompilierung, read-only Abschlussprüfung sowie Regression-Gates erfolgreich",
       "canonical_codemod": "scripts/apply_gate4_task_runner.py",
-      "limitations": "Modulkarten und Modul-Lebenszyklus bleiben Gate 6"
+      "limitations": "Launcher-Controller und Teilviews bleiben Gate 7"
     },
     {
       "path": "system/session_lifecycle.py",
       "role": "Autosave-Taktung, kombinierte Sicherungsabfolge und kontrollierter Shutdown",
       "evidence": "Lifecycle-Tests, Teilerfolgsberichte, Job-Abbruch, verzögerte Fensterzerstörung, Safe-Mode-Schreibsperre, reale Integration und read-only Abschlussprüfung erfolgreich",
       "canonical_codemod": "scripts/apply_gate5_session_lifecycle.py",
-      "limitations": "Close-Policy des Hauptfensters bleibt Gate 6"
+      "limitations": "Physische Desktop- und Shutdown-Abnahme bleibt separat"
     },
     {
       "path": "system/autostart_manager.py",
       "role": "Benutzerspezifischer Linux-XDG-Autostart",
       "evidence": "Aktivierung, Deaktivierung, Idempotenz, Desktop-Entry-Validierung, Safe-Mode-Sperre und Schutz fremder Dateien getestet",
       "limitations": "Start erfolgt nach Benutzeranmeldung; kein systemweiter Dienst vor Anmeldung"
+    },
+    {
+      "path": "system/module_lifecycle.py",
+      "role": "Autoritative Modulkarten-Zustände und sichere Close-Policy des Hauptfensters",
+      "evidence": "Aktivierungs-, Deaktivierungs-, Status- und Close-Policy-Tests, idempotenter Codemod, reale Integration, Kompilierungsprüfung sowie Regression-Gates 2 und 3 erfolgreich",
+      "canonical_codemod": "scripts/apply_gate6_module_lifecycle.py",
+      "limitations": "Launcher-Controller, Teilviews und physische Kartenabnahme bleiben Gate 7 beziehungsweise separater UI-Abnahme vorbehalten"
     }
   ],
   "generated": [
