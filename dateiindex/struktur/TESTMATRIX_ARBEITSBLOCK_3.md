@@ -1,13 +1,13 @@
 # Testmatrix Arbeitsblock 3
 
 Stand: 2026-08-03
-Status: Gates 1 bis 6 abgeschlossen; Gate 7 ist der nächste zulässige Schritt
+Status: Gates 1 bis 7 abgeschlossen; Arbeitsblock 3 ist testseitig abgeschlossen
 
 ## Zweck
 
-Vor jeder Auslagerung aus `system/launcher_gui.py` oder `system/main_window.py` muss ein passendes Sicherungstest-Gate bestehen. Strukturänderungen, visuelle Änderungen und Verhaltensänderungen bleiben getrennt.
+Vor jeder Auslagerung aus `system/launcher_gui.py` oder `system/main_window.py` musste ein passendes Sicherungstest-Gate bestehen. Strukturänderungen, visuelle Änderungen und Verhaltensänderungen wurden getrennt.
 
-## Verbindliche Reihenfolge
+## Abgeschlossene Reihenfolge
 
 1. Berichtformatierer – abgeschlossen
 2. Workspace-Geometrie und Kollision – abgeschlossen
@@ -15,13 +15,11 @@ Vor jeder Auslagerung aus `system/launcher_gui.py` oder `system/main_window.py` 
 4. Task-Runner für Threads und Prozesse – abgeschlossen
 5. Autosave, Shutdown und Autostart – abgeschlossen
 6. Modulkarten und Modul-Lebenszyklus – abgeschlossen
-7. Launcher-Controller und Teilviews – als Nächstes
+7. Launcher-Controller und Teilviews – abgeschlossen
 
 ## Gate 1 – Berichtformatierer
 
-### Umfang
-
-Nur Funktionen ohne UI-, Thread-, Prozess-, Logging- oder Dialogseiteneffekte:
+### Abgeschlossen
 
 - Wartungsbericht
 - Diagnosebericht
@@ -29,8 +27,7 @@ Nur Funktionen ohne UI-, Thread-, Prozess-, Logging- oder Dialogseiteneffekte:
 - End-Audit
 - Modul-Selbsttests
 - Fehlersimulation
-
-`_append_module_check` bleibt im Controller, weil die Methode zusätzlich Fehlerdialoge und Logging ausführt.
+- UI-, Thread- und Dialogseiteneffekte bleiben außerhalb der reinen Formatierer
 
 ### Sicherung
 
@@ -88,15 +85,13 @@ Nur Funktionen ohne UI-, Thread-, Prozess-, Logging- oder Dialogseiteneffekte:
 
 - höchstens ein paralleler Task pro Kategorie
 - unterschiedliche Kategorien dürfen parallel laufen
-- UI-Callback ausschließlich über den injizierten `root.after`-Scheduler
+- UI-Callback ausschließlich über den injizierten Scheduler
 - Erfolgs-, Fehler- und Ausnahmezustand über `TaskOutcome`
-- Kategorie wird vor dem Abschluss-Callback freigegeben
-- Wiederherstellung deaktivierter Diagnose- und Wartungsschaltflächen
+- Freigabe der Kategorie vor dem Abschluss-Callback
+- Wiederherstellung deaktivierter Schaltflächen
 - kontrollierte Thread-Start- und Schedulerfehler
 - zentrale Kommando- und Pfadvalidierung
-- zentrale Wartungsprozessausführung
 - kein Tkinter-Zugriff aus Worker-Threads
-- deterministische Abschlussresultate für Wartung und Diagnose
 
 ### Sicherung
 
@@ -118,14 +113,10 @@ Nur Funktionen ohne UI-, Thread-, Prozess-, Logging- oder Dialogseiteneffekte:
 - genau ein Logout-Lauf über Task-Runner-Kategorie `shutdown`
 - planbarer und idempotenter Autosave-Job-Abbruch
 - Fensterzerstörung erst nach Bericht, Status und Autosave-Abbruch
-- keine Tkinter-Nutzung im Worker
 - sichere Linux-XDG-Autostartaktivierung über Launcher-Schalter
-- atomisches Schreiben des eigenen Desktop-Eintrags
-- Schutz fremder gleichnamiger Autostartdateien
-- standardkonforme `Exec`-Quotierung, `TryExec` und Arbeitsverzeichnis
-- Safe-Mode verhindert Autosave-Planung
-- Safe-Mode überspringt Autosave und Backup vollständig
-- Safe-Mode blockiert Autostartänderungen
+- atomisches Schreiben und Schutz fremder Autostartdateien
+- Safe-Mode blockiert Autosave, Backup und Autostartänderungen
+- Inline- und datengetriebene Autostart-Hilfe werden als gleichwertig erkannt
 
 ### Sicherung
 
@@ -136,6 +127,7 @@ Nur Funktionen ohne UI-, Thread-, Prozess-, Logging- oder Dialogseiteneffekte:
 - `tests/test_gate5_safe_mode.py`
 - `tests/test_gate5_session_lifecycle_codemod.py`
 - `scripts/apply_gate5_session_lifecycle.py`
+- `scripts/apply_gate5_session_lifecycle_v2.py`
 - `.github/workflows/gate-5-session-lifecycle.yml`
 - `dateiindex/gehaertet/GATE_5_SESSION_LIFECYCLE.md`
 
@@ -143,16 +135,13 @@ Nur Funktionen ohne UI-, Thread-, Prozess-, Logging- oder Dialogseiteneffekte:
 
 ### Abgeschlossen
 
-- Kartenstatus wird ausschließlich aus dem autoritativen `ModuleManager`-Zustand abgeleitet
-- fehlgeschlagene Aktivierung bleibt sichtbar inaktiv und erneut aktivierbar
-- fehlgeschlagene Deaktivierung bleibt sichtbar aktiv und erneut deaktivierbar
-- Aktivieren-/Deaktivieren-Schaltflächen entsprechen dem tatsächlichen Zustand
-- deaktivierte und strukturell fehlerhafte Module können nicht aktiviert werden
+- Kartenstatus ausschließlich aus dem autoritativen Managerzustand
+- fehlgeschlagene Aktivierung bleibt sichtbar inaktiv
+- fehlgeschlagene Deaktivierung bleibt sichtbar aktiv
+- Schaltflächen entsprechen dem tatsächlichen Zustand
 - Karten werden nach Themewechseln erneut synchronisiert
-- beim Schließen werden ausschließlich aktuell aktive Fenstermodule deaktiviert
-- Warnungen erlauben das Schließen nur bei anschließend inaktivem Modul
+- ausschließlich aktive Fenstermodule werden beim Schließen deaktiviert
 - Exit-Fehler mit verbleibendem aktivem Modul blockiert `root.destroy()`
-- bereits erfolgreich deaktivierte Module bleiben bei blockiertem Schließen korrekt inaktiv
 - keine Registry- oder globale Modulkonfiguration wird verändert
 
 ### Sicherung
@@ -166,14 +155,44 @@ Nur Funktionen ohne UI-, Thread-, Prozess-, Logging- oder Dialogseiteneffekte:
 
 ## Gate 7 – Launcher-Controller und Teilviews
 
-Erforderlich:
+### Abgeschlossen
 
-- Refresh-Debounce
-- Show-all und Debug
-- Themewechsel mit Undo/Redo
-- Hilfe- und Shortcutregistrierung
-- Statusübergänge
-- Controller ohne echte Tkinter-Hauptschleife testbar
+- autoritativer Zustand für Show-all, Debug, Theme und Kontext-Hilfe
+- sichtbare Checkboxen, Tastenkürzel, Undo und Redo verwenden denselben Controller
+- No-op-Änderungen erzeugen weder Refresh noch Verlaufseintrag
+- generationssicheres Refresh-Debouncing
+- veraltete Refresh-Callbacks bleiben auch bei fehlgeschlagenem Abbruch wirkungslos
+- Themewechsel werden validiert und sind über Undo/Redo wiederherstellbar
+- Hilfe- und Shortcutdefinitionen sind datengetrieben, vollständig und eindeutig
+- Statusübergänge und Busy-Cursor werden aus einem testbaren Viewmodell abgeleitet
+- Controller ist ohne echte Tkinter-Hauptschleife testbar
+- vorherige Gates 1, 3, 4 und 5 bleiben grün
+
+### Sicherung
+
+- `system/launcher_controller.py`
+- `tests/test_launcher_controller.py`
+- `tests/test_gate7_launcher_controller_codemod.py`
+- `scripts/apply_gate7_launcher_controller.py`
+- `scripts/apply_gate7_launcher_controller_v2.py`
+- `.github/workflows/gate-7-launcher-controller.yml`
+- `dateiindex/gehaertet/GATE_7_LAUNCHER_CONTROLLER.md`
+
+## Ergebnis Arbeitsblock 3
+
+Die zuvor gemischten Verantwortlichkeiten der beiden produktiven UI-Einstiegspunkte sind testgesichert in klar abgegrenzte Bausteine überführt. Alle sieben Gates wurden vor der jeweiligen Produktionsintegration geprüft und anschließend erneut gegen die betroffenen Regression-Gates validiert.
+
+## Verbleibende Abnahme
+
+Nicht durch Unit-, Struktur- oder Codemodtests ersetzbar sind:
+
+- physische visuelle Abnahme auf Linux,
+- physische Bedienprüfung mit echtem Fenstermanager,
+- Autostartprüfung nach realer Benutzeranmeldung,
+- responsive Abnahme auf Tablet und iPhone,
+- Prüfung von Kontrast, Fokusführung, Zoom, Drag/Resize und langen Texten im realen Rendering.
+
+Visuelle oder responsive Änderungen müssen in einem neuen, erneut begrenzten Arbeitsblock erfolgen.
 
 ## Globale Stopregeln
 

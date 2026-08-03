@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
-from apply_gate5_session_lifecycle import transform
+from apply_gate5_session_lifecycle_v2 import transform
 
 
 def source_text() -> str:
@@ -49,6 +49,10 @@ def test_gate5_codemod_adds_tested_autostart_switch():
     assert "def _toggle_autostart(self) -> None:" in transformed
     assert "self.autostart_manager.set_enabled(enabled)" in transformed
     assert "self.autostart_check" in transformed
+    assert (
+        '"autostart_check": self.autostart_check' in transformed
+        or "if self.autostart_check is not None:" in transformed
+    )
 
 
 def test_gate5_keeps_previous_gates_and_future_scope_untouched():

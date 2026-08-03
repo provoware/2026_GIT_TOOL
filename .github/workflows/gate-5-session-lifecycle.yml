@@ -7,6 +7,7 @@ on:
       - "system/session_lifecycle.py"
       - "system/autostart_manager.py"
       - "scripts/apply_gate5_session_lifecycle.py"
+      - "scripts/apply_gate5_session_lifecycle_v2.py"
       - "tests/test_session_lifecycle.py"
       - "tests/test_autostart_manager.py"
       - "tests/test_gate5_safe_mode.py"
@@ -34,7 +35,7 @@ jobs:
           tests/test_gate5_session_lifecycle_codemod.py
       - name: Integrierten Zustand prüfen
         run: |
-          python scripts/apply_gate5_session_lifecycle.py --check
+          python scripts/apply_gate5_session_lifecycle_v2.py --check
           python -m py_compile system/launcher_gui.py system/session_lifecycle.py system/autostart_manager.py
       - name: Repository unverändert halten
         run: git diff --exit-code
