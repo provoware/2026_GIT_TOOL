@@ -162,3 +162,38 @@ def run_shutdown_sequence(
         report="\n".join(report_lines).rstrip() + "\n",
         success=success,
     )
+
+
+def complete_shutdown(
+    outcome: ShutdownOutcome,
+    *,
+    append_report: Callable[[str], None],
+    set_status: Callable[[str, str], None],
+    cancel_autosave: Callable[[], object],
+    schedule: Callable[[int, Callable[[], None]], object],
+    destroy: Callable[[], None],
+    delay_ms: int = 200,
+) -> object:
+    """Schließt die Sitzung geordnet ab und plant erst zuletzt die Zerstörung."""
+
+    if not isinstance(outcome, ShutdownOutcome):
+        raise SessionLifecycleError("Shutdown-Ergebnis ist ungültig.")
+    for callback, label in (
+        (append_report, "append_report"),
+        (set_status, "set_status"),
+        (cancel_autosave, "cancel_autosave"),
+        (schedule, "schedule"),
+        (destroy, "destroy"),
+    ):
+        if not callable(callback):
+            raise SessionLifecycleError(f"{label} ist nicht aufrufbar.")
+    if not isinstance(delay_ms, int) or delay_ms < 0:
+        raise SessionLifecycleError("delay_ms ist ungültig.")
+
+    if outcome.report:
+        append_report(outcome.report)
+    message = "Abmelden abgeschlossen." if outcome.success else "Abmelden mit Problemen."
+    state = "success" if outcome.success else "error"
+    set_status(message, state)
+    cancel_autosave()
+    return schedule(delay_ms, destroy)
