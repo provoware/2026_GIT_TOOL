@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
-from apply_ui_responsive_acceptance_v2 import (
+from apply_ui_responsive_acceptance_v3 import (
     transform_acceptance,
     transform_launcher,
     transform_main,
@@ -40,10 +40,14 @@ def test_responsive_codemod_is_idempotent_and_syntax_valid():
     ast.parse(acceptance_first)
 
 
-def test_launcher_integrates_three_responsive_modes():
+def test_launcher_integrates_three_responsive_modes_and_compact_help():
     transformed = transform_launcher(launcher_source())
 
-    assert "from ui_responsive import resolve_launcher_layout" in transformed
+    assert (
+        "from ui_responsive import resolve_launcher_help_text, resolve_launcher_layout"
+        in transformed
+    )
+    assert "self.help_label.configure(text=resolve_launcher_help_text(width))" in transformed
     assert "self.theme_label = tk.Label(" in transformed
     assert 'if layout.mode == "wide":' in transformed
     assert 'elif layout.mode == "medium":' in transformed
