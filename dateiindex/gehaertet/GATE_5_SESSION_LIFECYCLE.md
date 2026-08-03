@@ -13,6 +13,7 @@ Status: abgeschlossen
 - Logout als Kategorie `shutdown` des gehärteten Task-Runners
 - Fensterzerstörung ausschließlich nach UI-Abschlusscallback und Autosave-Abbruch
 - benutzerspezifischer Linux-XDG-Autostart über einen sichtbaren Launcher-Schalter
+- durchgängige Schreibsperre bei `GENREARCHIV_WRITE_MODE=read-only`
 
 ## Sicherheitsvertrag
 
@@ -26,6 +27,7 @@ Status: abgeschlossen
 8. Der Autostart-Eintrag wird atomar geschrieben.
 9. Nur Dateien mit `X-Genrearchiv-Managed=true` dürfen aktualisiert oder entfernt werden.
 10. Fremde gleichnamige Desktop-Einträge werden weder überschrieben noch gelöscht.
+11. Im schreibgeschützten Modus werden Autosave, Backup und Autostartänderungen vollständig blockiert.
 
 ## Testnachweis
 
@@ -42,6 +44,9 @@ Status: abgeschlossen
 - XDG-Desktop-Entry mit `TryExec`, argumentweiser `Exec`-Quotierung und verwaltetem Marker
 - Schutz fremder Autostartdateien
 - fehlendes Startskript
+- Safe-Mode verhindert Autosave-Planung
+- Safe-Mode überspringt Autosave und Backup ohne Schreibzugriff
+- Safe-Mode blockiert Autostartänderungen
 - idempotenter Launcher-Codemod
 - Python-Kompilierungsprüfung des integrierten Zustands
 - Regression-Gates 1, 3 und 4 erfolgreich
@@ -50,6 +55,7 @@ Status: abgeschlossen
 
 - `tests/test_session_lifecycle.py`
 - `tests/test_autostart_manager.py`
+- `tests/test_gate5_safe_mode.py`
 - `tests/test_gate5_session_lifecycle_codemod.py`
 - `scripts/apply_gate5_session_lifecycle.py`
 - `.github/workflows/gate-5-session-lifecycle.yml`
