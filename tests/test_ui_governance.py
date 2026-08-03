@@ -14,7 +14,9 @@ if str(SYSTEM_DIR) not in sys.path:
 
 from validate_ui_governance import (  # noqa: E402
     BLOCK_1_ALLOWED_PATHS,
+    BLOCK_2_ALLOWED_PATHS,
     UiGovernanceError,
+    allowed_paths_for_block,
     load_policy,
     validate_changed_paths,
     validate_policy,
@@ -28,31 +30,37 @@ def policy() -> dict:
 def test_current_governance_contract_is_valid():
     validated = validate_policy(policy(), root=ROOT)
 
-    assert validated["current_block"] == 1
-    assert validated["next_permitted_block"] == 2
-    assert validated["principles"]["forbid_visual_runtime_migration_in_block_1"] is True
+    assert validated["current_block"] == 2
+    assert validated["next_permitted_block"] == 3
+    assert validated["principles"]["forbid_visual_runtime_migration_in_block_2"] is True
 
 
-def test_design_tokens_remain_the_only_hand_maintained_token_source():
+def test_design_tokens_remain_single_source_with_generated_runtime():
     data = policy()
     sources = {
-        item["responsibility"]: item["owner"]
+        item["responsibility"]: item
         for item in data["authoritative_sources"]
     }
     planned_targets = {item["target"] for item in data["planned_responsibilities"]}
 
-    assert sources["design_tokens"] == "config/design-tokens.json"
-    assert "generated/design-tokens.py" in planned_targets
+    assert sources["design_tokens"]["owner"] == "config/design-tokens.json"
+    assert sources["python_design_token_runtime"] == {
+        "responsibility": "python_design_token_runtime",
+        "owner": "generated/design_tokens.py",
+        "status": "generated",
+    }
+    assert "generated/design_tokens.py" not in planned_targets
     assert "system/ui_tokens.py" not in planned_targets
     assert "system/ui_tokens.py" in data["forbidden_parallel_sources"]
+    assert "generated/design-tokens.py" in data["forbidden_parallel_sources"]
     assert not (ROOT / "system" / "ui_tokens.py").exists()
+    assert not (ROOT / "generated" / "design-tokens.py").exists()
 
 
 def test_conditional_extraction_requires_real_reuse():
-    data = policy()
     planned = {
         item["responsibility"]: item
-        for item in data["planned_responsibilities"]
+        for item in policy()["planned_responsibilities"]
     }
 
     assert len(planned["shared_tk_components"]["current_consumers"]) >= 2
@@ -67,9 +75,7 @@ def test_conditional_extraction_requires_real_reuse():
 
 
 def test_protected_contracts_have_real_evidence_files():
-    data = policy()
-
-    for contract in data["protected_contracts"]:
+    for contract in policy()["protected_contracts"]:
         assert (ROOT / contract["path"]).is_file(), contract["path"]
         assert contract["evidence"], contract["path"]
         for evidence in contract["evidence"]:
@@ -77,9 +83,8 @@ def test_protected_contracts_have_real_evidence_files():
 
 
 def test_duplicate_inventory_matches_current_repository_evidence():
-    data = policy()
-    topics = {item["topic"] for item in data["duplication_register"]}
-    required_topics = {
+    topics = {item["topic"] for item in policy()["duplication_register"]}
+    assert {
         "theme_palette",
         "spacing_and_widget_metrics",
         "typography",
@@ -89,9 +94,7 @@ def test_duplicate_inventory_matches_current_repository_evidence():
         "responsive_breakpoints_and_minimums",
         "help_focus_and_keyboard_bindings",
         "treeview_and_image_preview",
-    }
-
-    assert required_topics <= topics
+    } <= topics
 
     design_tokens = json.loads((ROOT / "config" / "design-tokens.json").read_text(encoding="utf-8"))
     launcher_config = json.loads((ROOT / "config" / "launcher_gui.json").read_text(encoding="utf-8"))
@@ -131,32 +134,20 @@ def test_parallel_token_source_is_rejected_when_it_exists(tmp_path: Path):
     fake_root = tmp_path / "repo"
     fake_root.mkdir()
 
-    for source in data["authoritative_sources"]:
-        target = fake_root / source["owner"]
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text("x", encoding="utf-8")
-    for source in data["transitional_sources"]:
-        target = fake_root / source["path"]
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text("x", encoding="utf-8")
+    required_paths: set[str] = set()
+    required_paths.update(item["owner"] for item in data["authoritative_sources"])
+    required_paths.update(item["path"] for item in data["transitional_sources"])
     for contract in data["protected_contracts"]:
-        target = fake_root / contract["path"]
+        required_paths.add(contract["path"])
+        required_paths.update(contract["evidence"])
+    for duplicate in data["duplication_register"]:
+        required_paths.update(duplicate["locations"])
+    for planned in data["planned_responsibilities"]:
+        required_paths.update(planned.get("current_consumers", []))
+    for path in required_paths:
+        target = fake_root / path
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text("x", encoding="utf-8")
-        for evidence in contract["evidence"]:
-            evidence_path = fake_root / evidence
-            evidence_path.parent.mkdir(parents=True, exist_ok=True)
-            evidence_path.write_text("x", encoding="utf-8")
-    for duplicate in data["duplication_register"]:
-        for location in duplicate["locations"]:
-            target = fake_root / location
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text("x", encoding="utf-8")
-    for planned in data["planned_responsibilities"]:
-        for consumer in planned.get("current_consumers", []):
-            target = fake_root / consumer
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text("x", encoding="utf-8")
 
     forbidden = fake_root / "system" / "ui_tokens.py"
     forbidden.parent.mkdir(parents=True, exist_ok=True)
@@ -168,17 +159,26 @@ def test_parallel_token_source_is_rejected_when_it_exists(tmp_path: Path):
 
 def test_migration_order_must_start_with_next_block():
     data = copy.deepcopy(policy())
-    data["next_permitted_block"] = 3
+    data["next_permitted_block"] = 4
 
     with pytest.raises(UiGovernanceError, match="unmittelbar"):
         validate_policy(data, root=ROOT)
 
 
-def test_block_one_diff_rejects_visual_runtime_files():
-    validate_changed_paths(sorted(BLOCK_1_ALLOWED_PATHS))
+def test_block_specific_diff_whitelists_reject_visual_runtime_files():
+    assert allowed_paths_for_block(1) == BLOCK_1_ALLOWED_PATHS
+    assert allowed_paths_for_block(2) == BLOCK_2_ALLOWED_PATHS
+    validate_changed_paths(sorted(BLOCK_1_ALLOWED_PATHS), block=1)
+    validate_changed_paths(sorted(BLOCK_2_ALLOWED_PATHS), block=2)
 
-    with pytest.raises(UiGovernanceError, match="darf diese Datei nicht ändern"):
-        validate_changed_paths(["system/launcher_gui.py"])
+    for path in (
+        "system/launcher_gui.py",
+        "system/main_window.py",
+        "modules/datei_manager/window.py",
+        "system/ui_theme_adapter.py",
+    ):
+        with pytest.raises(UiGovernanceError, match="Block 2 darf"):
+            validate_changed_paths([path], block=2)
 
-    with pytest.raises(UiGovernanceError, match="darf diese Datei nicht ändern"):
-        validate_changed_paths(["modules/datei_manager/window.py"])
+    with pytest.raises(UiGovernanceError, match="noch keine Diff-Whitelist"):
+        allowed_paths_for_block(3)
