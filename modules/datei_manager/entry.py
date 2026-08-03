@@ -44,8 +44,6 @@ build_ui = backend.build_ui
 handle_action = backend.handle_action
 load_config = backend.load_config
 load_state = backend.load_state
-run = backend.run
-validateInput = backend.validateInput
 validateOutput = backend.validateOutput
 
 _window_instance: FileManagerWindow | None = None
@@ -96,11 +94,43 @@ def open_ui(parent=None, *, initial_path: Path | str | None = None) -> FileManag
     return _window_instance
 
 
-def _schedule_ui_open() -> None:
+def _schedule_ui_open(initial_path: Path | str | None = None) -> bool:
     parent = _default_parent()
     if parent is None:
+        return False
+    parent.after_idle(lambda: open_ui(parent, initial_path=initial_path))
+    return True
+
+
+def validateInput(input_data: dict[str, Any]) -> None:
+    if isinstance(input_data, dict) and input_data.get("action") == "open_browser":
+        initial_path = input_data.get("path")
+        if initial_path is not None and (
+            not isinstance(initial_path, (str, Path)) or not str(initial_path).strip()
+        ):
+            raise ModuleError("path ist für open_browser ungültig.")
         return
-    parent.after_idle(lambda: open_ui(parent))
+    backend.validateInput(input_data)
+
+
+def run(input_data: dict[str, Any]) -> dict[str, Any]:
+    validateInput(input_data)
+    if input_data.get("action") != "open_browser":
+        return backend.run(input_data)
+    scheduled = _schedule_ui_open(input_data.get("path"))
+    config = backend.load_config(_backend_context(input_data.get("context")))
+    response = backend.build_response(
+        status="ok" if scheduled else "error",
+        message=(
+            "Datei-Manager wird geöffnet."
+            if scheduled
+            else "Datei-Manager benötigt eine aktive grafische Hauptanwendung."
+        ),
+        data={"scheduled": scheduled},
+        ui=backend.build_ui(config),
+    )
+    backend.validateOutput(response)
+    return response
 
 
 def init(context: dict[str, Any] | None = None) -> dict[str, Any]:
