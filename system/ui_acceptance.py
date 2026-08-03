@@ -6,6 +6,8 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 from typing import Any, Iterable, Mapping, Sequence
 
+from ui_responsive import MAIN_WINDOW_MIN_HEIGHT, MAIN_WINDOW_MIN_WIDTH
+
 
 class UiAcceptanceError(ValueError):
     """Ungültige Eingaben oder inkonsistente Abnahmedaten."""
@@ -110,7 +112,12 @@ DEVICE_PROFILES: tuple[DeviceProfile, ...] = (
 
 SURFACES: tuple[SurfaceSpec, ...] = (
     SurfaceSpec("launcher", "Launcher", 640, 420),
-    SurfaceSpec("main_window", "Hauptfenster", 960, 680),
+    SurfaceSpec(
+        "main_window",
+        "Hauptfenster",
+        MAIN_WINDOW_MIN_WIDTH,
+        MAIN_WINDOW_MIN_HEIGHT,
+    ),
 )
 
 CONTRAST_PAIRS: tuple[tuple[str, str, str, float], ...] = (

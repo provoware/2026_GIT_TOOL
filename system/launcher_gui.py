@@ -1010,13 +1010,13 @@ class LauncherGui:
                 positions = {
                     self.theme_label: (0, 0, 1, "w"),
                     self.theme_menu: (0, 1, 1, "w"),
-                    self.show_all_check: (1, 0, 2, "w"),
-                    self.debug_check: (2, 0, 2, "w"),
-                    self.autostart_check: (3, 0, 2, "w"),
-                    self.diagnostics_button: (4, 0, 1, "ew"),
-                    self.refresh_button: (4, 1, 1, "ew"),
-                    self.main_window_button: (5, 0, 1, "ew"),
-                    self.logout_button: (5, 1, 1, "ew"),
+                    self.show_all_check: (1, 0, 1, "w"),
+                    self.debug_check: (1, 1, 1, "w"),
+                    self.autostart_check: (2, 0, 2, "w"),
+                    self.diagnostics_button: (3, 0, 1, "ew"),
+                    self.refresh_button: (3, 1, 1, "ew"),
+                    self.main_window_button: (4, 0, 1, "ew"),
+                    self.logout_button: (4, 1, 1, "ew"),
                 }
                 controls.columnconfigure(0, weight=1)
                 controls.columnconfigure(1, weight=1)
@@ -1060,6 +1060,9 @@ class LauncherGui:
             if layout.developer_columns == 4:
                 positions = ((1, 0), (1, 1), (1, 2), (1, 3), (2, 0), (2, 1))
                 hint_span = 4
+            elif layout.developer_columns == 3:
+                positions = ((1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2))
+                hint_span = 3
             else:
                 positions = ((1, 0), (1, 1), (2, 0), (2, 1), (3, 0), (3, 1))
                 hint_span = 2
