@@ -10,6 +10,7 @@ on:
       - "tests/test_datei_manager_browser.py"
       - "tests/test_datei_manager_entry.py"
       - "tests/test_datei_manager_window.py"
+      - "tests/test_datei_manager_keyboard_help.py"
       - ".github/workflows/file-manager-preview.yml"
 
 permissions:
@@ -34,10 +35,12 @@ jobs:
           python -m pytest -q
           tests/test_datei_manager_browser.py
           tests/test_datei_manager_entry.py
-      - name: Echte Tk-Listenansicht und Vorschau testen
+      - name: Echte Tk-Listenansicht, Vorschau und Hilfe testen
         run: >-
           xvfb-run -a -s "-screen 0 1440x1000x24"
-          python -m pytest -q tests/test_datei_manager_window.py
+          python -m pytest -q
+          tests/test_datei_manager_window.py
+          tests/test_datei_manager_keyboard_help.py
       - name: Visuellen Vorschau-Beleg erzeugen
         run: |
           mkdir -p artifacts
@@ -49,8 +52,10 @@ jobs:
           python -m py_compile
           modules/datei_manager/browser.py
           modules/datei_manager/window.py
+          modules/datei_manager/keyboard_help.py
           modules/datei_manager/entry.py
           modules/datei_manager/__main__.py
+          tests/test_datei_manager_keyboard_help.py
           scripts/capture_file_manager_preview.py
       - name: Screenshotbeleg veröffentlichen
         uses: actions/upload-artifact@v4
