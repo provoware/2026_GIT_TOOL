@@ -58,9 +58,10 @@
         "Gate 1: Berichtformatierer",
         "Gate 2: Workspace-Geometrie",
         "Gate 3: Themeadapter",
-        "Gate 4: Task-Runner"
+        "Gate 4: Task-Runner",
+        "Gate 5: Autosave, Shutdown und Autostart"
       ],
-      "next_gate": "Gate 5: Autosave und Shutdown"
+      "next_gate": "Gate 6: Modulkarten und Modul-Lebenszyklus"
     }
   ],
   "hardened": [
@@ -94,14 +95,27 @@
       "role": "Gemeinsamer Themevertrag und Tkinter-Themeadapter",
       "evidence": "Sieben Themevertragstests, idempotente Codemods für beide Fenster, reale Integration, Kompilierungsprüfung sowie erneute Gates 1 und 2 erfolgreich",
       "canonical_codemod": "scripts/apply_gate3_ui_theme_adapter.py",
-      "limitations": "Physische visuelle Abnahme und Task-Orchestrierung bleiben separate Gates"
+      "limitations": "Physische visuelle Abnahme bleibt separat"
     },
     {
       "path": "system/task_runner.py",
       "role": "Kategorisierte Hintergrundtasks, UI-Callbacks und Wartungsprozessausführung",
-      "evidence": "Task-Runner- und Codemodtests, reale Integration, Python-Kompilierung, read-only Abschlussprüfung sowie Regression-Gates 1 und 3 erfolgreich",
+      "evidence": "Task-Runner- und Codemodtests, reale Integration, Python-Kompilierung, read-only Abschlussprüfung sowie Regression-Gates erfolgreich",
       "canonical_codemod": "scripts/apply_gate4_task_runner.py",
-      "limitations": "Logout, Autosave, Backup-Abfolge und Fensterzerstörung bleiben Gate 5"
+      "limitations": "Modulkarten und Modul-Lebenszyklus bleiben Gate 6"
+    },
+    {
+      "path": "system/session_lifecycle.py",
+      "role": "Autosave-Taktung, kombinierte Sicherungsabfolge und kontrollierter Shutdown",
+      "evidence": "Lifecycle-Tests, Teilerfolgsberichte, Job-Abbruch, verzögerte Fensterzerstörung, reale Integration und read-only Abschlussprüfung erfolgreich",
+      "canonical_codemod": "scripts/apply_gate5_session_lifecycle.py",
+      "limitations": "Close-Policy des Hauptfensters bleibt Gate 6"
+    },
+    {
+      "path": "system/autostart_manager.py",
+      "role": "Benutzerspezifischer Linux-XDG-Autostart",
+      "evidence": "Aktivierung, Deaktivierung, Idempotenz, Desktop-Entry-Validierung und Schutz fremder Dateien getestet",
+      "limitations": "Start erfolgt nach Benutzeranmeldung; kein systemweiter Dienst vor Anmeldung"
     }
   ],
   "generated": [
