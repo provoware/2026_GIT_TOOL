@@ -38,10 +38,11 @@ def test_gate4_codemod_changes_only_task_orchestration_contracts():
     assert 'self.task_runner.start(\n                "maintenance"' in transformed
     assert 'self._set_maintenance_buttons("normal")' in transformed
     assert 'self.diagnostics_button.configure(state="normal")' in transformed
-    assert "threading.Thread(target=self._execute_logout" in transformed
+    assert 'self.task_runner.start(\n                "shutdown"' in transformed
+    assert "threading.Thread(target=self._execute_logout" not in transformed
 
 
-def test_gate4_codemod_keeps_gate5_and_ui_areas_untouched():
+def test_gate4_codemod_keeps_later_lifecycle_and_ui_areas_untouched():
     source = (Path(__file__).resolve().parents[1] / "system" / "launcher_gui.py").read_text(
         encoding="utf-8"
     )
@@ -49,8 +50,9 @@ def test_gate4_codemod_keeps_gate5_and_ui_areas_untouched():
 
     for marker in (
         "def request_logout(self) -> None:",
-        "def _execute_logout(self) -> None:",
+        "def _execute_logout(self) -> ShutdownOutcome:",
         "def _setup_autosave(self) -> None:",
+        "def _toggle_autostart(self) -> None:",
         "def apply_theme(self, theme_name: str) -> None:",
         "def _update_layout_by_width(self) -> None:",
     ):
