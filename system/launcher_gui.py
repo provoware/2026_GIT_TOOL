@@ -436,7 +436,9 @@ class LauncherGui:
             controls,
             text="Alle Module anzeigen (inkl. deaktiviert)",
             variable=self.show_all_var,
-            command=self.refresh,
+            command=lambda: self._set_show_all(
+                bool(self.show_all_var.get()), record_action=True
+            ),
         )
         if self.button_font is not None:
             self.show_all_check.configure(font=self.button_font)
@@ -455,7 +457,9 @@ class LauncherGui:
             controls,
             text="Debug-Details anzeigen",
             variable=self.debug_var,
-            command=self.refresh,
+            command=lambda: self._set_debug(
+                bool(self.debug_var.get()), record_action=True
+            ),
         )
         if self.button_font is not None:
             self.debug_check.configure(font=self.button_font)
