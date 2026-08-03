@@ -57,6 +57,11 @@ def test_gate7_refresh_and_filters_use_controller_state():
     assert "change = self.controller.set_debug(bool(value))" in transformed
     assert transformed.count("if not change.changed:") >= 2
     assert "self.debug = bool(change.current)" in transformed
+    assert "command=lambda: self._set_show_all(" in transformed
+    assert "bool(self.show_all_var.get()), record_action=True" in transformed
+    assert "command=lambda: self._set_debug(" in transformed
+    assert "bool(self.debug_var.get()), record_action=True" in transformed
+    assert transformed.count("command=self.refresh") == 0
 
 
 def test_gate7_routes_theme_and_history_through_controller():
