@@ -16,12 +16,12 @@
     {
       "path": "system/launcher_gui.py",
       "role": "Produktiver Tkinter-GUI-Launcher",
-      "status": "in_pruefung"
+      "status": "gehaertet_mit_ui_abnahme_offen"
     },
     {
       "path": "system/main_window.py",
       "role": "Tkinter-Hauptfenster und Modulraster",
-      "status": "in_pruefung"
+      "status": "gehaertet_mit_ui_abnahme_offen"
     },
     {
       "path": "genrearchiv_werkzeug_v1_2_3_2026_01_06/src/main.jsx",
@@ -60,9 +60,10 @@
         "Gate 3: Themeadapter",
         "Gate 4: Task-Runner",
         "Gate 5: Autosave, Shutdown und Autostart",
-        "Gate 6: Modulkarten und Modul-Lebenszyklus"
+        "Gate 6: Modulkarten und Modul-Lebenszyklus",
+        "Gate 7: Launcher-Controller und Teilviews"
       ],
-      "next_gate": "Gate 7: Launcher-Controller und Teilviews"
+      "next_gate": "Arbeitsblock 3 abgeschlossen; nächste Phase: physische UI-Abnahme"
     }
   ],
   "hardened": [
@@ -70,46 +71,46 @@
       "path": "config/design-tokens.json",
       "role": "Zentrale Design-Token-Quelle",
       "evidence": "Pflichtgruppen und Theme-Farbvertrag werden durch den Generator validiert",
-      "limitations": "Laufzeittest muss in CI oder lokaler Projektumgebung erfolgen"
+      "limitations": "Physische visuelle Abnahme bleibt separat"
     },
     {
       "path": "system/generate_design_tokens.py",
       "role": "Deterministische Generierung und Drift-Prüfung",
       "evidence": "Validierung, definierte Exitcodes, --check-Modus und automatisch gekennzeichnete Ausgaben",
-      "limitations": "In der Connector-Umgebung war keine direkte Programmausführung möglich"
+      "limitations": "Physische visuelle Abnahme bleibt separat"
     },
     {
       "path": "system/launcher_reports.py",
       "role": "Reine Launcher-Berichtformatierer",
       "evidence": "Gate-1-Tests, idempotenter Codemod und Python-Kompilierungsprüfung erfolgreich",
-      "limitations": "Modulprüfung mit Dialog- und Logging-Seiteneffekten bleibt im Launcher-Controller"
+      "limitations": "Modulprüfung mit Dialog- und Logging-Seiteneffekten bleibt bewusst im Launcher"
     },
     {
       "path": "system/workspace_geometry.py",
       "role": "Reine Raster-, Bounds-, Move-, Resize- und Kollisionsberechnungen",
       "evidence": "Gate-2-Tests, kanonischer idempotenter Codemod, reale Integration und Python-Kompilierungsprüfung erfolgreich",
       "canonical_codemod": "scripts/apply_gate2_workspace_geometry_v2.py",
-      "limitations": "Responsive Reflow-Policy bleibt für die abschließende Controllerprüfung offen"
+      "limitations": "Physische Drag-, Resize- und Reflow-Abnahme bleibt separat"
     },
     {
       "path": "system/ui_theme_adapter.py",
       "role": "Gemeinsamer Themevertrag und Tkinter-Themeadapter",
-      "evidence": "Sieben Themevertragstests, idempotente Codemods für beide Fenster, reale Integration, Kompilierungsprüfung sowie erneute Gates 1 und 2 erfolgreich",
+      "evidence": "Sieben Themevertragstests, idempotente Codemods für beide Fenster, reale Integration und Kompilierungsprüfung erfolgreich",
       "canonical_codemod": "scripts/apply_gate3_ui_theme_adapter.py",
-      "limitations": "Physische visuelle Abnahme bleibt separat"
+      "limitations": "Physische Kontrast- und Themeabnahme bleibt separat"
     },
     {
       "path": "system/task_runner.py",
       "role": "Kategorisierte Hintergrundtasks, UI-Callbacks und Wartungsprozessausführung",
-      "evidence": "Task-Runner- und Codemodtests, reale Integration, Python-Kompilierung, read-only Abschlussprüfung sowie Regression-Gates erfolgreich",
+      "evidence": "Task-Runner- und Codemodtests, reale Integration, Python-Kompilierung und read-only Abschlussprüfung erfolgreich",
       "canonical_codemod": "scripts/apply_gate4_task_runner.py",
-      "limitations": "Launcher-Controller und Teilviews bleiben Gate 7"
+      "limitations": "Reale Langzeitausführung bleibt separate Betriebsabnahme"
     },
     {
       "path": "system/session_lifecycle.py",
       "role": "Autosave-Taktung, kombinierte Sicherungsabfolge und kontrollierter Shutdown",
-      "evidence": "Lifecycle-Tests, Teilerfolgsberichte, Job-Abbruch, verzögerte Fensterzerstörung, Safe-Mode-Schreibsperre, reale Integration und read-only Abschlussprüfung erfolgreich",
-      "canonical_codemod": "scripts/apply_gate5_session_lifecycle.py",
+      "evidence": "Lifecycle-Tests, Teilerfolgsberichte, Job-Abbruch, verzögerte Fensterzerstörung, Safe-Mode-Sperre und reale Integration erfolgreich",
+      "canonical_codemod": "scripts/apply_gate5_session_lifecycle_v2.py",
       "limitations": "Physische Desktop- und Shutdown-Abnahme bleibt separat"
     },
     {
@@ -121,9 +122,16 @@
     {
       "path": "system/module_lifecycle.py",
       "role": "Autoritative Modulkarten-Zustände und sichere Close-Policy des Hauptfensters",
-      "evidence": "Aktivierungs-, Deaktivierungs-, Status- und Close-Policy-Tests, idempotenter Codemod, reale Integration, Kompilierungsprüfung sowie Regression-Gates 2 und 3 erfolgreich",
+      "evidence": "Aktivierungs-, Deaktivierungs-, Status- und Close-Policy-Tests, idempotenter Codemod, reale Integration und Kompilierungsprüfung erfolgreich",
       "canonical_codemod": "scripts/apply_gate6_module_lifecycle.py",
-      "limitations": "Launcher-Controller, Teilviews und physische Kartenabnahme bleiben Gate 7 beziehungsweise separater UI-Abnahme vorbehalten"
+      "limitations": "Physische Modulkarten- und Close-Abnahme bleibt separat"
+    },
+    {
+      "path": "system/launcher_controller.py",
+      "role": "Autoritativer Launcherzustand, Refresh-Debounce, Status-, Hilfe- und Shortcut-Teilviews",
+      "evidence": "14 Controller- und Viewtests, 7 Codemod-Grenzen, reale Integration, read-only Abschlussprüfung sowie Regression-Gates 1, 3, 4 und 5 erfolgreich",
+      "canonical_codemod": "scripts/apply_gate7_launcher_controller_v2.py",
+      "limitations": "Physische Bedien-, Responsive- und Barrierefreiheitsabnahme bleibt separat"
     }
   ],
   "generated": [
@@ -133,8 +141,6 @@
     "docs/DESIGN_TOKENS.generated.md"
   ],
   "refactoring_candidates": [
-    "system/launcher_gui.py",
-    "system/main_window.py",
     "system/module_manager.py",
     "system/store.py",
     "system/module_loader.py",
