@@ -21,11 +21,66 @@ from config_models import load_gui_config
 from ui_acceptance import DEVICE_PROFILES, DeviceProfile
 
 
+REQUIRED_WIDGETS = {
+    "launcher": (
+        "controls_frame",
+        "help_section",
+        "developer_frame",
+        "status_label",
+        "footer_label",
+        "output_text",
+    ),
+    "main_window": (
+        "workspace",
+        "status_label",
+        "note_label",
+    ),
+}
+
+
 def _profile_by_key(key: str) -> DeviceProfile:
     for profile in DEVICE_PROFILES:
         if profile.key == key:
             return profile
     raise ValueError(f"Unbekanntes Geräteprofil: {key}")
+
+
+def _hidden_required_widgets(app: Any, surface: str) -> list[dict[str, Any]]:
+    hidden: list[dict[str, Any]] = []
+    for attribute in REQUIRED_WIDGETS[surface]:
+        widget = getattr(app, attribute, None)
+        if widget is None:
+            hidden.append({"attribute": attribute, "reason": "missing"})
+            continue
+        try:
+            mapped = bool(widget.winfo_ismapped())
+            width = int(widget.winfo_width())
+            height = int(widget.winfo_height())
+        except Exception as exc:
+            hidden.append(
+                {"attribute": attribute, "reason": "unmeasurable", "error": str(exc)}
+            )
+            continue
+        if not mapped or width <= 1 or height <= 1:
+            hidden.append(
+                {
+                    "attribute": attribute,
+                    "reason": "not_visible",
+                    "mapped": mapped,
+                    "size": [width, height],
+                }
+            )
+    if surface == "main_window":
+        for index, module_widget in enumerate(getattr(app, "module_widgets", [])):
+            frame = getattr(module_widget, "frame", None)
+            if frame is None or not frame.winfo_ismapped():
+                hidden.append(
+                    {
+                        "attribute": f"module_widgets[{index}].frame",
+                        "reason": "not_visible",
+                    }
+                )
+    return hidden
 
 
 def _run_single(
@@ -49,9 +104,10 @@ def _run_single(
     root = tk.Tk()
     root.geometry(f"{profile.width}x{profile.height}+0+0")
     root.update_idletasks()
-    factory(root)
+    app = factory(root)
     root.geometry(f"{profile.width}x{profile.height}+0+0")
     record = base._measure(root, profile, surface)
+    record["hidden_required_widgets"] = _hidden_required_widgets(app, surface)
     if screenshots is not None:
         base._capture(root, screenshots / f"{surface}__{profile.key}.png")
     output.parent.mkdir(parents=True, exist_ok=True)
