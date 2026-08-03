@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import logging
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Optional
@@ -20,6 +21,10 @@ class SessionLifecycleError(ValueError):
 class ShutdownOutcome:
     report: str
     success: bool
+
+
+def write_mode_allows_changes() -> bool:
+    return os.environ.get("GENREARCHIV_WRITE_MODE", "normal").strip().lower() != "read-only"
 
 
 class AutosaveSession:
@@ -57,7 +62,7 @@ class AutosaveSession:
             raise SessionLifecycleError("Autosave-Konfiguration ist ungültig.")
         self.cancel()
         self._config = config
-        if not config.enabled:
+        if not config.enabled or not write_mode_allows_changes():
             self._active = False
             return False
         self._active = True
@@ -116,6 +121,16 @@ def run_shutdown_sequence(
             raise SessionLifecycleError(f"{label} ist kein Pfad (Path).")
     if not isinstance(logger, logging.Logger):
         raise SessionLifecycleError("logger ist kein Logger.")
+
+    if not write_mode_allows_changes():
+        return ShutdownOutcome(
+            report=(
+                "Abmelden: Sicherung und sauberes Schließen\n"
+                "Hinweis: Schreibgeschützter Modus ist aktiv.\n"
+                "Autosave und Backup wurden ohne Schreibzugriff übersprungen.\n"
+            ),
+            success=True,
+        )
 
     report_lines = ["Abmelden: Sicherung und sauberes Schließen"]
     success = True
