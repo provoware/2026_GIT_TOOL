@@ -58,6 +58,13 @@
       "description": "Datei-Manager mit Quick-Rename, Tagging und Favoriten."
     },
     {
+      "id": "archiv_manager",
+      "name": "Archiv-Verwaltung",
+      "path": "modules/archiv_manager",
+      "enabled": true,
+      "description": "Gemeinsame Archivdatenbank mit GUI, CLI-Assistent, Kategorien, Filtern und Duplikatprüfung."
+    },
+    {
       "id": "media_wavesurfer",
       "name": "Wavesurfer-Toolkit",
       "path": "modules/media_wavesurfer",
