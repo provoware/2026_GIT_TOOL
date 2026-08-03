@@ -98,7 +98,7 @@
     "button_min_width": 18,
     "button_font_size": 16,
     "field_padx": 6,
-    "field_pady": 4,
+    "field_pady": 6,
     "text_spacing": {
       "before": 4,
       "line": 2,
