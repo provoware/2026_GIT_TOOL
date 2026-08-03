@@ -62,6 +62,12 @@ def _require_positive_number(value: Any, label: str) -> int | float:
     return value
 
 
+def _require_nonnegative_number(value: Any, label: str) -> int | float:
+    if not isinstance(value, (int, float)) or isinstance(value, bool) or value < 0:
+        raise ValueError(f"{label} muss eine nichtnegative Zahl sein")
+    return value
+
+
 def load_tokens() -> dict[str, Any]:
     try:
         with SOURCE.open("r", encoding="utf-8") as handle:
@@ -221,6 +227,14 @@ def _sorted_positive_number_mapping(value: Any, label: str) -> dict[str, int | f
     }
 
 
+def _sorted_nonnegative_number_mapping(value: Any, label: str) -> dict[str, int | float]:
+    mapping = _require_mapping(value, label)
+    return {
+        str(key): _require_nonnegative_number(item, f"{label}.{key}")
+        for key, item in sorted(mapping.items())
+    }
+
+
 def build_python_runtime_data(tokens: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(tokens, dict):
         raise ValueError("tokens muss ein Objekt sein")
@@ -284,7 +298,7 @@ def build_python_runtime_data(tokens: dict[str, Any]) -> dict[str, Any]:
             str(key): _to_milliseconds(value, f"motion.{key}")
             for key, value in sorted(motion.items())
         },
-        "z_index": _sorted_positive_number_mapping(tokens.get("zIndex"), "zIndex"),
+        "z_index": _sorted_nonnegative_number_mapping(tokens.get("zIndex"), "zIndex"),
         "breakpoint_px": {
             str(key): _to_pixel_value(value, f"breakpoint.{key}")
             for key, value in sorted(breakpoints.items())
