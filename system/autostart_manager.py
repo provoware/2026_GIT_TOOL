@@ -21,10 +21,19 @@ def default_autostart_dir() -> Path:
     return base / "autostart"
 
 
-def _desktop_quote(value: Path) -> str:
+def _exec_quote(value: Path) -> str:
     text = str(value)
-    escaped = text.replace("\\", "\\\\").replace('"', '\\"').replace("`", "\\`").replace("$", "\\$")
+    escaped = (
+        text.replace("\\", "\\\\")
+        .replace('"', '\\"')
+        .replace("`", "\\`")
+        .replace("$", "\\$")
+    )
     return f'"{escaped}"'
+
+
+def _string_value(value: Path) -> str:
+    return str(value).replace("\\", "\\\\")
 
 
 def build_desktop_entry(start_script: Path) -> str:
@@ -40,8 +49,9 @@ def build_desktop_entry(start_script: Path) -> str:
         "Version=1.0\n"
         "Name=Genrearchiv\n"
         "Comment=Genrearchiv beim Anmelden starten\n"
-        f"Exec=/bin/bash {_desktop_quote(script)}\n"
-        f"Path={_desktop_quote(project_root)}\n"
+        "TryExec=/bin/bash\n"
+        f"Exec=/bin/bash {_exec_quote(script)}\n"
+        f"Path={_string_value(project_root)}\n"
         "Terminal=false\n"
         "X-GNOME-Autostart-enabled=true\n"
         f"{MANAGED_MARKER}\n"
@@ -81,7 +91,8 @@ class AutostartManager:
     def _enable(self) -> None:
         if self.desktop_path.exists() and not self._is_managed_file():
             raise AutostartError(
-                f"Autostart-Datei wird nicht überschrieben, weil sie nicht vom Tool verwaltet wird: {self.desktop_path}"
+                "Autostart-Datei wird nicht überschrieben, weil sie nicht vom Tool "
+                f"verwaltet wird: {self.desktop_path}"
             )
         content = build_desktop_entry(self.start_script)
         self.autostart_dir.mkdir(parents=True, exist_ok=True)
