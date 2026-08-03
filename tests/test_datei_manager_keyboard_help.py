@@ -4,8 +4,12 @@ import importlib.util
 import sys
 from pathlib import Path
 
-MODULE_DIR = Path(__file__).resolve().parents[1] / "modules" / "datei_manager"
-sys.path.insert(0, str(MODULE_DIR))
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+MODULE_DIR = PROJECT_ROOT / "modules" / "datei_manager"
+SYSTEM_DIR = PROJECT_ROOT / "system"
+for import_path in (str(MODULE_DIR), str(SYSTEM_DIR)):
+    if import_path not in sys.path:
+        sys.path.insert(0, import_path)
 
 from keyboard_help import SHORTCUT_HELP, build_help_text, install_keyboard_help  # noqa: E402
 
