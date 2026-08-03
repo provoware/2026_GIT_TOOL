@@ -1,0 +1,47 @@
+name: UI Responsive Integration
+
+on:
+  pull_request:
+    paths:
+      - "system/launcher_gui.py"
+      - "system/main_window.py"
+      - "system/ui_responsive.py"
+      - "scripts/apply_ui_responsive_acceptance.py"
+      - "tests/test_ui_responsive.py"
+      - "tests/test_ui_responsive_codemod.py"
+      - ".github/workflows/ui-responsive-integration.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  responsive-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --disable-pip-version-check pytest
+      - name: Responsive-Regeln und Codemod testen
+        run: >-
+          python -m pytest -q
+          tests/test_ui_responsive.py
+          tests/test_ui_responsive_codemod.py
+      - name: Beide vollständigen UI-Dateien transformieren
+        run: |
+          cp system/launcher_gui.py /tmp/launcher_gui.py
+          cp system/main_window.py /tmp/main_window.py
+          python scripts/apply_ui_responsive_acceptance.py \
+            --launcher /tmp/launcher_gui.py \
+            --main-window /tmp/main_window.py
+          python scripts/apply_ui_responsive_acceptance.py \
+            --check \
+            --launcher /tmp/launcher_gui.py \
+            --main-window /tmp/main_window.py
+          python -m py_compile \
+            /tmp/launcher_gui.py \
+            /tmp/main_window.py \
+            system/ui_responsive.py
+      - name: Repository unverändert halten
+        run: git diff --exit-code
