@@ -1,7 +1,7 @@
 # Testmatrix Arbeitsblock 3
 
 Stand: 2026-08-03
-Status: Gates 1 bis 5 abgeschlossen; Gate 6 ist der nächste zulässige Schritt
+Status: Gates 1 bis 6 abgeschlossen; Gate 7 ist der nächste zulässige Schritt
 
 ## Zweck
 
@@ -14,8 +14,8 @@ Vor jeder Auslagerung aus `system/launcher_gui.py` oder `system/main_window.py` 
 3. Einheitlicher Themeadapter – abgeschlossen
 4. Task-Runner für Threads und Prozesse – abgeschlossen
 5. Autosave, Shutdown und Autostart – abgeschlossen
-6. Modulkarten und Modul-Lebenszyklus – als Nächstes
-7. Launcher-Controller und Teilviews
+6. Modulkarten und Modul-Lebenszyklus – abgeschlossen
+7. Launcher-Controller und Teilviews – als Nächstes
 
 ## Gate 1 – Berichtformatierer
 
@@ -141,13 +141,28 @@ Nur Funktionen ohne UI-, Thread-, Prozess-, Logging- oder Dialogseiteneffekte:
 
 ## Gate 6 – Modulkarten und Lebenszyklus
 
-Vor der Auslagerung erforderlich:
+### Abgeschlossen
 
-- Aktivierung/Deaktivierung
-- Warn- und Fehlerstatus
-- Widgetzustand entspricht Managerzustand
-- Close-Policy explizit getestet
-- keine unbeabsichtigte globale Deaktivierung
+- Kartenstatus wird ausschließlich aus dem autoritativen `ModuleManager`-Zustand abgeleitet
+- fehlgeschlagene Aktivierung bleibt sichtbar inaktiv und erneut aktivierbar
+- fehlgeschlagene Deaktivierung bleibt sichtbar aktiv und erneut deaktivierbar
+- Aktivieren-/Deaktivieren-Schaltflächen entsprechen dem tatsächlichen Zustand
+- deaktivierte und strukturell fehlerhafte Module können nicht aktiviert werden
+- Karten werden nach Themewechseln erneut synchronisiert
+- beim Schließen werden ausschließlich aktuell aktive Fenstermodule deaktiviert
+- Warnungen erlauben das Schließen nur bei anschließend inaktivem Modul
+- Exit-Fehler mit verbleibendem aktivem Modul blockiert `root.destroy()`
+- bereits erfolgreich deaktivierte Module bleiben bei blockiertem Schließen korrekt inaktiv
+- keine Registry- oder globale Modulkonfiguration wird verändert
+
+### Sicherung
+
+- `system/module_lifecycle.py`
+- `tests/test_module_lifecycle.py`
+- `tests/test_gate6_module_lifecycle_codemod.py`
+- `scripts/apply_gate6_module_lifecycle.py`
+- `.github/workflows/gate-6-module-lifecycle.yml`
+- `dateiindex/gehaertet/GATE_6_MODULE_LIFECYCLE.md`
 
 ## Gate 7 – Launcher-Controller und Teilviews
 
