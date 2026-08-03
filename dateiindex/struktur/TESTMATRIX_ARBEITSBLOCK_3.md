@@ -1,7 +1,7 @@
 # Testmatrix Arbeitsblock 3
 
 Stand: 2026-08-03
-Status: Gates 1 bis 4 abgeschlossen; Gate 5 ist der nächste zulässige Schritt
+Status: Gates 1 bis 5 abgeschlossen; Gate 6 ist der nächste zulässige Schritt
 
 ## Zweck
 
@@ -13,8 +13,8 @@ Vor jeder Auslagerung aus `system/launcher_gui.py` oder `system/main_window.py` 
 2. Workspace-Geometrie und Kollision – abgeschlossen
 3. Einheitlicher Themeadapter – abgeschlossen
 4. Task-Runner für Threads und Prozesse – abgeschlossen
-5. Autosave und Shutdown – als Nächstes
-6. Modulkarten und Modul-Lebenszyklus
+5. Autosave, Shutdown und Autostart – abgeschlossen
+6. Modulkarten und Modul-Lebenszyklus – als Nächstes
 7. Launcher-Controller und Teilviews
 
 ## Gate 1 – Berichtformatierer
@@ -107,22 +107,41 @@ Nur Funktionen ohne UI-, Thread-, Prozess-, Logging- oder Dialogseiteneffekte:
 - `.github/workflows/gate-4-task-runner.yml`
 - `dateiindex/gehaertet/GATE_4_TASK_RUNNER.md`
 
-## Gate 5 – Autosave und Shutdown
+## Gate 5 – Autosave, Shutdown und Autostart
 
-Vor der Auslagerung erforderlich:
+### Abgeschlossen
 
-- Autosave aktiviert/deaktiviert
-- Autosave-Fehler
-- Backup-Erfolg/-Fehler
-- kombinierter Logoutbericht
-- Job-Abbruch
-- Fensterzerstörung erst nach Abschluss
-- kein doppelter Logout-Lauf
-- klare Policy bei Teilerfolg von Autosave und Backup
+- Autosave aktiviert und deaktiviert
+- Autosave-Fehler mit fortgesetztem Backup-Versuch
+- Backup-Erfolg und Backup-Fehler
+- kombinierter Logoutbericht bei Erfolg und Teilerfolg
+- genau ein Logout-Lauf über Task-Runner-Kategorie `shutdown`
+- planbarer und idempotenter Autosave-Job-Abbruch
+- Fensterzerstörung erst nach Bericht, Status und Autosave-Abbruch
+- keine Tkinter-Nutzung im Worker
+- sichere Linux-XDG-Autostartaktivierung über Launcher-Schalter
+- atomisches Schreiben des eigenen Desktop-Eintrags
+- Schutz fremder gleichnamiger Autostartdateien
+- standardkonforme `Exec`-Quotierung, `TryExec` und Arbeitsverzeichnis
+- Safe-Mode verhindert Autosave-Planung
+- Safe-Mode überspringt Autosave und Backup vollständig
+- Safe-Mode blockiert Autostartänderungen
+
+### Sicherung
+
+- `system/session_lifecycle.py`
+- `system/autostart_manager.py`
+- `tests/test_session_lifecycle.py`
+- `tests/test_autostart_manager.py`
+- `tests/test_gate5_safe_mode.py`
+- `tests/test_gate5_session_lifecycle_codemod.py`
+- `scripts/apply_gate5_session_lifecycle.py`
+- `.github/workflows/gate-5-session-lifecycle.yml`
+- `dateiindex/gehaertet/GATE_5_SESSION_LIFECYCLE.md`
 
 ## Gate 6 – Modulkarten und Lebenszyklus
 
-Erforderlich:
+Vor der Auslagerung erforderlich:
 
 - Aktivierung/Deaktivierung
 - Warn- und Fehlerstatus
