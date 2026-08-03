@@ -1,0 +1,76 @@
+name: UI Acceptance Linux and Mobile Viewports
+
+on:
+  pull_request:
+    paths:
+      - "system/launcher_gui.py"
+      - "system/main_window.py"
+      - "system/ui_acceptance.py"
+      - "system/ui_responsive.py"
+      - "system/ui_theme_adapter.py"
+      - "config/launcher_gui.json"
+      - "scripts/probe_tk_ui.py"
+      - "scripts/probe_tk_ui_v2.py"
+      - "scripts/probe_tk_ui_v3.py"
+      - "scripts/run_ui_acceptance.py"
+      - "tests/test_ui_acceptance.py"
+      - "tests/test_ui_acceptance_report.py"
+      - "tests/test_ui_responsive.py"
+      - "tests/test_ui_theme_adapter.py"
+      - ".github/workflows/ui-acceptance.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  ui-acceptance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Systemabhängigkeiten installieren
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-tk xvfb imagemagick
+      - name: Testabhängigkeiten installieren
+        run: python -m pip install --disable-pip-version-check pytest
+      - name: Abnahme-, Bericht-, Responsive- und Themevertrag testen
+        run: >-
+          python -m pytest -q
+          tests/test_ui_acceptance.py
+          tests/test_ui_acceptance_report.py
+          tests/test_ui_responsive.py
+          tests/test_ui_theme_adapter.py
+      - name: Tkinter-Oberflächen unter Xvfb isoliert vermessen
+        run: |
+          mkdir -p artifacts/screenshots
+          xvfb-run -a -s "-screen 0 1600x1200x24" \
+            python scripts/probe_tk_ui_v3.py \
+            --output artifacts/runtime.json \
+            --screenshots artifacts/screenshots
+      - name: Konsolidierten Abnahmebericht erzeugen
+        run: |
+          python scripts/run_ui_acceptance.py \
+            --runtime artifacts/runtime.json \
+            --json-output artifacts/ui-acceptance.json \
+            --markdown-output artifacts/UI_ACCEPTANCE_REPORT.md
+      - name: Python-Syntax prüfen
+        run: >-
+          python -m py_compile
+          system/ui_acceptance.py
+          system/ui_responsive.py
+          system/ui_theme_adapter.py
+          scripts/probe_tk_ui.py
+          scripts/probe_tk_ui_v3.py
+          scripts/run_ui_acceptance.py
+      - name: Abnahmebelege veröffentlichen
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-acceptance-evidence
+          path: artifacts
+          if-no-files-found: warn
+      - name: Repository unverändert halten
+        run: git diff --exit-code

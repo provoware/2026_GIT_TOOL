@@ -61,6 +61,27 @@ class FakeWidget:
         return self.menu
 
 
+class StrictButton(FakeWidget):
+    def __getitem__(self, key):
+        raise AssertionError(f"Ein normales Button-Widget darf {key!r} nicht abfragen.")
+
+
+class NamedMenuButton(FakeWidget):
+    def __init__(self, menu):
+        super().__init__("Menubutton")
+        self.menu = menu
+
+    def __getitem__(self, key):
+        if key != "menu":
+            raise KeyError(key)
+        return ".menu"
+
+    def nametowidget(self, name):
+        if name != ".menu":
+            raise KeyError(name)
+        return self.menu
+
+
 def make_config():
     layout = GuiLayoutConfig(
         gap_xs=2,
@@ -148,6 +169,28 @@ def test_apply_theme_tree_styles_nested_widgets_and_option_menu():
     assert text.options["insertbackground"] == "#f0f0f0"
     assert option_menu.options["font"] == "ButtonFont"
     assert menu.options["activeforeground"] == "#ffffff"
+
+
+def test_plain_button_never_queries_nonexistent_menu_option():
+    button = StrictButton("Button")
+    root = FakeWidget("Tk", children=[button])
+
+    apply_theme_tree(root, COLORS, button_font="ButtonFont")
+
+    assert button.options["background"] == "#202020"
+    assert button.options["font"] == "ButtonFont"
+
+
+def test_named_tk_menu_reference_is_resolved_and_styled():
+    menu = FakeWidget("Menu")
+    option_menu = NamedMenuButton(menu)
+    root = FakeWidget("Tk", children=[option_menu])
+
+    apply_theme_tree(root, COLORS, button_font="ButtonFont")
+
+    assert menu.options["background"] == "#202020"
+    assert menu.options["activeforeground"] == "#ffffff"
+    assert menu.options["font"] == "ButtonFont"
 
 
 def test_apply_module_card_theme_preserves_card_specific_accents():

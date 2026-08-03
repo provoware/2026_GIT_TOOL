@@ -134,7 +134,8 @@ def apply_widget_style(widget, theme_or_colors, *, button_font=None) -> None:
         )
         if button_font is not None:
             widget.configure(font=button_font)
-        _apply_menu_style(widget, colors, button_font)
+        if widget_type in {"Menubutton", "OptionMenu"}:
+            _apply_menu_style(widget, colors, button_font)
     elif widget_type == "Text":
         widget.configure(
             background=colors["background"],
@@ -236,9 +237,17 @@ def _apply_menu_style(widget, colors: Mapping[str, str], button_font) -> None:
     if not hasattr(widget, "__getitem__"):
         return
     try:
-        menu = widget["menu"]
+        menu_reference = widget["menu"]
     except (KeyError, TypeError, AttributeError):
         return
+    menu = menu_reference
+    if isinstance(menu_reference, str):
+        if not hasattr(widget, "nametowidget"):
+            return
+        try:
+            menu = widget.nametowidget(menu_reference)
+        except (KeyError, TypeError, AttributeError):
+            return
     if menu is None or not hasattr(menu, "configure"):
         return
     menu.configure(
