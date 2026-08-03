@@ -1,0 +1,40 @@
+name: Gate 5 Session Lifecycle
+
+on:
+  pull_request:
+    paths:
+      - "system/launcher_gui.py"
+      - "system/session_lifecycle.py"
+      - "system/autostart_manager.py"
+      - "scripts/apply_gate5_session_lifecycle.py"
+      - "tests/test_session_lifecycle.py"
+      - "tests/test_autostart_manager.py"
+      - "tests/test_gate5_session_lifecycle_codemod.py"
+      - ".github/workflows/gate-5-session-lifecycle.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  gate-5:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --disable-pip-version-check pytest
+      - name: Lifecycle, Shutdown und Autostart testen
+        run: >-
+          python -m pytest -q
+          tests/test_session_lifecycle.py
+          tests/test_autostart_manager.py
+          tests/test_gate5_session_lifecycle_codemod.py
+      - name: Codemod auf vollständiger Arbeitskopie prüfen
+        run: |
+          cp system/launcher_gui.py /tmp/launcher_gui.py
+          python scripts/apply_gate5_session_lifecycle.py --path /tmp/launcher_gui.py
+          python scripts/apply_gate5_session_lifecycle.py --check --path /tmp/launcher_gui.py
+          python -m py_compile /tmp/launcher_gui.py system/session_lifecycle.py system/autostart_manager.py
+      - name: Repository unverändert halten
+        run: git diff --exit-code
