@@ -2,20 +2,43 @@
 
 from __future__ import annotations
 
+import importlib.util
 import sys
 from pathlib import Path
+from types import ModuleType
 from typing import Any
 
 MODULE_DIR = Path(__file__).resolve().parent
 if str(MODULE_DIR) not in sys.path:
     sys.path.insert(0, str(MODULE_DIR))
 
-import module as backend  # noqa: E402
-from window import FileManagerWindow, open_window  # noqa: E402
+
+def _load_sibling(module_name: str, filename: str) -> ModuleType:
+    cached = sys.modules.get(module_name)
+    if cached is not None:
+        return cached
+    path = MODULE_DIR / filename
+    spec = importlib.util.spec_from_file_location(module_name, path)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"Datei-Manager-Komponente kann nicht geladen werden: {path}")
+    loaded = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = loaded
+    try:
+        spec.loader.exec_module(loaded)
+    except Exception:
+        sys.modules.pop(module_name, None)
+        raise
+    return loaded
+
+
+backend = _load_sibling("_genrearchiv_datei_manager_backend", "module.py")
+window_module = _load_sibling("_genrearchiv_datei_manager_window", "window.py")
 
 ModuleConfig = backend.ModuleConfig
 ModuleContext = backend.ModuleContext
 ModuleError = backend.ModuleError
+FileManagerWindow = window_module.FileManagerWindow
+open_window = window_module.open_window
 build_response = backend.build_response
 build_ui = backend.build_ui
 handle_action = backend.handle_action
