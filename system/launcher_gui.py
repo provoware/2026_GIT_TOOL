@@ -30,6 +30,16 @@ from launcher_reports import (
     format_diagnostics_report,
     format_maintenance_report,
 )
+from launcher_controller import (
+    LauncherController,
+    LauncherControllerError,
+    RefreshDebouncer,
+    StateChange,
+    build_help_entries,
+    build_shortcut_specs,
+    build_status_view,
+    record_state_change,
+)
 from module_manager import ModuleManagerError
 from ui_theme_adapter import (
     UiThemeError,
@@ -308,7 +318,6 @@ class LauncherGui:
         self.export_center_button = None
         self.backup_button = None
         self.task_runner = TaskRunner(self.root.after)
-        self.refresh_job = None
         self.refresh_debounce_ms = gui_config.refresh_debounce_ms
         self.logger = get_logger("launcher_gui")
         self.status_var = None
@@ -323,7 +332,19 @@ class LauncherGui:
             "Kontext-Hilfe: Wähle ein Feld oder einen Knopf, "
             "dann erscheint hier eine kurze Erklärung."
         )
-        self.current_help_text = self.context_help_default
+        self.controller = LauncherController(
+            show_all=show_all,
+            debug=debug,
+            theme_name=self.gui_config.default_theme,
+            help_text=self.context_help_default,
+        )
+        self.refresh_debouncer = RefreshDebouncer(
+            self.root.after,
+            self.root.after_cancel,
+            self.refresh_debounce_ms,
+            self.refresh,
+        )
+        self.current_help_text = self.controller.state.help_text
         self.help_texts: Dict[object, str] = {}
         self.tooltips: List[Tooltip] = []
         self.tooltip_style: Dict[str, str] = {}
@@ -357,7 +378,7 @@ class LauncherGui:
         )
         self.undo_manager = UndoRedoManager(limit=50)
         self.drag_drop_manager = None
-        self.current_theme = self.gui_config.default_theme
+        self.current_theme = self.controller.state.theme_name
 
         self.root.title(f"{BRAND_NAME} – Startübersicht")
         self.root.minsize(640, 420)
@@ -392,7 +413,7 @@ class LauncherGui:
         tk.Label(controls, text=f"{ICON_SET['theme']} Farbschema:").grid(
             row=0, column=0, sticky="w"
         )
-        self.theme_var = tk.StringVar(value=self.gui_config.default_theme)
+        self.theme_var = tk.StringVar(value=self.controller.state.theme_name)
         self.theme_menu = tk.OptionMenu(
             controls,
             self.theme_var,
@@ -410,7 +431,7 @@ class LauncherGui:
             padx=(self.layout.gap_sm, self.layout.gap_xl),
         )
 
-        self.show_all_var = tk.BooleanVar(value=show_all)
+        self.show_all_var = tk.BooleanVar(value=self.controller.state.show_all)
         self.show_all_check = tk.Checkbutton(
             controls,
             text="Alle Module anzeigen (inkl. deaktiviert)",
@@ -429,7 +450,7 @@ class LauncherGui:
             pady=self.layout.gap_xs,
         )
 
-        self.debug_var = tk.BooleanVar(value=self.debug)
+        self.debug_var = tk.BooleanVar(value=self.controller.state.debug)
         self.debug_check = tk.Checkbutton(
             controls,
             text="Debug-Details anzeigen",
@@ -801,7 +822,7 @@ class LauncherGui:
         self._register_help_entries()
         self._setup_drag_drop()
         self.root.protocol("WM_DELETE_WINDOW", self.request_logout)
-        self.apply_theme(self.gui_config.default_theme)
+        self.apply_theme(self.controller.state.theme_name)
         self.request_refresh()
         self.root.after(100, lambda: self._focus_widget(self.theme_menu))
 
@@ -821,25 +842,33 @@ class LauncherGui:
         self._apply_zoom()
 
     def _bind_accessibility_shortcuts(self) -> None:
-        self.root.bind_all("<Alt-a>", lambda _event: self._toggle_show_all())
-        self.root.bind_all("<Alt-d>", lambda _event: self._toggle_debug())
-        self.root.bind_all("<Alt-r>", lambda _event: self._refresh_from_shortcut())
-        self.root.bind_all("<Alt-t>", lambda _event: self._focus_widget(self.theme_menu))
-        self.root.bind_all("<Alt-k>", lambda _event: self._toggle_contrast_theme())
-        self.root.bind_all("<Alt-g>", lambda _event: self.start_diagnostics())
-        self.root.bind_all("<Alt-m>", lambda _event: self.open_main_window())
-        self.root.bind_all("<Alt-s>", lambda _event: self.start_system_scan())
-        self.root.bind_all("<Alt-p>", lambda _event: self.show_standards())
-        self.root.bind_all("<Alt-l>", lambda _event: self.open_logs())
-        self.root.bind_all("<Alt-e>", lambda _event: self.start_selective_export())
-        self.root.bind_all("<Alt-x>", lambda _event: self.start_export_center())
-        self.root.bind_all("<Alt-b>", lambda _event: self.start_backup())
-        self.root.bind_all("<Alt-q>", lambda _event: self.request_logout())
-        self.root.bind_all("<Control-r>", lambda _event: self._refresh_from_shortcut())
-        self.root.bind_all("<Control-z>", lambda _event: self.undo_action())
-        self.root.bind_all("<Control-y>", lambda _event: self.redo_action())
-        self.root.bind_all("<Control-Shift-Z>", lambda _event: self.redo_action())
-        self.root.bind_all("<F1>", lambda _event: self._announce_context_help())
+        actions = {
+            "toggle_show_all": self._toggle_show_all,
+            "toggle_debug": self._toggle_debug,
+            "refresh": self._refresh_from_shortcut,
+            "focus_theme": lambda: self._focus_widget(self.theme_menu),
+            "toggle_contrast": self._toggle_contrast_theme,
+            "diagnostics": self.start_diagnostics,
+            "main_window": self.open_main_window,
+            "system_scan": self.start_system_scan,
+            "standards": self.show_standards,
+            "logs": self.open_logs,
+            "selective_export": self.start_selective_export,
+            "export_center": self.start_export_center,
+            "backup": self.start_backup,
+            "logout": self.request_logout,
+            "undo": self.undo_action,
+            "redo": self.redo_action,
+            "announce_help": self._announce_context_help,
+        }
+        for spec in build_shortcut_specs():
+            callback = actions.get(spec.action)
+            if callback is None:
+                raise GuiLauncherError(f"Shortcut-Aktion fehlt: {spec.action}")
+            self.root.bind_all(
+                spec.sequence,
+                lambda _event, action=callback: action(),
+            )
 
     def _bind_zoom_controls(self) -> None:
         self.root.bind_all("<Control-MouseWheel>", self._on_zoom_mousewheel)
@@ -980,15 +1009,19 @@ class LauncherGui:
         self._set_context_help(self.context_help_default)
 
     def _set_context_help(self, text: str) -> None:
-        clean_text = _require_text(text, "context_help")
-        self.current_help_text = clean_text
+        try:
+            change = self.controller.set_help(text)
+        except LauncherControllerError as exc:
+            raise GuiLauncherError(str(exc)) from exc
+        self.current_help_text = str(change.current)
         if self.context_help_label is not None:
-            self.context_help_label.configure(text=clean_text)
+            self.context_help_label.configure(text=self.current_help_text)
 
     def _announce_context_help(self) -> None:
-        if not isinstance(self.current_help_text, str) or not self.current_help_text.strip():
+        text = self.controller.state.help_text
+        if not text.strip():
             return
-        self._set_status(f"Hilfe: {self.current_help_text}", state="success")
+        self._set_status(f"Hilfe: {text}", state="success")
 
     def _setup_drag_drop(self) -> None:
         if self.drop_zone_label is None:
@@ -1050,108 +1083,29 @@ class LauncherGui:
         self._register_tooltip(widget, tooltip_text)
 
     def _register_help_entries(self) -> None:
-        if self.theme_menu is not None:
-            self._register_help(
-                self.theme_menu,
-                "Farbschema wählen (Theme = Farbstil).",
-                "Farbschema wählen: Wähle ein Theme (Farbstil), um Kontrast und Farben anzupassen.",
-            )
-        if self.show_all_check is not None:
-            self._register_help(
-                self.show_all_check,
-                "Zeigt alle Module (auch deaktivierte).",
-                "Alle Module anzeigen: Zeigt auch deaktivierte Module, damit du sie prüfen kannst.",
-            )
-        if self.debug_check is not None:
-            self._register_help(
-                self.debug_check,
-                "Zeigt technische Details (Debugging = Fehlersuche).",
-                "Debug-Details: Zeigt technische Zusatzinfos (Debugging = Fehlersuche).",
-            )
-        if self.autostart_check is not None:
-            self._register_help(
-                self.autostart_check,
-                "Startet das Tool nach der Linux-Anmeldung automatisch.",
-                "Autostart: Aktiviert oder deaktiviert den benutzerspezifischen Linux-Autostart.",
-            )
-        if self.refresh_button is not None:
-            self._register_help(
-                self.refresh_button,
-                "Aktualisiert die Modulübersicht.",
-                "Übersicht aktualisieren: Lädt Module neu und prüft Fehler.",
-            )
-        if self.logout_button is not None:
-            self._register_help(
-                self.logout_button,
-                "Sichert Daten und beendet das Tool.",
-                "Abmelden: Erst wird eine Sicherung erstellt, danach wird sauber beendet.",
-            )
-        if self.diagnostics_button is not None:
-            self._register_help(
-                self.diagnostics_button,
-                "Startet Tests und Codeprüfungen.",
-                "Diagnose starten: Führt Tests und Codequalität (Linting/Format) aus.",
-            )
-        if self.main_window_button is not None:
-            self._register_help(
-                self.main_window_button,
-                "Öffnet das Hauptfenster mit Modulraster.",
-                "Hauptfenster öffnen: Zeigt ein 3x3-Modulraster mit Drag/Resize und Start/Stop.",
-            )
-        if self.scan_button is not None:
-            self._register_help(
-                self.scan_button,
-                "Startet den System-Scan (Vorabprüfung).",
-                "System-Scan: Prüft Dateien, Ordner und Rechte ohne Schreiben.",
-            )
-        if self.standards_button is not None:
-            self._register_help(
-                self.standards_button,
-                "Zeigt die Standards (interne Regeln).",
-                "Standards anzeigen: Zeigt die internen Regeln (Standards = Regeln).",
-            )
-        if self.logs_button is not None:
-            self._register_help(
-                self.logs_button,
-                "Öffnet den Log-Ordner (Protokolle).",
-                "Log-Ordner öffnen: Zeigt Protokolle (Logs), falls etwas schiefgeht.",
-            )
-        if self.export_button is not None:
-            self._register_help(
-                self.export_button,
-                "Erstellt einen Teil-Export (ZIP).",
-                "Selektiver Export: Erstellt ein ZIP mit ausgewählten Bereichen (z. B. Logs).",
-            )
-        if self.export_center_button is not None:
-            self._register_help(
-                self.export_center_button,
-                "Exportiert JSON, TXT, PDF und ZIP.",
-                "Export-Center: Erstellt Exporte (Ausgabedateien) in mehreren Formaten.",
-            )
-        if self.backup_button is not None:
-            self._register_help(
-                self.backup_button,
-                "Erstellt ein vollständiges Backup (ZIP).",
-                "Backup: Erstellt eine vollständige Sicherung in data/backups.",
-            )
-        if self.output_text is not None:
-            self._register_help(
-                self.output_text,
-                "Hier stehen Module und Prüfergebnisse.",
-                "Modulübersicht: Zeigt Module, Prüfungen und Hinweise in einfacher Sprache.",
-            )
-        if self.status_label is not None:
-            self._register_help(
-                self.status_label,
-                "Zeigt Statusmeldungen (bereit, läuft, Fehler).",
-                "Status: Zeigt ob das Tool bereit ist, arbeitet oder einen Fehler meldet.",
-            )
-        if self.drop_zone_label is not None:
-            self._register_help(
-                self.drop_zone_label,
-                "Dateien/Module per Drag-and-Drop ablegen.",
-                "Drag-and-Drop: Ziehe Dateien oder Module auf diese Fläche, um sie zu prüfen.",
-            )
+        widgets = {
+            "theme_menu": self.theme_menu,
+            "show_all_check": self.show_all_check,
+            "debug_check": self.debug_check,
+            "autostart_check": self.autostart_check,
+            "refresh_button": self.refresh_button,
+            "logout_button": self.logout_button,
+            "diagnostics_button": self.diagnostics_button,
+            "main_window_button": self.main_window_button,
+            "scan_button": self.scan_button,
+            "standards_button": self.standards_button,
+            "logs_button": self.logs_button,
+            "export_button": self.export_button,
+            "export_center_button": self.export_center_button,
+            "backup_button": self.backup_button,
+            "output_text": self.output_text,
+            "status_label": self.status_label,
+            "drop_zone_label": self.drop_zone_label,
+        }
+        for entry in build_help_entries():
+            widget = widgets.get(entry.key)
+            if widget is not None:
+                self._register_help(widget, entry.tooltip, entry.context)
 
     def _focus_widget(self, widget) -> None:
         if widget is not None:
@@ -1265,23 +1219,18 @@ class LauncherGui:
         self._set_status(f"Farbschema aktiv: {label}", state="success")
 
     def request_refresh(self) -> None:
-        if self.refresh_job is not None:
-            self.root.after_cancel(self.refresh_job)
         self._set_status("Aktualisierung wird vorbereitet…", state="busy")
-        self.refresh_job = self.root.after(self.refresh_debounce_ms, self.refresh)
+        try:
+            self.refresh_debouncer.request()
+        except Exception as exc:  # noqa: BLE001
+            self.logger.error("Aktualisierung konnte nicht geplant werden: %s", exc)
+            self._set_status("Aktualisierung konnte nicht geplant werden.", state="error")
 
-    def _record_action(
-        self,
-        name: str,
-        undo_action,
-        redo_action,
-        metadata: dict | None = None,
-    ) -> None:
-        clean_name = _require_text(name, "action_name")
-        meta = metadata if isinstance(metadata, dict) else {}
-        self.undo_manager.record(
-            UndoRedoAction(name=clean_name, undo=undo_action, redo=redo_action, metadata=meta)
-        )
+    def _record_action(self, change: StateChange, apply_value) -> None:
+        try:
+            record_state_change(self.undo_manager, change, apply_value)
+        except (LauncherControllerError, UndoRedoError) as exc:
+            raise GuiLauncherError(str(exc)) from exc
 
     def undo_action(self) -> None:
         try:
@@ -1299,54 +1248,64 @@ class LauncherGui:
             return
         self._set_status(f"Redo: {action.name}", state="success")
 
-    def _set_theme(self, theme_name: str) -> None:
-        clean_name = _require_text(theme_name, "theme_name")
-        if clean_name not in self.gui_config.themes:
-            raise GuiLauncherError("Unbekanntes Farbschema.")
-        self.theme_var.set(clean_name)
-        self.apply_theme(clean_name)
+    def _set_theme(self, theme_name: str) -> StateChange:
+        try:
+            change = self.controller.set_theme(theme_name, self.gui_config.themes)
+        except LauncherControllerError as exc:
+            raise GuiLauncherError(str(exc)) from exc
+        target = str(change.current)
+        if self.theme_var is not None:
+            self.theme_var.set(target)
+        self.apply_theme(target)
+        self.current_theme = target
+        return change
 
     def _on_theme_changed(self, theme_name: str) -> None:
-        previous = self.current_theme
         target = _require_text(theme_name, "theme_name")
-        if previous == target:
+        if self.controller.state.theme_name == target:
             return
-        self._set_theme(target)
-        self.current_theme = target
+        change = self._set_theme(target)
         self._record_action(
-            f"Farbschema wechseln ({previous} → {target})",
-            undo_action=lambda: self._restore_theme(previous),
-            redo_action=lambda: self._restore_theme(target),
+            change,
+            lambda value: self._restore_theme(str(value)),
         )
         label = self.gui_config.themes[target].label
         self._set_status(f"Farbschema aktiv: {label}", state="success")
 
     def _restore_theme(self, theme_name: str) -> None:
         self._set_theme(theme_name)
-        self.current_theme = theme_name
 
     def _set_show_all(self, value: bool, record_action: bool) -> None:
-        previous = bool(self.show_all_var.get())
-        self.show_all_var.set(bool(value))
+        try:
+            change = self.controller.set_show_all(bool(value))
+        except LauncherControllerError as exc:
+            raise GuiLauncherError(str(exc)) from exc
+        if self.show_all_var is not None:
+            self.show_all_var.set(bool(change.current))
+        if not change.changed:
+            return
         self.request_refresh()
         if record_action:
             self._record_action(
-                "Alle Module anzeigen",
-                undo_action=lambda: self._set_show_all(previous, record_action=False),
-                redo_action=lambda: self._set_show_all(bool(value), record_action=False),
-                metadata={"previous": previous, "current": bool(value)},
+                change,
+                lambda target: self._set_show_all(bool(target), record_action=False),
             )
 
     def _set_debug(self, value: bool, record_action: bool) -> None:
-        previous = bool(self.debug_var.get())
-        self.debug_var.set(bool(value))
+        try:
+            change = self.controller.set_debug(bool(value))
+        except LauncherControllerError as exc:
+            raise GuiLauncherError(str(exc)) from exc
+        self.debug = bool(change.current)
+        if self.debug_var is not None:
+            self.debug_var.set(self.debug)
+        if not change.changed:
+            return
         self.request_refresh()
         if record_action:
             self._record_action(
-                "Debug-Details anzeigen",
-                undo_action=lambda: self._set_debug(previous, record_action=False),
-                redo_action=lambda: self._set_debug(bool(value), record_action=False),
-                metadata={"previous": previous, "current": bool(value)},
+                change,
+                lambda target: self._set_debug(bool(target), record_action=False),
             )
 
     def apply_theme(self, theme_name: str) -> None:
@@ -1408,9 +1367,8 @@ class LauncherGui:
             self.logger.error("Autosave fehlgeschlagen: %s", exc)
 
     def refresh(self) -> None:
-        self.refresh_job = None
-        show_all = bool(self.show_all_var.get())
-        debug = bool(self.debug_var.get())
+        show_all = self.controller.state.show_all
+        debug = self.controller.state.debug
         try:
             self._set_status("Prüfe Module…", state="busy")
             modules = load_modules(self.module_config)
@@ -1660,15 +1618,14 @@ class LauncherGui:
         self._set_output(combined)
 
     def _set_status(self, message: str, state: str = "success") -> None:
-        if not isinstance(message, str) or not message.strip():
-            raise GuiLauncherError("Statusmeldung ist leer.")
-        clean_state = _require_text(state, "status_state")
-        if clean_state not in {"success", "error", "busy"}:
-            raise GuiLauncherError("Status-State ist ungültig.")
+        try:
+            view = build_status_view(message, state)
+        except LauncherControllerError as exc:
+            raise GuiLauncherError(str(exc)) from exc
         if self.status_var is not None:
-            self.status_var.set(f"Status: {message}")
-        self._apply_status_style(clean_state)
-        self.root.configure(cursor="watch" if clean_state == "busy" else "")
+            self.status_var.set(view.display_text)
+        self._apply_status_style(view.state)
+        self.root.configure(cursor=view.cursor)
         self.root.update_idletasks()
 
     def _apply_status_style(self, state: str) -> None:
