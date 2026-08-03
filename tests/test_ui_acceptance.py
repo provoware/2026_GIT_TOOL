@@ -47,7 +47,8 @@ def test_profile_contract_distinguishes_native_simulation_and_blocker():
     assert by_key[("linux_desktop", "launcher")].status == "passed"
     assert by_key[("linux_desktop", "main_window")].status == "passed"
     assert by_key[("tablet_landscape", "launcher")].status == "simulated"
-    assert by_key[("tablet_portrait", "main_window")].status == "blocked"
+    assert by_key[("tablet_portrait", "main_window")].status == "simulated"
+    assert by_key[("tablet_portrait", "main_window")].details["minimum"] == [720, 680]
     assert by_key[("iphone_portrait", "launcher")].status == "blocked"
     assert all(profile.physical_required for profile in DEVICE_PROFILES)
 
