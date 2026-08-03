@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Kanonischer Gate-7-Codemod mit normalisierten Refresh-Escapes."""
+"""Kanonischer Gate-7-Codemod mit Escape- und View-Synchronisierung."""
 
 from __future__ import annotations
 
@@ -29,9 +29,61 @@ def _normalize_refresh_template() -> None:
     base.METHODS["refresh"] = template
 
 
+def _replace_once_or_done(source: str, old: str, new: str, label: str) -> str:
+    if new in source:
+        return source
+    count = source.count(old)
+    if count != 1:
+        raise RuntimeError(f"{label}: erwartete Struktur nicht eindeutig ({count}).")
+    return source.replace(old, new, 1)
+
+
+def _connect_filter_views(source: str) -> str:
+    result = _replace_once_or_done(
+        source,
+        '''        self.show_all_check = tk.Checkbutton(
+            controls,
+            text="Alle Module anzeigen (inkl. deaktiviert)",
+            variable=self.show_all_var,
+            command=self.refresh,
+        )
+''',
+        '''        self.show_all_check = tk.Checkbutton(
+            controls,
+            text="Alle Module anzeigen (inkl. deaktiviert)",
+            variable=self.show_all_var,
+            command=lambda: self._set_show_all(
+                bool(self.show_all_var.get()), record_action=True
+            ),
+        )
+''',
+        "Show-all-Command",
+    )
+    return _replace_once_or_done(
+        result,
+        '''        self.debug_check = tk.Checkbutton(
+            controls,
+            text="Debug-Details anzeigen",
+            variable=self.debug_var,
+            command=self.refresh,
+        )
+''',
+        '''        self.debug_check = tk.Checkbutton(
+            controls,
+            text="Debug-Details anzeigen",
+            variable=self.debug_var,
+            command=lambda: self._set_debug(
+                bool(self.debug_var.get()), record_action=True
+            ),
+        )
+''',
+        "Debug-Command",
+    )
+
+
 def transform(source: str) -> str:
     _normalize_refresh_template()
-    return base.transform(source)
+    return _connect_filter_views(base.transform(source))
 
 
 def main() -> int:
