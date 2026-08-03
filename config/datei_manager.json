@@ -18,16 +18,22 @@
   "ui": {
     "title": "Datei-Manager",
     "menus": [
+      {"id": "browser", "label": "Dateien"},
+      {"id": "preview", "label": "Bildvorschau"},
       {"id": "rename", "label": "Quick-Rename"},
       {"id": "tags", "label": "Tagging"},
       {"id": "favorites", "label": "Favoriten"}
     ],
     "actions": [
+      {"id": "open_browser", "label": "Datei-Manager öffnen", "hint": "Ordner durchsuchen, Listen sortieren und Bilder groß anzeigen"},
       {"id": "quick_rename", "label": "Schnell umbenennen", "hint": "Quick-Rename = schneller Dateiname"},
       {"id": "tag_items", "label": "Tags speichern", "hint": "Tagging = Schlagworte"},
       {"id": "toggle_favorite", "label": "Favorit merken", "hint": "Favorit = schnell wiederfinden"}
     ],
     "hints": [
+      "Ein Klick auf ein Bild zeigt rechts eine große, proportional skalierte Vorschau.",
+      "Die Spalten Name, Typ, Größe und Geändert sind per Spaltenkopf auf- und absteigend sortierbar.",
+      "Ordner werden per Doppelklick oder Enter geöffnet; Backspace wechselt zum übergeordneten Ordner.",
       "Quick-Rename normalisiert Namen für Linux (snake_case).",
       "Tagging hilft beim schnellen Filtern der Dateien."
     ]
