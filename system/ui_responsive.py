@@ -33,6 +33,25 @@ LAUNCHER_MEDIUM_BREAKPOINT = 800
 MAIN_WINDOW_MIN_WIDTH = 720
 MAIN_WINDOW_MIN_HEIGHT = 680
 
+LAUNCHER_HELP_FULL = (
+    "So geht's: Farbschema wählen, Module einblenden und mit „Übersicht aktualisieren“ "
+    "prüfen. Diagnose: „Diagnose starten“ führt Tests und Codeprüfungen aus. "
+    "Entwicklerbereich: System-Scan (Prüfung), Standards (Regeln), Log-Ordner "
+    "(Protokolle), Backup (Sicherung), Export-Center und selektiver Export. "
+    "Kontrastmodus: Alt+K. Zoom: Strg + Mausrad. Tastatur: Tab für Fokus, F1 für "
+    "Kontext-Hilfe. Kurzbefehle: Alt+A (alle Module), Alt+D (Debug), Alt+R "
+    "(aktualisieren), Alt+G (Diagnose), Alt+M (Hauptfenster), Alt+S (System-Scan), "
+    "Alt+P (Standards), Alt+L (Logs), Alt+E (Export), Alt+X (Export-Center), "
+    "Alt+B (Backup), Alt+T (Theme), Alt+Q (abmelden & sichern), Strg+Z (Undo), "
+    "Strg+Y (Redo)."
+)
+LAUNCHER_HELP_COMPACT = (
+    "Bedienung: Farbschema und Filter wählen, dann „Übersicht aktualisieren“. "
+    "Tab wechselt den Fokus; F1 zeigt die Hilfe zum aktuellen Element. "
+    "Alt+K aktiviert Kontrast, Strg + Mausrad ändert den Zoom. "
+    "Weitere Kurzbefehle stehen im Footer und in den Tooltips."
+)
+
 
 def _positive_int(value: int, name: str) -> int:
     if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
@@ -49,6 +68,11 @@ def resolve_launcher_layout(width: int) -> LauncherLayout:
     if width >= LAUNCHER_MEDIUM_BREAKPOINT:
         return LauncherLayout("medium", control_columns=2, developer_columns=2, help_columns=1)
     return LauncherLayout("compact", control_columns=1, developer_columns=2, help_columns=1)
+
+
+def resolve_launcher_help_text(width: int) -> str:
+    layout = resolve_launcher_layout(width)
+    return LAUNCHER_HELP_FULL if layout.mode == "wide" else LAUNCHER_HELP_COMPACT
 
 
 def resolve_workspace_grid(
