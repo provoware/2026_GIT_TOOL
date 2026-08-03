@@ -107,14 +107,14 @@
     {
       "path": "system/session_lifecycle.py",
       "role": "Autosave-Taktung, kombinierte Sicherungsabfolge und kontrollierter Shutdown",
-      "evidence": "Lifecycle-Tests, Teilerfolgsberichte, Job-Abbruch, verzögerte Fensterzerstörung, reale Integration und read-only Abschlussprüfung erfolgreich",
+      "evidence": "Lifecycle-Tests, Teilerfolgsberichte, Job-Abbruch, verzögerte Fensterzerstörung, Safe-Mode-Schreibsperre, reale Integration und read-only Abschlussprüfung erfolgreich",
       "canonical_codemod": "scripts/apply_gate5_session_lifecycle.py",
       "limitations": "Close-Policy des Hauptfensters bleibt Gate 6"
     },
     {
       "path": "system/autostart_manager.py",
       "role": "Benutzerspezifischer Linux-XDG-Autostart",
-      "evidence": "Aktivierung, Deaktivierung, Idempotenz, Desktop-Entry-Validierung und Schutz fremder Dateien getestet",
+      "evidence": "Aktivierung, Deaktivierung, Idempotenz, Desktop-Entry-Validierung, Safe-Mode-Sperre und Schutz fremder Dateien getestet",
       "limitations": "Start erfolgt nach Benutzeranmeldung; kein systemweiter Dienst vor Anmeldung"
     }
   ],
