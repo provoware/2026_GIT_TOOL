@@ -25,13 +25,15 @@ def test_launcher_uses_three_two_and_one_column_modes():
     assert resolve_launcher_layout(768).control_columns == 1
 
 
-def test_help_stacks_below_wide_breakpoint():
-    assert resolve_launcher_layout(1199).help_columns == 1
+def test_help_uses_two_columns_when_1024_pixels_are_available():
+    assert resolve_launcher_layout(999).help_columns == 1
+    assert resolve_launcher_layout(1024).help_columns == 2
     assert resolve_launcher_layout(1200).help_columns == 2
 
 
-def test_developer_actions_use_two_columns_on_tablet_profiles():
-    assert resolve_launcher_layout(1024).developer_columns == 2
+def test_developer_actions_use_three_by_two_grid_at_1024_pixels():
+    assert resolve_launcher_layout(1024).developer_columns == 3
+    assert resolve_launcher_layout(900).developer_columns == 2
     assert resolve_launcher_layout(768).developer_columns == 2
 
 
