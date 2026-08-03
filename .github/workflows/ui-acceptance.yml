@@ -10,6 +10,7 @@ on:
       - "system/ui_theme_adapter.py"
       - "config/launcher_gui.json"
       - "scripts/probe_tk_ui.py"
+      - "scripts/probe_tk_ui_v2.py"
       - "scripts/run_ui_acceptance.py"
       - "tests/test_ui_acceptance.py"
       - "tests/test_ui_acceptance_report.py"
@@ -45,7 +46,7 @@ jobs:
         run: |
           mkdir -p artifacts/screenshots
           xvfb-run -a -s "-screen 0 1600x1200x24" \
-            python scripts/probe_tk_ui.py \
+            python scripts/probe_tk_ui_v2.py \
             --output artifacts/runtime.json \
             --screenshots artifacts/screenshots
       - name: Konsolidierten Abnahmebericht erzeugen
@@ -61,6 +62,7 @@ jobs:
           system/ui_responsive.py
           system/ui_theme_adapter.py
           scripts/probe_tk_ui.py
+          scripts/probe_tk_ui_v2.py
           scripts/run_ui_acceptance.py
       - name: Abnahmebelege veröffentlichen
         if: always()
