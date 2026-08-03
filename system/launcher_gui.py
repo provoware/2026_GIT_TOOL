@@ -41,6 +41,7 @@ from launcher_controller import (
     record_state_change,
 )
 from module_manager import ModuleManagerError
+from ui_responsive import resolve_launcher_layout
 from ui_theme_adapter import (
     UiThemeError,
     apply_theme_tree,
@@ -304,6 +305,7 @@ class LauncherGui:
         self.autostart_var = None
         self.output_text = None
         self.theme_menu = None
+        self.theme_label = None
         self.show_all_check = None
         self.debug_check = None
         self.autostart_check = None
@@ -410,9 +412,10 @@ class LauncherGui:
         controls.pack(fill="x", padx=self.layout.gap_md, pady=self.layout.gap_sm)
         self.controls_frame = controls
 
-        tk.Label(controls, text=f"{ICON_SET['theme']} Farbschema:").grid(
-            row=0, column=0, sticky="w"
+        self.theme_label = tk.Label(
+            controls, text=f"{ICON_SET['theme']} Farbschema:"
         )
+        self.theme_label.grid(row=0, column=0, sticky="w")
         self.theme_var = tk.StringVar(value=self.controller.state.theme_name)
         self.theme_menu = tk.OptionMenu(
             controls,
@@ -941,63 +944,140 @@ class LauncherGui:
         self._update_layout_by_width()
 
     def _update_wrap_length(self) -> None:
-        width = max(self.root.winfo_width() - 32, 280)
+        width = max(self.root.winfo_width(), 1)
+        layout = resolve_launcher_layout(width)
+        full_width = max(width - 64, 280)
+        help_width = max((width - 96) // 2, 280) if layout.help_columns == 2 else full_width
         if self.footer_label is not None:
-            self.footer_label.configure(wraplength=width, justify="left")
+            self.footer_label.configure(wraplength=full_width, justify="left")
         if self.help_label is not None:
-            self.help_label.configure(wraplength=width, justify="left")
+            self.help_label.configure(wraplength=help_width, justify="left")
         if self.context_help_label is not None:
-            self.context_help_label.configure(wraplength=width, justify="left")
+            self.context_help_label.configure(wraplength=help_width, justify="left")
         if self.developer_hint is not None:
-            self.developer_hint.configure(wraplength=width, justify="left")
+            self.developer_hint.configure(wraplength=full_width, justify="left")
         if self.drop_zone_label is not None:
-            self.drop_zone_label.configure(wraplength=width, justify="left")
+            self.drop_zone_label.configure(wraplength=full_width, justify="left")
         if self.status_label is not None:
-            self.status_label.configure(wraplength=width, justify="left")
+            self.status_label.configure(wraplength=full_width, justify="left")
 
     def _update_layout_by_width(self) -> None:
-        width = self.root.winfo_width()
+        width = max(self.root.winfo_width(), 1)
+        layout = resolve_launcher_layout(width)
         self._update_wrap_length()
+
         if (
             self.help_section is not None
             and self.help_label is not None
             and self.context_help_label is not None
         ):
-            if width >= 900:
-                self.help_label.grid_configure(row=0, column=0, columnspan=1, sticky="w")
+            if layout.help_columns == 2:
+                self.help_label.grid_configure(row=0, column=0, columnspan=1, sticky="nw")
                 self.context_help_label.grid_configure(
-                    row=0,
-                    column=1,
-                    columnspan=1,
-                    sticky="w",
+                    row=0, column=1, columnspan=1, sticky="nw"
                 )
+                drop_row = 1
             else:
-                self.help_label.grid_configure(row=0, column=0, columnspan=2, sticky="w")
+                self.help_label.grid_configure(row=0, column=0, columnspan=2, sticky="nw")
                 self.context_help_label.grid_configure(
-                    row=1,
-                    column=0,
-                    columnspan=2,
-                    sticky="w",
+                    row=1, column=0, columnspan=2, sticky="nw"
                 )
-        if self.drop_zone_label is not None:
-            row = 1 if width >= 900 else 2
-            self.drop_zone_label.grid_configure(row=row, column=0, columnspan=2, sticky="ew")
-        if self.developer_frame is not None and self.export_center_button is not None:
-            if width >= 900:
-                self.export_center_button.grid_configure(row=2, column=0)
-                if self.backup_button is not None:
-                    self.backup_button.grid_configure(row=2, column=1)
+                drop_row = 2
+            if self.drop_zone_label is not None:
+                self.drop_zone_label.grid_configure(
+                    row=drop_row, column=0, columnspan=2, sticky="ew"
+                )
+
+        controls = self.controls_frame
+        if controls is not None:
+            for column in range(4):
+                controls.columnconfigure(column, weight=0)
+            if layout.mode == "wide":
+                positions = {
+                    self.theme_label: (0, 0, 1, "w"),
+                    self.theme_menu: (0, 1, 1, "w"),
+                    self.show_all_check: (0, 2, 1, "w"),
+                    self.debug_check: (1, 0, 1, "w"),
+                    self.diagnostics_button: (1, 1, 1, "ew"),
+                    self.refresh_button: (1, 2, 1, "ew"),
+                    self.autostart_check: (2, 0, 1, "w"),
+                    self.main_window_button: (2, 1, 1, "ew"),
+                    self.logout_button: (2, 2, 1, "ew"),
+                }
+                for column in range(3):
+                    controls.columnconfigure(column, weight=1 if column else 0)
+            elif layout.mode == "medium":
+                positions = {
+                    self.theme_label: (0, 0, 1, "w"),
+                    self.theme_menu: (0, 1, 1, "w"),
+                    self.show_all_check: (1, 0, 2, "w"),
+                    self.debug_check: (2, 0, 2, "w"),
+                    self.autostart_check: (3, 0, 2, "w"),
+                    self.diagnostics_button: (4, 0, 1, "ew"),
+                    self.refresh_button: (4, 1, 1, "ew"),
+                    self.main_window_button: (5, 0, 1, "ew"),
+                    self.logout_button: (5, 1, 1, "ew"),
+                }
+                controls.columnconfigure(0, weight=1)
+                controls.columnconfigure(1, weight=1)
             else:
-                self.export_center_button.grid_configure(
-                    row=3,
-                    column=0,
-                    padx=(0, self.layout.gap_md),
+                positions = {
+                    self.theme_label: (0, 0, 1, "w"),
+                    self.theme_menu: (0, 1, 1, "w"),
+                    self.show_all_check: (1, 0, 2, "w"),
+                    self.debug_check: (2, 0, 2, "w"),
+                    self.autostart_check: (3, 0, 2, "w"),
+                    self.diagnostics_button: (4, 0, 2, "ew"),
+                    self.refresh_button: (5, 0, 2, "ew"),
+                    self.main_window_button: (6, 0, 2, "ew"),
+                    self.logout_button: (7, 0, 2, "ew"),
+                }
+                controls.columnconfigure(0, weight=1)
+                controls.columnconfigure(1, weight=1)
+            for widget, (row, column, columnspan, sticky) in positions.items():
+                if widget is not None:
+                    widget.grid_configure(
+                        row=row,
+                        column=column,
+                        columnspan=columnspan,
+                        sticky=sticky,
+                        padx=self.layout.gap_xs,
+                        pady=self.layout.gap_xs,
+                    )
+
+        developer = self.developer_frame
+        if developer is not None:
+            for column in range(4):
+                developer.columnconfigure(column, weight=0)
+            buttons = (
+                self.scan_button,
+                self.standards_button,
+                self.logs_button,
+                self.export_button,
+                self.export_center_button,
+                self.backup_button,
+            )
+            if layout.developer_columns == 4:
+                positions = ((1, 0), (1, 1), (1, 2), (1, 3), (2, 0), (2, 1))
+                hint_span = 4
+            else:
+                positions = ((1, 0), (1, 1), (2, 0), (2, 1), (3, 0), (3, 1))
+                hint_span = 2
+            if self.developer_hint is not None:
+                self.developer_hint.grid_configure(
+                    row=0, column=0, columnspan=hint_span, sticky="w"
                 )
-                if self.backup_button is not None:
-                    self.backup_button.grid_configure(
-                        row=3,
-                        column=1,
-                        padx=(0, self.layout.gap_md),
+            for column in range(hint_span):
+                developer.columnconfigure(column, weight=1)
+            for widget, (row, column) in zip(buttons, positions):
+                if widget is not None:
+                    widget.grid_configure(
+                        row=row,
+                        column=column,
+                        columnspan=1,
+                        sticky="ew",
+                        padx=self.layout.gap_xs,
+                        pady=self.layout.gap_xs,
                     )
 
     def _bind_help_context(self) -> None:

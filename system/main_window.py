@@ -18,6 +18,12 @@ from module_lifecycle import (
     prepare_close,
     resolve_card_presentation,
 )
+from ui_responsive import (
+    MAIN_WINDOW_MIN_HEIGHT,
+    MAIN_WINDOW_MIN_WIDTH,
+    UiResponsiveError,
+    resolve_workspace_grid,
+)
 from workspace_geometry import Rect, build_grid, clamp_rect, has_collision, move_rect, rect_overlap, resize_rect
 from ui_theme_adapter import (
     UiThemeError,
@@ -97,6 +103,8 @@ class ModuleWidget:
         self.deactivate_button = tk.Button(
             button_row, text="Deaktivieren", command=self._handle_deactivate
         )
+        for button in (self.activate_button, self.deactivate_button):
+            button.configure(pady=7, takefocus=1)
         self.activate_button.pack(side="left", expand=True, fill="x", padx=(0, 4))
         self.deactivate_button.pack(side="left", expand=True, fill="x", padx=(4, 0))
 
@@ -202,7 +210,9 @@ class MainWindow:
         self.workspace = None
         self.status_label = None
         self.theme_var = None
+        self.note_label = None
         self._layout_ready = False
+        self._layout_size: tuple[int, int] | None = None
         self._build_ui()
 
     def _build_ui(self) -> None:
@@ -210,7 +220,7 @@ class MainWindow:
 
         self.root.title("Genrearchiv – Hauptfenster")
         self.root.geometry("1200x820")
-        self.root.minsize(960, 680)
+        self.root.minsize(MAIN_WINDOW_MIN_WIDTH, MAIN_WINDOW_MIN_HEIGHT)
         self.root.configure(background=self._theme_colors()["background"])
 
         header = tk.Label(
@@ -230,9 +240,10 @@ class MainWindow:
             *self.gui_config.themes.keys(),
             command=lambda _value: self._apply_theme_and_sync(),
         )
+        menu.configure(padx=6, pady=8, takefocus=1)
         menu.pack(side="left", padx=(8, 16))
 
-        note = tk.Label(
+        self.note_label = tk.Label(
             controls,
             text=(
                 "Tipp: Ziehen per Maus. Größe ändern über ↘ unten rechts. "
@@ -240,7 +251,7 @@ class MainWindow:
             ),
             anchor="w",
         )
-        note.pack(side="left", fill="x", expand=True)
+        self.note_label.pack(side="left", fill="x", expand=True)
 
         self.workspace = tk.Frame(self.root)
         self.workspace.pack(fill="both", expand=True, padx=16, pady=8)
@@ -283,15 +294,49 @@ class MainWindow:
         height = self.workspace.winfo_height()
         if width < 10 or height < 10:
             return
-        if self._layout_ready:
-            self._ensure_within_bounds(width, height)
+        layout_size = (width, height)
+        if self._layout_ready and self._layout_size == layout_size:
             return
-        rects = build_grid(len(self.module_widgets), width, height, rows=3, cols=3, gap=12, min_width=200, min_height=160)
+        try:
+            grid = resolve_workspace_grid(
+                len(self.module_widgets),
+                width,
+                height,
+                maximum_columns=3,
+                gap=12,
+                minimum_width=200,
+                minimum_height=160,
+            )
+        except UiResponsiveError as exc:
+            self._set_status(str(exc), self._theme_colors()["status_error"])
+            return
+        rects = build_grid(
+            len(self.module_widgets),
+            width,
+            height,
+            rows=grid.rows,
+            cols=grid.columns,
+            gap=12,
+            min_width=200,
+            min_height=160,
+        )
         for widget, rect in zip(self.module_widgets, rects):
             widget.rect = rect
             widget.last_valid_rect = rect
-            widget.frame.place(x=rect.x, y=rect.y, width=rect.width, height=rect.height)
+            widget.description.configure(wraplength=max(rect.width - 16, 120))
+            widget.frame.place(
+                x=rect.x,
+                y=rect.y,
+                width=rect.width,
+                height=rect.height,
+            )
+        if self.note_label is not None:
+            self.note_label.configure(
+                wraplength=max(self.root.winfo_width() - 220, 240),
+                justify="left",
+            )
         self._layout_ready = True
+        self._layout_size = layout_size
 
     def _ensure_within_bounds(self, width: int, height: int) -> None:
         for widget in self.module_widgets:
