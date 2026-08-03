@@ -28,6 +28,7 @@ class WorkspaceGrid:
 
 
 LAUNCHER_WIDE_BREAKPOINT = 1200
+LAUNCHER_BALANCED_BREAKPOINT = 1000
 LAUNCHER_MEDIUM_BREAKPOINT = 800
 MAIN_WINDOW_MIN_WIDTH = 720
 MAIN_WINDOW_MIN_HEIGHT = 680
@@ -43,6 +44,8 @@ def resolve_launcher_layout(width: int) -> LauncherLayout:
     width = _positive_int(width, "width")
     if width >= LAUNCHER_WIDE_BREAKPOINT:
         return LauncherLayout("wide", control_columns=3, developer_columns=4, help_columns=2)
+    if width >= LAUNCHER_BALANCED_BREAKPOINT:
+        return LauncherLayout("medium", control_columns=2, developer_columns=3, help_columns=2)
     if width >= LAUNCHER_MEDIUM_BREAKPOINT:
         return LauncherLayout("medium", control_columns=2, developer_columns=2, help_columns=1)
     return LauncherLayout("compact", control_columns=1, developer_columns=2, help_columns=1)
