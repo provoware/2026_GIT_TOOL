@@ -7,6 +7,7 @@ on:
       - "system/launcher_controller.py"
       - "system/undo_redo.py"
       - "scripts/apply_gate7_launcher_controller.py"
+      - "scripts/apply_gate7_launcher_controller_v2.py"
       - "tests/test_launcher_controller.py"
       - "tests/test_gate7_launcher_controller_codemod.py"
       - ".github/workflows/gate-7-launcher-controller.yml"
@@ -31,8 +32,8 @@ jobs:
       - name: Codemod auf vollständiger Arbeitskopie prüfen
         run: |
           cp system/launcher_gui.py /tmp/launcher_gui.py
-          python scripts/apply_gate7_launcher_controller.py --path /tmp/launcher_gui.py
-          python scripts/apply_gate7_launcher_controller.py --check --path /tmp/launcher_gui.py
+          python scripts/apply_gate7_launcher_controller_v2.py --path /tmp/launcher_gui.py
+          python scripts/apply_gate7_launcher_controller_v2.py --check --path /tmp/launcher_gui.py
           python -m py_compile /tmp/launcher_gui.py system/launcher_controller.py
       - name: Repository unverändert halten
         run: git diff --exit-code
