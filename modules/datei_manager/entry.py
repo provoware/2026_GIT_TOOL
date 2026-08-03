@@ -33,12 +33,14 @@ def _load_sibling(module_name: str, filename: str) -> ModuleType:
 
 backend = _load_sibling("_genrearchiv_datei_manager_backend", "module.py")
 window_module = _load_sibling("_genrearchiv_datei_manager_window", "window.py")
+keyboard_help_module = _load_sibling(
+    "_genrearchiv_datei_manager_keyboard_help", "keyboard_help.py"
+)
 
 ModuleConfig = backend.ModuleConfig
 ModuleContext = backend.ModuleContext
 ModuleError = backend.ModuleError
 FileManagerWindow = window_module.FileManagerWindow
-open_window = window_module.open_window
 build_response = backend.build_response
 build_ui = backend.build_ui
 handle_action = backend.handle_action
@@ -77,6 +79,13 @@ def _default_parent():
         return parent if parent.winfo_exists() else None
     except Exception:
         return None
+
+
+def open_window(parent=None, *, initial_path: Path | str | None = None) -> FileManagerWindow:
+    """Öffnet ein Fenster und ergänzt die zentrale Tastatur-Kurzhilfe."""
+    app = window_module.open_window(parent, initial_path=initial_path)
+    keyboard_help_module.install_keyboard_help(app)
+    return app
 
 
 def open_ui(parent=None, *, initial_path: Path | str | None = None) -> FileManagerWindow:
