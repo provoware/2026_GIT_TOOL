@@ -20,16 +20,30 @@ DEFAULT_DATABASE = PROJECT_ROOT / "data" / "archiv_manager.sqlite3"
 DEFAULT_LOG_FILE = PROJECT_ROOT / "logs" / "archiv_manager.log"
 
 
+def default_database_path() -> Path:
+    configured = os.environ.get("GENREARCHIV_ARCHIVE_DB")
+    return Path(configured).expanduser() if configured else DEFAULT_DATABASE
+
+
 def configure_logging(log_file: Path | str) -> logging.Logger:
+    """Konfiguriert das Archiv-Log erneut, wenn sich der Zielpfad ändert."""
     logger = logging.getLogger("archiv_manager")
-    if getattr(logger, "_archiv_manager_configured", False):
+    path = Path(log_file).expanduser().resolve()
+    if getattr(logger, "_archiv_manager_log_path", None) == path:
         return logger
+
+    for handler in tuple(logger.handlers):
+        logger.removeHandler(handler)
+        try:
+            handler.close()
+        except Exception:  # pragma: no cover - defensiver Handler-Abbau
+            pass
+
     logger.setLevel(logging.INFO)
     logger.propagate = False
     formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
     console = logging.StreamHandler()
     console.setFormatter(formatter)
-    path = Path(log_file).expanduser()
     path.parent.mkdir(parents=True, exist_ok=True)
     file_handler = logging.handlers.RotatingFileHandler(
         path,
@@ -39,7 +53,7 @@ def configure_logging(log_file: Path | str) -> logging.Logger:
     )
     file_handler.setFormatter(formatter)
     logger.handlers = [console, file_handler]
-    setattr(logger, "_archiv_manager_configured", True)
+    setattr(logger, "_archiv_manager_log_path", path)
     return logger
 
 
@@ -54,11 +68,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--database",
         type=Path,
-        default=Path(os.environ.get("GENREARCHIV_ARCHIVE_DB", DEFAULT_DATABASE)),
+        default=default_database_path(),
         help="Abweichender Pfad zur gemeinsamen SQLite-Datenbank.",
     )
     parser.add_argument("--log-file", type=Path, default=DEFAULT_LOG_FILE)
-    parser.add_argument("--list", action="store_true", help="Archive und Einstellungen anzeigen.")
+    operation = parser.add_mutually_exclusive_group()
+    operation.add_argument("--list", action="store_true", help="Archive und Einstellungen anzeigen.")
     parser.add_argument("--archive", help="Archivkennung oder Archivname für eine direkte Eingabe.")
     parser.add_argument("--category", default="Allgemein", help="Kategorie der direkten Eingabe.")
     parser.add_argument("--value", help="Direkt zu speichernder Text; ohne diese Option startet der Assistent.")
@@ -68,7 +83,7 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Konservative Rechtschreibvorschläge bei direkter Eingabe übernehmen.",
     )
-    parser.add_argument("--create-archive", help="Neues Archiv mit diesem Namen anlegen.")
+    operation.add_argument("--create-archive", help="Neues Archiv mit diesem Namen anlegen.")
     parser.add_argument("--description", default="", help="Beschreibung für ein neues Archiv.")
     parser.add_argument(
         "--split-mode",
@@ -76,6 +91,21 @@ def build_parser() -> argparse.ArgumentParser:
         default="comma",
         help="Kommas trennen Einträge oder die gesamte Eingabe bleibt zusammen.",
     )
+    operation.add_argument(
+        "--set-mode",
+        choices=("comma", "whole"),
+        help="Setzt den Eingabemodus des mit --archive angegebenen Archivs.",
+    )
+    operation.add_argument("--show-aliases", action="store_true", help="Alle kurzen CLI-Aliase anzeigen.")
+    operation.add_argument("--install-aliases", action="store_true", help="CLI-Aliase installieren oder aktualisieren.")
+    operation.add_argument("--uninstall-aliases", action="store_true", help="Verwaltete CLI-Aliase entfernen.")
+    parser.add_argument(
+        "--alias-dir",
+        type=Path,
+        default=Path.home() / ".local" / "bin",
+        help="Zielordner der Alias-Befehle.",
+    )
+    parser.add_argument("--force", action="store_true", help="Namenskollisionen bei der Aliasinstallation ersetzen.")
     return parser
 
 
@@ -103,7 +133,7 @@ def print_overview(service: ArchiveService) -> None:
         print(f"    {_mode_text(archive.split_on_comma)}")
 
 
-def _select_archive(service: ArchiveService, input_fn: Callable[[str], str]):
+def select_archive(service: ArchiveService, input_fn: Callable[[str], str]):
     archives = service.list_archives()
     print_overview(service)
     while True:
@@ -135,8 +165,17 @@ def _print_prepared(archive, prepared) -> None:
         print(f"{index}. {item.value}{suffix}")
 
 
-def _add_wizard(service: ArchiveService, input_fn: Callable[[str], str]) -> None:
-    archive = _select_archive(service, input_fn)
+def add_wizard(
+    service: ArchiveService,
+    input_fn: Callable[[str], str],
+    *,
+    archive_identifier: int | str | None = None,
+) -> None:
+    archive = (
+        service.get_archive(archive_identifier)
+        if archive_identifier is not None
+        else select_archive(service, input_fn)
+    )
     _section(f"EINGABE — {archive.name}")
     print(archive.description)
     print(_mode_text(archive.split_on_comma))
@@ -171,7 +210,7 @@ def _add_wizard(service: ArchiveService, input_fn: Callable[[str], str]) -> None
     print(f"Ignorierte Duplikate: {len(result.duplicates)}")
 
 
-def _create_archive_wizard(service: ArchiveService, input_fn: Callable[[str], str]) -> None:
+def create_archive_wizard(service: ArchiveService, input_fn: Callable[[str], str]) -> None:
     _section("NEUES ARCHIV")
     print("Ein Archiv bündelt zusammengehörige Einträge und besitzt einen eigenen Komma-Modus.")
     name = input_fn("Eindeutiger Archivname: ").strip()
@@ -186,8 +225,17 @@ def _create_archive_wizard(service: ArchiveService, input_fn: Callable[[str], st
     print(f"Archiv angelegt: {archive.name} ({archive.slug})")
 
 
-def _change_mode_wizard(service: ArchiveService, input_fn: Callable[[str], str]) -> None:
-    archive = _select_archive(service, input_fn)
+def change_mode_wizard(
+    service: ArchiveService,
+    input_fn: Callable[[str], str],
+    *,
+    archive_identifier: int | str | None = None,
+) -> None:
+    archive = (
+        service.get_archive(archive_identifier)
+        if archive_identifier is not None
+        else select_archive(service, input_fn)
+    )
     _section(f"EINGABEMODUS — {archive.name}")
     print(_mode_text(archive.split_on_comma))
     new_mode = _confirm(input_fn, "Soll künftig jedes Komma einen eigenen Eintrag trennen?")
@@ -197,6 +245,13 @@ def _change_mode_wizard(service: ArchiveService, input_fn: Callable[[str], str])
         source="cli",
     )
     print(_mode_text(updated.split_on_comma))
+
+
+# Rückwärtskompatibilität für bereits importierte interne Hilfsfunktionen.
+_select_archive = select_archive
+_add_wizard = add_wizard
+_create_archive_wizard = create_archive_wizard
+_change_mode_wizard = change_mode_wizard
 
 
 def run_interactive(service: ArchiveService, input_fn: Callable[[str], str] = input) -> int:
@@ -211,11 +266,11 @@ def run_interactive(service: ArchiveService, input_fn: Callable[[str], str] = in
         print("[0] Beenden")
         choice = input_fn("Auswahl: ").strip()
         if choice == "1":
-            _add_wizard(service, input_fn)
+            add_wizard(service, input_fn)
         elif choice == "2":
-            _create_archive_wizard(service, input_fn)
+            create_archive_wizard(service, input_fn)
         elif choice == "3":
-            _change_mode_wizard(service, input_fn)
+            change_mode_wizard(service, input_fn)
         elif choice == "4":
             print_overview(service)
         elif choice == "0":
@@ -225,11 +280,44 @@ def run_interactive(service: ArchiveService, input_fn: Callable[[str], str] = in
             print("Bitte 0, 1, 2, 3 oder 4 eingeben.")
 
 
-def main(argv: Sequence[str] | None = None) -> int:
-    args = build_parser().parse_args(argv)
-    logger = configure_logging(args.log_file)
-    service = ArchiveService(args.database, logger=logger)
+def _handle_alias_management(args, service: ArchiveService) -> int | None:
+    if not (args.show_aliases or args.install_aliases or args.uninstall_aliases):
+        return None
     try:
+        from .aliases import alias_table, install_aliases, uninstall_aliases
+    except ImportError:
+        from aliases import alias_table, install_aliases, uninstall_aliases
+
+    if args.show_aliases:
+        print(alias_table(service))
+        return 0
+    if args.uninstall_aliases:
+        removed = uninstall_aliases(args.alias_dir)
+        print(f"Verwaltete Aliase entfernt: {len(removed)}")
+        return 0
+    installed = install_aliases(service, args.alias_dir, force=args.force)
+    print(f"Aliase installiert oder aktualisiert: {len(installed)}")
+    print(f"Zielordner: {args.alias_dir.expanduser()}")
+    print("Steueroberfläche starten: garch")
+    return 0
+
+
+def main(
+    argv: Sequence[str] | None = None,
+    *,
+    input_fn: Callable[[str], str] = input,
+) -> int:
+    args = build_parser().parse_args(argv)
+    try:
+        logger = configure_logging(args.log_file)
+        service = ArchiveService(args.database, logger=logger)
+    except (ArchiveStorageError, OSError) as exc:
+        print(f"Fehler: CLI konnte nicht initialisiert werden: {exc}", file=sys.stderr)
+        return 2
+    try:
+        alias_result = _handle_alias_management(args, service)
+        if alias_result is not None:
+            return alias_result
         if args.list:
             print_overview(service)
             return 0
@@ -242,6 +330,19 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
             print(f"Archiv angelegt: {archive.name} ({archive.slug})")
             return 0
+        if args.set_mode:
+            if not args.archive:
+                raise ArchiveServiceError("--set-mode benötigt zusätzlich --archive.")
+            archive = service.get_archive(args.archive)
+            updated = service.update_archive(
+                archive.id,
+                split_on_comma=args.set_mode == "comma",
+                source="cli",
+            )
+            print(f"{updated.name}: {_mode_text(updated.split_on_comma)}")
+            return 0
+        if args.value is not None and not args.archive:
+            raise ArchiveServiceError("--value benötigt zusätzlich --archive.")
         if args.archive and args.value is not None:
             archive, prepared = service.prepare_add(
                 args.archive,
@@ -249,7 +350,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 apply_spelling=args.apply_spelling,
             )
             _print_prepared(archive, prepared)
-            if not args.yes and not _confirm(input, "Geprüfte Einträge speichern?"):
+            if not args.yes and not _confirm(input_fn, "Geprüfte Einträge speichern?"):
                 print("Abgebrochen. Es wurde nichts gespeichert.")
                 return 1
             result = service.add_text(
@@ -261,8 +362,11 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
             print(f"Gespeichert: {len(result.inserted)}; Duplikate ignoriert: {len(result.duplicates)}")
             return 0
-        return run_interactive(service)
-    except (ArchiveServiceError, ArchiveStorageError) as exc:
+        if args.archive:
+            add_wizard(service, input_fn, archive_identifier=args.archive)
+            return 0
+        return run_interactive(service, input_fn)
+    except (ArchiveServiceError, ArchiveStorageError, OSError) as exc:
         logger.error("Archivvorgang fehlgeschlagen: %s", exc)
         print(f"Fehler: {exc}", file=sys.stderr)
         return 2

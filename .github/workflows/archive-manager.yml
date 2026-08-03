@@ -26,17 +26,21 @@ jobs:
           sudo apt-get install -y python3-tk xvfb
       - name: Testabhängigkeiten installieren
         run: python -m pip install --disable-pip-version-check pytest
-      - name: Service-, CLI- und Modulverträge testen
+      - name: Service-, CLI-, Alias- und Modulverträge testen
         run: >-
           python -m pytest -q
           tests/test_archiv_manager_service.py
           tests/test_archiv_manager_cli.py
+          tests/test_archiv_manager_aliases.py
           tests/test_archiv_manager_entry.py
       - name: Grafisches Archiv-Modul unter Xvfb testen
         run: >-
           xvfb-run -a -s "-screen 0 1440x1000x24"
           python -m pytest -q tests/test_archiv_manager_window.py
       - name: Syntax prüfen
-        run: python -m py_compile modules/archiv_manager/*.py
+        run: >-
+          python -m py_compile
+          modules/archiv_manager/*.py
+          tests/test_archiv_manager_*.py
       - name: Repository unverändert halten
         run: git diff --exit-code

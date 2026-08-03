@@ -1,8 +1,11 @@
 {
   "id": "archiv_manager",
   "name": "Archiv-Verwaltung",
-  "version": "1.0.0",
-  "description": "Gemeinsame Archivdatenbank mit grafischer Verwaltung, CLI-Assistent, Kategorien, Filtern, Duplikatprüfung, Komma-Modus und Audit-Protokoll.",
+  "version": "1.1.0",
+  "description": "Gemeinsame Archivdatenbank mit GUI, zentraler CLI-Steuerung, kurzen Alias-Befehlen, Kategorien, Filtern, Duplikatprüfung und Audit-Protokoll.",
   "entry": "entry.py",
-  "permissions": ["read", "write:data"]
+  "permissions": [
+    "read",
+    "write:data"
+  ]
 }
