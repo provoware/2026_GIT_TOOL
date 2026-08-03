@@ -9,7 +9,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "system"))
 
 import autosave_manager
 import backup_center
-from session_lifecycle import AutosaveSession, ShutdownOutcome, run_shutdown_sequence
+from session_lifecycle import (
+    AutosaveSession,
+    ShutdownOutcome,
+    complete_shutdown,
+    run_shutdown_sequence,
+)
 
 
 class FakeScheduler:
@@ -193,3 +198,49 @@ def test_shutdown_reports_backup_error_without_losing_autosave_result(tmp_path):
     assert "Erfolg: Autosave erstellt" in outcome.report
     assert "Fehler: Backup fehlgeschlagen." in outcome.report
     assert "Ursache: invalid config" in outcome.report
+
+
+def test_complete_shutdown_cancels_autosave_before_scheduling_destroy():
+    events = []
+    scheduled = []
+
+    def schedule(delay, callback):
+        events.append("schedule")
+        scheduled.append((delay, callback))
+        return "destroy-job"
+
+    result = complete_shutdown(
+        ShutdownOutcome("report\n", True),
+        append_report=lambda report: events.append(("report", report)),
+        set_status=lambda message, state: events.append(("status", message, state)),
+        cancel_autosave=lambda: events.append("cancel"),
+        schedule=schedule,
+        destroy=lambda: events.append("destroy"),
+    )
+
+    assert result == "destroy-job"
+    assert events == [
+        ("report", "report\n"),
+        ("status", "Abmelden abgeschlossen.", "success"),
+        "cancel",
+        "schedule",
+    ]
+    assert scheduled[0][0] == 200
+    assert "destroy" not in events
+
+    scheduled[0][1]()
+    assert events[-1] == "destroy"
+
+
+def test_complete_shutdown_uses_error_status_for_partial_failure():
+    statuses = []
+    complete_shutdown(
+        ShutdownOutcome("problem\n", False),
+        append_report=lambda _report: None,
+        set_status=lambda message, state: statuses.append((message, state)),
+        cancel_autosave=lambda: None,
+        schedule=lambda _delay, _callback: "job",
+        destroy=lambda: None,
+    )
+
+    assert statuses == [("Abmelden mit Problemen.", "error")]
