@@ -6,10 +6,12 @@ on:
       - "system/launcher_gui.py"
       - "system/main_window.py"
       - "system/ui_acceptance.py"
+      - "system/ui_theme_adapter.py"
       - "config/launcher_gui.json"
       - "scripts/probe_tk_ui.py"
       - "scripts/run_ui_acceptance.py"
       - "tests/test_ui_acceptance.py"
+      - "tests/test_ui_theme_adapter.py"
       - ".github/workflows/ui-acceptance.yml"
 
 permissions:
@@ -29,8 +31,11 @@ jobs:
           sudo apt-get install -y python3-tk xvfb imagemagick
       - name: Testabhängigkeiten installieren
         run: python -m pip install --disable-pip-version-check pytest
-      - name: Abnahmevertrag testen
-        run: python -m pytest -q tests/test_ui_acceptance.py
+      - name: Abnahmevertrag und Themeadapter testen
+        run: >-
+          python -m pytest -q
+          tests/test_ui_acceptance.py
+          tests/test_ui_theme_adapter.py
       - name: Tkinter-Oberflächen unter Xvfb vermessen
         run: |
           mkdir -p artifacts/screenshots
@@ -48,6 +53,7 @@ jobs:
         run: >-
           python -m py_compile
           system/ui_acceptance.py
+          system/ui_theme_adapter.py
           scripts/probe_tk_ui.py
           scripts/run_ui_acceptance.py
       - name: Abnahmebelege veröffentlichen
