@@ -123,6 +123,9 @@ Nur Funktionen ohne UI-, Thread-, Prozess-, Logging- oder Dialogseiteneffekte:
 - atomisches Schreiben des eigenen Desktop-Eintrags
 - Schutz fremder gleichnamiger Autostartdateien
 - standardkonforme `Exec`-Quotierung, `TryExec` und Arbeitsverzeichnis
+- Safe-Mode verhindert Autosave-Planung
+- Safe-Mode überspringt Autosave und Backup vollständig
+- Safe-Mode blockiert Autostartänderungen
 
 ### Sicherung
 
@@ -130,6 +133,7 @@ Nur Funktionen ohne UI-, Thread-, Prozess-, Logging- oder Dialogseiteneffekte:
 - `system/autostart_manager.py`
 - `tests/test_session_lifecycle.py`
 - `tests/test_autostart_manager.py`
+- `tests/test_gate5_safe_mode.py`
 - `tests/test_gate5_session_lifecycle_codemod.py`
 - `scripts/apply_gate5_session_lifecycle.py`
 - `.github/workflows/gate-5-session-lifecycle.yml`
