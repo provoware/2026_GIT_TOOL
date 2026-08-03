@@ -24,7 +24,7 @@
         "accent": "#4da3ff",
         "button_background": "#1f2a36",
         "button_foreground": "#f5f5f5",
-        "status_success": "#2e7d32",
+        "status_success": "#388e3c",
         "status_error": "#cf6679",
         "status_busy": "#4da3ff",
         "status_foreground": "#0b0b0b"
@@ -66,8 +66,8 @@
         "accent": "#33b7ff",
         "button_background": "#123a5a",
         "button_foreground": "#ffffff",
-        "status_success": "#1f8a5b",
-        "status_error": "#d84a4a",
+        "status_success": "#26a269",
+        "status_error": "#ef5350",
         "status_busy": "#33b7ff",
         "status_foreground": "#0a1a2b"
       }
