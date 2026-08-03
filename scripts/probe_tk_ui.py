@@ -32,6 +32,7 @@ INTERACTIVE_CLASSES = {
     "Spinbox",
     "Text",
 }
+TEXT_CLIP_CLASSES = {"Button", "Checkbutton", "Menubutton", "Radiobutton"}
 
 
 def _descendants(widget) -> list[Any]:
@@ -64,6 +65,7 @@ def _measure(root, profile: DeviceProfile, surface: str) -> dict[str, Any]:
     root_width = root.winfo_width()
     root_height = root.winfo_height()
     overflow: list[dict[str, Any]] = []
+    clipped_text: list[dict[str, Any]] = []
     undersized: list[dict[str, Any]] = []
     focusable: list[str] = []
 
@@ -88,6 +90,16 @@ def _measure(root, profile: DeviceProfile, surface: str) -> dict[str, Any]:
                 }
             )
         widget_class = widget.winfo_class()
+        if widget_class in TEXT_CLIP_CLASSES:
+            requested_width = widget.winfo_reqwidth()
+            if requested_width > width + 1:
+                clipped_text.append(
+                    {
+                        "widget": name,
+                        "width": width,
+                        "requested_width": requested_width,
+                    }
+                )
         if widget_class in INTERACTIVE_CLASSES:
             focusable.append(name)
             if profile.input_mode == "touch" and (width < 44 or height < 44):
@@ -101,6 +113,7 @@ def _measure(root, profile: DeviceProfile, surface: str) -> dict[str, Any]:
         "requested_size": [profile.width, profile.height],
         "actual_size": [root_width, root_height],
         "overflow_widgets": overflow,
+        "clipped_text_widgets": clipped_text,
         "focusable_count": len(focusable),
         "focusable_widgets": focusable,
         "undersized_touch_targets": undersized,
