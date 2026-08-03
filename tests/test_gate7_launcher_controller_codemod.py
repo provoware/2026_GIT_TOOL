@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
-from apply_gate7_launcher_controller import transform
+from apply_gate7_launcher_controller_v2 import transform
 
 
 def launcher_source() -> str:
