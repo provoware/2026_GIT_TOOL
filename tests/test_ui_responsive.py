@@ -8,9 +8,12 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "system"))
 
 from ui_responsive import (
+    LAUNCHER_HELP_COMPACT,
+    LAUNCHER_HELP_FULL,
     MAIN_WINDOW_MIN_HEIGHT,
     MAIN_WINDOW_MIN_WIDTH,
     UiResponsiveError,
+    resolve_launcher_help_text,
     resolve_launcher_layout,
     resolve_workspace_grid,
 )
@@ -29,6 +32,15 @@ def test_help_uses_two_columns_when_1024_pixels_are_available():
     assert resolve_launcher_layout(999).help_columns == 1
     assert resolve_launcher_layout(1024).help_columns == 2
     assert resolve_launcher_layout(1200).help_columns == 2
+
+
+def test_help_text_is_compact_below_wide_breakpoint_without_losing_help_paths():
+    assert resolve_launcher_help_text(1440) == LAUNCHER_HELP_FULL
+    assert resolve_launcher_help_text(1024) == LAUNCHER_HELP_COMPACT
+    assert resolve_launcher_help_text(768) == LAUNCHER_HELP_COMPACT
+    assert "F1" in LAUNCHER_HELP_COMPACT
+    assert "Tooltips" in LAUNCHER_HELP_COMPACT
+    assert len(LAUNCHER_HELP_COMPACT) < len(LAUNCHER_HELP_FULL) / 2
 
 
 def test_developer_actions_use_three_by_two_grid_at_1024_pixels():
