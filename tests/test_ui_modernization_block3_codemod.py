@@ -30,24 +30,20 @@ def _copy_targets(tmp_path: Path) -> Path:
     return tmp_path
 
 
-def test_codemod_is_idempotent_and_produces_valid_python(tmp_path: Path):
+def test_integrated_codemod_is_idempotent_and_python_stays_valid(tmp_path: Path):
     codemod = _load_codemod()
     worktree = _copy_targets(tmp_path)
 
     first = codemod.apply(worktree, check=False)
     second = codemod.apply(worktree, check=False)
 
-    assert first == [
-        "system/ui_components.py",
-        "system/launcher_gui.py",
-        "system/main_window.py",
-    ]
+    assert first == []
     assert second == []
     for relative in codemod.TARGETS.values():
         ast.parse((worktree / relative).read_text(encoding="utf-8"))
 
 
-def test_check_mode_reports_missing_integration_without_writing(tmp_path: Path):
+def test_check_mode_accepts_integrated_tree_without_writing(tmp_path: Path):
     codemod = _load_codemod()
     worktree = _copy_targets(tmp_path)
     before = {
@@ -57,11 +53,7 @@ def test_check_mode_reports_missing_integration_without_writing(tmp_path: Path):
 
     changed = codemod.apply(worktree, check=True)
 
-    assert changed == [
-        "system/ui_components.py",
-        "system/launcher_gui.py",
-        "system/main_window.py",
-    ]
+    assert changed == []
     after = {
         relative.as_posix(): (worktree / relative).read_text(encoding="utf-8")
         for relative in codemod.TARGETS.values()
@@ -70,16 +62,14 @@ def test_check_mode_reports_missing_integration_without_writing(tmp_path: Path):
 
 
 def test_launcher_roles_and_status_contract_are_integrated(tmp_path: Path):
-    codemod = _load_codemod()
     worktree = _copy_targets(tmp_path)
-    codemod.apply(worktree, check=False)
     source = (worktree / "system/launcher_gui.py").read_text(encoding="utf-8")
 
     assert "from ui_components import UiComponentError, configure_status_widget, register_component" in source
     assert 'register_component(self.refresh_button, "primary")' in source
     assert 'register_component(self.logout_button, "danger")' in source
     assert 'register_component(self.backup_button, "primary")' in source
-    assert source.count('register_component(') >= 16
+    assert source.count("register_component(") >= 16
     assert "self.component_theme = theme" in source
     assert "style = configure_status_widget(" in source
     assert "self.status_indicator.configure(text=style.symbol)" in source
@@ -88,9 +78,7 @@ def test_launcher_roles_and_status_contract_are_integrated(tmp_path: Path):
 
 
 def test_main_window_roles_preserve_lifecycle_and_geometry_contracts(tmp_path: Path):
-    codemod = _load_codemod()
     worktree = _copy_targets(tmp_path)
-    codemod.apply(worktree, check=False)
     source = (worktree / "system/main_window.py").read_text(encoding="utf-8")
 
     assert "from ui_components import register_component" in source
@@ -104,11 +92,28 @@ def test_main_window_roles_preserve_lifecycle_and_geometry_contracts(tmp_path: P
     assert "build_grid(" in source
 
 
-def test_hover_fix_always_produces_distinct_primary_state(tmp_path: Path):
-    codemod = _load_codemod()
+def test_hover_fix_is_present_in_integrated_components(tmp_path: Path):
     worktree = _copy_targets(tmp_path)
-    codemod.apply(worktree, check=False)
     source = (worktree / "system/ui_components.py").read_text(encoding="utf-8")
 
     assert 'hover_bg = mix_hex(normal_bg, "#ffffff", 0.12)' in source
     assert 'hover_bg = mix_hex(normal_bg, palette.accent, 0.20)' not in source
+
+
+def test_partial_or_legacy_source_is_rejected_instead_of_silently_skipped(tmp_path: Path):
+    codemod = _load_codemod()
+    worktree = _copy_targets(tmp_path)
+    launcher = worktree / "system/launcher_gui.py"
+    source = launcher.read_text(encoding="utf-8")
+    launcher.write_text(
+        source.replace(
+            '        register_component(self.refresh_button, "primary")\n',
+            "",
+            1,
+        ),
+        encoding="utf-8",
+    )
+
+    changed = codemod.apply(worktree, check=True)
+
+    assert changed == ["system/launcher_gui.py"]
