@@ -15,6 +15,9 @@
     "datei_manager": {
       "action": "list_tags"
     },
+    "archiv_manager": {
+      "action": "list_archives"
+    },
     "media_ffmpeg_wrapper": {
       "action": "list_presets"
     },

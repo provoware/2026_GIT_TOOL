@@ -1,8 +1,10 @@
 {
   "required_entry": "module.py",
-  "entry_exceptions": [],
+  "entry_exceptions": [
+    "datei_manager",
+    "archiv_manager"
+  ],
   "required_files": [
-    "manifest.json",
-    "module.py"
+    "manifest.json"
   ]
 }
