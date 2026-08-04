@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Resolve, install and validate all declared Provoware Memo Python dependencies."""
+
 from __future__ import annotations
 
 import argparse
@@ -143,9 +144,7 @@ def validate(requirements: list[str]) -> list[Result]:
         module = import_name(distribution)
         is_installed, version = installed(distribution)
         if not is_installed:
-            results.append(
-                Result(requirement, distribution, module, "missing", version)
-            )
+            results.append(Result(requirement, distribution, module, "missing", version))
             continue
         try:
             importlib.import_module(module)
@@ -199,9 +198,7 @@ def write_report(
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(
-        description="Provoware-Memo-Abhängigkeitsauflösung"
-    )
+    parser = argparse.ArgumentParser(description="Provoware-Memo-Abhängigkeitsauflösung")
     parser.add_argument("--requirements", type=Path, required=True)
     parser.add_argument("--check-only", action="store_true")
     parser.add_argument("--report", type=Path)
@@ -214,8 +211,7 @@ def main(argv: list[str] | None = None) -> int:
         results = validate(requirements)
         if any(item.status != "ok" for item in results) and not args.check_only:
             print(
-                "Abhängigkeiten: Fehlende oder beschädigte Pakete werden "
-                "automatisch repariert."
+                "Abhängigkeiten: Fehlende oder beschädigte Pakete werden " "automatisch repariert."
             )
             install(args.requirements)
             importlib.invalidate_caches()
@@ -234,14 +230,9 @@ def main(argv: list[str] | None = None) -> int:
                 f"Abhängigkeit {item.distribution} / Import {item.import_name}: "
                 f"{item.status.upper()} — {item.detail}"
             )
-        print(
-            f"Abhängigkeitsgraph: {'OK' if graph_ok else 'FEHLER'} — "
-            f"{graph_detail}"
-        )
+        print(f"Abhängigkeitsgraph: {'OK' if graph_ok else 'FEHLER'} — " f"{graph_detail}")
         if any(item.status != "ok" for item in results) or not graph_ok:
-            raise DependencyError(
-                "Nachvalidierung der Abhängigkeiten ist fehlgeschlagen."
-            )
+            raise DependencyError("Nachvalidierung der Abhängigkeiten ist fehlgeschlagen.")
         print("Abhängigkeiten: vollständig installiert und nachvalidiert.")
         return 0
     except DependencyError as exc:
