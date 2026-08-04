@@ -96,6 +96,42 @@ def _api(tmp_path: Path) -> web_server.ProvowareApi:
                 "message": "ok",
                 "data": {"items": [{"id": "t1", "title": "Test"}]},
             }
+        if request["action"] == "set_legend":
+            return {
+                "status": "ok",
+                "message": "ok",
+                "data": {"legend": request["legend"]},
+            }
+        if request["action"] == "set_day_colors":
+            return {
+                "status": "ok",
+                "message": "ok",
+                "data": {"date": request["date"], "color_ids": request["color_ids"]},
+            }
+        if request["action"] in {"add_appointment", "update_appointment"}:
+            return {
+                "status": "ok",
+                "message": "ok",
+                "data": {
+                    "id": request.get("id", "termin-1"),
+                    "title": request["title"],
+                    "date": request["date"],
+                },
+            }
+        if request["action"] == "delete_appointment":
+            return {"status": "ok", "message": "ok", "data": {"id": request["id"]}}
+        if request["action"] == "list_reminders":
+            return {
+                "status": "ok",
+                "message": "ok",
+                "data": {"due": [], "upcoming": []},
+            }
+        if request["action"] == "acknowledge_reminder":
+            return {
+                "status": "ok",
+                "message": "ok",
+                "data": {"id": request["id"], "reminder_acknowledged": True},
+            }
         return {
             "status": "ok",
             "message": "ok",
@@ -267,3 +303,45 @@ def test_image_preview_uses_controlled_png_response(tmp_path: Path) -> None:
     content, content_type = _api(tmp_path).file_preview(str(image_path))
     assert content_type == "image/png"
     assert content.startswith(b"\x89PNG")
+
+
+def test_calendar_color_appointment_and_reminder_endpoints(tmp_path: Path) -> None:
+    api = _api(tmp_path)
+    legend = [
+        {"id": f"farbe-{index}", "title": f"Farbe {index}", "color": "#2563eb"}
+        for index in range(1, 6)
+    ]
+    saved_legend = api.dispatch("PUT", "/api/calendar/legend", body={"legend": legend})
+    assert saved_legend.status == HTTPStatus.OK
+    assert len(saved_legend.payload["data"]["legend"]) == 5
+
+    marker = api.dispatch(
+        "PUT",
+        "/api/calendar/day-colors",
+        body={"date": "2026-08-04", "color_ids": ["farbe-1", "farbe-2"]},
+    )
+    assert marker.payload["data"]["color_ids"] == ["farbe-1", "farbe-2"]
+
+    appointment = api.dispatch(
+        "POST",
+        "/api/calendar/appointments",
+        body={"title": "Termin", "date": "2026-08-04", "reminder_minutes": 30},
+    )
+    assert appointment.status == HTTPStatus.CREATED
+    assert appointment.payload["data"]["id"] == "termin-1"
+
+    updated = api.dispatch(
+        "PUT",
+        "/api/calendar/appointments/termin-1",
+        body={"title": "Termin neu", "date": "2026-08-05"},
+    )
+    assert updated.payload["data"]["title"] == "Termin neu"
+
+    reminders = api.dispatch("GET", "/api/calendar/reminders")
+    assert reminders.payload["data"] == {"due": [], "upcoming": []}
+
+    acknowledged = api.dispatch("POST", "/api/calendar/reminders/termin-1/acknowledge", body={})
+    assert acknowledged.payload["data"]["reminder_acknowledged"] is True
+
+    deleted = api.dispatch("DELETE", "/api/calendar/appointments/termin-1")
+    assert deleted.payload["data"]["id"] == "termin-1"

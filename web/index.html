@@ -6,7 +6,7 @@
   <meta name="color-scheme" content="dark light">
   <meta name="description" content="Provoware Memo – integrierte lokale Arbeitsoberfläche für Notizen, Aufgaben, Kalender, Charaktere, Dateien, Medien, Profile und Archive.">
   <title>Provoware Memo</title>
-  <link rel="stylesheet" href="/styles.css?v=3">
+  <link rel="stylesheet" href="/styles.css?v=4">
 </head>
 <body>
   <div id="app" class="app-shell">
@@ -18,6 +18,15 @@
         <p class="subtitle">Alle bestehenden Inhalte und Module in einer gemeinsamen Oberfläche</p>
       </div>
       <div class="header-dashboard">
+        <section class="mini-calendar-card" aria-label="Kompakter Monatskalender">
+          <div class="mini-calendar-heading">
+            <button class="mini-calendar-nav" type="button" data-action="mini-calendar-prev" aria-label="Vorheriger Monat">‹</button>
+            <button id="miniCalendarTitle" class="mini-calendar-title" type="button" data-view="calendar">Monat</button>
+            <button class="mini-calendar-nav" type="button" data-action="mini-calendar-next" aria-label="Nächster Monat">›</button>
+          </div>
+          <div class="mini-calendar-weekdays" aria-hidden="true"><span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span><span>Sa</span><span>So</span></div>
+          <div id="headerMiniCalendar" class="mini-calendar-grid"></div>
+        </section>
         <div class="clock-block" aria-live="off"><strong id="headerTime">--:--</strong><span id="headerDate">--</span></div>
         <div class="signal-grid" aria-live="polite">
           <span class="signal"><i id="processLight" class="light idle"></i><span>Prozess</span></span>
@@ -119,8 +128,61 @@
         </section>
 
         <section class="view" data-panel="calendar">
-          <div class="section-heading"><div><p class="eyebrow">KALENDER</p><h2>Jahr, Monat und Woche</h2></div><div class="inline-controls"><select id="calendarView"><option value="monat">Monat</option><option value="woche">Woche</option><option value="jahr">Jahr</option></select><input id="calendarDate" type="date"><button class="button secondary" type="button" data-action="load-calendar">Anzeigen</button></div></div>
-          <article class="panel"><div id="calendarGrid" class="calendar-grid empty-state">Keine Kalendereinträge vorhanden.</div></article>
+          <div class="section-heading calendar-heading">
+            <div><p class="eyebrow">KALENDER</p><h2>Monatsübersicht, Termine und Erinnerungen</h2></div>
+            <div class="calendar-navigation" aria-label="Kalendernavigation">
+              <button class="button secondary" type="button" data-action="calendar-prev" aria-label="Vorheriger Zeitraum">‹</button>
+              <button class="button secondary" type="button" data-action="calendar-today">Heute</button>
+              <button class="button secondary" type="button" data-action="calendar-next" aria-label="Nächster Zeitraum">›</button>
+              <select id="calendarView" aria-label="Kalenderansicht"><option value="monat">Monat</option><option value="woche">Woche</option><option value="jahr">Jahr</option></select>
+              <input id="calendarDate" type="date" aria-label="Bezugsdatum">
+              <button class="button primary" type="button" data-action="load-calendar">Anzeigen</button>
+            </div>
+          </div>
+          <article class="panel calendar-options">
+            <label class="checkbox"><input id="calendarShowWeekends" type="checkbox" checked><span>Wochenenden anzeigen</span></label>
+            <label class="checkbox"><input id="calendarShowCompleted" type="checkbox" checked><span>Erledigte Aufgaben anzeigen</span></label>
+            <label class="checkbox"><input id="calendarShowReminders" type="checkbox" checked><span>Erinnerungen hervorheben</span></label>
+            <button class="button small secondary" type="button" data-action="enable-notifications">Browser-Erinnerungen erlauben</button>
+            <span id="calendarRangeLabel" class="muted">Zeitraum wird geladen.</span>
+          </article>
+          <div class="calendar-workspace">
+            <div class="calendar-main-column">
+              <article class="panel calendar-panel">
+                <div class="calendar-weekdays" aria-hidden="true"><span>Montag</span><span>Dienstag</span><span>Mittwoch</span><span>Donnerstag</span><span>Freitag</span><span>Samstag</span><span>Sonntag</span></div>
+                <div id="calendarGrid" class="calendar-grid empty-state">Keine Kalendereinträge vorhanden.</div>
+                <div id="calendarLegend" class="calendar-legend" aria-label="Farblegende"></div>
+              </article>
+              <article class="panel"><div class="panel-toolbar"><h3>Terminübersicht</h3><span id="calendarAppointmentCount" class="tag">0 Termine</span></div><div id="calendarAgenda" class="item-list empty-state">Keine Termine im gewählten Zeitraum.</div></article>
+            </div>
+            <aside class="calendar-sidebar-stack">
+              <form id="appointmentForm" class="panel form-panel compact-form">
+                <div class="panel-toolbar"><h3 id="appointmentFormTitle">Neuer Termin</h3><button id="appointmentReset" class="button small secondary" type="button" data-action="reset-appointment" hidden>Bearbeitung beenden</button></div>
+                <input id="appointmentId" type="hidden">
+                <label>Titel<input id="appointmentTitle" maxlength="180" required></label>
+                <div class="form-row"><label>Datum<input id="appointmentDate" type="date" required></label><label class="checkbox appointment-all-day"><input id="appointmentAllDay" type="checkbox"><span>Ganztägig</span></label></div>
+                <div class="form-row" id="appointmentTimeRow"><label>Beginn<input id="appointmentStart" type="time"></label><label>Ende<input id="appointmentEnd" type="time"></label></div>
+                <label>Ort<input id="appointmentLocation" maxlength="180"></label>
+                <div class="form-row"><label>Farbe<select id="appointmentColor"><option value="">Ohne Farbe</option></select></label><label>Erinnerung<select id="appointmentReminder"><option value="-1">Keine</option><option value="0">Zum Termin</option><option value="5">5 Minuten vorher</option><option value="15">15 Minuten vorher</option><option value="30">30 Minuten vorher</option><option value="60">1 Stunde vorher</option><option value="1440">1 Tag vorher</option><option value="10080">1 Woche vorher</option></select></label></div>
+                <label>Notizen<textarea id="appointmentNotes" rows="3" maxlength="4000"></textarea></label>
+                <button class="button primary" type="submit">Termin speichern</button>
+              </form>
+              <form id="dayColorForm" class="panel form-panel compact-form">
+                <h3>Tag farblich markieren</h3>
+                <label>Datum<input id="dayColorDate" type="date" required></label>
+                <p class="muted">Bis zu vier der fünf Farben kombinieren. Die Legendennamen erscheinen als Kurzinfo im Kalendertag.</p>
+                <div id="dayColorOptions" class="day-color-options"></div>
+                <button class="button secondary" type="submit">Tagesfarben speichern</button>
+              </form>
+              <form id="calendarLegendForm" class="panel form-panel compact-form">
+                <h3>Farblegende</h3>
+                <p class="muted">Fünf feste Farbfelder mit frei wählbaren Titeln.</p>
+                <div id="calendarLegendEditor" class="legend-editor"></div>
+                <button class="button secondary" type="submit">Legende speichern</button>
+              </form>
+              <article class="panel"><div class="panel-toolbar"><h3>Erinnerungen</h3><span id="calendarReminderCount" class="tag">0 offen</span></div><div id="calendarReminders" class="item-list empty-state">Keine offenen Erinnerungen.</div></article>
+            </aside>
+          </div>
         </section>
 
         <section class="view" data-panel="characters">
@@ -222,7 +284,7 @@
           <div class="section-heading"><div><p class="eyebrow">HILFE</p><h2>Bedienung und Tastatur</h2></div></div>
           <div class="two-column">
             <article class="panel"><h3>Navigation</h3><p>Alle Bereiche befinden sich in derselben Oberfläche. Die linke Navigation wechselt den Arbeitsbereich ohne neues Fenster.</p><dl class="shortcut-list"><div><dt>Alt+1</dt><dd>Übersicht</dd></div><div><dt>Alt+N</dt><dd>Notizen</dd></div><div><dt>Alt+A</dt><dd>Aufgaben</dd></div><div><dt>Alt+K</dt><dd>Kalender</dd></div><div><dt>Alt+M</dt><dd>Alle Module</dd></div><div><dt>F1</dt><dd>Hilfe</dd></div><div><dt>Strg+R</dt><dd>Daten aktualisieren</dd></div></dl></article>
-            <article class="panel"><h3>Funktionsprinzip</h3><p>Jedes registrierte Modul besitzt im Modulkatalog direkt anklickbare Aktionen. Formulare werden aus dem geprüften Aktionsvertrag erzeugt. Schreibende oder potenziell folgenreiche Aktionen verlangen eine Bestätigung.</p><p>Fehler werden sichtbar in der Oberfläche angezeigt und erhöhen die rote Fehleranzeige. Es gibt keinen stillen Abbruch der JavaScript-Initialisierung mehr.</p></article>
+            <article class="panel"><h3>Funktionsprinzip</h3><p>Jedes registrierte Modul besitzt im Modulkatalog direkt anklickbare Aktionen. Formulare werden aus dem geprüften Aktionsvertrag erzeugt. Schreibende oder potenziell folgenreiche Aktionen verlangen eine Bestätigung.</p><p>Im Kalender lassen sich fünf Farblegenden frei benennen, pro Tag bis zu vier Farben kombinieren und Termine mit Erinnerungen anlegen. Der Monatskalender bleibt kompakt im Header sichtbar.</p><p>Fehler werden sichtbar in der Oberfläche angezeigt und erhöhen die rote Fehleranzeige. Es gibt keinen stillen Abbruch der JavaScript-Initialisierung mehr.</p></article>
           </div>
         </section>
       </main>
@@ -246,6 +308,6 @@
     <div id="fatalError" class="fatal-error" role="alert" hidden><strong>Oberflächenfehler</strong><span id="fatalErrorText"></span><button class="button small secondary" type="button" data-action="reload-page">Neu laden</button></div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </div>
-  <script src="/app.js?v=3" defer></script>
+  <script src="/app.js?v=4" defer></script>
 </body>
 </html>

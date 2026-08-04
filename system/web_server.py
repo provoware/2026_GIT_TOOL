@@ -371,6 +371,95 @@ class ProvowareApi:
             result = _module_data(self._todo_runner(request), payload_key="data")
             return ApiResult(HTTPStatus.OK, _json_success(result, "Kalender geladen."))
 
+        if path == "/api/calendar/legend" and method == "PUT":
+            result = _module_data(
+                self._todo_runner({"action": "set_legend", "legend": body.get("legend")}),
+                payload_key="data",
+            )
+            return ApiResult(HTTPStatus.OK, _json_success(result, "Farblegende gespeichert."))
+
+        if path == "/api/calendar/day-colors" and method == "PUT":
+            result = _module_data(
+                self._todo_runner(
+                    {
+                        "action": "set_day_colors",
+                        "date": body.get("date"),
+                        "color_ids": body.get("color_ids", []),
+                    }
+                ),
+                payload_key="data",
+            )
+            return ApiResult(HTTPStatus.OK, _json_success(result, "Tagesfarben gespeichert."))
+
+        if path == "/api/calendar/appointments" and method == "POST":
+            appointment_fields = {
+                "title",
+                "date",
+                "all_day",
+                "start_time",
+                "end_time",
+                "location",
+                "notes",
+                "color_id",
+                "reminder_minutes",
+            }
+            request = {key: body.get(key) for key in appointment_fields if key in body}
+            request["action"] = "add_appointment"
+            result = _module_data(self._todo_runner(request), payload_key="data")
+            return ApiResult(HTTPStatus.CREATED, _json_success(result, "Termin gespeichert."))
+
+        if path.startswith("/api/calendar/appointments/"):
+            appointment_id = path.removeprefix("/api/calendar/appointments/").strip("/")
+            if method == "PUT":
+                appointment_fields = {
+                    "title",
+                    "date",
+                    "all_day",
+                    "start_time",
+                    "end_time",
+                    "location",
+                    "notes",
+                    "color_id",
+                    "reminder_minutes",
+                }
+                request = {key: body.get(key) for key in appointment_fields if key in body}
+                request.update({"action": "update_appointment", "id": appointment_id})
+                result = _module_data(
+                    self._todo_runner(request),
+                    payload_key="data",
+                )
+                return ApiResult(HTTPStatus.OK, _json_success(result, "Termin aktualisiert."))
+            if method == "DELETE":
+                result = _module_data(
+                    self._todo_runner({"action": "delete_appointment", "id": appointment_id}),
+                    payload_key="data",
+                )
+                return ApiResult(HTTPStatus.OK, _json_success(result, "Termin gelöscht."))
+
+        if path == "/api/calendar/reminders" and method == "GET":
+            request = {
+                "action": "list_reminders",
+                "horizon_hours": self._query_value(query, "horizon_hours", "168"),
+            }
+            result = _module_data(self._todo_runner(request), payload_key="data")
+            return ApiResult(HTTPStatus.OK, _json_success(result, "Erinnerungen geladen."))
+
+        if (
+            path.startswith("/api/calendar/reminders/")
+            and path.endswith("/acknowledge")
+            and method == "POST"
+        ):
+            appointment_id = (
+                path.removeprefix("/api/calendar/reminders/")
+                .removesuffix("/acknowledge")
+                .strip("/")
+            )
+            result = _module_data(
+                self._todo_runner({"action": "acknowledge_reminder", "id": appointment_id}),
+                payload_key="data",
+            )
+            return ApiResult(HTTPStatus.OK, _json_success(result, "Erinnerung bestätigt."))
+
         if path == "/api/archives":
             if method == "GET":
                 result = _module_data(

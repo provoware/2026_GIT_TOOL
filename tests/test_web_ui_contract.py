@@ -86,12 +86,36 @@ def test_previous_core_content_and_full_module_surfaces_are_present() -> None:
         "systemActions",
         "globalSearchForm",
         "calendarGrid",
+        "headerMiniCalendar",
+        "calendarLegendEditor",
+        "dayColorOptions",
+        "appointmentForm",
+        "calendarReminders",
         "archiveEntries",
     }:
         assert required in parser.ids
 
 
 def test_assets_are_versioned_and_no_inline_script_is_required() -> None:
-    assert "/app.js?v=3" in HTML
-    assert "/styles.css?v=3" in HTML
+    assert "/app.js?v=4" in HTML
+    assert "/styles.css?v=4" in HTML
     assert "<script>" not in HTML
+
+
+def test_calendar_has_color_appointment_and_reminder_controls() -> None:
+    parser = parsed_ui()
+    for required in {
+        "miniCalendarTitle",
+        "calendarShowWeekends",
+        "calendarShowCompleted",
+        "calendarShowReminders",
+        "appointmentTitle",
+        "appointmentDate",
+        "appointmentReminder",
+        "dayColorDate",
+        "calendarLegendForm",
+    }:
+        assert required in parser.ids
+    assert "data-calendar-date" in JAVASCRIPT
+    assert "data-appointment-edit" in JAVASCRIPT
+    assert "Notification.requestPermission" in JAVASCRIPT
