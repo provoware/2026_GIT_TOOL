@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "phase": "ui-modernization",
-  "current_block": 2,
-  "title": "Zentrale Design-Token-Laufzeitabbildung",
+  "current_block": 3,
+  "title": "Gemeinsame Tk-Komponenten und visuelle Zustände",
   "principles": {
     "single_authoritative_owner": true,
     "tests_before_visual_migration": true,
@@ -16,6 +16,7 @@
     ],
     "forbid_visual_runtime_migration_in_block_1": true,
     "forbid_visual_runtime_migration_in_block_2": true,
+    "visual_runtime_migration_scoped": true,
     "forbid_parallel_token_sources": true
   },
   "authoritative_sources": [
@@ -33,6 +34,11 @@
       "responsibility": "python_design_token_runtime",
       "owner": "generated/design_tokens.py",
       "status": "generated"
+    },
+    {
+      "responsibility": "shared_tk_components",
+      "owner": "system/ui_components.py",
+      "status": "hardened"
     },
     {
       "responsibility": "tk_theme_resolution_and_application",
@@ -90,16 +96,15 @@
       "path": "config/launcher_gui.json",
       "duplicates": [
         "theme_colors",
-        "spacing",
-        "button_metrics",
-        "typography"
+        "legacy_layout_metrics",
+        "legacy_typography"
       ],
       "retain": [
         "refresh_debounce_ms",
         "theme_labels",
         "runtime_compatibility"
       ],
-      "target_block": 3
+      "target_block": 8
     },
     {
       "path": "config/datei_manager.json",
@@ -116,28 +121,29 @@
     {
       "path": "system/launcher_gui.py",
       "duplicates": [
-        "button_configuration",
         "section_composition",
-        "help_presentation"
+        "help_presentation",
+        "legacy_font_initialization"
       ],
       "retain": [
         "launcher_view_composition",
-        "framework_bindings"
+        "framework_bindings",
+        "controller_adapters"
       ],
-      "target_block": 3
+      "target_block": 8
     },
     {
       "path": "system/main_window.py",
       "duplicates": [
-        "button_configuration",
-        "hardcoded_spacing",
+        "hardcoded_outer_spacing",
         "hardcoded_typography"
       ],
       "retain": [
         "module_card_view",
-        "workspace_bindings"
+        "workspace_bindings",
+        "lifecycle_adapters"
       ],
-      "target_block": 3
+      "target_block": 9
     },
     {
       "path": "modules/datei_manager/window.py",
@@ -154,17 +160,6 @@
     }
   ],
   "planned_responsibilities": [
-    {
-      "responsibility": "shared_tk_components",
-      "target": "system/ui_components.py",
-      "target_block": 3,
-      "condition": "at_least_two_real_consumers",
-      "current_consumers": [
-        "system/launcher_gui.py",
-        "system/main_window.py",
-        "modules/datei_manager/window.py"
-      ]
-    },
     {
       "responsibility": "shared_table_policy",
       "target": "system/ui_tables.py",
@@ -186,7 +181,7 @@
     {
       "responsibility": "shared_accessibility_helpers",
       "target": "system/ui_accessibility.py",
-      "target_block": 3,
+      "target_block": 8,
       "condition": "duplicated_cross_surface_behavior_is_demonstrated",
       "current_consumers": [
         "system/launcher_gui.py",
@@ -200,7 +195,8 @@
     "config/ui-tokens.json",
     "config/design_tokens_runtime.json",
     "modules/datei_manager/ui_tokens.py",
-    "generated/design-tokens.py"
+    "generated/design-tokens.py",
+    "system/ui_component_styles.py"
   ],
   "protected_contracts": [
     {
@@ -213,6 +209,13 @@
       "path": "system/workspace_geometry.py",
       "evidence": [
         "tests/test_workspace_geometry.py"
+      ]
+    },
+    {
+      "path": "system/ui_components.py",
+      "evidence": [
+        "tests/test_ui_components.py",
+        "tests/test_ui_modernization_block3_codemod.py"
       ]
     },
     {
@@ -295,97 +298,59 @@
         "config/launcher_gui.json",
         "config/datei_manager.json"
       ],
-      "decision": "runtime token artifact completed; migrate launcher in block 3 and file manager in block 7",
-      "target_block": 3
+      "decision": "Shared component palette is complete; migrate remaining launcher and file-manager theme payloads in their dedicated visual blocks.",
+      "target_block": 7
     },
     {
       "id": "DUP-002",
       "topic": "spacing_and_widget_metrics",
-      "severity": "high",
+      "severity": "medium",
       "locations": [
         "config/design-tokens.json",
         "config/launcher_gui.json",
         "system/main_window.py",
         "modules/datei_manager/window.py"
       ],
-      "decision": "pixel runtime mapping completed; consume through shared components from block 3",
-      "target_block": 3
+      "decision": "Shared component metrics are complete; remove remaining outer-layout constants only in the owning surface blocks.",
+      "target_block": 7
     },
     {
       "id": "DUP-003",
       "topic": "typography",
-      "severity": "high",
+      "severity": "medium",
       "locations": [
         "config/design-tokens.json",
         "system/launcher_gui.py",
         "system/main_window.py",
         "modules/datei_manager/window.py"
       ],
-      "decision": "font runtime mapping completed; migrate platform fallbacks through shared components",
-      "target_block": 3
-    },
-    {
-      "id": "DUP-004",
-      "topic": "button_configuration",
-      "severity": "high",
-      "locations": [
-        "system/launcher_gui.py",
-        "system/main_window.py",
-        "modules/datei_manager/window.py"
-      ],
-      "decision": "centralize shared button states and metrics without changing commands",
-      "target_block": 3
-    },
-    {
-      "id": "DUP-005",
-      "topic": "panel_card_surface_styling",
-      "severity": "medium",
-      "locations": [
-        "system/launcher_gui.py",
-        "system/main_window.py",
-        "modules/datei_manager/window.py",
-        "system/ui_theme_adapter.py"
-      ],
-      "decision": "extend existing theme adapter and add minimal shared components",
-      "target_block": 3
-    },
-    {
-      "id": "DUP-006",
-      "topic": "status_presentation",
-      "severity": "medium",
-      "locations": [
-        "system/launcher_controller.py",
-        "system/ui_theme_adapter.py",
-        "system/module_lifecycle.py",
-        "modules/datei_manager/window.py"
-      ],
-      "decision": "share visual status tokens only; preserve domain-specific state models",
-      "target_block": 3
+      "decision": "Migrate platform font fallback and heading hierarchy per surface after component-state stabilization.",
+      "target_block": 7
     },
     {
       "id": "DUP-007",
       "topic": "responsive_breakpoints_and_minimums",
-      "severity": "high",
+      "severity": "medium",
       "locations": [
         "config/design-tokens.json",
         "system/ui_responsive.py",
         "system/launcher_gui.py",
         "modules/datei_manager/window.py"
       ],
-      "decision": "breakpoint and layout runtime mappings completed; consume from block 3",
-      "target_block": 3
+      "decision": "Keep the hardened responsive rules authoritative and align remaining file-manager dimensions in block 7.",
+      "target_block": 7
     },
     {
       "id": "DUP-008",
       "topic": "icons_and_action_labels",
-      "severity": "medium",
+      "severity": "low",
       "locations": [
         "system/launcher_gui.py",
         "system/main_window.py",
         "modules/datei_manager/window.py"
       ],
-      "decision": "centralize only cross-surface semantics; keep feature-specific icons local",
-      "target_block": 3
+      "decision": "Centralize only cross-surface semantics during launcher refinement; retain feature-specific labels locally.",
+      "target_block": 8
     },
     {
       "id": "DUP-009",
@@ -397,8 +362,8 @@
         "system/main_window.py",
         "modules/datei_manager/window.py"
       ],
-      "decision": "extract only repeated binding and focus rules after contract tests",
-      "target_block": 3
+      "decision": "Extract only demonstrated repeated accessibility behavior in block 8 and validate physically in block 10.",
+      "target_block": 8
     },
     {
       "id": "DUP-010",
@@ -408,14 +373,14 @@
         "modules/datei_manager/browser.py",
         "modules/datei_manager/window.py"
       ],
-      "decision": "keep feature-local until a second real consumer exists",
+      "decision": "Keep both feature-local until a second real consumer exists; block 4 and 5 may close without extraction.",
       "target_block": 4
     }
   ],
   "non_goals": [
     "No GUI framework replacement.",
-    "No visual production migration in block 2.",
-    "No new cloud, synchronization or image-editing feature.",
+    "No broad screen redesign outside shared component roles in block 3.",
+    "No file-manager visual migration in block 3.",
     "No change to module activation, deactivation or close policy.",
     "No change to task execution, autosave, backup, logout or autostart contracts.",
     "No forced native iOS, iPadOS or Android claim for Tkinter.",
@@ -429,47 +394,42 @@
     },
     {
       "id": "AC-002",
-      "text": "generated/design_tokens.py is deterministic, importable and deeply read-only."
+      "text": "system/ui_components.py is the only owner of shared Tk component roles, metrics and visual states."
     },
     {
       "id": "AC-003",
-      "text": "rem, px and ms values are converted with explicit unit validation."
+      "text": "Primary, secondary, neutral and danger buttons expose distinct normal, hover, active, focus and disabled states."
     },
     {
       "id": "AC-004",
-      "text": "Unsupported and fractional runtime units fail early."
+      "text": "Event bindings are idempotent and disabled widgets cannot enter hover or active visuals."
     },
     {
       "id": "AC-005",
-      "text": "All previous generated artifacts remain byte-identical."
+      "text": "Launcher and main-window widgets consume roles through the existing theme adapter."
     },
     {
       "id": "AC-006",
-      "text": "All protected contracts and evidence files exist."
+      "text": "Launcher status text, cursor and controller state remain authoritative while only visual status styling is shared."
     },
     {
       "id": "AC-007",
-      "text": "Block 2 changes no productive visual surface."
+      "text": "Module lifecycle, close policy, workspace geometry and task execution contracts remain unchanged."
     },
     {
       "id": "AC-008",
-      "text": "The design-token generator reports no drift."
+      "text": "Component, theme, codemod and governance tests pass in read-only workflows."
     },
     {
       "id": "AC-009",
-      "text": "Governance and runtime-token tests pass in read-only workflows."
+      "text": "Automated Xvfb UI acceptance and relevant regression gates remain green."
     },
     {
       "id": "AC-010",
-      "text": "The next permitted block is shared Tk components and visual states."
+      "text": "The next permitted block is the conditional shared table policy decision."
     }
   ],
   "migration_order": [
-    {
-      "block": 3,
-      "name": "Shared Tk components and state styles",
-      "visual_migration": true
-    },
     {
       "block": 4,
       "name": "Table policy if reuse threshold is met",
@@ -501,5 +461,5 @@
       "visual_migration": false
     }
   ],
-  "next_permitted_block": 3
+  "next_permitted_block": 4
 }
