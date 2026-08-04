@@ -5,11 +5,21 @@ on:
     paths:
       - "scripts/start.sh"
       - "scripts/ensure_venv.sh"
+      - "scripts/check_env.sh"
+      - "scripts/run_tests.sh"
       - "system/startup_preflight.py"
       - "system/dependency_checker.py"
+      - "system/module_api_validator.py"
       - "config/product.json"
+      - "config/test_gate.json"
+      - "config/module_structure.json"
+      - "config/module_selftests.json"
       - "tests/test_startup_preflight.py"
       - "tests/test_dependency_checker_v2.py"
+      - "tests/test_module_api_validator.py"
+      - "tests/test_module_checker.py"
+      - "tests/test_datei_manager_window.py"
+      - "tests/test_archiv_manager_window.py"
       - "docs/PROVOWARE_MEMO_STARTUP.md"
       - ".github/workflows/provoware-memo-startup-release.yml"
   workflow_dispatch:
@@ -28,7 +38,7 @@ jobs:
       - name: Systemvoraussetzungen installieren
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-tk xvfb zip rsync
+          sudo apt-get install -y python3-tk xvfb xauth zip rsync
       - name: Testabhängigkeiten installieren
         run: python -m pip install --disable-pip-version-check -r config/requirements.txt
       - name: Neue Vorvalidierungs- und Resolververträge testen
@@ -49,15 +59,22 @@ jobs:
           python -m pytest -q tests/test_archiv_manager_window.py
       - name: Shell- und Python-Syntax prüfen
         run: |
-          bash -n scripts/start.sh scripts/ensure_venv.sh
+          bash -n scripts/start.sh scripts/ensure_venv.sh scripts/check_env.sh scripts/run_tests.sh
           python -m py_compile system/startup_preflight.py system/dependency_checker.py
       - name: Vollprojekt-Vorvalidierung ausführen
-        run: python system/startup_preflight.py --root . --report "$RUNNER_TEMP/ci_preflight_report.json"
+        run: >-
+          python system/startup_preflight.py
+          --root .
+          --report "$RUNNER_TEMP/ci_preflight_report.json"
       - name: Vollständige Startkette isoliert nachvalidieren
         run: |
           SMOKE_ROOT="$RUNNER_TEMP/Provoware_Memo_Smoke"
           mkdir -p "$SMOKE_ROOT"
-          rsync -a ./ "$SMOKE_ROOT/" --exclude '.git/' --exclude '.venv/' --exclude '__pycache__/' --exclude '*.pyc'
+          rsync -a ./ "$SMOKE_ROOT/" \
+            --exclude '.git/' \
+            --exclude '.venv/' \
+            --exclude '__pycache__/' \
+            --exclude '*.pyc'
           cd "$SMOKE_ROOT"
           ./scripts/start.sh --no-start --no-log
       - name: Vollständigen Provoware-Memo-Export erstellen
@@ -72,7 +89,11 @@ jobs:
             --exclude 'logs/*.log' \
             --exclude 'data/*.sqlite' \
             --exclude 'data/*.sqlite-*'
-          chmod +x "$EXPORT_ROOT/scripts/start.sh" "$EXPORT_ROOT/scripts/ensure_venv.sh"
+          chmod +x \
+            "$EXPORT_ROOT/scripts/start.sh" \
+            "$EXPORT_ROOT/scripts/ensure_venv.sh" \
+            "$EXPORT_ROOT/scripts/check_env.sh" \
+            "$EXPORT_ROOT/scripts/run_tests.sh"
           cd "$RUNNER_TEMP"
           zip -qr Provoware_Memo_FULL.zip Provoware_Memo
           sha256sum Provoware_Memo_FULL.zip > Provoware_Memo_FULL.zip.sha256
