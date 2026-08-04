@@ -4,8 +4,11 @@ from pathlib import Path
 
 import pytest
 
-from system.web_module_bridge import MODULE_ACTIONS, WebModuleBridge, WebModuleBridgeError
-
+from system.web_module_bridge import (
+    MODULE_ACTIONS,
+    WebModuleBridge,
+    WebModuleBridgeError,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -17,7 +20,10 @@ def test_catalog_exposes_every_registered_main_module_once() -> None:
     assert len(module_ids) == len(set(module_ids)) == 12
     assert set(module_ids) == set(MODULE_ACTIONS)
     assert all(item["actions"] for item in catalog)
-    assert all(item["default_action"] in {action["id"] for action in item["actions"]} for item in catalog)
+    assert all(
+        item["default_action"] in {action["id"] for action in item["actions"]}
+        for item in catalog
+    )
 
 
 def test_all_action_ids_are_unique_per_module() -> None:

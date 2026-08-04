@@ -81,7 +81,9 @@ def _require_int(value: Any, field: str, *, minimum: int, maximum: int) -> int:
     return value
 
 
-def load_config(path: Path = DEFAULT_CONFIG, *, root: Path = PROJECT_ROOT) -> WebServerConfig:
+def load_config(
+    path: Path = DEFAULT_CONFIG, *, root: Path = PROJECT_ROOT
+) -> WebServerConfig:
     config_path = path if path.is_absolute() else root / path
     try:
         raw = json.loads(config_path.read_text(encoding="utf-8"))
@@ -111,7 +113,9 @@ def load_config(path: Path = DEFAULT_CONFIG, *, root: Path = PROJECT_ROOT) -> We
 
     browser_candidates = tuple(
         _require_text(item, "browser_candidates")
-        for item in data.get("browser_candidates", ["google-chrome", "google-chrome-stable"])
+        for item in data.get(
+            "browser_candidates", ["google-chrome", "google-chrome-stable"]
+        )
     )
     chromium_fallbacks = tuple(
         _require_text(item, "chromium_fallbacks")
@@ -139,7 +143,9 @@ def _json_error(message: str, *, code: str = "request_error") -> dict[str, Any]:
 
 def _module_data(response: Mapping[str, Any], *, payload_key: str) -> Any:
     if response.get("status") != "ok":
-        raise WebServerError(str(response.get("message") or "Modulaufruf fehlgeschlagen."))
+        raise WebServerError(
+            str(response.get("message") or "Modulaufruf fehlgeschlagen.")
+        )
     container = response.get(payload_key)
     if not isinstance(container, Mapping):
         raise WebServerError("Modulausgabe enthält keine gültigen Daten.")
@@ -181,12 +187,21 @@ class ProvowareApi:
         try:
             with self._lock:
                 return self._dispatch_locked(method, path, query, body)
-        except (KeyError, TypeError, ValueError, WebServerError, WebModuleBridgeError) as exc:
+        except (
+            KeyError,
+            TypeError,
+            ValueError,
+            WebServerError,
+            WebModuleBridgeError,
+        ) as exc:
             return ApiResult(HTTPStatus.BAD_REQUEST, _json_error(str(exc)))
         except Exception as exc:  # noqa: BLE001
             return ApiResult(
                 HTTPStatus.INTERNAL_SERVER_ERROR,
-                _json_error(f"Interner Serverfehler: {type(exc).__name__}", code="internal_error"),
+                _json_error(
+                    f"Interner Serverfehler: {type(exc).__name__}",
+                    code="internal_error",
+                ),
             )
 
     def _dispatch_locked(
@@ -236,14 +251,23 @@ class ProvowareApi:
             module_id, action_id = parts
             request_payload = dict(body)
             if method == "GET":
-                request_payload.update({key: values[0] for key, values in query.items() if values})
+                request_payload.update(
+                    {key: values[0] for key, values in query.items() if values}
+                )
             result = self._module_bridge.invoke(module_id, action_id, request_payload)
-            status = HTTPStatus.OK if result.get("status") == "ok" else HTTPStatus.BAD_REQUEST
+            status = (
+                HTTPStatus.OK
+                if result.get("status") == "ok"
+                else HTTPStatus.BAD_REQUEST
+            )
             return ApiResult(status, result)
 
         if path == "/api/search" and method == "GET":
             term = self._query_value(query, "q", "").strip()
-            return ApiResult(HTTPStatus.OK, _json_success(self._global_search(term), "Suche abgeschlossen."))
+            return ApiResult(
+                HTTPStatus.OK,
+                _json_success(self._global_search(term), "Suche abgeschlossen."),
+            )
 
         if path == "/api/files" and method == "GET":
             return ApiResult(
@@ -252,8 +276,12 @@ class ProvowareApi:
                     self._list_files(
                         self._query_value(query, "path", ""),
                         sort_by=self._query_value(query, "sort", "name"),
-                        descending=self._query_value(query, "descending", "false").lower() == "true",
-                        show_hidden=self._query_value(query, "hidden", "false").lower() == "true",
+                        descending=self._query_value(
+                            query, "descending", "false"
+                        ).lower()
+                        == "true",
+                        show_hidden=self._query_value(query, "hidden", "false").lower()
+                        == "true",
                     ),
                     "Ordnerinhalt geladen.",
                 ),
@@ -261,16 +289,27 @@ class ProvowareApi:
 
         if path.startswith("/api/system/actions/") and method == "POST":
             action_name = path.removeprefix("/api/system/actions/").strip("/")
-            return ApiResult(HTTPStatus.OK, _json_success(self._run_system_action(action_name, body), "Systemaktion abgeschlossen."))
+            return ApiResult(
+                HTTPStatus.OK,
+                _json_success(
+                    self._run_system_action(action_name, body),
+                    "Systemaktion abgeschlossen.",
+                ),
+            )
 
         if path == "/api/bootstrap" and method == "GET":
-            notes = _module_data(self._note_runner({"action": "list_notes"}), payload_key="data")
-            todos = _module_data(self._todo_runner({"action": "list"}), payload_key="data")
+            notes = _module_data(
+                self._note_runner({"action": "list_notes"}), payload_key="data"
+            )
+            todos = _module_data(
+                self._todo_runner({"action": "list"}), payload_key="data"
+            )
             archives = _module_data(
                 self._archive_runner({"action": "list_archives"}), payload_key="payload"
             )
             calendar = _module_data(
-                self._todo_runner({"action": "calendar", "view": "monat"}), payload_key="data"
+                self._todo_runner({"action": "calendar", "view": "monat"}),
+                payload_key="data",
             )
             return ApiResult(
                 HTTPStatus.OK,
@@ -293,7 +332,9 @@ class ProvowareApi:
                 result = _module_data(
                     self._note_runner({"action": "list_notes"}), payload_key="data"
                 )
-                return ApiResult(HTTPStatus.OK, _json_success(result, "Notizen geladen."))
+                return ApiResult(
+                    HTTPStatus.OK, _json_success(result, "Notizen geladen.")
+                )
             if method == "POST":
                 request = {
                     "action": "create_note",
@@ -304,19 +345,34 @@ class ProvowareApi:
                     "custom_fields": body.get("custom_fields", {}),
                 }
                 result = _module_data(self._note_runner(request), payload_key="data")
-                return ApiResult(HTTPStatus.CREATED, _json_success(result, "Notiz gespeichert."))
+                return ApiResult(
+                    HTTPStatus.CREATED, _json_success(result, "Notiz gespeichert.")
+                )
 
-        if path.startswith("/api/notes/") and path.endswith("/favorite") and method == "POST":
-            note_id = path.removeprefix("/api/notes/").removesuffix("/favorite").strip("/")
-            result = _module_data(
-                self._note_runner({"action": "toggle_favorite", "id": note_id}), payload_key="data"
+        if (
+            path.startswith("/api/notes/")
+            and path.endswith("/favorite")
+            and method == "POST"
+        ):
+            note_id = (
+                path.removeprefix("/api/notes/").removesuffix("/favorite").strip("/")
             )
-            return ApiResult(HTTPStatus.OK, _json_success(result, "Favoritenstatus aktualisiert."))
+            result = _module_data(
+                self._note_runner({"action": "toggle_favorite", "id": note_id}),
+                payload_key="data",
+            )
+            return ApiResult(
+                HTTPStatus.OK, _json_success(result, "Favoritenstatus aktualisiert.")
+            )
 
         if path == "/api/todos":
             if method == "GET":
-                result = _module_data(self._todo_runner({"action": "list"}), payload_key="data")
-                return ApiResult(HTTPStatus.OK, _json_success(result, "Aufgaben geladen."))
+                result = _module_data(
+                    self._todo_runner({"action": "list"}), payload_key="data"
+                )
+                return ApiResult(
+                    HTTPStatus.OK, _json_success(result, "Aufgaben geladen.")
+                )
             if method == "POST":
                 result = _module_data(
                     self._todo_runner(
@@ -329,10 +385,18 @@ class ProvowareApi:
                     ),
                     payload_key="data",
                 )
-                return ApiResult(HTTPStatus.CREATED, _json_success(result, "Aufgabe gespeichert."))
+                return ApiResult(
+                    HTTPStatus.CREATED, _json_success(result, "Aufgabe gespeichert.")
+                )
 
-        if path.startswith("/api/todos/") and path.endswith("/complete") and method == "POST":
-            todo_id = path.removeprefix("/api/todos/").removesuffix("/complete").strip("/")
+        if (
+            path.startswith("/api/todos/")
+            and path.endswith("/complete")
+            and method == "POST"
+        ):
+            todo_id = (
+                path.removeprefix("/api/todos/").removesuffix("/complete").strip("/")
+            )
             request: dict[str, Any] = {"action": "complete", "id": todo_id}
             if body.get("done_date"):
                 request["done_date"] = body["done_date"]
@@ -353,9 +417,12 @@ class ProvowareApi:
         if path == "/api/archives":
             if method == "GET":
                 result = _module_data(
-                    self._archive_runner({"action": "list_archives"}), payload_key="payload"
+                    self._archive_runner({"action": "list_archives"}),
+                    payload_key="payload",
                 )
-                return ApiResult(HTTPStatus.OK, _json_success(result, "Archive geladen."))
+                return ApiResult(
+                    HTTPStatus.OK, _json_success(result, "Archive geladen.")
+                )
             if method == "POST":
                 result = _module_data(
                     self._archive_runner(
@@ -369,10 +436,14 @@ class ProvowareApi:
                     ),
                     payload_key="payload",
                 )
-                return ApiResult(HTTPStatus.CREATED, _json_success(result, "Archiv angelegt."))
+                return ApiResult(
+                    HTTPStatus.CREATED, _json_success(result, "Archiv angelegt.")
+                )
 
         if path.startswith("/api/archives/") and path.endswith("/entries"):
-            archive_slug = path.removeprefix("/api/archives/").removesuffix("/entries").strip("/")
+            archive_slug = (
+                path.removeprefix("/api/archives/").removesuffix("/entries").strip("/")
+            )
             if not archive_slug:
                 raise WebServerError("Archivkennung fehlt.")
             if method == "GET":
@@ -384,8 +455,12 @@ class ProvowareApi:
                 category = self._query_value(query, "category", "")
                 if category:
                     request["category"] = category
-                result = _module_data(self._archive_runner(request), payload_key="payload")
-                return ApiResult(HTTPStatus.OK, _json_success(result, "Archiveinträge geladen."))
+                result = _module_data(
+                    self._archive_runner(request), payload_key="payload"
+                )
+                return ApiResult(
+                    HTTPStatus.OK, _json_success(result, "Archiveinträge geladen.")
+                )
             if method == "POST":
                 result = _module_data(
                     self._archive_runner(
@@ -401,7 +476,8 @@ class ProvowareApi:
                     payload_key="payload",
                 )
                 return ApiResult(
-                    HTTPStatus.CREATED, _json_success(result, "Archiveintrag verarbeitet.")
+                    HTTPStatus.CREATED,
+                    _json_success(result, "Archiveintrag verarbeitet."),
                 )
 
         if path.startswith("/api/archive-entries/"):
@@ -425,17 +501,26 @@ class ProvowareApi:
             if method == "DELETE":
                 result = _module_data(
                     self._archive_runner(
-                        {"action": "delete_entry", "entry_id": entry_id, "source": "provoware-web"}
+                        {
+                            "action": "delete_entry",
+                            "entry_id": entry_id,
+                            "source": "provoware-web",
+                        }
                     ),
                     payload_key="payload",
                 )
-                return ApiResult(HTTPStatus.OK, _json_success(result, "Archiveintrag gelöscht."))
+                return ApiResult(
+                    HTTPStatus.OK, _json_success(result, "Archiveintrag gelöscht.")
+                )
 
         return ApiResult(
-            HTTPStatus.NOT_FOUND, _json_error("API-Endpunkt nicht gefunden.", code="not_found")
+            HTTPStatus.NOT_FOUND,
+            _json_error("API-Endpunkt nicht gefunden.", code="not_found"),
         )
 
-    def _resolve_file_path(self, raw_path: str, *, directory: bool | None = None) -> Path:
+    def _resolve_file_path(
+        self, raw_path: str, *, directory: bool | None = None
+    ) -> Path:
         candidate = Path(raw_path or str(Path.home())).expanduser()
         if not candidate.is_absolute():
             candidate = Path.home() / candidate
@@ -443,8 +528,13 @@ class ProvowareApi:
             resolved = candidate.resolve(strict=True)
         except (OSError, RuntimeError) as exc:
             raise WebServerError(f"Pfad ist nicht erreichbar: {candidate}") from exc
-        if not any(resolved == root or resolved.is_relative_to(root) for root in self.file_roots):
-            raise WebServerError("Der Pfad liegt außerhalb der freigegebenen lokalen Arbeitsbereiche.")
+        if not any(
+            resolved == root or resolved.is_relative_to(root)
+            for root in self.file_roots
+        ):
+            raise WebServerError(
+                "Der Pfad liegt außerhalb der freigegebenen lokalen Arbeitsbereiche."
+            )
         if directory is True and not resolved.is_dir():
             raise WebServerError(f"Pfad ist kein Ordner: {resolved}")
         if directory is False and not resolved.is_file():
@@ -470,7 +560,9 @@ class ProvowareApi:
             raise WebServerError(str(exc)) from exc
         parent = directory.parent
         parent_value = ""
-        if any(parent == root or parent.is_relative_to(root) for root in self.file_roots):
+        if any(
+            parent == root or parent.is_relative_to(root) for root in self.file_roots
+        ):
             parent_value = str(parent)
         return {
             "path": str(directory),
@@ -496,7 +588,9 @@ class ProvowareApi:
     def file_preview(self, raw_path: str) -> tuple[bytes, str]:
         path = self._resolve_file_path(raw_path, directory=False)
         if path.suffix.lower() not in file_browser.IMAGE_SUFFIXES:
-            raise WebServerError("Für diesen Dateityp ist keine Bildvorschau verfügbar.")
+            raise WebServerError(
+                "Für diesen Dateityp ist keine Bildvorschau verfügbar."
+            )
         try:
             from PIL import Image
 
@@ -508,7 +602,9 @@ class ProvowareApi:
                 image.save(buffer, format="PNG", optimize=True)
                 return buffer.getvalue(), "image/png"
         except (OSError, ValueError) as exc:
-            raise WebServerError(f"Bildvorschau konnte nicht erzeugt werden: {exc}") from exc
+            raise WebServerError(
+                f"Bildvorschau konnte nicht erzeugt werden: {exc}"
+            ) from exc
 
     def _global_search(self, term: str) -> dict[str, Any]:
         needle = term.casefold()
@@ -516,7 +612,9 @@ class ProvowareApi:
             return {"query": term, "results": []}
         results: list[dict[str, Any]] = []
 
-        def add(kind: str, title: Any, text: Any, target: str, item_id: Any = "") -> None:
+        def add(
+            kind: str, title: Any, text: Any, target: str, item_id: Any = ""
+        ) -> None:
             haystack = f"{title} {text}".casefold()
             if needle in haystack:
                 results.append(
@@ -529,41 +627,136 @@ class ProvowareApi:
                     }
                 )
 
-        notes = self._module_bridge.invoke("notiz_editor", "list_notes", {}).get("data", {})
+        notes = self._module_bridge.invoke("notiz_editor", "list_notes", {}).get(
+            "data", {}
+        )
         for item in notes.get("notes", []):
-            add("Notiz", item.get("title"), f"{item.get('body', '')} {' '.join(item.get('tags', []))}", "memo", item.get("id"))
+            add(
+                "Notiz",
+                item.get("title"),
+                f"{item.get('body', '')} {' '.join(item.get('tags', []))}",
+                "memo",
+                item.get("id"),
+            )
         todos = self._module_bridge.invoke("todo_kalender", "list", {}).get("data", {})
         for item in todos.get("items", []):
-            add("Aufgabe", item.get("title"), item.get("notes", ""), "tasks", item.get("id"))
-        characters = self._module_bridge.invoke("charakter_modul", "list_characters", {}).get("data", {})
+            add(
+                "Aufgabe",
+                item.get("title"),
+                item.get("notes", ""),
+                "tasks",
+                item.get("id"),
+            )
+        characters = self._module_bridge.invoke(
+            "charakter_modul", "list_characters", {}
+        ).get("data", {})
         for item in characters.get("characters", []):
-            add("Charakter", item.get("name"), f"{item.get('role', '')} {item.get('archetype', '')} {item.get('biography', '')}", "characters", item.get("id"))
-        archives = self._module_bridge.invoke("archiv_manager", "list_archives", {}).get("data", {})
+            add(
+                "Charakter",
+                item.get("name"),
+                f"{item.get('role', '')} {item.get('archetype', '')} {item.get('biography', '')}",
+                "characters",
+                item.get("id"),
+            )
+        archives = self._module_bridge.invoke(
+            "archiv_manager", "list_archives", {}
+        ).get("data", {})
         for archive in archives.get("archives", []):
-            add("Archiv", archive.get("name"), archive.get("description", ""), "archive", archive.get("slug"))
+            add(
+                "Archiv",
+                archive.get("name"),
+                archive.get("description", ""),
+                "archive",
+                archive.get("slug"),
+            )
         modules = self._module_bridge.catalog()
         for module in modules:
-            add("Modul", module.get("name"), module.get("description", ""), "modules", module.get("id"))
+            add(
+                "Modul",
+                module.get("name"),
+                module.get("description", ""),
+                "modules",
+                module.get("id"),
+            )
         return {"query": term, "results": results[:200]}
 
     @staticmethod
     def _system_action_catalog() -> list[dict[str, Any]]:
         return [
-            {"id": "end_audit", "label": "Release-Audit", "description": "Release-Status aus Kernindikatoren prüfen.", "mode": "read", "confirm": ""},
-            {"id": "system_scan", "label": "System-Scan", "description": "Struktur, Konfiguration und Module schreibgeschützt prüfen.", "mode": "read", "confirm": ""},
-            {"id": "diagnostics", "label": "Diagnose", "description": "Tests und Qualitätsprüfungen ausführen.", "mode": "read", "confirm": "Die vollständige Diagnose kann einige Minuten dauern. Fortfahren?"},
-            {"id": "backup", "label": "Backup erstellen", "description": "Vollständige Projektsicherung erzeugen.", "mode": "write", "confirm": "Jetzt ein vollständiges Backup erzeugen?"},
-            {"id": "export", "label": "Export-Center", "description": "JSON-, TXT-, PDF- und ZIP-Export erzeugen.", "mode": "write", "confirm": "Jetzt Exporte erzeugen?"},
-            {"id": "selective_export", "label": "Selektiver Export", "description": "Konfigurierten Teil-Export erzeugen.", "mode": "write", "confirm": "Jetzt einen selektiven ZIP-Export erzeugen?"},
-            {"id": "standards", "label": "Standards anzeigen", "description": "Projektstandards einblenden.", "mode": "read", "confirm": ""},
-            {"id": "logs", "label": "Letzte Protokolle", "description": "Aktuelle Start- und Testprotokolle anzeigen.", "mode": "read", "confirm": ""},
-            {"id": "progress", "label": "Projektfortschritt", "description": "Fortschrittsbericht und offene Aufgaben anzeigen.", "mode": "read", "confirm": ""},
+            {
+                "id": "end_audit",
+                "label": "Release-Audit",
+                "description": "Release-Status aus Kernindikatoren prüfen.",
+                "mode": "read",
+                "confirm": "",
+            },
+            {
+                "id": "system_scan",
+                "label": "System-Scan",
+                "description": "Struktur, Konfiguration und Module schreibgeschützt prüfen.",
+                "mode": "read",
+                "confirm": "",
+            },
+            {
+                "id": "diagnostics",
+                "label": "Diagnose",
+                "description": "Tests und Qualitätsprüfungen ausführen.",
+                "mode": "read",
+                "confirm": "Die vollständige Diagnose kann einige Minuten dauern. Fortfahren?",
+            },
+            {
+                "id": "backup",
+                "label": "Backup erstellen",
+                "description": "Vollständige Projektsicherung erzeugen.",
+                "mode": "write",
+                "confirm": "Jetzt ein vollständiges Backup erzeugen?",
+            },
+            {
+                "id": "export",
+                "label": "Export-Center",
+                "description": "JSON-, TXT-, PDF- und ZIP-Export erzeugen.",
+                "mode": "write",
+                "confirm": "Jetzt Exporte erzeugen?",
+            },
+            {
+                "id": "selective_export",
+                "label": "Selektiver Export",
+                "description": "Konfigurierten Teil-Export erzeugen.",
+                "mode": "write",
+                "confirm": "Jetzt einen selektiven ZIP-Export erzeugen?",
+            },
+            {
+                "id": "standards",
+                "label": "Standards anzeigen",
+                "description": "Projektstandards einblenden.",
+                "mode": "read",
+                "confirm": "",
+            },
+            {
+                "id": "logs",
+                "label": "Letzte Protokolle",
+                "description": "Aktuelle Start- und Testprotokolle anzeigen.",
+                "mode": "read",
+                "confirm": "",
+            },
+            {
+                "id": "progress",
+                "label": "Projektfortschritt",
+                "description": "Fortschrittsbericht und offene Aufgaben anzeigen.",
+                "mode": "read",
+                "confirm": "",
+            },
         ]
 
-    def _run_system_action(self, action_name: str, body: Mapping[str, Any]) -> dict[str, Any]:
+    def _run_system_action(
+        self, action_name: str, body: Mapping[str, Any]
+    ) -> dict[str, Any]:
         text_actions = {
             "standards": [self.root / "standards.md"],
-            "logs": [self.root / "logs" / "start_run.log", self.root / "logs" / "test_run.log"],
+            "logs": [
+                self.root / "logs" / "start_run.log",
+                self.root / "logs" / "test_run.log",
+            ],
             "progress": [self.root / "PROGRESS.md", self.root / "TODO.md"],
         }
         if action_name in text_actions:
@@ -572,16 +765,43 @@ class ProvowareApi:
                 if path.is_file():
                     content = path.read_text(encoding="utf-8", errors="replace")
                     chunks.append(f"## {path.name}\n{content[-30000:]}")
-            return {"action": action_name, "output": "\n\n".join(chunks) or "Keine Daten vorhanden."}
+            return {
+                "action": action_name,
+                "output": "\n\n".join(chunks) or "Keine Daten vorhanden.",
+            }
 
         python = sys.executable
         commands: dict[str, tuple[list[str], int]] = {
             "end_audit": ([python, "system/end_audit.py", "--root", "."], 120),
             "system_scan": (["bash", "scripts/system_scan.sh"], 180),
-            "diagnostics": ([python, "system/diagnostics_runner.py", "--timeout", "900"], 960),
-            "backup": ([python, "system/backup_center.py", "--config", "config/backup.json"], 300),
-            "export": ([python, "system/export_center.py", "--config", "config/export_center.json"], 300),
-            "selective_export": ([python, "system/selective_exporter.py", "--root", ".", "--config", "config/selective_export.json"], 300),
+            "diagnostics": (
+                [python, "system/diagnostics_runner.py", "--timeout", "900"],
+                960,
+            ),
+            "backup": (
+                [python, "system/backup_center.py", "--config", "config/backup.json"],
+                300,
+            ),
+            "export": (
+                [
+                    python,
+                    "system/export_center.py",
+                    "--config",
+                    "config/export_center.json",
+                ],
+                300,
+            ),
+            "selective_export": (
+                [
+                    python,
+                    "system/selective_exporter.py",
+                    "--root",
+                    ".",
+                    "--config",
+                    "config/selective_export.json",
+                ],
+                300,
+            ),
         }
         if action_name not in commands:
             raise WebServerError(f"Unbekannte Systemaktion: {action_name}")
@@ -595,10 +815,18 @@ class ProvowareApi:
             check=False,
             env={**os.environ, "PYTHONPATH": str(self.root)},
         )
-        output = (completed.stdout + ("\n" + completed.stderr if completed.stderr else "")).strip()
+        output = (
+            completed.stdout + ("\n" + completed.stderr if completed.stderr else "")
+        ).strip()
         if completed.returncode != 0:
-            raise WebServerError(f"Systemaktion {action_name} fehlgeschlagen (Exit {completed.returncode}): {output[-4000:]}")
-        return {"action": action_name, "exit_code": completed.returncode, "output": output[-50000:]}
+            raise WebServerError(
+                f"Systemaktion {action_name} fehlgeschlagen (Exit {completed.returncode}): {output[-4000:]}"
+            )
+        return {
+            "action": action_name,
+            "exit_code": completed.returncode,
+            "output": output[-50000:],
+        }
 
     @staticmethod
     def _query_value(query: Mapping[str, list[str]], key: str, default: str) -> str:
@@ -648,7 +876,11 @@ class ProvowareRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(content)
             return
         if parsed.path.startswith("/api/"):
-            body = self._read_json_body() if self.command in {"POST", "PUT", "PATCH"} else {}
+            body = (
+                self._read_json_body()
+                if self.command in {"POST", "PUT", "PATCH"}
+                else {}
+            )
             if body is None:
                 return
             result = self.api.dispatch(
@@ -660,7 +892,9 @@ class ProvowareRequestHandler(BaseHTTPRequestHandler):
             self._send_json(result.status, result.payload)
             return
         if self.command != "GET":
-            self._send_json(HTTPStatus.METHOD_NOT_ALLOWED, _json_error("Methode nicht erlaubt."))
+            self._send_json(
+                HTTPStatus.METHOD_NOT_ALLOWED, _json_error("Methode nicht erlaubt.")
+            )
             return
         self._serve_static(parsed.path)
 
@@ -669,7 +903,9 @@ class ProvowareRequestHandler(BaseHTTPRequestHandler):
         try:
             length = int(raw_length)
         except ValueError:
-            self._send_json(HTTPStatus.BAD_REQUEST, _json_error("Ungültige Content-Length."))
+            self._send_json(
+                HTTPStatus.BAD_REQUEST, _json_error("Ungültige Content-Length.")
+            )
             return None
         if length < 0 or length > MAX_JSON_BYTES:
             self._send_json(
@@ -680,11 +916,14 @@ class ProvowareRequestHandler(BaseHTTPRequestHandler):
             raw = self.rfile.read(length) if length else b"{}"
             value = json.loads(raw.decode("utf-8"))
         except (UnicodeDecodeError, json.JSONDecodeError):
-            self._send_json(HTTPStatus.BAD_REQUEST, _json_error("JSON-Anfrage ist ungültig."))
+            self._send_json(
+                HTTPStatus.BAD_REQUEST, _json_error("JSON-Anfrage ist ungültig.")
+            )
             return None
         if not isinstance(value, Mapping):
             self._send_json(
-                HTTPStatus.BAD_REQUEST, _json_error("JSON-Anfrage muss ein Objekt sein.")
+                HTTPStatus.BAD_REQUEST,
+                _json_error("JSON-Anfrage muss ein Objekt sein."),
             )
             return None
         return value
@@ -700,7 +939,9 @@ class ProvowareRequestHandler(BaseHTTPRequestHandler):
         if not candidate.is_file():
             candidate = self.static_dir / "index.html"
         content = candidate.read_bytes()
-        content_type = mimetypes.guess_type(candidate.name)[0] or "application/octet-stream"
+        content_type = (
+            mimetypes.guess_type(candidate.name)[0] or "application/octet-stream"
+        )
         self.send_response(HTTPStatus.OK)
         self._common_headers()
         self.send_header(
@@ -767,7 +1008,9 @@ def bind_server(
     preferred = config.port if port is None else port
     upper = config.max_port if max_port is None else max_port
     if preferred == 0:
-        server = ThreadingHTTPServer((selected_host, 0), handler_factory(api, config.static_dir))
+        server = ThreadingHTTPServer(
+            (selected_host, 0), handler_factory(api, config.static_dir)
+        )
         server.daemon_threads = True
         return server, int(server.server_address[1]), True
     if not 1 <= preferred <= 65535 or not preferred <= upper <= 65535:
@@ -826,7 +1069,9 @@ def launch_browser(url: str, config: WebServerConfig) -> tuple[bool, str]:
 def write_runtime_state(path: Path, payload: Mapping[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    temporary.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     temporary.replace(path)
 
 
@@ -839,7 +1084,9 @@ def smoke_test(config: WebServerConfig, api: ProvowareApi) -> int:
         with urllib.request.urlopen(url, timeout=5) as response:
             payload = json.loads(response.read().decode("utf-8"))
         if response.status != HTTPStatus.OK or payload.get("status") != "ok":
-            raise WebServerError("Health-Endpunkt lieferte keinen erfolgreichen Status.")
+            raise WebServerError(
+                "Health-Endpunkt lieferte keinen erfolgreichen Status."
+            )
         print(f"Webserver-Smoke-Test: OK — {url}")
         return 0
     finally:
@@ -849,7 +1096,9 @@ def smoke_test(config: WebServerConfig, api: ProvowareApi) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Provoware Memo – integrierter Webserver")
+    parser = argparse.ArgumentParser(
+        description="Provoware Memo – integrierter Webserver"
+    )
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     parser.add_argument("--host")
     parser.add_argument("--port", type=int)
@@ -874,9 +1123,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.check_browser:
             browser, is_google_chrome = resolve_browser(config)
             if browser is None:
-                raise WebServerError(
-                    "Google Chrome ist nicht installiert."
-                )
+                raise WebServerError("Google Chrome ist nicht installiert.")
             browser_name = "Google Chrome" if is_google_chrome else Path(browser).name
             print(f"Provoware Memo: Browserprüfung bestanden — {browser_name}.")
 

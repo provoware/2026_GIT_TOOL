@@ -4,7 +4,6 @@ import re
 from html.parser import HTMLParser
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 HTML = (ROOT / "web" / "index.html").read_text(encoding="utf-8")
 JAVASCRIPT = (ROOT / "web" / "app.js").read_text(encoding="utf-8")
@@ -27,7 +26,9 @@ class UiParser(HTMLParser):
         if values.get("data-panel"):
             self.panels.add(values["data-panel"])
         if values.get("data-module-id") and values.get("data-module-action"):
-            self.module_actions.add((values["data-module-id"], values["data-module-action"]))
+            self.module_actions.add(
+                (values["data-module-id"], values["data-module-action"])
+            )
 
 
 def parsed_ui() -> UiParser:
@@ -93,6 +94,6 @@ def test_previous_core_content_and_full_module_surfaces_are_present() -> None:
 
 
 def test_assets_are_versioned_and_no_inline_script_is_required() -> None:
-    assert '/app.js?v=3' in HTML
-    assert '/styles.css?v=3' in HTML
+    assert "/app.js?v=3" in HTML
+    assert "/styles.css?v=3" in HTML
     assert "<script>" not in HTML
