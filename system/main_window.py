@@ -18,6 +18,7 @@ from module_lifecycle import (
     prepare_close,
     resolve_card_presentation,
 )
+from ui_components import register_component
 from ui_responsive import (
     MAIN_WINDOW_MIN_HEIGHT,
     MAIN_WINDOW_MIN_WIDTH,
@@ -104,7 +105,7 @@ class ModuleWidget:
             button_row, text="Deaktivieren", command=self._handle_deactivate
         )
         for button in (self.activate_button, self.deactivate_button):
-            button.configure(pady=7, takefocus=1)
+            button.configure(takefocus=1)
         self.activate_button.pack(side="left", expand=True, fill="x", padx=(0, 4))
         self.deactivate_button.pack(side="left", expand=True, fill="x", padx=(4, 0))
 
@@ -231,6 +232,7 @@ class MainWindow:
         header.pack(fill="x", padx=16, pady=(16, 4))
 
         controls = tk.Frame(self.root)
+        register_component(controls, "panel")
         controls.pack(fill="x", padx=16, pady=(0, 8))
         tk.Label(controls, text="Farbschema:").pack(side="left")
         self.theme_var = tk.StringVar(value=self.theme_name)
@@ -240,7 +242,7 @@ class MainWindow:
             *self.gui_config.themes.keys(),
             command=lambda _value: self._apply_theme_and_sync(),
         )
-        menu.configure(padx=6, pady=8, takefocus=1)
+        menu.configure(takefocus=1)
         menu.pack(side="left", padx=(8, 16))
 
         self.note_label = tk.Label(
@@ -254,6 +256,7 @@ class MainWindow:
         self.note_label.pack(side="left", fill="x", expand=True)
 
         self.workspace = tk.Frame(self.root)
+        register_component(self.workspace, "panel")
         self.workspace.pack(fill="both", expand=True, padx=16, pady=8)
         self.workspace.bind("<Configure>", lambda _event: self._layout_modules())
 

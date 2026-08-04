@@ -171,7 +171,9 @@ def build_button_style(theme_or_colors: Any, role: str = "secondary") -> ButtonV
     else:
         normal_bg = palette.elevated
         normal_fg = palette.text
-    hover_bg = mix_hex(normal_bg, palette.accent, 0.20)
+    hover_bg = mix_hex(normal_bg, "#ffffff", 0.12)
+    if hover_bg == normal_bg:
+        hover_bg = mix_hex(normal_bg, "#000000", 0.12)
     active_bg = mix_hex(normal_bg, palette.background, 0.22)
     disabled_bg = mix_hex(normal_bg, palette.background, 0.58)
     disabled_fg = mix_hex(normal_fg, disabled_bg, 0.48)
