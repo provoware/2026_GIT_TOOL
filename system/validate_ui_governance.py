@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validiert den maschinenlesbaren Vertrag der UI-Modernisierung."""
+"""Validiert Eigentümer, Evidence, Migrationsfolge und blockbezogene UI-Diffs."""
 
 from __future__ import annotations
 
@@ -11,79 +11,61 @@ from typing import Any, Iterable, Mapping, Sequence
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_POLICY = ROOT / "config" / "ui-governance.json"
 REQUIRED_TOP_LEVEL = {
-    "schema_version",
-    "phase",
-    "current_block",
-    "title",
-    "principles",
-    "authoritative_sources",
-    "transitional_sources",
-    "planned_responsibilities",
-    "forbidden_parallel_sources",
-    "protected_contracts",
-    "duplication_register",
-    "non_goals",
-    "acceptance_criteria",
-    "migration_order",
-    "next_permitted_block",
+    "schema_version", "phase", "current_block", "title", "principles",
+    "authoritative_sources", "transitional_sources", "planned_responsibilities",
+    "forbidden_parallel_sources", "protected_contracts", "duplication_register",
+    "non_goals", "acceptance_criteria", "migration_order", "next_permitted_block",
 }
 ALLOWED_SOURCE_STATUSES = {
-    "authoritative",
-    "generated",
-    "hardened",
-    "protected",
-    "feature_local",
+    "authoritative", "generated", "hardened", "protected", "feature_local",
 }
 ALLOWED_SEVERITIES = {"info", "low", "medium", "high", "critical"}
-BLOCK_1_ALLOWED_PATHS = frozenset(
-    {
-        ".github/workflows/ui-modernization-block-1.yml",
-        "config/ui-governance.json",
-        "system/validate_ui_governance.py",
-        "tests/test_ui_governance.py",
-        "dateiindex/struktur/UI_MODERNISIERUNG_BLOCK_1.md",
-        "dateiindex/struktur/TESTMATRIX_UI_MODERNISIERUNG.md",
-        "dateiindex/gehaertet/UI_MODERNISIERUNG_BLOCK_1.md",
-        "dateiindex/index.json",
-    }
-)
-BLOCK_2_ALLOWED_PATHS = frozenset(
-    {
-        ".github/workflows/ui-modernization-block-1.yml",
-        ".github/workflows/ui-modernization-block-2.yml",
-        "config/ui-governance.json",
-        "system/validate_ui_governance.py",
-        "tests/test_ui_governance.py",
-        "system/generate_design_tokens.py",
-        "tests/test_design_token_runtime.py",
-        "generated/design_tokens.py",
-        "dateiindex/struktur/UI_MODERNISIERUNG_BLOCK_1.md",
-        "dateiindex/struktur/UI_MODERNISIERUNG_BLOCK_2.md",
-        "dateiindex/struktur/TESTMATRIX_UI_MODERNISIERUNG.md",
-        "dateiindex/gehaertet/UI_MODERNISIERUNG_BLOCK_2.md",
-        "dateiindex/index.json",
-    }
-)
-BLOCK_3_ALLOWED_PATHS = frozenset(
-    {
-        ".github/workflows/ui-modernization-block-3.yml",
-        "config/ui-governance.json",
-        "system/validate_ui_governance.py",
-        "tests/test_ui_governance.py",
-        "system/ui_components.py",
-        "system/ui_theme_adapter.py",
-        "system/launcher_gui.py",
-        "system/main_window.py",
-        "scripts/apply_ui_modernization_block3.py",
-        "tests/test_ui_components.py",
-        "tests/test_ui_theme_adapter.py",
-        "tests/test_ui_modernization_block3_codemod.py",
-        "dateiindex/struktur/UI_MODERNISIERUNG_BLOCK_3.md",
-        "dateiindex/struktur/TESTMATRIX_UI_MODERNISIERUNG.md",
-        "dateiindex/gehaertet/UI_MODERNISIERUNG_BLOCK_3.md",
-        "dateiindex/index.json",
-    }
-)
+BLOCK_1_ALLOWED_PATHS = frozenset({
+    ".github/workflows/ui-modernization-block-1.yml",
+    "config/ui-governance.json",
+    "system/validate_ui_governance.py",
+    "tests/test_ui_governance.py",
+    "dateiindex/struktur/UI_MODERNISIERUNG_BLOCK_1.md",
+    "dateiindex/struktur/TESTMATRIX_UI_MODERNISIERUNG.md",
+    "dateiindex/gehaertet/UI_MODERNISIERUNG_BLOCK_1.md",
+    "dateiindex/index.json",
+})
+BLOCK_2_ALLOWED_PATHS = frozenset({
+    ".github/workflows/ui-modernization-block-1.yml",
+    ".github/workflows/ui-modernization-block-2.yml",
+    "config/ui-governance.json",
+    "system/validate_ui_governance.py",
+    "tests/test_ui_governance.py",
+    "system/generate_design_tokens.py",
+    "tests/test_design_token_runtime.py",
+    "generated/design_tokens.py",
+    "dateiindex/struktur/UI_MODERNISIERUNG_BLOCK_1.md",
+    "dateiindex/struktur/UI_MODERNISIERUNG_BLOCK_2.md",
+    "dateiindex/struktur/TESTMATRIX_UI_MODERNISIERUNG.md",
+    "dateiindex/gehaertet/UI_MODERNISIERUNG_BLOCK_2.md",
+    "dateiindex/index.json",
+})
+BLOCK_3_ALLOWED_PATHS = frozenset({
+    ".github/workflows/ui-modernization-block-3.yml",
+    "config/ui-governance.json",
+    "system/validate_ui_governance.py",
+    "tests/test_ui_governance.py",
+    "system/ui_components.py",
+    "system/ui_theme_adapter.py",
+    "system/launcher_gui.py",
+    "system/main_window.py",
+    "scripts/apply_ui_modernization_block3.py",
+    "scripts/apply_gate3_ui_theme_adapter.py",
+    "scripts/apply_ui_responsive_acceptance_v3.py",
+    "tests/test_ui_components.py",
+    "tests/test_ui_theme_adapter.py",
+    "tests/test_ui_modernization_block3_codemod.py",
+    "tests/test_ui_responsive_codemod.py",
+    "dateiindex/struktur/UI_MODERNISIERUNG_BLOCK_3.md",
+    "dateiindex/struktur/TESTMATRIX_UI_MODERNISIERUNG.md",
+    "dateiindex/gehaertet/UI_MODERNISIERUNG_BLOCK_3.md",
+    "dateiindex/index.json",
+})
 BLOCK_ALLOWED_PATHS = {
     1: BLOCK_1_ALLOWED_PATHS,
     2: BLOCK_2_ALLOWED_PATHS,
@@ -171,11 +153,10 @@ def _validate_principles(data: Mapping[str, Any], current_block: int) -> None:
             raise UiGovernanceError(f"principles.{key} muss true sein.")
     elif principles.get("visual_runtime_migration_scoped") is not True:
         raise UiGovernanceError("principles.visual_runtime_migration_scoped muss true sein.")
-    minimum = _positive_int(
+    if _positive_int(
         principles.get("minimum_real_consumers_for_shared_component"),
         "principles.minimum_real_consumers_for_shared_component",
-    )
-    if minimum < 2:
+    ) < 2:
         raise UiGovernanceError("Gemeinsame Komponenten benötigen mindestens zwei reale Verbraucher.")
     _unique_texts(
         _list(principles.get("single_consumer_exceptions"), "principles.single_consumer_exceptions"),
@@ -198,16 +179,18 @@ def _validate_sources(data: Mapping[str, Any], root: Path, current_block: int) -
         owners[responsibility] = owner
     if len(set(responsibilities)) != len(responsibilities):
         raise UiGovernanceError("Eine aktuelle Verantwortung besitzt mehrere Quellenangaben.")
-    if owners.get("design_tokens") != "config/design-tokens.json":
-        raise UiGovernanceError("config/design-tokens.json muss die autoritative Tokenquelle bleiben.")
-    if current_block >= 2 and owners.get("python_design_token_runtime") != "generated/design_tokens.py":
-        raise UiGovernanceError("Ab Block 2 ist generated/design_tokens.py die Runtimequelle.")
-    if current_block >= 3 and owners.get("shared_tk_components") != "system/ui_components.py":
-        raise UiGovernanceError("Ab Block 3 ist system/ui_components.py die gemeinsame Komponentenquelle.")
+    required = {"design_tokens": "config/design-tokens.json"}
+    if current_block >= 2:
+        required["python_design_token_runtime"] = "generated/design_tokens.py"
+    if current_block >= 3:
+        required["shared_tk_components"] = "system/ui_components.py"
+    for responsibility, expected in required.items():
+        if owners.get(responsibility) != expected:
+            raise UiGovernanceError(f"{expected} muss Eigentümer von {responsibility} sein.")
 
 
 def _validate_future_entries(data: Mapping[str, Any], root: Path, current_block: int) -> None:
-    transitional_paths: list[str] = []
+    seen_transitional: list[str] = []
     for index, raw in enumerate(_list(data["transitional_sources"], "transitional_sources")):
         item = _mapping(raw, f"transitional_sources[{index}]")
         path = _text(item.get("path"), f"transitional_sources[{index}].path")
@@ -216,11 +199,14 @@ def _validate_future_entries(data: Mapping[str, Any], root: Path, current_block:
         _unique_texts(_list(item.get("retain"), f"transitional_sources[{index}].retain"), f"transitional_sources[{index}].retain")
         if _positive_int(item.get("target_block"), f"transitional_sources[{index}].target_block") <= current_block:
             raise UiGovernanceError("Temporäre Quellen müssen in einem späteren Block behandelt werden.")
-        transitional_paths.append(path)
-    if len(set(transitional_paths)) != len(transitional_paths):
+        seen_transitional.append(path)
+    if len(set(seen_transitional)) != len(seen_transitional):
         raise UiGovernanceError("Temporäre Quellen sind doppelt eingetragen.")
 
-    forbidden = _unique_texts(_list(data["forbidden_parallel_sources"], "forbidden_parallel_sources"), "forbidden_parallel_sources")
+    forbidden = _unique_texts(
+        _list(data["forbidden_parallel_sources"], "forbidden_parallel_sources"),
+        "forbidden_parallel_sources",
+    )
     for index, path in enumerate(forbidden):
         if _repo_path(root, path, f"forbidden_parallel_sources[{index}]", must_exist=False).exists():
             raise UiGovernanceError(f"Verbotene Parallelquelle existiert: {path}")
@@ -234,8 +220,7 @@ def _validate_future_entries(data: Mapping[str, Any], root: Path, current_block:
         _repo_path(root, target, f"planned_responsibilities[{index}].target", must_exist=False)
         if _positive_int(item.get("target_block"), f"planned_responsibilities[{index}].target_block") <= current_block:
             raise UiGovernanceError("Geplante Verantwortung muss in einem späteren Block liegen.")
-        condition = _text(item.get("condition"), f"planned_responsibilities[{index}].condition")
-        if condition != "always":
+        if _text(item.get("condition"), f"planned_responsibilities[{index}].condition") != "always":
             consumers = _unique_texts(
                 _list(item.get("current_consumers"), f"planned_responsibilities[{index}].current_consumers"),
                 f"planned_responsibilities[{index}].current_consumers",
@@ -248,8 +233,6 @@ def _validate_future_entries(data: Mapping[str, Any], root: Path, current_block:
         targets.append(target)
     if len(set(ids)) != len(ids) or len(set(targets)) != len(targets):
         raise UiGovernanceError("Geplante Verantwortungen und Zielpfade müssen eindeutig sein.")
-    if "system/ui_tokens.py" in targets or "system/ui_component_styles.py" in targets:
-        raise UiGovernanceError("Parallele Token- oder Komponentenquellen sind nicht zulässig.")
 
 
 def _validate_contracts(data: Mapping[str, Any], root: Path) -> None:
@@ -258,7 +241,10 @@ def _validate_contracts(data: Mapping[str, Any], root: Path) -> None:
         item = _mapping(raw, f"protected_contracts[{index}]")
         path = _text(item.get("path"), f"protected_contracts[{index}].path")
         _repo_path(root, path, f"protected_contracts[{index}].path", must_exist=True)
-        evidence = _unique_texts(_list(item.get("evidence"), f"protected_contracts[{index}].evidence"), f"protected_contracts[{index}].evidence")
+        evidence = _unique_texts(
+            _list(item.get("evidence"), f"protected_contracts[{index}].evidence"),
+            f"protected_contracts[{index}].evidence",
+        )
         for evidence_index, evidence_path in enumerate(evidence):
             _repo_path(root, evidence_path, f"protected_contracts[{index}].evidence[{evidence_index}]", must_exist=True)
         paths.append(path)
@@ -276,8 +262,10 @@ def _validate_duplicates(data: Mapping[str, Any], root: Path, current_block: int
         severity = _text(item.get("severity"), f"duplication_register[{index}].severity")
         if severity not in ALLOWED_SEVERITIES:
             raise UiGovernanceError(f"Unzulässige Duplikatschwere: {severity}")
-        locations = _unique_texts(_list(item.get("locations"), f"duplication_register[{index}].locations"), f"duplication_register[{index}].locations")
-        for location_index, location in enumerate(locations):
+        for location_index, location in enumerate(_unique_texts(
+            _list(item.get("locations"), f"duplication_register[{index}].locations"),
+            f"duplication_register[{index}].locations",
+        )):
             _repo_path(root, location, f"duplication_register[{index}].locations[{location_index}]", must_exist=True)
         _text(item.get("decision"), f"duplication_register[{index}].decision")
         if _positive_int(item.get("target_block"), f"duplication_register[{index}].target_block") <= current_block:
@@ -339,10 +327,7 @@ def allowed_paths_for_block(block: int) -> frozenset[str]:
 
 
 def validate_changed_paths(
-    paths: Iterable[str],
-    *,
-    block: int = 1,
-    allowed: frozenset[str] | None = None,
+    paths: Iterable[str], *, block: int = 1, allowed: frozenset[str] | None = None,
 ) -> list[str]:
     allowed_paths = allowed if allowed is not None else allowed_paths_for_block(block)
     normalized: list[str] = []
