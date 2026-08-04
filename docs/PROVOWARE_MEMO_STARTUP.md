@@ -68,9 +68,13 @@ Der explizite Entwicklerlauf bleibt unverändert streng und prüft weiterhin das
 
 Damit werden bestehende projektweite Lint-Altlasten transparent erhalten, aber nicht fälschlich als neue Startregression bewertet.
 
+## Verbindliche Browser-Interaktionsabnahme
+
+Das Release-Gate startet die vollständige Anwendung in Google Chrome und führt reale Benutzeraktionen aus. Geprüft werden sämtliche Navigationsbereiche, die Aktivierung des zugehörigen Panels, das Öffnen und Schließen dynamischer Modulaktionen, der integrierte Datei-Manager und die sichtbare JavaScript-Fehlergrenze. Ein Release darf nicht allein aufgrund bestandener Syntax- oder API-Tests freigegeben werden.
+
 ## Vollständiger Export
 
-Das Workflow-Gate `Provoware Memo Startup and Full Export` erzeugt erst nach bestandener Vorvalidierung, vollständiger Funktionsprüfung und isolierter Startkette das Artefakt:
+Das Workflow-Gate `Provoware Memo Startup and Full Export` erzeugt erst nach bestandener Vorvalidierung, vollständiger Funktionsprüfung, realer Browser-Interaktionsabnahme und isolierter Startkette das Artefakt:
 
 ```text
 Provoware_Memo_FULL.zip
