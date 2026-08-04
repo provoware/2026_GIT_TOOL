@@ -8,6 +8,14 @@ from types import MappingProxyType
 from typing import Mapping, Optional
 
 from config_models import GuiConfigModel
+from ui_components import (
+    UiComponentError,
+    apply_registered_style,
+    configure_button,
+    configure_surface,
+    register_component,
+    resolve_component_palette,
+)
 
 
 class UiThemeError(ValueError):
@@ -86,10 +94,14 @@ def build_status_palette(theme_or_colors) -> dict[str, str]:
 
 def build_tooltip_style(theme_or_colors) -> dict[str, str]:
     colors = _coerce_colors(theme_or_colors, COMMON_COLOR_KEYS)
+    try:
+        palette = resolve_component_palette(colors)
+    except UiComponentError as exc:
+        raise UiThemeError(str(exc)) from exc
     return {
-        "bg": colors["button_background"],
-        "fg": colors["button_foreground"],
-        "border": colors["accent"],
+        "bg": palette.elevated,
+        "fg": palette.text,
+        "border": palette.border,
     }
 
 
@@ -108,42 +120,38 @@ def apply_widget_style(widget, theme_or_colors, *, button_font=None) -> None:
     colors = _coerce_colors(theme_or_colors, COMMON_COLOR_KEYS)
     widget_type = _widget_class(widget)
 
-    if widget_type == "Frame":
-        widget.configure(background=colors["background"])
-    elif widget_type == "Label":
-        widget.configure(
-            background=colors["background"],
-            foreground=colors["foreground"],
-        )
-    elif widget_type == "Labelframe":
-        widget.configure(
-            background=colors["background"],
-            foreground=colors["foreground"],
-            highlightbackground=colors["accent"],
-            highlightcolor=colors["accent"],
-        )
-    elif widget_type in {"Checkbutton", "Button", "Menubutton", "OptionMenu"}:
-        widget.configure(
-            background=colors["button_background"],
-            foreground=colors["button_foreground"],
-            activebackground=colors["accent"],
-            activeforeground=colors["button_foreground"],
-            highlightbackground=colors["accent"],
-            highlightcolor=colors["accent"],
-            highlightthickness=2,
-        )
-        if button_font is not None:
-            widget.configure(font=button_font)
-        if widget_type in {"Menubutton", "OptionMenu"}:
-            _apply_menu_style(widget, colors, button_font)
-    elif widget_type == "Text":
-        widget.configure(
-            background=colors["background"],
-            foreground=colors["foreground"],
-            insertbackground=colors["foreground"],
-            highlightbackground=colors["accent"],
-            highlightcolor=colors["accent"],
-        )
+    try:
+        if widget_type == "Frame":
+            widget.configure(background=colors["background"])
+        elif widget_type == "Label":
+            widget.configure(
+                background=colors["background"],
+                foreground=colors["foreground"],
+            )
+        elif widget_type == "Labelframe":
+            widget.configure(
+                background=colors["background"],
+                foreground=colors["foreground"],
+                highlightbackground=colors["accent"],
+                highlightcolor=colors["accent"],
+            )
+        elif widget_type in {"Checkbutton", "Button", "Menubutton", "OptionMenu"}:
+            configure_button(widget, colors, font=button_font)
+            if widget_type in {"Menubutton", "OptionMenu"}:
+                _apply_menu_style(widget, colors, button_font)
+        elif widget_type == "Text":
+            widget.configure(
+                background=colors["background"],
+                foreground=colors["foreground"],
+                insertbackground=colors["foreground"],
+                highlightbackground=colors["accent"],
+                highlightcolor=colors["accent"],
+            )
+
+        if widget_type not in {"Checkbutton", "Button", "Menubutton", "OptionMenu"}:
+            apply_registered_style(widget, colors, font=button_font)
+    except UiComponentError as exc:
+        raise UiThemeError(str(exc)) from exc
 
     for child in _children(widget):
         apply_widget_style(child, colors, button_font=button_font)
@@ -166,33 +174,38 @@ def apply_module_card_theme(module_widget, theme_or_colors) -> None:
     if missing:
         raise UiThemeError(f"Modulkarte unvollständig: {', '.join(missing)}")
 
-    module_widget.frame.configure(
-        background=colors["background"],
-        highlightbackground=colors["accent"],
-    )
-    module_widget.header.configure(background=colors["background"])
+    try:
+        palette = resolve_component_palette(colors)
+        register_component(module_widget.frame, "card")
+        register_component(module_widget.header, "panel")
+        register_component(module_widget.activate_button, "primary")
+        register_component(module_widget.deactivate_button, "danger")
+        card_style = configure_surface(module_widget.frame, colors, role="card")
+        header_style = configure_surface(module_widget.header, colors, role="panel")
+        configure_button(module_widget.activate_button, colors, role="primary")
+        configure_button(module_widget.deactivate_button, colors, role="danger")
+    except UiComponentError as exc:
+        raise UiThemeError(str(exc)) from exc
+
     module_widget.title_label.configure(
-        background=colors["background"], foreground=colors["foreground"]
+        background=header_style.background,
+        foreground=header_style.foreground,
     )
     module_widget.drag_label.configure(
-        background=colors["background"], foreground=colors["accent"]
+        background=header_style.background,
+        foreground=palette.accent,
     )
     module_widget.description.configure(
-        background=colors["background"], foreground=colors["foreground"]
+        background=card_style.background,
+        foreground=palette.text,
     )
     module_widget.status_label.configure(
-        background=colors["background"], foreground=colors["foreground"]
-    )
-    module_widget.activate_button.configure(
-        background=colors["button_background"],
-        foreground=colors["button_foreground"],
-    )
-    module_widget.deactivate_button.configure(
-        background=colors["button_background"],
-        foreground=colors["button_foreground"],
+        background=card_style.background,
+        foreground=palette.text,
     )
     module_widget.resize_handle.configure(
-        background=colors["background"], foreground=colors["accent"]
+        background=card_style.background,
+        foreground=palette.accent,
     )
 
 
@@ -250,11 +263,17 @@ def _apply_menu_style(widget, colors: Mapping[str, str], button_font) -> None:
             return
     if menu is None or not hasattr(menu, "configure"):
         return
+    try:
+        palette = resolve_component_palette(colors)
+    except UiComponentError as exc:
+        raise UiThemeError(str(exc)) from exc
     menu.configure(
-        background=colors["button_background"],
-        foreground=colors["button_foreground"],
-        activebackground=colors["accent"],
-        activeforeground=colors["button_foreground"],
+        background=palette.elevated,
+        foreground=palette.text,
+        activebackground=palette.accent,
+        activeforeground=palette.accent_text,
+        borderwidth=1,
+        relief="flat",
     )
     if button_font is not None:
         menu.configure(font=button_font)

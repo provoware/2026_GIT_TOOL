@@ -42,6 +42,7 @@ from launcher_controller import (
 )
 from module_manager import ModuleManagerError
 from ui_responsive import resolve_launcher_help_text, resolve_launcher_layout
+from ui_components import UiComponentError, configure_status_widget, register_component
 from ui_theme_adapter import (
     UiThemeError,
     apply_theme_tree,
@@ -350,6 +351,7 @@ class LauncherGui:
         self.help_texts: Dict[object, str] = {}
         self.tooltips: List[Tooltip] = []
         self.tooltip_style: Dict[str, str] = {}
+        self.component_theme = None
         self.developer_hint = None
         self.controls_frame = None
         self.developer_frame = None
@@ -407,6 +409,7 @@ class LauncherGui:
         )
 
         controls_section = tk.LabelFrame(self.root, text="Einstellungen und Filter")
+        register_component(controls_section, "panel")
         controls_section.pack(fill="x", padx=self.layout.gap_lg, pady=(0, self.layout.gap_md))
         controls = tk.Frame(controls_section)
         controls.pack(fill="x", padx=self.layout.gap_md, pady=self.layout.gap_sm)
@@ -512,6 +515,7 @@ class LauncherGui:
             width=self.button_min_width,
         )
         self.refresh_button.configure(takefocus=1, underline=0)
+        register_component(self.refresh_button, "primary")
         self.refresh_button.grid(
             row=1,
             column=2,
@@ -533,6 +537,7 @@ class LauncherGui:
             width=self.button_min_width,
         )
         self.logout_button.configure(takefocus=1, underline=0)
+        register_component(self.logout_button, "danger")
         self.logout_button.grid(
             row=2,
             column=2,
@@ -554,6 +559,7 @@ class LauncherGui:
             width=self.button_min_width,
         )
         self.diagnostics_button.configure(takefocus=1, underline=0)
+        register_component(self.diagnostics_button, "secondary")
         self.diagnostics_button.grid(
             row=1,
             column=1,
@@ -575,6 +581,7 @@ class LauncherGui:
             width=self.button_min_width,
         )
         self.main_window_button.configure(takefocus=1, underline=0)
+        register_component(self.main_window_button, "secondary")
         self.main_window_button.grid(
             row=2,
             column=1,
@@ -586,6 +593,7 @@ class LauncherGui:
         controls.columnconfigure(2, weight=1)
 
         help_section = tk.LabelFrame(self.root, text="Hilfe (Kurzinfo)")
+        register_component(help_section, "panel")
         help_section.pack(fill="x", padx=self.layout.gap_lg, pady=(0, self.layout.gap_md))
         help_section.columnconfigure(0, weight=1)
         help_section.columnconfigure(1, weight=1)
@@ -643,6 +651,7 @@ class LauncherGui:
             padx=self.layout.gap_sm,
             pady=self.layout.gap_sm,
         )
+        register_component(self.drop_zone_label, "drop-zone")
         self.drop_zone_label.grid(
             row=1,
             column=0,
@@ -655,6 +664,7 @@ class LauncherGui:
         developer_section = tk.LabelFrame(
             self.root, text=f"{ICON_SET['developer']} Entwicklerbereich (für Profis)"
         )
+        register_component(developer_section, "panel")
         developer_section.pack(fill="x", padx=self.layout.gap_lg, pady=(0, self.layout.gap_md))
         developer_frame = tk.Frame(developer_section)
         developer_frame.pack(fill="x", padx=self.layout.gap_md, pady=self.layout.gap_sm)
@@ -686,6 +696,7 @@ class LauncherGui:
             width=self.button_min_width,
         )
         self.scan_button.configure(takefocus=1, underline=0)
+        register_component(self.scan_button, "neutral")
         self.scan_button.grid(row=1, column=0, sticky="w", padx=(0, self.layout.gap_md))
 
         self.standards_button = tk.Button(
@@ -701,6 +712,7 @@ class LauncherGui:
             width=self.button_min_width,
         )
         self.standards_button.configure(takefocus=1, underline=0)
+        register_component(self.standards_button, "neutral")
         self.standards_button.grid(row=1, column=1, sticky="w", padx=(0, self.layout.gap_md))
 
         self.logs_button = tk.Button(
@@ -716,6 +728,7 @@ class LauncherGui:
             width=self.button_min_width,
         )
         self.logs_button.configure(takefocus=1, underline=0)
+        register_component(self.logs_button, "neutral")
         self.logs_button.grid(row=1, column=2, sticky="w")
 
         self.export_button = tk.Button(
@@ -731,6 +744,7 @@ class LauncherGui:
             width=self.button_min_width,
         )
         self.export_button.configure(takefocus=1, underline=0)
+        register_component(self.export_button, "secondary")
         self.export_button.grid(row=1, column=3, sticky="w", padx=(self.layout.gap_md, 0))
 
         self.export_center_button = tk.Button(
@@ -746,6 +760,7 @@ class LauncherGui:
             width=self.button_min_width,
         )
         self.export_center_button.configure(takefocus=1, underline=0)
+        register_component(self.export_center_button, "secondary")
         self.export_center_button.grid(row=2, column=0, sticky="w", padx=(0, self.layout.gap_md))
 
         self.backup_button = tk.Button(
@@ -761,14 +776,17 @@ class LauncherGui:
             width=self.button_min_width,
         )
         self.backup_button.configure(takefocus=1, underline=0)
+        register_component(self.backup_button, "primary")
         self.backup_button.grid(row=2, column=1, sticky="w", padx=(0, self.layout.gap_md))
 
         developer_frame.columnconfigure(3, weight=1)
 
         self.status_var = tk.StringVar(value="Status: Bereit.")
         status_section = tk.LabelFrame(self.root, text="Status")
+        register_component(status_section, "panel")
         status_section.pack(fill="x", padx=self.layout.gap_lg, pady=(0, self.layout.gap_sm))
-        self.status_indicator = tk.Label(status_section, text="●", width=2, anchor="w")
+        self.status_indicator = tk.Label(status_section, text="○", width=2, anchor="w")
+        register_component(self.status_indicator, "status")
         self.status_indicator.pack(side="left", padx=(self.layout.gap_md, 0))
         self.status_label = tk.Label(
             status_section,
@@ -782,6 +800,7 @@ class LauncherGui:
         )
 
         output_section = tk.LabelFrame(self.root, text="Modulübersicht")
+        register_component(output_section, "panel")
         output_section.pack(
             fill="both",
             expand=True,
@@ -1404,6 +1423,7 @@ class LauncherGui:
         except UiThemeError as exc:
             raise GuiLauncherError(str(exc)) from exc
         self.current_theme = theme.name
+        self.component_theme = theme
         self.status_palette = build_status_palette(theme)
         self.tooltip_style = build_tooltip_style(theme)
         apply_theme_tree(self.root, theme, button_font=self.button_font)
@@ -1718,16 +1738,19 @@ class LauncherGui:
         self.root.update_idletasks()
 
     def _apply_status_style(self, state: str) -> None:
-        if self.status_label is None or not self.status_palette:
+        if self.status_label is None or self.component_theme is None:
             return
-        bg = self.status_palette.get(state, self.status_palette.get("success", ""))
-        fg = self.status_palette.get("foreground", "")
-        if bg:
-            self.status_label.configure(bg=bg)
-            if self.status_indicator is not None:
-                self.status_indicator.configure(bg=bg, fg=fg or "#ffffff")
-        if fg:
-            self.status_label.configure(fg=fg)
+        try:
+            style = configure_status_widget(
+                self.status_indicator,
+                self.component_theme,
+                state,
+            )
+        except UiComponentError as exc:
+            raise GuiLauncherError(str(exc)) from exc
+        self.status_label.configure(bg=style.background, fg=style.foreground)
+        if self.status_indicator is not None:
+            self.status_indicator.configure(text=style.symbol)
 
     def _show_error(self, message: str) -> None:
         import tkinter.messagebox as messagebox

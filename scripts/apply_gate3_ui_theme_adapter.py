@@ -43,6 +43,7 @@ LAUNCHER_METHODS = {
         except UiThemeError as exc:
             raise GuiLauncherError(str(exc)) from exc
         self.current_theme = theme.name
+        self.component_theme = theme
         self.status_palette = build_status_palette(theme)
         self.tooltip_style = build_tooltip_style(theme)
         apply_theme_tree(self.root, theme, button_font=self.button_font)

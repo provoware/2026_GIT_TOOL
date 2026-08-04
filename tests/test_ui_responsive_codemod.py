@@ -79,13 +79,16 @@ def test_acceptance_uses_same_main_window_minimum_as_runtime():
     assert "MAIN_WINDOW_MIN_HEIGHT" in transformed
 
 
-def test_touch_targets_are_enlarged_without_changing_actions():
+def test_touch_targets_are_owned_by_components_without_changing_actions():
     transformed = transform_main(main_source())
 
-    assert "menu.configure(padx=6, pady=8, takefocus=1)" in transformed
-    assert "button.configure(pady=7, takefocus=1)" in transformed
+    assert "menu.configure(takefocus=1)" in transformed
+    assert "menu.configure(padx=6, pady=8, takefocus=1)" not in transformed
+    assert "button.configure(takefocus=1)" in transformed
+    assert "button.configure(pady=7, takefocus=1)" not in transformed
     assert "command=self._handle_activate" in transformed
     assert "command=self._handle_deactivate" in transformed
+    assert "from ui_components import register_component" in transformed
 
 
 def test_previous_hardened_boundaries_remain_present():
@@ -98,6 +101,7 @@ def test_previous_hardened_boundaries_remain_present():
         "self.autosave_session = AutosaveSession(",
         "complete_shutdown(",
         "apply_theme_tree(self.root, theme, button_font=self.button_font)",
+        "self.component_theme = theme",
     ):
         assert marker in launcher
     for marker in (
@@ -105,5 +109,6 @@ def test_previous_hardened_boundaries_remain_present():
         "prepare_close(self.manager)",
         "resolve_card_presentation(widget.state)",
         "has_collision(candidate",
+        'register_component(self.workspace, "panel")',
     ):
         assert marker in main
