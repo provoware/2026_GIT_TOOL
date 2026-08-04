@@ -51,22 +51,35 @@ def transform_launcher(source: str) -> str:
     return result
 
 
+def _collapse_repeated(text: str, fragment: str) -> str:
+    repeated = fragment + fragment
+    while repeated in text:
+        text = text.replace(repeated, fragment, 1)
+    return text
+
+
 def _preserve_component_metrics(source: str, result: str) -> str:
     """Verhindert, dass der historische Responsive-Codemod Block-3-Metriken zurücksetzt."""
     if "from ui_components import register_component" not in source:
         return result
+    menu_line = "        menu.configure(takefocus=1)\n"
+    button_block = (
+        "        for button in (self.activate_button, self.deactivate_button):\n"
+        "            button.configure(takefocus=1)\n"
+    )
     result = result.replace(
         "        menu.configure(padx=6, pady=8, takefocus=1)\n",
-        "        menu.configure(takefocus=1)\n",
+        menu_line,
         1,
     )
     result = result.replace(
         "        for button in (self.activate_button, self.deactivate_button):\n"
         "            button.configure(pady=7, takefocus=1)\n",
-        "        for button in (self.activate_button, self.deactivate_button):\n"
-        "            button.configure(takefocus=1)\n",
+        button_block,
         1,
     )
+    result = _collapse_repeated(result, menu_line)
+    result = _collapse_repeated(result, button_block)
     return result
 
 
