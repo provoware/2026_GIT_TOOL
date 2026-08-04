@@ -8,9 +8,12 @@ on:
       - "system/launcher_gui.py"
       - "system/main_window.py"
       - "scripts/apply_ui_modernization_block3.py"
+      - "scripts/apply_gate3_ui_theme_adapter.py"
+      - "scripts/apply_ui_responsive_acceptance_v3.py"
       - "tests/test_ui_components.py"
       - "tests/test_ui_theme_adapter.py"
       - "tests/test_ui_modernization_block3_codemod.py"
+      - "tests/test_ui_responsive_codemod.py"
       - "config/ui-governance.json"
       - "system/validate_ui_governance.py"
       - "tests/test_ui_governance.py"
@@ -39,8 +42,19 @@ jobs:
           tests/test_ui_theme_adapter.py
           tests/test_ui_modernization_block3_codemod.py
           tests/test_ui_governance.py
-      - name: Integrierten Codemod prüfen
-        run: python scripts/apply_ui_modernization_block3.py --check
+          tests/test_gate3_ui_theme_codemod.py
+          tests/test_ui_responsive.py
+          tests/test_ui_responsive_codemod.py
+      - name: Alle integrierten Codemods prüfen
+        run: |
+          python scripts/apply_ui_modernization_block3.py --check
+          cp system/launcher_gui.py /tmp/launcher_gui.py
+          cp system/main_window.py /tmp/main_window.py
+          python scripts/apply_gate3_ui_theme_adapter.py \
+            --check \
+            --launcher /tmp/launcher_gui.py \
+            --main-window /tmp/main_window.py
+          python scripts/apply_ui_responsive_acceptance_v3.py --check
       - name: Governance vollständig validieren
         run: python system/validate_ui_governance.py
       - name: Block-3-Diff begrenzen
@@ -58,6 +72,8 @@ jobs:
           system/main_window.py
           system/validate_ui_governance.py
           scripts/apply_ui_modernization_block3.py
+          scripts/apply_gate3_ui_theme_adapter.py
+          scripts/apply_ui_responsive_acceptance_v3.py
       - name: Design-Token-Drift ausschließen
         run: python system/generate_design_tokens.py --check
       - name: Repository unverändert halten
