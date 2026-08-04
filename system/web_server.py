@@ -81,9 +81,7 @@ def _require_int(value: Any, field: str, *, minimum: int, maximum: int) -> int:
     return value
 
 
-def load_config(
-    path: Path = DEFAULT_CONFIG, *, root: Path = PROJECT_ROOT
-) -> WebServerConfig:
+def load_config(path: Path = DEFAULT_CONFIG, *, root: Path = PROJECT_ROOT) -> WebServerConfig:
     config_path = path if path.is_absolute() else root / path
     try:
         raw = json.loads(config_path.read_text(encoding="utf-8"))
@@ -113,9 +111,7 @@ def load_config(
 
     browser_candidates = tuple(
         _require_text(item, "browser_candidates")
-        for item in data.get(
-            "browser_candidates", ["google-chrome", "google-chrome-stable"]
-        )
+        for item in data.get("browser_candidates", ["google-chrome", "google-chrome-stable"])
     )
     chromium_fallbacks = tuple(
         _require_text(item, "chromium_fallbacks")
@@ -143,9 +139,7 @@ def _json_error(message: str, *, code: str = "request_error") -> dict[str, Any]:
 
 def _module_data(response: Mapping[str, Any], *, payload_key: str) -> Any:
     if response.get("status") != "ok":
-        raise WebServerError(
-            str(response.get("message") or "Modulaufruf fehlgeschlagen.")
-        )
+        raise WebServerError(str(response.get("message") or "Modulaufruf fehlgeschlagen."))
     container = response.get(payload_key)
     if not isinstance(container, Mapping):
         raise WebServerError("Modulausgabe enthält keine gültigen Daten.")
@@ -251,15 +245,9 @@ class ProvowareApi:
             module_id, action_id = parts
             request_payload = dict(body)
             if method == "GET":
-                request_payload.update(
-                    {key: values[0] for key, values in query.items() if values}
-                )
+                request_payload.update({key: values[0] for key, values in query.items() if values})
             result = self._module_bridge.invoke(module_id, action_id, request_payload)
-            status = (
-                HTTPStatus.OK
-                if result.get("status") == "ok"
-                else HTTPStatus.BAD_REQUEST
-            )
+            status = HTTPStatus.OK if result.get("status") == "ok" else HTTPStatus.BAD_REQUEST
             return ApiResult(status, result)
 
         if path == "/api/search" and method == "GET":
@@ -276,12 +264,9 @@ class ProvowareApi:
                     self._list_files(
                         self._query_value(query, "path", ""),
                         sort_by=self._query_value(query, "sort", "name"),
-                        descending=self._query_value(
-                            query, "descending", "false"
-                        ).lower()
+                        descending=self._query_value(query, "descending", "false").lower()
                         == "true",
-                        show_hidden=self._query_value(query, "hidden", "false").lower()
-                        == "true",
+                        show_hidden=self._query_value(query, "hidden", "false").lower() == "true",
                     ),
                     "Ordnerinhalt geladen.",
                 ),
@@ -298,12 +283,8 @@ class ProvowareApi:
             )
 
         if path == "/api/bootstrap" and method == "GET":
-            notes = _module_data(
-                self._note_runner({"action": "list_notes"}), payload_key="data"
-            )
-            todos = _module_data(
-                self._todo_runner({"action": "list"}), payload_key="data"
-            )
+            notes = _module_data(self._note_runner({"action": "list_notes"}), payload_key="data")
+            todos = _module_data(self._todo_runner({"action": "list"}), payload_key="data")
             archives = _module_data(
                 self._archive_runner({"action": "list_archives"}), payload_key="payload"
             )
@@ -332,9 +313,7 @@ class ProvowareApi:
                 result = _module_data(
                     self._note_runner({"action": "list_notes"}), payload_key="data"
                 )
-                return ApiResult(
-                    HTTPStatus.OK, _json_success(result, "Notizen geladen.")
-                )
+                return ApiResult(HTTPStatus.OK, _json_success(result, "Notizen geladen."))
             if method == "POST":
                 request = {
                     "action": "create_note",
@@ -345,34 +324,20 @@ class ProvowareApi:
                     "custom_fields": body.get("custom_fields", {}),
                 }
                 result = _module_data(self._note_runner(request), payload_key="data")
-                return ApiResult(
-                    HTTPStatus.CREATED, _json_success(result, "Notiz gespeichert.")
-                )
+                return ApiResult(HTTPStatus.CREATED, _json_success(result, "Notiz gespeichert."))
 
-        if (
-            path.startswith("/api/notes/")
-            and path.endswith("/favorite")
-            and method == "POST"
-        ):
-            note_id = (
-                path.removeprefix("/api/notes/").removesuffix("/favorite").strip("/")
-            )
+        if path.startswith("/api/notes/") and path.endswith("/favorite") and method == "POST":
+            note_id = path.removeprefix("/api/notes/").removesuffix("/favorite").strip("/")
             result = _module_data(
                 self._note_runner({"action": "toggle_favorite", "id": note_id}),
                 payload_key="data",
             )
-            return ApiResult(
-                HTTPStatus.OK, _json_success(result, "Favoritenstatus aktualisiert.")
-            )
+            return ApiResult(HTTPStatus.OK, _json_success(result, "Favoritenstatus aktualisiert."))
 
         if path == "/api/todos":
             if method == "GET":
-                result = _module_data(
-                    self._todo_runner({"action": "list"}), payload_key="data"
-                )
-                return ApiResult(
-                    HTTPStatus.OK, _json_success(result, "Aufgaben geladen.")
-                )
+                result = _module_data(self._todo_runner({"action": "list"}), payload_key="data")
+                return ApiResult(HTTPStatus.OK, _json_success(result, "Aufgaben geladen."))
             if method == "POST":
                 result = _module_data(
                     self._todo_runner(
@@ -385,18 +350,10 @@ class ProvowareApi:
                     ),
                     payload_key="data",
                 )
-                return ApiResult(
-                    HTTPStatus.CREATED, _json_success(result, "Aufgabe gespeichert.")
-                )
+                return ApiResult(HTTPStatus.CREATED, _json_success(result, "Aufgabe gespeichert."))
 
-        if (
-            path.startswith("/api/todos/")
-            and path.endswith("/complete")
-            and method == "POST"
-        ):
-            todo_id = (
-                path.removeprefix("/api/todos/").removesuffix("/complete").strip("/")
-            )
+        if path.startswith("/api/todos/") and path.endswith("/complete") and method == "POST":
+            todo_id = path.removeprefix("/api/todos/").removesuffix("/complete").strip("/")
             request: dict[str, Any] = {"action": "complete", "id": todo_id}
             if body.get("done_date"):
                 request["done_date"] = body["done_date"]
@@ -416,14 +373,10 @@ class ProvowareApi:
 
         if path == "/api/calendar/legend" and method == "PUT":
             result = _module_data(
-                self._todo_runner(
-                    {"action": "set_legend", "legend": body.get("legend")}
-                ),
+                self._todo_runner({"action": "set_legend", "legend": body.get("legend")}),
                 payload_key="data",
             )
-            return ApiResult(
-                HTTPStatus.OK, _json_success(result, "Farblegende gespeichert.")
-            )
+            return ApiResult(HTTPStatus.OK, _json_success(result, "Farblegende gespeichert."))
 
         if path == "/api/calendar/day-colors" and method == "PUT":
             result = _module_data(
@@ -436,9 +389,7 @@ class ProvowareApi:
                 ),
                 payload_key="data",
             )
-            return ApiResult(
-                HTTPStatus.OK, _json_success(result, "Tagesfarben gespeichert.")
-            )
+            return ApiResult(HTTPStatus.OK, _json_success(result, "Tagesfarben gespeichert."))
 
         if path == "/api/calendar/appointments" and method == "POST":
             appointment_fields = {
@@ -455,9 +406,7 @@ class ProvowareApi:
             request = {key: body.get(key) for key in appointment_fields if key in body}
             request["action"] = "add_appointment"
             result = _module_data(self._todo_runner(request), payload_key="data")
-            return ApiResult(
-                HTTPStatus.CREATED, _json_success(result, "Termin gespeichert.")
-            )
+            return ApiResult(HTTPStatus.CREATED, _json_success(result, "Termin gespeichert."))
 
         if path.startswith("/api/calendar/appointments/"):
             appointment_id = path.removeprefix("/api/calendar/appointments/").strip("/")
@@ -473,27 +422,19 @@ class ProvowareApi:
                     "color_id",
                     "reminder_minutes",
                 }
-                request = {
-                    key: body.get(key) for key in appointment_fields if key in body
-                }
+                request = {key: body.get(key) for key in appointment_fields if key in body}
                 request.update({"action": "update_appointment", "id": appointment_id})
                 result = _module_data(
                     self._todo_runner(request),
                     payload_key="data",
                 )
-                return ApiResult(
-                    HTTPStatus.OK, _json_success(result, "Termin aktualisiert.")
-                )
+                return ApiResult(HTTPStatus.OK, _json_success(result, "Termin aktualisiert."))
             if method == "DELETE":
                 result = _module_data(
-                    self._todo_runner(
-                        {"action": "delete_appointment", "id": appointment_id}
-                    ),
+                    self._todo_runner({"action": "delete_appointment", "id": appointment_id}),
                     payload_key="data",
                 )
-                return ApiResult(
-                    HTTPStatus.OK, _json_success(result, "Termin gelöscht.")
-                )
+                return ApiResult(HTTPStatus.OK, _json_success(result, "Termin gelöscht."))
 
         if path == "/api/calendar/reminders" and method == "GET":
             request = {
@@ -501,9 +442,7 @@ class ProvowareApi:
                 "horizon_hours": self._query_value(query, "horizon_hours", "168"),
             }
             result = _module_data(self._todo_runner(request), payload_key="data")
-            return ApiResult(
-                HTTPStatus.OK, _json_success(result, "Erinnerungen geladen.")
-            )
+            return ApiResult(HTTPStatus.OK, _json_success(result, "Erinnerungen geladen."))
 
         if (
             path.startswith("/api/calendar/reminders/")
@@ -516,14 +455,10 @@ class ProvowareApi:
                 .strip("/")
             )
             result = _module_data(
-                self._todo_runner(
-                    {"action": "acknowledge_reminder", "id": appointment_id}
-                ),
+                self._todo_runner({"action": "acknowledge_reminder", "id": appointment_id}),
                 payload_key="data",
             )
-            return ApiResult(
-                HTTPStatus.OK, _json_success(result, "Erinnerung bestätigt.")
-            )
+            return ApiResult(HTTPStatus.OK, _json_success(result, "Erinnerung bestätigt."))
 
         if path == "/api/archives":
             if method == "GET":
@@ -531,9 +466,7 @@ class ProvowareApi:
                     self._archive_runner({"action": "list_archives"}),
                     payload_key="payload",
                 )
-                return ApiResult(
-                    HTTPStatus.OK, _json_success(result, "Archive geladen.")
-                )
+                return ApiResult(HTTPStatus.OK, _json_success(result, "Archive geladen."))
             if method == "POST":
                 result = _module_data(
                     self._archive_runner(
@@ -547,14 +480,10 @@ class ProvowareApi:
                     ),
                     payload_key="payload",
                 )
-                return ApiResult(
-                    HTTPStatus.CREATED, _json_success(result, "Archiv angelegt.")
-                )
+                return ApiResult(HTTPStatus.CREATED, _json_success(result, "Archiv angelegt."))
 
         if path.startswith("/api/archives/") and path.endswith("/entries"):
-            archive_slug = (
-                path.removeprefix("/api/archives/").removesuffix("/entries").strip("/")
-            )
+            archive_slug = path.removeprefix("/api/archives/").removesuffix("/entries").strip("/")
             if not archive_slug:
                 raise WebServerError("Archivkennung fehlt.")
             if method == "GET":
@@ -566,12 +495,8 @@ class ProvowareApi:
                 category = self._query_value(query, "category", "")
                 if category:
                     request["category"] = category
-                result = _module_data(
-                    self._archive_runner(request), payload_key="payload"
-                )
-                return ApiResult(
-                    HTTPStatus.OK, _json_success(result, "Archiveinträge geladen.")
-                )
+                result = _module_data(self._archive_runner(request), payload_key="payload")
+                return ApiResult(HTTPStatus.OK, _json_success(result, "Archiveinträge geladen."))
             if method == "POST":
                 result = _module_data(
                     self._archive_runner(
@@ -620,18 +545,14 @@ class ProvowareApi:
                     ),
                     payload_key="payload",
                 )
-                return ApiResult(
-                    HTTPStatus.OK, _json_success(result, "Archiveintrag gelöscht.")
-                )
+                return ApiResult(HTTPStatus.OK, _json_success(result, "Archiveintrag gelöscht."))
 
         return ApiResult(
             HTTPStatus.NOT_FOUND,
             _json_error("API-Endpunkt nicht gefunden.", code="not_found"),
         )
 
-    def _resolve_file_path(
-        self, raw_path: str, *, directory: bool | None = None
-    ) -> Path:
+    def _resolve_file_path(self, raw_path: str, *, directory: bool | None = None) -> Path:
         candidate = Path(raw_path or str(Path.home())).expanduser()
         if not candidate.is_absolute():
             candidate = Path.home() / candidate
@@ -639,10 +560,7 @@ class ProvowareApi:
             resolved = candidate.resolve(strict=True)
         except (OSError, RuntimeError) as exc:
             raise WebServerError(f"Pfad ist nicht erreichbar: {candidate}") from exc
-        if not any(
-            resolved == root or resolved.is_relative_to(root)
-            for root in self.file_roots
-        ):
+        if not any(resolved == root or resolved.is_relative_to(root) for root in self.file_roots):
             raise WebServerError(
                 "Der Pfad liegt außerhalb der freigegebenen lokalen Arbeitsbereiche."
             )
@@ -671,9 +589,7 @@ class ProvowareApi:
             raise WebServerError(str(exc)) from exc
         parent = directory.parent
         parent_value = ""
-        if any(
-            parent == root or parent.is_relative_to(root) for root in self.file_roots
-        ):
+        if any(parent == root or parent.is_relative_to(root) for root in self.file_roots):
             parent_value = str(parent)
         return {
             "path": str(directory),
@@ -699,9 +615,7 @@ class ProvowareApi:
     def file_preview(self, raw_path: str) -> tuple[bytes, str]:
         path = self._resolve_file_path(raw_path, directory=False)
         if path.suffix.lower() not in file_browser.IMAGE_SUFFIXES:
-            raise WebServerError(
-                "Für diesen Dateityp ist keine Bildvorschau verfügbar."
-            )
+            raise WebServerError("Für diesen Dateityp ist keine Bildvorschau verfügbar.")
         try:
             from PIL import Image
 
@@ -713,9 +627,7 @@ class ProvowareApi:
                 image.save(buffer, format="PNG", optimize=True)
                 return buffer.getvalue(), "image/png"
         except (OSError, ValueError) as exc:
-            raise WebServerError(
-                f"Bildvorschau konnte nicht erzeugt werden: {exc}"
-            ) from exc
+            raise WebServerError(f"Bildvorschau konnte nicht erzeugt werden: {exc}") from exc
 
     def _global_search(self, term: str) -> dict[str, Any]:
         needle = term.casefold()
@@ -723,9 +635,7 @@ class ProvowareApi:
             return {"query": term, "results": []}
         results: list[dict[str, Any]] = []
 
-        def add(
-            kind: str, title: Any, text: Any, target: str, item_id: Any = ""
-        ) -> None:
+        def add(kind: str, title: Any, text: Any, target: str, item_id: Any = "") -> None:
             haystack = f"{title} {text}".casefold()
             if needle in haystack:
                 results.append(
@@ -738,9 +648,7 @@ class ProvowareApi:
                     }
                 )
 
-        notes = self._module_bridge.invoke("notiz_editor", "list_notes", {}).get(
-            "data", {}
-        )
+        notes = self._module_bridge.invoke("notiz_editor", "list_notes", {}).get("data", {})
         for item in notes.get("notes", []):
             add(
                 "Notiz",
@@ -758,9 +666,9 @@ class ProvowareApi:
                 "tasks",
                 item.get("id"),
             )
-        characters = self._module_bridge.invoke(
-            "charakter_modul", "list_characters", {}
-        ).get("data", {})
+        characters = self._module_bridge.invoke("charakter_modul", "list_characters", {}).get(
+            "data", {}
+        )
         for item in characters.get("characters", []):
             add(
                 "Charakter",
@@ -769,9 +677,7 @@ class ProvowareApi:
                 "characters",
                 item.get("id"),
             )
-        archives = self._module_bridge.invoke(
-            "archiv_manager", "list_archives", {}
-        ).get("data", {})
+        archives = self._module_bridge.invoke("archiv_manager", "list_archives", {}).get("data", {})
         for archive in archives.get("archives", []):
             add(
                 "Archiv",
@@ -859,9 +765,7 @@ class ProvowareApi:
             },
         ]
 
-    def _run_system_action(
-        self, action_name: str, body: Mapping[str, Any]
-    ) -> dict[str, Any]:
+    def _run_system_action(self, action_name: str, body: Mapping[str, Any]) -> dict[str, Any]:
         text_actions = {
             "standards": [self.root / "standards.md"],
             "logs": [
@@ -926,9 +830,7 @@ class ProvowareApi:
             check=False,
             env={**os.environ, "PYTHONPATH": str(self.root)},
         )
-        output = (
-            completed.stdout + ("\n" + completed.stderr if completed.stderr else "")
-        ).strip()
+        output = (completed.stdout + ("\n" + completed.stderr if completed.stderr else "")).strip()
         if completed.returncode != 0:
             raise WebServerError(
                 f"Systemaktion {action_name} fehlgeschlagen (Exit {completed.returncode}): {output[-4000:]}"
@@ -987,11 +889,7 @@ class ProvowareRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(content)
             return
         if parsed.path.startswith("/api/"):
-            body = (
-                self._read_json_body()
-                if self.command in {"POST", "PUT", "PATCH"}
-                else {}
-            )
+            body = self._read_json_body() if self.command in {"POST", "PUT", "PATCH"} else {}
             if body is None:
                 return
             result = self.api.dispatch(
@@ -1003,9 +901,7 @@ class ProvowareRequestHandler(BaseHTTPRequestHandler):
             self._send_json(result.status, result.payload)
             return
         if self.command != "GET":
-            self._send_json(
-                HTTPStatus.METHOD_NOT_ALLOWED, _json_error("Methode nicht erlaubt.")
-            )
+            self._send_json(HTTPStatus.METHOD_NOT_ALLOWED, _json_error("Methode nicht erlaubt."))
             return
         self._serve_static(parsed.path)
 
@@ -1014,9 +910,7 @@ class ProvowareRequestHandler(BaseHTTPRequestHandler):
         try:
             length = int(raw_length)
         except ValueError:
-            self._send_json(
-                HTTPStatus.BAD_REQUEST, _json_error("Ungültige Content-Length.")
-            )
+            self._send_json(HTTPStatus.BAD_REQUEST, _json_error("Ungültige Content-Length."))
             return None
         if length < 0 or length > MAX_JSON_BYTES:
             self._send_json(
@@ -1027,9 +921,7 @@ class ProvowareRequestHandler(BaseHTTPRequestHandler):
             raw = self.rfile.read(length) if length else b"{}"
             value = json.loads(raw.decode("utf-8"))
         except (UnicodeDecodeError, json.JSONDecodeError):
-            self._send_json(
-                HTTPStatus.BAD_REQUEST, _json_error("JSON-Anfrage ist ungültig.")
-            )
+            self._send_json(HTTPStatus.BAD_REQUEST, _json_error("JSON-Anfrage ist ungültig."))
             return None
         if not isinstance(value, Mapping):
             self._send_json(
@@ -1050,9 +942,7 @@ class ProvowareRequestHandler(BaseHTTPRequestHandler):
         if not candidate.is_file():
             candidate = self.static_dir / "index.html"
         content = candidate.read_bytes()
-        content_type = (
-            mimetypes.guess_type(candidate.name)[0] or "application/octet-stream"
-        )
+        content_type = mimetypes.guess_type(candidate.name)[0] or "application/octet-stream"
         self.send_response(HTTPStatus.OK)
         self._common_headers()
         self.send_header(
@@ -1119,9 +1009,7 @@ def bind_server(
     preferred = config.port if port is None else port
     upper = config.max_port if max_port is None else max_port
     if preferred == 0:
-        server = ThreadingHTTPServer(
-            (selected_host, 0), handler_factory(api, config.static_dir)
-        )
+        server = ThreadingHTTPServer((selected_host, 0), handler_factory(api, config.static_dir))
         server.daemon_threads = True
         return server, int(server.server_address[1]), True
     if not 1 <= preferred <= 65535 or not preferred <= upper <= 65535:
@@ -1180,9 +1068,7 @@ def launch_browser(url: str, config: WebServerConfig) -> tuple[bool, str]:
 def write_runtime_state(path: Path, payload: Mapping[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-    )
+    temporary.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     temporary.replace(path)
 
 
@@ -1195,9 +1081,7 @@ def smoke_test(config: WebServerConfig, api: ProvowareApi) -> int:
         with urllib.request.urlopen(url, timeout=5) as response:
             payload = json.loads(response.read().decode("utf-8"))
         if response.status != HTTPStatus.OK or payload.get("status") != "ok":
-            raise WebServerError(
-                "Health-Endpunkt lieferte keinen erfolgreichen Status."
-            )
+            raise WebServerError("Health-Endpunkt lieferte keinen erfolgreichen Status.")
         print(f"Webserver-Smoke-Test: OK — {url}")
         return 0
     finally:
@@ -1207,9 +1091,7 @@ def smoke_test(config: WebServerConfig, api: ProvowareApi) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
-        description="Provoware Memo – integrierter Webserver"
-    )
+    parser = argparse.ArgumentParser(description="Provoware Memo – integrierter Webserver")
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     parser.add_argument("--host")
     parser.add_argument("--port", type=int)
