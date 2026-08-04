@@ -118,7 +118,7 @@ else
     "${CRITICAL_PATHS[@]}" \
     --config "${CONFIG_DIR}/ruff.toml"
   echo "Qualität: Black-Prüfung der neuen Start- und Resolverdateien."
-  "${PYTHON_BIN}" -m black --check \
+  "${PYTHON_BIN}" -m black --diff --check \
     "${FORMAT_PATHS[@]}" \
     --config "${CONFIG_DIR}/black.toml"
 fi
