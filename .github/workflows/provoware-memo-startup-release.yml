@@ -73,19 +73,27 @@ jobs:
           rsync -a ./ "$SMOKE_ROOT/" \
             --exclude '.git/' \
             --exclude '.venv/' \
+            --exclude '.pytest_cache/' \
+            --exclude '.ruff_cache/' \
+            --exclude '.mypy_cache/' \
             --exclude '__pycache__/' \
             --exclude '*.pyc'
           cd "$SMOKE_ROOT"
           ./scripts/start.sh --no-start --no-log
-      - name: Vollständigen Provoware-Memo-Export erstellen
+      - name: Vollständigen Provoware-Memo-Export erstellen und prüfen
         run: |
           EXPORT_ROOT="$RUNNER_TEMP/Provoware_Memo"
           mkdir -p "$EXPORT_ROOT"
           rsync -a ./ "$EXPORT_ROOT/" \
             --exclude '.git/' \
             --exclude '.venv/' \
+            --exclude '.pytest_cache/' \
+            --exclude '.ruff_cache/' \
+            --exclude '.mypy_cache/' \
             --exclude '__pycache__/' \
             --exclude '*.pyc' \
+            --exclude '.coverage' \
+            --exclude 'htmlcov/' \
             --exclude 'logs/*.log' \
             --exclude 'data/*.sqlite' \
             --exclude 'data/*.sqlite-*'
@@ -96,7 +104,14 @@ jobs:
             "$EXPORT_ROOT/scripts/run_tests.sh"
           cd "$RUNNER_TEMP"
           zip -qr Provoware_Memo_FULL.zip Provoware_Memo
+          unzip -tq Provoware_Memo_FULL.zip
+          if unzip -Z1 Provoware_Memo_FULL.zip | grep -Eq \
+            '(^|/)(\.git|\.venv|\.pytest_cache|\.ruff_cache|\.mypy_cache|__pycache__|htmlcov)(/|$)|\.pyc$|\.sqlite(-wal|-shm)?$|/logs/[^/]*\.log$'; then
+            echo "Fehler: Vollprojekt-ZIP enthält ausgeschlossene Laufzeit- oder Cachedateien." >&2
+            exit 1
+          fi
           sha256sum Provoware_Memo_FULL.zip > Provoware_Memo_FULL.zip.sha256
+          sha256sum -c Provoware_Memo_FULL.zip.sha256
       - name: Vollprojekt-ZIP hochladen
         uses: actions/upload-artifact@v4
         with:
