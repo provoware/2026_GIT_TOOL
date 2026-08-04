@@ -53,3 +53,12 @@ def test_preflight_rejects_wrong_product_identity(tmp_path: Path) -> None:
     checks = preflight.validate(root)
     identity = next(item for item in checks if item.name == "product_identity")
     assert identity.status == "error"
+
+
+def test_preflight_rejects_missing_integrated_web_ui(tmp_path: Path) -> None:
+    root = _build_root(tmp_path)
+    (root / "web/index.html").unlink()
+    checks = preflight.validate(root)
+    critical = next(item for item in checks if item.name == "critical_files")
+    assert critical.status == "error"
+    assert "web/index.html" in critical.detail

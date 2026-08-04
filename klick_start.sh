@@ -52,7 +52,14 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if ! command -v python >/dev/null 2>&1; then
+PYTHON_BIN=""
+for candidate in python3 python; do
+  if command -v "$candidate" >/dev/null 2>&1; then
+    PYTHON_BIN="$candidate"
+    break
+  fi
+done
+if [[ -z "$PYTHON_BIN" ]]; then
   echo "Fehler: Python ist nicht installiert. Bitte Python installieren, damit der Start funktioniert."
   exit 1
 fi
@@ -63,17 +70,9 @@ if [[ ! -x "${ROOT_DIR}/scripts/start.sh" ]]; then
   exit 1
 fi
 
-if [[ ! -f "${ROOT_DIR}/config/pin.json" ]]; then
-  echo "Fehler: PIN-Konfiguration fehlt: config/pin.json"
-  echo "Tipp: Self-Repair starten: python system/self_repair.py --root ."
-  exit 1
-fi
-
 START_ARGS=()
-GUI_ARGS=()
 if [[ "${DEBUG_MODE}" -eq 1 ]]; then
   START_ARGS+=(--debug)
-  GUI_ARGS+=(--debug)
 fi
 if [[ -n "${LOG_FILE}" ]]; then
   START_ARGS+=(--log-file "${LOG_FILE}")
@@ -82,12 +81,5 @@ if [[ "${NO_LOG}" -eq 1 ]]; then
   START_ARGS+=(--no-log)
 fi
 
-echo "Klick&Start: PIN-Check läuft (falls aktiviert)."
-python "${ROOT_DIR}/system/pin_auth.py" --config "${ROOT_DIR}/config/pin.json" \
-  --state "${ROOT_DIR}/data/pin_state.json" "${GUI_ARGS[@]}"
-
-echo "Klick&Start: Startroutine läuft (automatische Prüfungen + Fortschritt)."
-"${ROOT_DIR}/scripts/start.sh" "${START_ARGS[@]}"
-
-echo "Klick&Start: Startübersicht wird geöffnet."
-python "${ROOT_DIR}/system/launcher_gui.py" "${GUI_ARGS[@]}"
+echo "Klick&Start: Provoware Memo wird vollständig geprüft und im Browser geöffnet."
+exec "${ROOT_DIR}/scripts/start.sh" "${START_ARGS[@]}"

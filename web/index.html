@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <title>Provoware Memo</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">LOKALES HAUPTTOOL</p>
+        <h1>Provoware Memo</h1>
+        <p class="subtitle">Memo, Aufgaben, Kalender und Archive in einer Oberfläche</p>
+      </div>
+      <div class="status-strip" aria-live="polite">
+        <span class="status-pill"><i id="serverLight" class="light pending"></i><span id="serverStatus">Server wird geprüft</span></span>
+        <span class="status-pill"><i id="dbLight" class="light pending"></i><span id="databaseStatus">Datenbank wird geprüft</span></span>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <nav class="sidebar" aria-label="Hauptnavigation">
+        <button class="nav-button active" data-view="dashboard">Übersicht</button>
+        <button class="nav-button" data-view="memo">Memo</button>
+        <button class="nav-button" data-view="tasks">Aufgaben</button>
+        <button class="nav-button" data-view="calendar">Kalender</button>
+        <button class="nav-button" data-view="archive">Archive</button>
+        <button class="nav-button" data-view="system">System</button>
+      </nav>
+
+      <main class="content" id="mainContent">
+        <section class="view active" data-panel="dashboard">
+          <div class="section-heading"><div><p class="eyebrow">DASHBOARD</p><h2>Arbeitsübersicht</h2></div><button class="button secondary" id="refreshAll">Aktualisieren</button></div>
+          <div class="metric-grid">
+            <article class="metric"><span>Notizen</span><strong id="metricNotes">0</strong></article>
+            <article class="metric"><span>Offene Aufgaben</span><strong id="metricOpenTasks">0</strong></article>
+            <article class="metric"><span>Erledigte Aufgaben</span><strong id="metricDoneTasks">0</strong></article>
+            <article class="metric"><span>Archive</span><strong id="metricArchives">0</strong></article>
+          </div>
+          <div class="two-column">
+            <article class="panel"><h3>Letzte Notizen</h3><div id="dashboardNotes" class="item-list empty-state">Keine Notizen vorhanden.</div></article>
+            <article class="panel"><h3>Nächste Aufgaben</h3><div id="dashboardTasks" class="item-list empty-state">Keine Aufgaben vorhanden.</div></article>
+          </div>
+        </section>
+
+        <section class="view" data-panel="memo">
+          <div class="section-heading"><div><p class="eyebrow">MEMO</p><h2>Notizen</h2></div></div>
+          <div class="split-layout">
+            <form id="noteForm" class="panel form-panel">
+              <h3>Neue Notiz</h3>
+              <label>Titel<input id="noteTitle" maxlength="160" required></label>
+              <label>Text<textarea id="noteBody" rows="8" maxlength="20000" required></textarea></label>
+              <label>Tags, durch Komma getrennt<input id="noteTags" placeholder="Recherche, Idee"></label>
+              <button class="button primary" type="submit">Notiz speichern</button>
+            </form>
+            <article class="panel"><div class="panel-toolbar"><h3>Gespeicherte Notizen</h3><input id="noteSearch" type="search" placeholder="Notizen filtern"></div><div id="notesList" class="item-list empty-state">Keine Notizen vorhanden.</div></article>
+          </div>
+        </section>
+
+        <section class="view" data-panel="tasks">
+          <div class="section-heading"><div><p class="eyebrow">AUFGABEN</p><h2>Aufgabenverwaltung</h2></div></div>
+          <div class="split-layout">
+            <form id="todoForm" class="panel form-panel">
+              <h3>Neue Aufgabe</h3>
+              <label>Titel<input id="todoTitle" maxlength="180" required></label>
+              <label>Geplantes Datum<input id="todoDate" type="date" required></label>
+              <label>Hinweise<textarea id="todoNotes" rows="5" maxlength="4000"></textarea></label>
+              <button class="button primary" type="submit">Aufgabe speichern</button>
+            </form>
+            <article class="panel"><div class="panel-toolbar"><h3>Aufgaben</h3><select id="todoFilter"><option value="all">Alle</option><option value="geplant">Offen</option><option value="erledigt">Erledigt</option></select></div><div id="todosList" class="item-list empty-state">Keine Aufgaben vorhanden.</div></article>
+          </div>
+        </section>
+
+        <section class="view" data-panel="calendar">
+          <div class="section-heading"><div><p class="eyebrow">KALENDER</p><h2>Terminübersicht</h2></div><div class="inline-controls"><input id="calendarDate" type="month"><button class="button secondary" id="calendarLoad">Anzeigen</button></div></div>
+          <article class="panel"><div id="calendarGrid" class="calendar-grid empty-state">Keine Kalendereinträge vorhanden.</div></article>
+        </section>
+
+        <section class="view" data-panel="archive">
+          <div class="section-heading"><div><p class="eyebrow">ARCHIVE</p><h2>Gemeinsame Archivdatenbank</h2></div><span class="database-badge" id="archiveDatabase">SQLite wird verbunden</span></div>
+          <div class="archive-layout">
+            <aside class="panel archive-sidebar">
+              <h3>Archive</h3>
+              <div id="archiveList" class="archive-list empty-state">Keine Archive vorhanden.</div>
+              <details>
+                <summary>Neues Archiv</summary>
+                <form id="archiveForm" class="compact-form">
+                  <label>Name<input id="archiveName" maxlength="120" required></label>
+                  <label>Beschreibung<textarea id="archiveDescription" rows="3" maxlength="1000"></textarea></label>
+                  <label class="checkbox"><input id="archiveSplit" type="checkbox" checked> Kommas trennen Einträge</label>
+                  <button class="button secondary" type="submit">Archiv anlegen</button>
+                </form>
+              </details>
+            </aside>
+            <div class="panel archive-main">
+              <div class="panel-toolbar wrap"><div><h3 id="archiveTitle">Archiv auswählen</h3><p id="archiveDescriptionText" class="muted"></p></div><input id="archiveSearch" type="search" placeholder="Archiv durchsuchen"></div>
+              <form id="archiveEntryForm" class="entry-form">
+                <input id="archiveCategory" value="Allgemein" placeholder="Kategorie" required>
+                <textarea id="archiveValue" rows="3" placeholder="Eintrag oder kommagetrennte Einträge" required></textarea>
+                <button class="button primary" type="submit">Eintragen</button>
+              </form>
+              <div id="archiveEntries" class="item-list empty-state">Bitte ein Archiv auswählen.</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" data-panel="system">
+          <div class="section-heading"><div><p class="eyebrow">SYSTEM</p><h2>Start- und Laufzeitstatus</h2></div></div>
+          <article class="panel system-grid">
+            <div><span>Produkt</span><strong>Provoware Memo</strong></div>
+            <div><span>Serveradresse</span><strong id="systemUrl">–</strong></div>
+            <div><span>Archivdatenbank</span><strong id="systemDatabase">–</strong></div>
+            <div><span>Darstellung</span><strong>Eine integrierte Browseroberfläche</strong></div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </div>
+  <script src="/app.js" defer></script>
+</body>
+</html>

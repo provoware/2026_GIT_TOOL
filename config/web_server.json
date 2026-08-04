@@ -1,0 +1,17 @@
+{
+  "host": "127.0.0.1",
+  "port": 8765,
+  "max_port": 8795,
+  "static_dir": "web",
+  "integration_mode": "single_surface",
+  "browser_candidates": [
+    "google-chrome",
+    "google-chrome-stable"
+  ],
+  "allow_chromium_fallback": true,
+  "chromium_fallbacks": [
+    "chromium",
+    "chromium-browser"
+  ],
+  "open_new_window": true
+}
