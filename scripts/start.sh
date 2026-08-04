@@ -2,364 +2,231 @@
 set -uo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-
+cd "$ROOT_DIR"
+PRODUCT_NAME="Provoware Memo"
 DEBUG_MODE=0
-LOG_FILE=""
 NO_LOG=0
 SAFE_MODE=0
 SANDBOX_MODE=0
-SANDBOX_ROOT=""
+PREFLIGHT_ONLY=0
+NO_START=0
+LOG_FILE=""
 
-show_help() {
+usage() {
   cat <<'EOF'
-Start-Routine (Struktur + Checks + Fortschritt)
+Provoware Memo — automatische Start-, Prüf- und Reparaturroutine
 
-Nutzung:
-  ./scripts/start.sh [--debug] [--log-file <pfad>] [--no-log] [--safe-mode] [--ghost-mode] [--test-mode] [--sandbox]
-
-Optionen:
-  --debug           Debug-Modus aktivieren (mehr Diagnoseausgaben).
-  --log-file <pfad> Logdatei überschreiben (Standard: logs/start_run.log).
-  --no-log          Keine Logdatei schreiben (nur Terminalausgabe).
-  --safe-mode       Schreibgeschützter Start (keine Änderungen, nur Checks).
-  --ghost-mode      Alias für --safe-mode (Testmodus ohne Schreiben).
-  --test-mode       Alias für --safe-mode (Testmodus ohne Schreiben).
-  --sandbox         Start in isolierter Sandbox (writes nur in Sandbox).
-  -h, --help        Diese Hilfe anzeigen.
-
-Hinweis:
-  Die Start-Routine richtet eine Venv ein und startet die GUI automatisch.
+Nutzung: ./scripts/start.sh [Optionen]
+  --debug           ausführliche Diagnosen
+  --log-file PFAD   eigenes Startprotokoll
+  --no-log          kein Dateiprotokoll
+  --safe-mode       nur prüfen, nicht reparieren oder starten
+  --sandbox         vollständige isolierte Projektkopie verwenden
+  --preflight-only  nach der Vorvalidierung beenden
+  --no-start        vollständig prüfen und reparieren, GUI nicht starten
 EOF
 }
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --debug)
-      DEBUG_MODE=1
-      shift
-      ;;
-    --log-file)
-      if [[ -z "${2:-}" ]]; then
-        echo "Fehler: --log-file braucht einen Pfad."
-        exit 2
-      fi
-      LOG_FILE="$2"
-      shift 2
-      ;;
-    --no-log)
-      NO_LOG=1
-      shift
-      ;;
-    --safe-mode)
-      SAFE_MODE=1
-      shift
-      ;;
-    --ghost-mode)
-      SAFE_MODE=1
-      shift
-      ;;
-    --test-mode)
-      SAFE_MODE=1
-      shift
-      ;;
-    --sandbox)
-      SANDBOX_MODE=1
-      shift
-      ;;
-    -h|--help)
-      show_help
-      exit 0
-      ;;
-    *)
-      echo "Fehler: Unbekannte Option: $1"
-      show_help
-      exit 2
-      ;;
+    --debug) DEBUG_MODE=1; shift ;;
+    --log-file) [[ -n "${2:-}" ]] || { echo "--log-file braucht einen Pfad" >&2; exit 2; }; LOG_FILE="$2"; shift 2 ;;
+    --no-log) NO_LOG=1; shift ;;
+    --safe-mode|--ghost-mode|--test-mode) SAFE_MODE=1; shift ;;
+    --sandbox) SANDBOX_MODE=1; shift ;;
+    --preflight-only) PREFLIGHT_ONLY=1; shift ;;
+    --no-start) NO_START=1; shift ;;
+    -h|--help) usage; exit 0 ;;
+    *) echo "Unbekannte Option: $1" >&2; usage; exit 2 ;;
   esac
 done
 
-DEBUG_ARGS=()
-if [[ "${DEBUG_MODE}" -eq 1 ]]; then
-  DEBUG_ARGS=(--debug)
+required_files=(
+  config/product.json config/modules.json config/launcher_gui.json config/requirements.txt
+  scripts/start.sh scripts/ensure_venv.sh scripts/check_env.sh scripts/bootstrap.sh
+  system/startup_preflight.py system/dependency_checker.py system/launcher_gui.py
+  system/pin_auth.py system/structure_checker.py system/self_repair.py system/health_check.py
+  system/json_validator.py system/filename_fixer.py system/todo_manager.py
+  system/module_integration_checks.py system/test_gate.py modules/archiv_manager/manifest.json
+)
+missing=()
+for item in "${required_files[@]}"; do [[ -f "$ROOT_DIR/$item" ]] || missing+=("$item"); done
+if (( ${#missing[@]} )); then
+  echo "$PRODUCT_NAME: unvollständiger Projektordner; Start vor jeder Installation abgebrochen." >&2
+  printf 'Fehlende Kerndatei: %s\n' "${missing[@]}" >&2
+  exit 12
 fi
 
-ORIGINAL_ROOT="${ROOT_DIR}"
-
-create_sandbox() {
-  local source_root="$1"
-  local sandbox
-  sandbox="$(mktemp -d -t git_tool_sandbox_XXXXXX)"
-
-  local dirs=(config system scripts modules src tests data logs)
-  for dir in "${dirs[@]}"; do
-    if [[ -d "${source_root}/${dir}" ]]; then
-      cp -a "${source_root}/${dir}" "${sandbox}/"
-    else
-      mkdir -p "${sandbox}/${dir}"
+find_python() {
+  local candidate
+  for candidate in "${PROVOWARE_PYTHON:-}" python3 python; do
+    [[ -n "$candidate" ]] || continue
+    if command -v "$candidate" >/dev/null 2>&1 \
+      && "$candidate" -c 'import sys; raise SystemExit(0 if sys.version_info >= (3, 10) else 1)' >/dev/null 2>&1; then
+      command -v "$candidate"; return 0
     fi
   done
-
-  local files=(todo.txt CHANGELOG.md DEV_DOKU.md DONE.md PROGRESS.md README.md standards.md STYLEGUIDE.md)
-  for file in "${files[@]}"; do
-    if [[ -f "${source_root}/${file}" ]]; then
-      cp -a "${source_root}/${file}" "${sandbox}/${file}"
-    fi
-  done
-
-  echo "Start-Routine: Sandbox erstellt: ${sandbox}" >&2
-  echo "Start-Routine: Alle Schreibzugriffe bleiben in der Sandbox." >&2
-  echo "${sandbox}"
+  return 1
 }
 
-if [[ "${SAFE_MODE}" -eq 1 ]]; then
+install_system_python() {
+  [[ "${PROVOWARE_AUTO_SYSTEM_INSTALL:-1}" == "1" ]] || return 1
+  local prefix=()
+  if [[ "$EUID" -ne 0 ]]; then
+    command -v sudo >/dev/null 2>&1 && sudo -n true >/dev/null 2>&1 || return 1
+    prefix=(sudo -n)
+  fi
+  if command -v apt-get >/dev/null 2>&1; then
+    "${prefix[@]}" apt-get update && "${prefix[@]}" apt-get install -y python3 python3-venv python3-pip python3-tk
+  elif command -v dnf >/dev/null 2>&1; then
+    "${prefix[@]}" dnf install -y python3 python3-pip python3-tkinter
+  elif command -v pacman >/dev/null 2>&1; then
+    "${prefix[@]}" pacman -Sy --noconfirm python python-pip tk
+  elif command -v zypper >/dev/null 2>&1; then
+    "${prefix[@]}" zypper --non-interactive install python3 python3-pip python3-tk
+  elif command -v apk >/dev/null 2>&1; then
+    "${prefix[@]}" apk add python3 py3-pip py3-virtualenv tk
+  else
+    return 1
+  fi
+}
+
+SYSTEM_PYTHON="$(find_python || true)"
+if [[ -z "$SYSTEM_PYTHON" ]]; then
+  echo "$PRODUCT_NAME: Python >= 3.10 fehlt; nichtinteraktive Reparatur wird versucht."
+  install_system_python || { echo "$PRODUCT_NAME: Python konnte ohne Nutzerinteraktion nicht installiert werden." >&2; exit 10; }
+  SYSTEM_PYTHON="$(find_python || true)"
+fi
+[[ -n "$SYSTEM_PYTHON" ]] || exit 10
+
+mkdir -p data/runtime
+"$SYSTEM_PYTHON" system/startup_preflight.py \
+  --root "$ROOT_DIR" --report "$ROOT_DIR/data/runtime/preflight_report.json" || exit $?
+[[ "$PREFLIGHT_ONLY" -eq 0 ]] || exit 0
+
+if [[ "$SANDBOX_MODE" -eq 1 ]]; then
+  SANDBOX_ROOT="$(mktemp -d -t provoware_memo_sandbox_XXXXXX)"
+  cp -a "$ROOT_DIR/." "$SANDBOX_ROOT/"
+  rm -rf "$SANDBOX_ROOT/.git" "$SANDBOX_ROOT/.venv"
+  ROOT_DIR="$SANDBOX_ROOT"
+  cd "$ROOT_DIR"
+  echo "$PRODUCT_NAME: Sandbox aktiv: $ROOT_DIR"
+  "$SYSTEM_PYTHON" system/startup_preflight.py \
+    --root "$ROOT_DIR" --report "$ROOT_DIR/data/runtime/preflight_report.json" || exit $?
+fi
+
+if [[ "$SAFE_MODE" -eq 1 ]]; then
   NO_LOG=1
-fi
-
-if [[ "${SANDBOX_MODE}" -eq 1 ]]; then
-  SANDBOX_ROOT="$(create_sandbox "${ORIGINAL_ROOT}")"
-  ROOT_DIR="${SANDBOX_ROOT}"
-fi
-
-if [[ "${SAFE_MODE}" -eq 1 ]]; then
-  export GENREARCHIV_WRITE_MODE="read-only"
+  export GENREARCHIV_WRITE_MODE=read-only
 else
-  export GENREARCHIV_WRITE_MODE="normal"
+  export GENREARCHIV_WRITE_MODE=normal
 fi
 
-if [[ "${NO_LOG}" -eq 0 ]]; then
-  if [[ -z "${LOG_FILE}" ]]; then
-    LOG_FILE="${ROOT_DIR}/logs/start_run.log"
+if [[ "$NO_LOG" -eq 0 ]]; then
+  [[ -n "$LOG_FILE" ]] || LOG_FILE="$ROOT_DIR/logs/start_run.log"
+  mkdir -p "$(dirname "$LOG_FILE")"
+  touch "$LOG_FILE"
+  exec > >(tee -a "$LOG_FILE") 2>&1
+fi
+
+echo "$PRODUCT_NAME: Projektordner: $ROOT_DIR"
+echo "$PRODUCT_NAME: Vorvalidierung bestanden."
+
+DEBUG_ARGS=(); [[ "$DEBUG_MODE" -eq 0 ]] || DEBUG_ARGS=(--debug)
+FAILURES=()
+STEP=0
+TOTAL=14
+progress() { STEP=$((STEP + 1)); echo "$PRODUCT_NAME [$STEP/$TOTAL]: $1"; }
+run_required() {
+  local label="$1"; shift
+  "$@"; local code=$?
+  if [[ "$code" -ne 0 ]]; then
+    FAILURES+=("$label (Exit-Code $code)")
+    echo "$PRODUCT_NAME: FEHLER — $label (Exit-Code $code)."
   fi
-  LOG_DIR="$(dirname "${LOG_FILE}")"
-  mkdir -p "${LOG_DIR}"
-  touch "${LOG_FILE}"
-  exec > >(tee -a "${LOG_FILE}") 2>&1
-  echo "Start-Routine: Logdatei aktiv: ${LOG_FILE}"
-else
-  echo "Start-Routine: Logging deaktiviert (--no-log oder Safe-Mode)."
-fi
-
-TOTAL_STEPS=15
-CURRENT_STEP=0
-ERRORS=()
-PYTHON_BIN="python"
-
-update_progress() {
-  local message="$1"
-  local percent=$((CURRENT_STEP * 100 / TOTAL_STEPS))
-  echo "Start-Routine: ${message} (Fortschritt: ${percent} %)"
 }
 
-prepare_venv() {
-  local args=(--root "${ROOT_DIR}")
-  if [[ "${SAFE_MODE}" -eq 1 ]]; then
-    args+=(--no-create)
-  fi
+progress "Venv und Pip prüfen/reparieren"
+VENV_ARGS=(--root "$ROOT_DIR"); [[ "$SAFE_MODE" -eq 0 ]] || VENV_ARGS+=(--no-create)
+PYTHON_BIN="$(PROVOWARE_PYTHON="$SYSTEM_PYTHON" scripts/ensure_venv.sh "${VENV_ARGS[@]}")" || exit $?
+[[ -x "$PYTHON_BIN" ]] || { echo "$PRODUCT_NAME: ungültiger Venv-Interpreter" >&2; exit 11; }
+export PYTHONPATH="$ROOT_DIR${PYTHONPATH:+:$PYTHONPATH}"
 
-  local output
-  if ! output="$("${ROOT_DIR}/scripts/ensure_venv.sh" "${args[@]}")"; then
-    return 1
-  fi
-  if [[ -z "${output}" ]]; then
-    echo "Fehler: Kein Python-Pfad von ensure_venv.sh erhalten."
-    return 1
-  fi
-  PYTHON_BIN="${output}"
-  echo "Start-Routine: Python-Interpreter aktiv: ${PYTHON_BIN}"
-  return 0
-}
+progress "Alle deklarierten Pakete auflösen und importseitig prüfen"
+DEP_ARGS=(--requirements config/requirements.txt --report data/runtime/dependency_report.json)
+[[ "$SAFE_MODE" -eq 0 ]] || DEP_ARGS+=(--check-only)
+run_required "Abhängigkeitsauflösung" "$PYTHON_BIN" system/dependency_checker.py "${DEP_ARGS[@]}" "${DEBUG_ARGS[@]}"
 
-run_step() {
-  local label="$1"
-  local suggestion="$2"
-  shift 2
-  if "$@"; then
-    return 0
-  fi
-  local exit_code=$?
-  echo "Start-Routine: Fehler bei '${label}' (Exit-Code: ${exit_code})."
-  echo "Start-Routine: Alternative: ${suggestion}"
-  ERRORS+=("${label}|${suggestion}")
-  return 0
-}
+progress "Systemumgebung nachprüfen"
+run_required "Umgebungsprüfung" scripts/check_env.sh
 
-CURRENT_STEP=1
-update_progress "Umgebung wird geprüft"
-run_step "Umgebung wird geprüft" \
-  "Bitte ./scripts/check_env.sh ausführen und fehlende Tools installieren." \
-  "${ROOT_DIR}/scripts/check_env.sh"
-
-CURRENT_STEP=2
-update_progress "Virtuelle Umgebung wird vorbereitet"
-run_step "Virtuelle Umgebung wird vorbereitet" \
-  "Tipp: ./scripts/ensure_venv.sh ausführen, um die Venv neu zu erstellen." \
-  prepare_venv
-
-CURRENT_STEP=3
-update_progress "PIN-Login wird geprüft"
-if [[ "${SAFE_MODE}" -eq 1 ]]; then
-  run_step "PIN-Login prüfen" \
-    "Safe-Mode aktiv: PIN-Check übersprungen (schreibgeschützt)." \
-    bash -c "echo 'Safe-Mode: PIN-Check übersprungen (keine Schreibzugriffe).'"
+progress "PIN und Bootstrap prüfen"
+if [[ "$SAFE_MODE" -eq 1 ]]; then
+  echo "$PRODUCT_NAME: Safe-Mode — keine schreibende PIN-/Bootstrap-Aktion."
 else
-  run_step "PIN-Login prüfen" \
-    "Tipp: config/pin.json prüfen oder PIN-Check deaktivieren (enabled=false)." \
-    "${PYTHON_BIN}" "${ROOT_DIR}/system/pin_auth.py" \
-    --config "${ROOT_DIR}/config/pin.json" \
-    --state "${ROOT_DIR}/data/pin_state.json" \
-    "${DEBUG_ARGS[@]}"
+  run_required "PIN-Prüfung" "$PYTHON_BIN" system/pin_auth.py --config config/pin.json --state data/pin_state.json "${DEBUG_ARGS[@]}"
+  run_required "Bootstrap" scripts/bootstrap.sh
 fi
 
-CURRENT_STEP=4
-update_progress "Projektstruktur wird vorbereitet"
-if [[ "${SAFE_MODE}" -eq 1 ]]; then
-  run_step "Projektstruktur wird vorbereitet" \
-    "Safe-Mode aktiv: Bootstrap übersprungen (schreibgeschützt)." \
-    bash -c "echo 'Safe-Mode: Bootstrap übersprungen (keine Schreibzugriffe).'"
+progress "Strukturvertrag prüfen"
+run_required "Strukturprüfung" "$PYTHON_BIN" system/structure_checker.py --root "$ROOT_DIR" "${DEBUG_ARGS[@]}"
+
+progress "Self-Repair ausführen"
+REPAIR_ARGS=(--root "$ROOT_DIR"); [[ "$SAFE_MODE" -eq 0 ]] || REPAIR_ARGS+=(--dry-run)
+run_required "Self-Repair" "$PYTHON_BIN" system/self_repair.py "${REPAIR_ARGS[@]}" "${DEBUG_ARGS[@]}"
+
+progress "Health-Check ausführen"
+run_required "Health-Check" "$PYTHON_BIN" system/health_check.py --root "$ROOT_DIR" "${DEBUG_ARGS[@]}"
+
+progress "JSON und Konfiguration validieren"
+run_required "JSON-Validierung" "$PYTHON_BIN" system/json_validator.py --root "$ROOT_DIR" "${DEBUG_ARGS[@]}"
+
+progress "Dateinamen validieren/reparieren"
+NAME_ARGS=(--root "$ROOT_DIR"); [[ "$SAFE_MODE" -eq 0 ]] || NAME_ARGS+=(--dry-run)
+run_required "Dateinamenprüfung" "$PYTHON_BIN" system/filename_fixer.py "${NAME_ARGS[@]}" "${DEBUG_ARGS[@]}"
+
+progress "Archivdatenbank initialisieren und CLI-Aliase synchronisieren"
+run_required "Archivinitialisierung" "$PYTHON_BIN" -m modules.archiv_manager --list
+if [[ "$SAFE_MODE" -eq 0 ]]; then
+  run_required "Alias-Synchronisierung" "$PYTHON_BIN" -m modules.archiv_manager --install-aliases
+fi
+
+progress "Fortschrittsdaten prüfen"
+TODO_ARGS=(--config config/todo_config.json progress); [[ "$SAFE_MODE" -eq 0 ]] && TODO_ARGS+=(--write-progress)
+run_required "Fortschrittsprüfung" "$PYTHON_BIN" system/todo_manager.py "${TODO_ARGS[@]}" "${DEBUG_ARGS[@]}"
+
+progress "Modulverbund prüfen"
+run_required "Modulprüfung" "$PYTHON_BIN" system/module_integration_checks.py \
+  --config config/modules.json --selftests config/module_selftests.json "${DEBUG_ARGS[@]}"
+
+progress "Test-Gate prüfen"
+if [[ "$SAFE_MODE" -eq 1 ]]; then
+  echo "$PRODUCT_NAME: Safe-Mode — Test-Gate bleibt unverändert."
 else
-  run_step "Projektstruktur wird vorbereitet" \
-    "Bitte ./scripts/bootstrap.sh erneut starten, falls Ordner fehlen." \
-    "${ROOT_DIR}/scripts/bootstrap.sh"
+  run_required "Test-Gate" "$PYTHON_BIN" system/test_gate.py --config config/test_gate.json "${DEBUG_ARGS[@]}"
 fi
 
-CURRENT_STEP=5
-update_progress "Strukturtrennung wird geprüft"
-run_step "Struktur-Check" \
-  "Bitte Ordnerstruktur laut standards.md korrigieren." \
-  "${PYTHON_BIN}" "${ROOT_DIR}/system/structure_checker.py" --root "${ROOT_DIR}" "${DEBUG_ARGS[@]}"
+progress "Pakete, Tkinter und SQLite abschließend nachvalidieren"
+run_required "Abhängigkeits-Nachvalidierung" "$PYTHON_BIN" system/dependency_checker.py \
+  --requirements config/requirements.txt --check-only --report data/runtime/dependency_report_final.json "${DEBUG_ARGS[@]}"
+run_required "GUI-Bibliotheken" "$PYTHON_BIN" -c 'import tkinter, sqlite3; print("Tkinter und SQLite verfügbar")'
 
-CURRENT_STEP=6
-update_progress "Self-Repair (Selbstreparatur) wird ausgeführt"
-SELF_REPAIR_ARGS=(--root "${ROOT_DIR}")
-if [[ "${SAFE_MODE}" -eq 1 ]]; then
-  SELF_REPAIR_ARGS+=(--dry-run)
-fi
-run_step "Self-Repair" \
-  "Tipp: python system/self_repair.py --root . ausführen." \
-  "${PYTHON_BIN}" "${ROOT_DIR}/system/self_repair.py" "${SELF_REPAIR_ARGS[@]}" "${DEBUG_ARGS[@]}"
-
-CURRENT_STEP=7
-update_progress "Health-Check (Sicherheitsprüfung) läuft"
-run_step "Health-Check" \
-  "Tipp: python system/health_check.py --root . ausführen." \
-  "${PYTHON_BIN}" "${ROOT_DIR}/system/health_check.py" --root "${ROOT_DIR}" "${DEBUG_ARGS[@]}"
-
-CURRENT_STEP=8
-update_progress "JSON-Dateien werden geprüft"
-run_step "JSON-Validierung" \
-  "Bitte JSON-Dateien in config/ und modules/ prüfen (Syntax/Struktur)." \
-  "${PYTHON_BIN}" "${ROOT_DIR}/system/json_validator.py" --root "${ROOT_DIR}" "${DEBUG_ARGS[@]}"
-
-CURRENT_STEP=9
-update_progress "Dateinamen werden korrigiert"
-FILENAME_ARGS=(--root "${ROOT_DIR}")
-if [[ "${SAFE_MODE}" -eq 1 ]]; then
-  FILENAME_ARGS+=(--dry-run)
-fi
-run_step "Dateinamen-Korrektur" \
-  "Tipp: Namen in data/ und logs/ prüfen (snake_case, keine Leerzeichen)." \
-  "${PYTHON_BIN}" "${ROOT_DIR}/system/filename_fixer.py" "${FILENAME_ARGS[@]}" "${DEBUG_ARGS[@]}"
-
-CURRENT_STEP=10
-update_progress "Abhängigkeiten werden geprüft"
-DEPENDENCY_ARGS=(--requirements "${ROOT_DIR}/config/requirements.txt")
-if [[ "${SAFE_MODE}" -eq 1 ]]; then
-  DEPENDENCY_ARGS+=(--no-auto-install)
-fi
-run_step "Abhängigkeiten prüfen" \
-  "Tipp: python -m pip install -r config/requirements.txt ausführen." \
-  "${PYTHON_BIN}" "${ROOT_DIR}/system/dependency_checker.py" \
-  "${DEPENDENCY_ARGS[@]}" \
-  "${DEBUG_ARGS[@]}"
-
-CURRENT_STEP=11
-update_progress "Fortschritt wird aus todo.txt berechnet"
-TODO_BASE_ARGS=(--config "${ROOT_DIR}/config/todo_config.json")
-TODO_PROGRESS_ARGS=()
-PROGRESS_WRITE=0
-if [[ "${SAFE_MODE}" -eq 0 ]]; then
-  TODO_PROGRESS_ARGS+=(--write-progress)
-  PROGRESS_WRITE=1
-fi
-run_step "Fortschritt berechnen" \
-  "Bitte todo.txt prüfen (Aufgabenliste/Format)." \
-  "${PYTHON_BIN}" "${ROOT_DIR}/system/todo_manager.py" "${TODO_BASE_ARGS[@]}" progress \
-  "${TODO_PROGRESS_ARGS[@]}" "${DEBUG_ARGS[@]}"
-
-CURRENT_STEP=12
-update_progress "Module werden geprüft (inkl. Verbund-Checks)"
-run_step "Module prüfen (Verbund-Checks)" \
-  "Bitte config/modules.json und module_selftests.json prüfen (id, path, manifest, tests)." \
-  "${PYTHON_BIN}" "${ROOT_DIR}/system/module_integration_checks.py" \
-  --config "${ROOT_DIR}/config/modules.json" \
-  --selftests "${ROOT_DIR}/config/module_selftests.json" \
-  "${DEBUG_ARGS[@]}"
-
-CURRENT_STEP=13
-update_progress "Tests werden geprüft (nur nach kompletter Runde)"
-if [[ "${SAFE_MODE}" -eq 1 ]]; then
-  run_step "Test-Sperre" \
-    "Safe-Mode aktiv: Test-Sperre übersprungen (schreibgeschützt)." \
-    bash -c "echo 'Safe-Mode: Test-Sperre übersprungen (keine Schreibzugriffe).'"
-else
-  run_step "Test-Sperre" \
-    "Tipp: ./scripts/run_tests.sh ausführen und Log prüfen." \
-    "${PYTHON_BIN}" "${ROOT_DIR}/system/test_gate.py" --config "${ROOT_DIR}/config/test_gate.json" "${DEBUG_ARGS[@]}"
-fi
-
-CURRENT_STEP=14
-update_progress "GUI-Voraussetzungen werden geprüft"
-run_step "GUI-Voraussetzungen prüfen" \
-  "Tipp: Installieren Sie python3-tk (Tkinter) über Ihren Paketmanager." \
-  "${PYTHON_BIN}" -c "import tkinter as tk"
-
-CURRENT_STEP=15
-if [[ ${#ERRORS[@]} -gt 0 ]]; then
-  update_progress "Start-Routine abgeschlossen (mit Hinweisen)"
-  echo "Start-Routine: Es gab ${#ERRORS[@]} Hinweis(e)."
-  for entry in "${ERRORS[@]}"; do
-    IFS="|" read -r label suggestion <<< "${entry}"
-    echo "- ${label}"
-    echo "  Tipp: ${suggestion}"
-  done
-  if [[ "${PROGRESS_WRITE}" -eq 1 ]]; then
-    echo "Start-Routine: PROGRESS.md wurde aktualisiert."
-  else
-    echo "Start-Routine: PROGRESS.md wurde nicht geschrieben (Safe-Mode)."
-  fi
-  echo "Start-Routine: Ampelstatus: rot (mindestens ein Fehler)."
+if (( ${#FAILURES[@]} )); then
+  echo "$PRODUCT_NAME: Start blockiert — ${#FAILURES[@]} kritische Prüfung(en) fehlgeschlagen."
+  printf ' - %s\n' "${FAILURES[@]}"
+  echo "$PRODUCT_NAME: Kein unsicherer Teilstart. Berichte: data/runtime/ und logs/."
   exit 2
 fi
 
-update_progress "GUI-Launcher wird gestartet"
-run_step "GUI-Launcher starten" \
-  "Tipp: python system/launcher_gui.py --config config/modules.json ausführen." \
-  "${PYTHON_BIN}" "${ROOT_DIR}/system/launcher_gui.py" \
-  --config "${ROOT_DIR}/config/modules.json" \
-  --gui-config "${ROOT_DIR}/config/launcher_gui.json" \
-  "${DEBUG_ARGS[@]}"
-
-if [[ ${#ERRORS[@]} -gt 0 ]]; then
-  update_progress "Start-Routine abgeschlossen (mit Hinweisen)"
-  echo "Start-Routine: Es gab ${#ERRORS[@]} Hinweis(e)."
-  for entry in "${ERRORS[@]}"; do
-    IFS="|" read -r label suggestion <<< "${entry}"
-    echo "- ${label}"
-    echo "  Tipp: ${suggestion}"
-  done
-  if [[ "${PROGRESS_WRITE}" -eq 1 ]]; then
-    echo "Start-Routine: PROGRESS.md wurde aktualisiert."
-  else
-    echo "Start-Routine: PROGRESS.md wurde nicht geschrieben (Safe-Mode)."
-  fi
-  echo "Start-Routine: Ampelstatus: rot (mindestens ein Fehler)."
-  exit 2
+if [[ "$NO_START" -eq 1 || "$SAFE_MODE" -eq 1 ]]; then
+  echo "$PRODUCT_NAME: vollständige Nachvalidierung erfolgreich; GUI-Start unterdrückt."
+  exit 0
 fi
 
-update_progress "Start-Routine abgeschlossen"
-if [[ "${PROGRESS_WRITE}" -eq 1 ]]; then
-  echo "Start-Routine: PROGRESS.md wurde aktualisiert."
-else
-  echo "Start-Routine: PROGRESS.md wurde nicht geschrieben (Safe-Mode)."
-fi
-echo "Start-Routine: Ampelstatus: grün (keine Fehler)."
+progress "Provoware Memo starten"
+"$PYTHON_BIN" system/launcher_gui.py \
+  --config config/modules.json --gui-config config/launcher_gui.json "${DEBUG_ARGS[@]}"
+code=$?
+[[ "$code" -eq 0 ]] || { echo "$PRODUCT_NAME: Launcherstart fehlgeschlagen ($code)." >&2; exit "$code"; }
+
+echo "$PRODUCT_NAME: Startkette vollständig erfolgreich. Ampelstatus: grün."

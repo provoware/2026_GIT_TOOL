@@ -1,0 +1,88 @@
+name: Provoware Memo Startup and Full Export
+
+on:
+  pull_request:
+    paths:
+      - "scripts/start.sh"
+      - "scripts/ensure_venv.sh"
+      - "system/startup_preflight.py"
+      - "system/dependency_checker.py"
+      - "config/product.json"
+      - "tests/test_startup_preflight.py"
+      - "tests/test_dependency_checker_v2.py"
+      - "docs/PROVOWARE_MEMO_STARTUP.md"
+      - ".github/workflows/provoware-memo-startup-release.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Systemvoraussetzungen installieren
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-tk xvfb zip rsync
+      - name: Testabhängigkeiten installieren
+        run: python -m pip install --disable-pip-version-check -r config/requirements.txt
+      - name: Neue Vorvalidierungs- und Resolververträge testen
+        run: >-
+          python -m pytest -q
+          tests/test_startup_preflight.py
+          tests/test_dependency_checker_v2.py
+      - name: Archiv-Regression testen
+        run: >-
+          python -m pytest -q
+          tests/test_archiv_manager_service.py
+          tests/test_archiv_manager_cli.py
+          tests/test_archiv_manager_aliases.py
+          tests/test_archiv_manager_entry.py
+      - name: Tkinter-Regression unter Xvfb testen
+        run: >-
+          xvfb-run -a -s "-screen 0 1440x1000x24"
+          python -m pytest -q tests/test_archiv_manager_window.py
+      - name: Shell- und Python-Syntax prüfen
+        run: |
+          bash -n scripts/start.sh scripts/ensure_venv.sh
+          python -m py_compile system/startup_preflight.py system/dependency_checker.py
+      - name: Vollprojekt-Vorvalidierung ausführen
+        run: python system/startup_preflight.py --root . --report "$RUNNER_TEMP/ci_preflight_report.json"
+      - name: Vollständige Startkette isoliert nachvalidieren
+        run: |
+          SMOKE_ROOT="$RUNNER_TEMP/Provoware_Memo_Smoke"
+          mkdir -p "$SMOKE_ROOT"
+          rsync -a ./ "$SMOKE_ROOT/" --exclude '.git/' --exclude '.venv/' --exclude '__pycache__/' --exclude '*.pyc'
+          cd "$SMOKE_ROOT"
+          ./scripts/start.sh --no-start --no-log
+      - name: Vollständigen Provoware-Memo-Export erstellen
+        run: |
+          EXPORT_ROOT="$RUNNER_TEMP/Provoware_Memo"
+          mkdir -p "$EXPORT_ROOT"
+          rsync -a ./ "$EXPORT_ROOT/" \
+            --exclude '.git/' \
+            --exclude '.venv/' \
+            --exclude '__pycache__/' \
+            --exclude '*.pyc' \
+            --exclude 'logs/*.log' \
+            --exclude 'data/*.sqlite' \
+            --exclude 'data/*.sqlite-*'
+          chmod +x "$EXPORT_ROOT/scripts/start.sh" "$EXPORT_ROOT/scripts/ensure_venv.sh"
+          cd "$RUNNER_TEMP"
+          zip -qr Provoware_Memo_FULL.zip Provoware_Memo
+          sha256sum Provoware_Memo_FULL.zip > Provoware_Memo_FULL.zip.sha256
+      - name: Vollprojekt-ZIP hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: Provoware_Memo_FULL
+          path: |
+            ${{ runner.temp }}/Provoware_Memo_FULL.zip
+            ${{ runner.temp }}/Provoware_Memo_FULL.zip.sha256
+          if-no-files-found: error
+      - name: Arbeitsbaum unverändert halten
+        run: git diff --exit-code

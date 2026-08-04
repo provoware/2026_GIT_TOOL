@@ -1,183 +1,240 @@
 #!/usr/bin/env python3
-"""Prüft Python-Abhängigkeiten und installiert sie bei Bedarf."""
-
+"""Resolve, install and validate all declared Provoware Memo Python dependencies."""
 from __future__ import annotations
 
 import argparse
-import importlib.util
-import logging
+import importlib
+import importlib.metadata
+import json
 import re
 import subprocess
 import sys
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Iterable, List
 
-from config_utils import ensure_path
-from logging_center import setup_logging as setup_logging_center
+NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*")
+IMPORT_NAMES = {
+    "pillow": "PIL",
+    "pytest": "pytest",
+    "ruff": "ruff",
+    "black": "black",
+}
 
-DEFAULT_REQUIREMENTS = Path(__file__).resolve().parents[1] / "config" / "requirements.txt"
 
-
-class DependencyError(Exception):
-    """Fehler bei der Abhängigkeitsprüfung."""
+class DependencyError(RuntimeError):
+    """Controlled dependency resolution failure."""
 
 
 @dataclass(frozen=True)
-class DependencyCheckResult:
-    total: int
-    missing: List[str]
+class Result:
+    requirement: str
+    distribution: str
+    import_name: str
+    status: str
+    detail: str
 
 
-def _strip_inline_comment(line: str) -> str:
-    if not isinstance(line, str):
-        raise DependencyError("Requirements-Zeile ist kein Text.")
-    cleaned = line.strip()
-    match = re.search(r"\s+#", cleaned)
-    if match:
-        cleaned = cleaned[: match.start()].strip()
-    return cleaned
-
-
-def _read_requirements(path: Path) -> List[str]:
-    ensure_path(path, "requirements", DependencyError)
-    if not path.exists():
+def read_requirements(path: Path) -> list[str]:
+    if not path.is_file():
         raise DependencyError(f"Requirements-Datei fehlt: {path}")
-
-    lines = path.read_text(encoding="utf-8").splitlines()
-    requirements: List[str] = []
-    for line in lines:
-        cleaned = _strip_inline_comment(line)
-        if not cleaned or cleaned.startswith("#"):
+    items: list[str] = []
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
             continue
-        requirements.append(cleaned)
-    return requirements
+        line = re.split(r"\s+#", line, maxsplit=1)[0].strip()
+        if line.startswith(("-r", "--requirement")):
+            raise DependencyError(
+                "Verschachtelte Requirements sind in der Startroutine nicht zulässig."
+            )
+        items.append(line)
+    return items
 
 
-def _normalize_module_name(requirement: str) -> str:
-    if not isinstance(requirement, str) or not requirement.strip():
-        raise DependencyError("Abhängigkeit ist leer oder ungültig.")
-
-    cleaned = requirement.split(";")[0].strip()
-    cleaned = cleaned.split("[")[0].strip()
-    cleaned = re.split(r"[<>=!~]", cleaned)[0].strip()
-    if not cleaned:
-        raise DependencyError("Abhängigkeit enthält keinen Paketnamen.")
-    return cleaned.replace("-", "_")
+def distribution_name(requirement: str) -> str:
+    match = NAME_RE.match(requirement)
+    if not match:
+        raise DependencyError(f"Ungültige Requirement-Angabe: {requirement}")
+    return match.group(0)
 
 
-def _check_missing(requirements: Iterable[str]) -> DependencyCheckResult:
-    missing: List[str] = []
-    total = 0
-    for requirement in requirements:
-        module_name = _normalize_module_name(requirement)
-        total += 1
-        if importlib.util.find_spec(module_name) is None:
-            missing.append(requirement)
-    return DependencyCheckResult(total=total, missing=missing)
+def import_name(distribution: str) -> str:
+    normalized = distribution.casefold().replace("_", "-")
+    return IMPORT_NAMES.get(normalized, distribution.replace("-", "_"))
 
 
-def _install_requirements(path: Path) -> None:
-    cmd = [sys.executable, "-m", "pip", "install", "-r", str(path)]
-    logging.info("Starte Installation: %s", " ".join(cmd))
-    result = subprocess.run(cmd, check=False)
-    if result.returncode != 0:
-        raise DependencyError(
-            "Installation der Abhängigkeiten fehlgeschlagen. "
-            "Bitte prüfen Sie die Ausgabe von pip."
-        )
+def installed(distribution: str) -> tuple[bool, str]:
+    try:
+        return True, importlib.metadata.version(distribution)
+    except importlib.metadata.PackageNotFoundError:
+        return False, "nicht installiert"
 
 
-def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
-        description="Prüft Python-Abhängigkeiten und installiert sie bei Bedarf.",
+def ensure_pip() -> None:
+    probe = subprocess.run(
+        [sys.executable, "-m", "pip", "--version"],
+        capture_output=True,
+        text=True,
+        check=False,
     )
-    parser.add_argument(
-        "--requirements",
-        type=Path,
-        default=DEFAULT_REQUIREMENTS,
-        help="Pfad zur Requirements-Datei.",
+    if probe.returncode == 0:
+        return
+    repair = subprocess.run(
+        [sys.executable, "-m", "ensurepip", "--upgrade"],
+        capture_output=True,
+        text=True,
+        check=False,
     )
-    parser.add_argument(
-        "--no-auto-install",
-        action="store_true",
-        help="Installiert fehlende Pakete nicht automatisch.",
-    )
-    parser.add_argument(
-        "--debug",
-        action="store_true",
-        help="Debug-Modus aktivieren.",
-    )
-    return parser
+    if repair.returncode != 0:
+        detail = repair.stderr.strip() or repair.stdout.strip()
+        raise DependencyError(f"Pip konnte nicht repariert werden: {detail}")
 
 
-def setup_logging(debug: bool) -> None:
-    setup_logging_center(debug)
-
-
-def _render_missing(missing: Iterable[str]) -> str:
-    items = ", ".join(missing)
-    return f"Fehlende Abhängigkeiten: {items}"
-
-
-def _render_next_steps(no_auto_install: bool) -> List[str]:
-    steps = [
-        "Tipp: Abhängigkeiten installieren mit: python -m pip install -r config/requirements.txt.",
-        "Hinweis: Im Safe-Mode werden keine Pakete installiert.",
+def install(requirements: Path) -> None:
+    commands = [
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "--disable-pip-version-check",
+            "--upgrade",
+            "-r",
+            str(requirements),
+        ],
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "--disable-pip-version-check",
+            "--upgrade",
+            "--prefer-binary",
+            "-r",
+            str(requirements),
+        ],
     ]
-    if no_auto_install:
-        steps.append("Auto-Installation ist deaktiviert. Bitte Installation manuell starten.")
-    else:
-        steps.append("Auto-Installation ist aktiv und wird jetzt gestartet.")
-    return steps
+    messages: list[str] = []
+    for command in commands:
+        completed = subprocess.run(command, capture_output=True, text=True, check=False)
+        if completed.returncode == 0:
+            return
+        messages.append(completed.stderr.strip() or completed.stdout.strip())
+    detail = " | ".join(message for message in messages if message)
+    raise DependencyError(f"Installation fehlgeschlagen: {detail}")
 
 
-def main() -> int:
-    parser = build_parser()
-    args = parser.parse_args()
-    setup_logging(args.debug)
+def validate(requirements: list[str]) -> list[Result]:
+    results: list[Result] = []
+    for requirement in requirements:
+        distribution = distribution_name(requirement)
+        module = import_name(distribution)
+        is_installed, version = installed(distribution)
+        if not is_installed:
+            results.append(
+                Result(requirement, distribution, module, "missing", version)
+            )
+            continue
+        try:
+            importlib.import_module(module)
+        except Exception as exc:
+            results.append(
+                Result(
+                    requirement,
+                    distribution,
+                    module,
+                    "broken",
+                    f"{type(exc).__name__}: {exc}",
+                )
+            )
+        else:
+            results.append(Result(requirement, distribution, module, "ok", version))
+    return results
+
+
+def pip_check() -> tuple[bool, str]:
+    completed = subprocess.run(
+        [sys.executable, "-m", "pip", "check"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    text = (completed.stdout or completed.stderr).strip()
+    return completed.returncode == 0, text or "keine Konflikte"
+
+
+def write_report(
+    path: Path | None,
+    results: list[Result],
+    graph_ok: bool,
+    graph_detail: str,
+) -> None:
+    if path is None:
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "product": "Provoware Memo",
+        "ok": all(item.status == "ok" for item in results) and graph_ok,
+        "results": [asdict(item) for item in results],
+        "pip_check": {"ok": graph_ok, "detail": graph_detail},
+    }
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    temporary.replace(path)
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Provoware-Memo-Abhängigkeitsauflösung"
+    )
+    parser.add_argument("--requirements", type=Path, required=True)
+    parser.add_argument("--check-only", action="store_true")
+    parser.add_argument("--report", type=Path)
+    parser.add_argument("--debug", action="store_true")
+    args = parser.parse_args(argv)
 
     try:
-        requirements = _read_requirements(args.requirements)
-    except DependencyError as exc:
-        logging.error("Abhängigkeitsprüfung konnte nicht starten: %s", exc)
-        return 2
+        requirements = read_requirements(args.requirements)
+        ensure_pip()
+        results = validate(requirements)
+        if any(item.status != "ok" for item in results) and not args.check_only:
+            print(
+                "Abhängigkeiten: Fehlende oder beschädigte Pakete werden "
+                "automatisch repariert."
+            )
+            install(args.requirements)
+            importlib.invalidate_caches()
+            results = validate(requirements)
 
-    if not requirements:
-        print("Abhängigkeiten: Keine Einträge in requirements.txt. Weiter.")
+        graph_ok, graph_detail = pip_check()
+        if not graph_ok and not args.check_only:
+            install(args.requirements)
+            importlib.invalidate_caches()
+            results = validate(requirements)
+            graph_ok, graph_detail = pip_check()
+
+        write_report(args.report, results, graph_ok, graph_detail)
+        for item in results:
+            print(
+                f"Abhängigkeit {item.distribution} / Import {item.import_name}: "
+                f"{item.status.upper()} — {item.detail}"
+            )
+        print(
+            f"Abhängigkeitsgraph: {'OK' if graph_ok else 'FEHLER'} — "
+            f"{graph_detail}"
+        )
+        if any(item.status != "ok" for item in results) or not graph_ok:
+            raise DependencyError(
+                "Nachvalidierung der Abhängigkeiten ist fehlgeschlagen."
+            )
+        print("Abhängigkeiten: vollständig installiert und nachvalidiert.")
         return 0
-
-    try:
-        result = _check_missing(requirements)
     except DependencyError as exc:
-        logging.error("Abhängigkeitsprüfung fehlgeschlagen: %s", exc)
+        print(f"Abhängigkeiten: FEHLER — {exc}", file=sys.stderr)
         return 2
-
-    if not result.missing:
-        print("Abhängigkeiten: Alle Pakete vorhanden.")
-        return 0
-
-    print(_render_missing(result.missing))
-    for line in _render_next_steps(args.no_auto_install):
-        print(line)
-    if args.no_auto_install:
-        return 1
-
-    print("Abhängigkeiten: Installation wird gestartet.")
-    try:
-        _install_requirements(args.requirements)
-    except DependencyError as exc:
-        logging.error("Abhängigkeits-Installation fehlgeschlagen: %s", exc)
-        return 2
-
-    result = _check_missing(requirements)
-    if result.missing:
-        logging.error("Nach der Installation fehlen weiterhin Pakete.")
-        print(_render_missing(result.missing))
-        return 2
-
-    print("Abhängigkeiten: Installation erfolgreich.")
-    return 0
 
 
 if __name__ == "__main__":

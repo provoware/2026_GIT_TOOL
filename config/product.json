@@ -1,0 +1,7 @@
+{
+  "id": "provoware_memo",
+  "name": "Provoware Memo",
+  "version": "1.0.0",
+  "project_directory": "Provoware_Memo",
+  "entrypoint": "scripts/start.sh"
+}
