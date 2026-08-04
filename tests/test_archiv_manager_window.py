@@ -3,11 +3,12 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-MODULE_DIR = Path(__file__).resolve().parents[1] / "modules" / "archiv_manager"
-sys.path.insert(0, str(MODULE_DIR))
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
-from service import ArchiveService  # noqa: E402
-from window import ArchiveManagerWindow  # noqa: E402
+from modules.archiv_manager.service import ArchiveService  # noqa: E402
+from modules.archiv_manager.window import ArchiveManagerWindow  # noqa: E402
 
 
 def test_window_loads_archives_filters_and_shared_entries(tmp_path: Path):
@@ -23,7 +24,8 @@ def test_window_loads_archives_filters_and_shared_entries(tmp_path: Path):
         root.update()
         assert len(app.archive_tree.get_children()) == 7
         linux_item = next(
-            item_id for item_id, archive in app.archives_by_item.items()
+            item_id
+            for item_id, archive in app.archives_by_item.items()
             if archive.slug == "linux"
         )
         app.archive_tree.selection_set(linux_item)
