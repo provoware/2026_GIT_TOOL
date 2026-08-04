@@ -1,0 +1,36 @@
+name: Apply Complete Web Integration Once
+
+on:
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      - name: Geprüften Gesamtstand atomar einspielen
+        env:
+          EXPECTED_SHA256: 1f83a7e55cae8d6b495a007544d90c39690c0d59f648e715417c12388d6b16ae
+          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+          cat .provoware-payload/part-* > "$RUNNER_TEMP/payload.b64"
+          base64 --decode "$RUNNER_TEMP/payload.b64" > "$RUNNER_TEMP/payload.tar.gz"
+          echo "$EXPECTED_SHA256  $RUNNER_TEMP/payload.tar.gz" | sha256sum --check --strict
+          tar -tzf "$RUNNER_TEMP/payload.tar.gz"
+          tar -xzf "$RUNNER_TEMP/payload.tar.gz" -C .
+          chmod +x scripts/run_tests.sh scripts/web_interaction_probe.py
+          rm -rf .provoware-payload
+          git rm .github/workflows/apply-complete-web-integration.yml
+          git config user.name "provoware-release-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git commit -m "Provoware Memo: vollständige Webintegration und Interaktionsfix"
+          git push origin "HEAD:$HEAD_BRANCH"
