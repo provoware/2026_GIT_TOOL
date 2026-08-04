@@ -1,24 +1,24 @@
 name: Apply Calendar Enhancement Once
 
 on:
-  push:
-    branches:
-      - agent/calendar-color-appointments-reminders
+  pull_request:
 
 permissions:
   contents: write
 
 jobs:
   apply:
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: agent/calendar-color-appointments-reminders
+          ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
       - name: Geprüften Kalenderstand atomar einspielen
         env:
           EXPECTED_SHA256: 0e03f401760e3f7b27faedddc5da18668a1bceda4614bf669bc5b62a3ccbde42
+          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
         run: |
           set -euo pipefail
           if ! compgen -G ".calendar-payload/part-*" >/dev/null; then
@@ -36,4 +36,4 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add modules/todo_kalender/module.py config/todo_kalender.json system/web_module_bridge.py system/web_server.py web/index.html web/app.js web/styles.css scripts/web_interaction_probe.py tests/test_todo_kalender_module.py tests/test_web_server.py tests/test_web_ui_contract.py docs/CALENDAR_COLORS_APPOINTMENTS.md .calendar-payload
           git commit -m "Provoware Memo: Kalenderfarben, Termine und Erinnerungen"
-          git push origin HEAD:agent/calendar-color-appointments-reminders
+          git push origin "HEAD:$HEAD_BRANCH"
