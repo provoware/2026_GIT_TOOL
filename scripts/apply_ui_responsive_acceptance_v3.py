@@ -51,8 +51,30 @@ def transform_launcher(source: str) -> str:
     return result
 
 
+def _preserve_component_metrics(source: str, result: str) -> str:
+    """Verhindert, dass der historische Responsive-Codemod Block-3-Metriken zurücksetzt."""
+    if "from ui_components import register_component" not in source:
+        return result
+    result = result.replace(
+        "        menu.configure(padx=6, pady=8, takefocus=1)\n",
+        "        menu.configure(takefocus=1)\n",
+        1,
+    )
+    result = result.replace(
+        "        for button in (self.activate_button, self.deactivate_button):\n"
+        "            button.configure(pady=7, takefocus=1)\n",
+        "        for button in (self.activate_button, self.deactivate_button):\n"
+        "            button.configure(takefocus=1)\n",
+        1,
+    )
+    return result
+
+
 def transform_main(source: str) -> str:
-    return v2.transform_main(source)
+    result = v2.transform_main(source)
+    result = _preserve_component_metrics(source, result)
+    ast.parse(result)
+    return result
 
 
 def transform_acceptance(source: str) -> str:
