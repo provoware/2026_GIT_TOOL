@@ -12,7 +12,9 @@ import pytest
 from system import web_server
 
 
-def _config(tmp_path: Path, *, port: int = 8765, max_port: int | None = None) -> web_server.WebServerConfig:
+def _config(
+    tmp_path: Path, *, port: int = 8765, max_port: int | None = None
+) -> web_server.WebServerConfig:
     static_dir = tmp_path / "web"
     static_dir.mkdir(parents=True)
     (static_dir / "index.html").write_text("<h1>Provoware Memo</h1>", encoding="utf-8")
@@ -32,21 +34,51 @@ def _config(tmp_path: Path, *, port: int = 8765, max_port: int | None = None) ->
 def _api(tmp_path: Path) -> web_server.ProvowareApi:
     def note_runner(request):
         if request["action"] == "list_notes":
-            return {"status": "ok", "message": "ok", "data": {"notes": [{"id": "n1", "title": "Memo"}]}, "ui": {}}
-        return {"status": "ok", "message": "ok", "data": {"id": "n2", "title": request.get("title")}, "ui": {}}
+            return {
+                "status": "ok",
+                "message": "ok",
+                "data": {"notes": [{"id": "n1", "title": "Memo"}]},
+                "ui": {},
+            }
+        return {
+            "status": "ok",
+            "message": "ok",
+            "data": {"id": "n2", "title": request.get("title")},
+            "ui": {},
+        }
 
     def todo_runner(request):
         if request["action"] == "calendar":
-            return {"status": "ok", "message": "ok", "data": {"entries": [], "view": request["view"]}}
+            return {
+                "status": "ok",
+                "message": "ok",
+                "data": {"entries": [], "view": request["view"]},
+            }
         if request["action"] == "list":
-            return {"status": "ok", "message": "ok", "data": {"items": [{"id": "t1", "title": "Test"}]}}
-        return {"status": "ok", "message": "ok", "data": {"id": "t2", "title": request.get("title")}}
+            return {
+                "status": "ok",
+                "message": "ok",
+                "data": {"items": [{"id": "t1", "title": "Test"}]},
+            }
+        return {
+            "status": "ok",
+            "message": "ok",
+            "data": {"id": "t2", "title": request.get("title")},
+        }
 
     def archive_runner(request):
         if request["action"] == "list_archives":
-            return {"status": "ok", "message": "ok", "payload": {"archives": [{"slug": "genres", "name": "Genres"}]}}
+            return {
+                "status": "ok",
+                "message": "ok",
+                "payload": {"archives": [{"slug": "genres", "name": "Genres"}]},
+            }
         if request["action"] == "list_entries":
-            return {"status": "ok", "message": "ok", "payload": {"entries": [{"id": 1, "value": "Fantasy"}]}}
+            return {
+                "status": "ok",
+                "message": "ok",
+                "payload": {"entries": [{"id": 1, "value": "Fantasy"}]},
+            }
         return {"status": "ok", "message": "ok", "payload": {"entry": {"id": 2}}}
 
     return web_server.ProvowareApi(
@@ -129,7 +161,11 @@ def test_health_endpoint_served_over_real_loopback_socket(tmp_path: Path) -> Non
 
 def test_browser_resolution_prefers_google_chrome(monkeypatch, tmp_path: Path) -> None:
     config = _config(tmp_path)
-    monkeypatch.setattr(web_server.shutil, "which", lambda name: f"/usr/bin/{name}" if name == "google-chrome" else None)
+    monkeypatch.setattr(
+        web_server.shutil,
+        "which",
+        lambda name: f"/usr/bin/{name}" if name == "google-chrome" else None,
+    )
     executable, is_google = web_server.resolve_browser(config)
     assert executable == "/usr/bin/google-chrome"
     assert is_google is True

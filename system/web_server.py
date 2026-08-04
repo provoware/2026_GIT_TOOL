@@ -89,9 +89,13 @@ def load_config(path: Path = DEFAULT_CONFIG, *, root: Path = PROJECT_ROOT) -> We
     data = _require_mapping(raw, "Konfiguration")
     host = _require_text(data.get("host", "127.0.0.1"), "host")
     if host not in {"127.0.0.1", "localhost", "::1"}:
-        raise WebServerError("Der integrierte Server darf ausschließlich an Loopback gebunden werden.")
+        raise WebServerError(
+            "Der integrierte Server darf ausschließlich an Loopback gebunden werden."
+        )
     port = _require_int(data.get("port", 8765), "port", minimum=1, maximum=65535)
-    max_port = _require_int(data.get("max_port", port + 20), "max_port", minimum=port, maximum=65535)
+    max_port = _require_int(
+        data.get("max_port", port + 20), "max_port", minimum=port, maximum=65535
+    )
     static_value = _require_text(data.get("static_dir", "web"), "static_dir")
     static_dir = Path(static_value)
     if not static_dir.is_absolute():
@@ -203,7 +207,9 @@ class ProvowareApi:
         if path == "/api/bootstrap" and method == "GET":
             notes = _module_data(self._note_runner({"action": "list_notes"}), payload_key="data")
             todos = _module_data(self._todo_runner({"action": "list"}), payload_key="data")
-            archives = _module_data(self._archive_runner({"action": "list_archives"}), payload_key="payload")
+            archives = _module_data(
+                self._archive_runner({"action": "list_archives"}), payload_key="payload"
+            )
             calendar = _module_data(
                 self._todo_runner({"action": "calendar", "view": "monat"}), payload_key="data"
             )
@@ -223,7 +229,9 @@ class ProvowareApi:
 
         if path == "/api/notes":
             if method == "GET":
-                result = _module_data(self._note_runner({"action": "list_notes"}), payload_key="data")
+                result = _module_data(
+                    self._note_runner({"action": "list_notes"}), payload_key="data"
+                )
                 return ApiResult(HTTPStatus.OK, _json_success(result, "Notizen geladen."))
             if method == "POST":
                 request = {
@@ -331,7 +339,9 @@ class ProvowareApi:
                     ),
                     payload_key="payload",
                 )
-                return ApiResult(HTTPStatus.CREATED, _json_success(result, "Archiveintrag verarbeitet."))
+                return ApiResult(
+                    HTTPStatus.CREATED, _json_success(result, "Archiveintrag verarbeitet.")
+                )
 
         if path.startswith("/api/archive-entries/"):
             entry_id = int(path.removeprefix("/api/archive-entries/").strip("/"))
@@ -348,7 +358,9 @@ class ProvowareApi:
                     ),
                     payload_key="payload",
                 )
-                return ApiResult(HTTPStatus.OK, _json_success(result, "Archiveintrag aktualisiert."))
+                return ApiResult(
+                    HTTPStatus.OK, _json_success(result, "Archiveintrag aktualisiert.")
+                )
             if method == "DELETE":
                 result = _module_data(
                     self._archive_runner(
@@ -358,7 +370,9 @@ class ProvowareApi:
                 )
                 return ApiResult(HTTPStatus.OK, _json_success(result, "Archiveintrag gelöscht."))
 
-        return ApiResult(HTTPStatus.NOT_FOUND, _json_error("API-Endpunkt nicht gefunden.", code="not_found"))
+        return ApiResult(
+            HTTPStatus.NOT_FOUND, _json_error("API-Endpunkt nicht gefunden.", code="not_found")
+        )
 
     @staticmethod
     def _query_value(query: Mapping[str, list[str]], key: str, default: str) -> str:
@@ -416,7 +430,9 @@ class ProvowareRequestHandler(BaseHTTPRequestHandler):
             self._send_json(HTTPStatus.BAD_REQUEST, _json_error("Ungültige Content-Length."))
             return None
         if length < 0 or length > MAX_JSON_BYTES:
-            self._send_json(HTTPStatus.REQUEST_ENTITY_TOO_LARGE, _json_error("Anfrage ist zu groß."))
+            self._send_json(
+                HTTPStatus.REQUEST_ENTITY_TOO_LARGE, _json_error("Anfrage ist zu groß.")
+            )
             return None
         try:
             raw = self.rfile.read(length) if length else b"{}"
@@ -425,7 +441,9 @@ class ProvowareRequestHandler(BaseHTTPRequestHandler):
             self._send_json(HTTPStatus.BAD_REQUEST, _json_error("JSON-Anfrage ist ungültig."))
             return None
         if not isinstance(value, Mapping):
-            self._send_json(HTTPStatus.BAD_REQUEST, _json_error("JSON-Anfrage muss ein Objekt sein."))
+            self._send_json(
+                HTTPStatus.BAD_REQUEST, _json_error("JSON-Anfrage muss ein Objekt sein.")
+            )
             return None
         return value
 
@@ -443,8 +461,19 @@ class ProvowareRequestHandler(BaseHTTPRequestHandler):
         content_type = mimetypes.guess_type(candidate.name)[0] or "application/octet-stream"
         self.send_response(HTTPStatus.OK)
         self._common_headers()
-        self.send_header("Content-Type", f"{content_type}; charset=utf-8" if content_type.startswith("text/") or content_type in {"application/javascript", "application/json"} else content_type)
-        self.send_header("Cache-Control", "no-cache" if candidate.name == "index.html" else "public, max-age=3600")
+        self.send_header(
+            "Content-Type",
+            (
+                f"{content_type}; charset=utf-8"
+                if content_type.startswith("text/")
+                or content_type in {"application/javascript", "application/json"}
+                else content_type
+            ),
+        )
+        self.send_header(
+            "Cache-Control",
+            "no-cache" if candidate.name == "index.html" else "public, max-age=3600",
+        )
         self.send_header("Content-Length", str(len(content)))
         self.end_headers()
         self.wfile.write(content)
@@ -654,7 +683,10 @@ def main(argv: list[str] | None = None) -> int:
             opened, detail = launch_browser(url, config)
             print(f"Provoware Memo: {detail}")
             if not opened:
-                print(f"Provoware Memo: Bitte URL manuell in Google Chrome öffnen: {url}", file=sys.stderr)
+                print(
+                    f"Provoware Memo: Bitte URL manuell in Google Chrome öffnen: {url}",
+                    file=sys.stderr,
+                )
         print("Provoware Memo: Server läuft. Beenden mit Strg+C.")
         server.serve_forever(poll_interval=0.25)
         return 0
