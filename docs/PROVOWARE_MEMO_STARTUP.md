@@ -70,7 +70,7 @@ Damit werden bestehende projektweite Lint-Altlasten transparent erhalten, aber n
 
 ## Verbindliche Browser-Interaktionsabnahme
 
-Das Release-Gate startet die vollständige Anwendung in Google Chrome und führt reale Benutzeraktionen aus. Geprüft werden sämtliche Navigationsbereiche, die Aktivierung des zugehörigen Panels, das Öffnen und Schließen dynamischer Modulaktionen, der integrierte Datei-Manager und die sichtbare JavaScript-Fehlergrenze. Ein Release darf nicht allein aufgrund bestandener Syntax- oder API-Tests freigegeben werden.
+Das Release-Gate startet die vollständige Anwendung in Google Chrome und führt reale Benutzeraktionen aus. Geprüft werden sämtliche Navigationsbereiche, die Aktivierung des zugehörigen Panels, das Öffnen und Schließen dynamischer Modulaktionen, der integrierte Datei-Manager und die sichtbare JavaScript-Fehlergrenze. Ein Release darf nicht allein aufgrund bestandener Syntax- oder API-Tests freigegeben werden. Die Interaktionsprüfung läuft auf demselben vollständig formatierten Projektstand, aus dem anschließend das Release-ZIP erzeugt wird.
 
 ## Vollständiger Export
 
