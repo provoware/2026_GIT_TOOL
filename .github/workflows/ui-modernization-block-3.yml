@@ -18,29 +18,52 @@ on:
       - "dateiindex/**"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  components:
+  integrate-components:
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
       - name: Testabhängigkeiten installieren
         run: python -m pip install --disable-pip-version-check pytest
-      - name: Komponenten- und Themeverträge testen
+      - name: Codemod vor Integration testen
+        run: python -m pytest -q tests/test_ui_modernization_block3_codemod.py
+      - name: Komponentenrollen integrieren
+        run: python scripts/apply_ui_modernization_block3.py
+      - name: Integrierte Komponenten- und Themeverträge testen
         run: >-
           python -m pytest -q
           tests/test_ui_components.py
           tests/test_ui_theme_adapter.py
+      - name: Integrierten Codemod prüfen
+        run: python scripts/apply_ui_modernization_block3.py --check
       - name: Syntax prüfen
         run: >-
           python -m py_compile
           system/ui_components.py
           system/ui_theme_adapter.py
+          system/launcher_gui.py
+          system/main_window.py
+          scripts/apply_ui_modernization_block3.py
       - name: Design-Token-Drift ausschließen
         run: python system/generate_design_tokens.py --check
-      - name: Repository unverändert halten
-        run: git diff --exit-code
+      - name: Produktionsintegration committen
+        run: |
+          if git diff --quiet; then
+            echo "Keine Integrationsänderung erforderlich."
+            exit 0
+          fi
+          git diff --check
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add system/ui_components.py system/launcher_gui.py system/main_window.py
+          git commit -m "Block 3: Komponentenrollen in produktive Fenster integrieren"
+          git push origin HEAD:${{ github.head_ref }}
