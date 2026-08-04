@@ -14,6 +14,7 @@ from config_models import (
     GuiTextSpacingConfig,
     ThemeConfig,
 )
+from ui_components import component_metrics, register_component
 from ui_theme_adapter import (
     UiThemeError,
     apply_module_card_theme,
@@ -44,10 +45,17 @@ class FakeWidget:
         self.widget_class = widget_class
         self.children = list(children or [])
         self.menu = menu
-        self.options = {}
+        self.options = {"state": "normal"}
+        self.bindings = {}
 
     def configure(self, **options):
         self.options.update(options)
+
+    def cget(self, key):
+        return self.options.get(key, "")
+
+    def bind(self, sequence, callback, add=None):
+        self.bindings.setdefault(sequence, []).append((callback, add))
 
     def winfo_class(self):
         return self.widget_class
@@ -145,7 +153,7 @@ def test_status_and_tooltip_palettes_follow_same_theme_contract():
     }
     assert build_tooltip_style(resolved) == {
         "bg": "#202020",
-        "fg": "#ffffff",
+        "fg": "#f0f0f0",
         "border": "#00ff99",
     }
 
@@ -163,9 +171,12 @@ def test_apply_theme_tree_styles_nested_widgets_and_option_menu():
 
     assert root.options["background"] == "#101010"
     assert frame.options["background"] == "#101010"
-    assert label.options == {"background": "#101010", "foreground": "#f0f0f0"}
+    assert label.options["background"] == "#101010"
+    assert label.options["foreground"] == "#f0f0f0"
     assert button.options["background"] == "#202020"
-    assert button.options["activebackground"] == "#00ff99"
+    assert button.options["activebackground"] != button.options["background"]
+    assert button.options["padx"] == component_metrics().gap_md
+    assert button.options["pady"] == component_metrics().gap_sm
     assert text.options["insertbackground"] == "#f0f0f0"
     assert option_menu.options["font"] == "ButtonFont"
     assert menu.options["activeforeground"] == "#ffffff"
@@ -193,7 +204,30 @@ def test_named_tk_menu_reference_is_resolved_and_styled():
     assert menu.options["font"] == "ButtonFont"
 
 
-def test_apply_module_card_theme_preserves_card_specific_accents():
+def test_registered_button_role_is_used_by_recursive_theme_application():
+    button = FakeWidget("Button")
+    register_component(button, "primary")
+    root = FakeWidget("Tk", children=[button])
+
+    apply_theme_tree(root, COLORS)
+
+    assert button.options["background"] == "#00ff99"
+    assert getattr(button, "_pw_component_role") == "primary"
+
+
+def test_registered_panel_receives_surface_and_depth_contract():
+    panel = FakeWidget("Labelframe")
+    register_component(panel, "panel")
+    root = FakeWidget("Tk", children=[panel])
+
+    apply_theme_tree(root, COLORS)
+
+    assert panel.options["background"] == "#202020"
+    assert panel.options["borderwidth"] == 1
+    assert panel.options["relief"] == "flat"
+
+
+def test_apply_module_card_theme_assigns_card_and_action_roles():
     card = SimpleNamespace(
         frame=FakeWidget(),
         header=FakeWidget(),
@@ -209,8 +243,13 @@ def test_apply_module_card_theme_preserves_card_specific_accents():
     apply_module_card_theme(card, COLORS)
 
     assert card.frame.options["highlightbackground"] == "#00ff99"
+    assert card.frame.options["background"] == "#202020"
+    assert card.frame.options["relief"] == "raised"
     assert card.drag_label.options["foreground"] == "#00ff99"
-    assert card.activate_button.options["background"] == "#202020"
+    assert card.activate_button.options["background"] == "#00ff99"
+    assert card.deactivate_button.options["background"] == "#990000"
+    assert getattr(card.activate_button, "_pw_component_role") == "primary"
+    assert getattr(card.deactivate_button, "_pw_component_role") == "danger"
     assert card.resize_handle.options["foreground"] == "#00ff99"
 
 
@@ -220,4 +259,4 @@ def test_missing_theme_color_fails_before_widget_mutation():
 
     with pytest.raises(UiThemeError, match="accent"):
         apply_theme_tree(root, incomplete)
-    assert root.options == {}
+    assert root.options == {"state": "normal"}
