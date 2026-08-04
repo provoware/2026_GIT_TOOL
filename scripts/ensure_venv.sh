@@ -5,37 +5,10 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ALLOW_CREATE=1
 QUIET=0
 
-show_help() {
-  cat <<'EOF'
-Virtuelle Umgebung vorbereiten (Venv = isolierte Python-Umgebung)
-
-Nutzung:
-  ./scripts/ensure_venv.sh [--root <pfad>] [--no-create] [--quiet]
-
-Optionen:
-  --root <pfad>   Projektwurzel festlegen (Standard: Repo-Root).
-  --no-create     Keine neue Venv anlegen (nur nutzen, falls vorhanden).
-  --quiet         Keine Statusausgaben (nur Python-Pfad ausgeben).
-  -h, --help      Hilfe anzeigen.
-
-Ausgabe:
-  Gibt den Pfad zum Python-Interpreter (Venv oder System) aus.
-EOF
-}
-
-log_info() {
-  if [[ "${QUIET}" -eq 0 ]]; then
-    echo "$@" >&2
-  fi
-}
-
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --root)
-      if [[ -z "${2:-}" ]]; then
-        echo "Fehler: --root braucht einen Pfad." >&2
-        exit 2
-      fi
+      [[ -n "${2:-}" ]] || { echo "Fehler: --root braucht einen Pfad." >&2; exit 2; }
       ROOT_DIR="$(cd "$2" && pwd)"
       shift 2
       ;;
@@ -47,50 +20,82 @@ while [[ $# -gt 0 ]]; do
       QUIET=1
       shift
       ;;
-    -h|--help)
-      show_help
-      exit 0
-      ;;
     *)
       echo "Fehler: Unbekannte Option: $1" >&2
-      show_help
       exit 2
       ;;
   esac
 done
 
-if ! command -v python >/dev/null 2>&1; then
-  echo "Fehler: Python ist nicht installiert. Bitte Python installieren." >&2
-  exit 1
+log_info() {
+  [[ "$QUIET" -eq 1 ]] || echo "$*" >&2
+}
+
+find_python() {
+  local candidate
+  for candidate in "${PROVOWARE_PYTHON:-}" python3 python; do
+    [[ -n "$candidate" ]] || continue
+    if command -v "$candidate" >/dev/null 2>&1 \
+      && "$candidate" -c 'import sys; raise SystemExit(0 if sys.version_info >= (3, 10) else 1)' >/dev/null 2>&1; then
+      command -v "$candidate"
+      return 0
+    fi
+  done
+  return 1
+}
+
+BASE_PYTHON="$(find_python || true)"
+if [[ -z "$BASE_PYTHON" ]]; then
+  echo "Fehler: Python >= 3.10 wurde nicht gefunden." >&2
+  exit 10
 fi
 
 VENV_DIR="${ROOT_DIR}/.venv"
 VENV_PYTHON="${VENV_DIR}/bin/python"
 
-if [[ -x "${VENV_PYTHON}" ]]; then
-  log_info "Venv: Bereits vorhanden (${VENV_DIR})."
-  echo "${VENV_PYTHON}"
+venv_healthy() {
+  [[ -x "$VENV_PYTHON" ]] \
+    && "$VENV_PYTHON" -c 'import sys, venv; raise SystemExit(0 if sys.version_info >= (3, 10) else 1)' >/dev/null 2>&1
+}
+
+if venv_healthy; then
+  if ! "$VENV_PYTHON" -m pip --version >/dev/null 2>&1; then
+    "$VENV_PYTHON" -m ensurepip --upgrade >/dev/null
+  fi
+  log_info "Venv: geprüft und wiederverwendet (${VENV_DIR})."
+  echo "$VENV_PYTHON"
   exit 0
 fi
 
-if [[ "${ALLOW_CREATE}" -eq 0 ]]; then
-  log_info "Venv: Nicht vorhanden, nutze System-Python."
-  command -v python
+if [[ -e "$VENV_DIR" ]]; then
+  if [[ "$ALLOW_CREATE" -eq 0 ]]; then
+    log_info "Venv: beschädigt; Safe-Mode nutzt System-Python."
+    echo "$BASE_PYTHON"
+    exit 0
+  fi
+  backup="${VENV_DIR}.broken.$(date +%Y%m%d%H%M%S)"
+  mv "$VENV_DIR" "$backup"
+  log_info "Venv: beschädigter Stand gesichert: ${backup}"
+fi
+
+if [[ "$ALLOW_CREATE" -eq 0 ]]; then
+  log_info "Venv: nicht vorhanden; System-Python wird geprüft."
+  echo "$BASE_PYTHON"
   exit 0
 fi
 
-log_info "Venv: Erstelle neue virtuelle Umgebung in ${VENV_DIR}."
-python -m venv "${VENV_DIR}"
+log_info "Venv: wird mit ${BASE_PYTHON} erstellt."
+"$BASE_PYTHON" -m venv "$VENV_DIR"
 
-if [[ ! -x "${VENV_PYTHON}" ]]; then
-  echo "Fehler: Venv konnte nicht erstellt werden (${VENV_PYTHON} fehlt)." >&2
-  exit 1
+if ! venv_healthy; then
+  echo "Fehler: Venv konnte nicht funktionsfähig erstellt werden." >&2
+  exit 11
 fi
 
-if ! "${VENV_PYTHON}" -m pip --version >/dev/null 2>&1; then
-  echo "Fehler: Pip ist in der Venv nicht verfügbar." >&2
-  exit 1
+if ! "$VENV_PYTHON" -m pip --version >/dev/null 2>&1; then
+  "$VENV_PYTHON" -m ensurepip --upgrade
 fi
+"$VENV_PYTHON" -m pip --version >/dev/null
 
-log_info "Venv: Bereit (${VENV_DIR})."
-echo "${VENV_PYTHON}"
+log_info "Venv: erfolgreich erstellt und Pip nachvalidiert."
+echo "$VENV_PYTHON"

@@ -31,10 +31,23 @@ class ModuleApiValidatorTests(unittest.TestCase):
                     ]
                 ),
             )
+            self.assertEqual(validate_module_api(entry), [])
 
-            issues = validate_module_api(entry)
-
-            self.assertEqual(issues, [])
+    def test_validate_module_api_accepts_explicit_reexports(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            entry = Path(tmp_dir) / "entry.py"
+            self._write_module(
+                entry,
+                "\n".join(
+                    [
+                        "import backend",
+                        "run = backend.run",
+                        "validateInput = backend.validateInput",
+                        "validateOutput = backend.validateOutput",
+                    ]
+                ),
+            )
+            self.assertEqual(validate_module_api(entry), [])
 
     def test_validate_module_api_missing_run(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
@@ -51,9 +64,7 @@ class ModuleApiValidatorTests(unittest.TestCase):
                     ]
                 ),
             )
-
             issues = validate_module_api(entry)
-
             self.assertTrue(any("run" in issue for issue in issues))
 
     def test_validate_module_api_missing_validation(self) -> None:
@@ -68,9 +79,7 @@ class ModuleApiValidatorTests(unittest.TestCase):
                     ]
                 ),
             )
-
             issues = validate_module_api(entry)
-
             self.assertTrue(any("validateInput" in issue for issue in issues))
             self.assertTrue(any("validateOutput" in issue for issue in issues))
 
@@ -92,18 +101,14 @@ class ModuleApiValidatorTests(unittest.TestCase):
                     ]
                 ),
             )
-
             issues = validate_module_api(entry)
-
             self.assertTrue(any("mindestens ein Argument" in issue for issue in issues))
 
     def test_validate_module_api_syntax_error(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             entry = Path(tmp_dir) / "module.py"
             self._write_module(entry, "def run(:\n    pass\n")
-
             issues = validate_module_api(entry)
-
             self.assertTrue(any("Syntaxfehler" in issue for issue in issues))
 
 

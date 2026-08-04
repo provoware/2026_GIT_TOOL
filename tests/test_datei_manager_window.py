@@ -5,10 +5,11 @@ from pathlib import Path
 
 from PIL import Image
 
-MODULE_DIR = Path(__file__).resolve().parents[1] / "modules" / "datei_manager"
-sys.path.insert(0, str(MODULE_DIR))
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
-from window import FileManagerWindow  # noqa: E402
+from modules.datei_manager.window import FileManagerWindow  # noqa: E402
 
 
 def test_window_shows_sortable_list_and_large_image_preview(tmp_path: Path):
