@@ -23,3 +23,5 @@ def test_module_manager_activate_deactivate() -> None:
     assert result.status in {"ok", "warn"}
     state = manager.get_state("status")
     assert not state.active
+    assert [entry.status for entry in state.history] == ["idle", "ok", "ok"]
+    assert all(entry.version == state.manifest.version for entry in state.history)

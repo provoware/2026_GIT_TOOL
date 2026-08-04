@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, Optional
 
 from logging_center import get_logger
+from module_history import ModuleHistoryEntry, create_history_entry
 from module_loader import MODULE_LOADER, ModuleLoaderError
 from module_registry import (
     ModuleEntry,
@@ -40,6 +41,7 @@ class ModuleState:
     last_status: str
     last_message: str
     error_message: Optional[str] = None
+    history: list[ModuleHistoryEntry] | None = None
 
 
 class ModuleManager:
@@ -102,6 +104,7 @@ class ModuleManager:
         state.context = context
         state.last_status = "ok"
         state.last_message = "Modul aktiviert."
+        self._record_history(state)
         return self._result("ok", "Modul aktiviert.", state)
 
     def deactivate_module(self, module_id: str) -> ModuleActionResult:
@@ -128,6 +131,7 @@ class ModuleManager:
         state.context = None
         state.last_status = "ok"
         state.last_message = "Modul deaktiviert."
+        self._record_history(state)
         return self._result("ok", "Modul deaktiviert.", state)
 
     def deactivate_all(self) -> list[ModuleActionResult]:
@@ -164,8 +168,17 @@ class ModuleManager:
                 last_status="idle",
                 last_message="Modul noch nicht geladen.",
                 error_message=error_message,
+                history=[],
             )
+            self._record_history(state)
             self._states[entry.module_id] = state
+
+    @staticmethod
+    def _record_history(state: ModuleState) -> None:
+        version = state.manifest.version if state.manifest is not None else "unbekannt"
+        if state.history is None:
+            state.history = []
+        state.history.append(create_history_entry(version, state.last_status, state.last_message))
 
     def _validate_module_functions(self, module: Any) -> None:
         for name in ("run", "validateInput", "validateOutput"):

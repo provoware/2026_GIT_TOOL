@@ -93,6 +93,8 @@ def test_supported_formats_include_common_photo_and_web_types():
 
 
 def test_invalid_inputs_fail_early(tmp_path: Path):
+    with pytest.raises(BrowserError, match="Ordnerpfad"):
+        list_directory("")
     with pytest.raises(BrowserError):
         list_directory(tmp_path / "fehlt")
     with pytest.raises(BrowserError):

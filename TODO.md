@@ -299,13 +299,13 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [x] MOD-02: Modulmanager implementieren (laden/aktivieren/deaktivieren). | fertig wenn: Module steuerbar.
 - [x] MOD-03: Verschiebbare und skalierbare Modulfenster realisieren. | fertig wenn: Fenster ziehen/größern.
 - [x] MOD-04: Kollisionserkennung für Module (keine Überlappung). | fertig wenn: Kollision verhindert.
-- [ ] MOD-05: Standardgrößen + Auto-Layout definieren. | fertig wenn: Module ordnen sich.
-- [ ] MOD-06: Modul-Status visuell anzeigen (Ampel = grün/gelb/rot). | fertig wenn: Status sichtbar.
+- [x] MOD-05: Standardgrößen + Auto-Layout definieren. | fertig wenn: Module ordnen sich.
+- [x] MOD-06: Modul-Status visuell anzeigen (Ampel = grün/gelb/rot). | fertig wenn: Status sichtbar.
 
 ### Profil- & Datenstruktur
 - [x] DATA-01: Profil-System mit getrennten Projektordnern. | fertig wenn: Profile trennen Daten.
 - [x] DATA-02: Globale Settings als zentrale Datei. | fertig wenn: eine Settings-Datei existiert.
-- [ ] DATA-03: Versionierung pro Modul + Änderungsverläufe. | fertig wenn: Historie sichtbar.
+- [x] DATA-03: Versionierung pro Modul + Änderungsverläufe. | fertig wenn: Historie sichtbar.
 - [x] DATA-04: Automatische Pflege von baumstruktur.txt/manifest.json/dummy_register.json. | fertig wenn: Dateien automatisch aktualisiert.
 - [x] DATA-05: Dateinamen-Suffix-Standards implementieren. | fertig wenn: Endungen folgen Standard.
 
@@ -325,7 +325,7 @@ Hinweis: Diese Liste entspricht der Kurzliste in `todo.txt` (je Runde 4 Tasks).
 - [x] FLOW-05: Rechte- und Schreibschutzsystem. | fertig wenn: Schutz aktiv.
 
 ### Kernmodule
-- [ ] CORE-01: Dateimanager-Modul finalisieren. | fertig wenn: Kernfunktionen stabil.
+- [x] CORE-01: Dateimanager-Modul finalisieren. | fertig wenn: Kernfunktionen stabil.
 - [ ] CORE-02: Bildvorschau-Modul einbauen. | fertig wenn: Vorschau sichtbar.
 - [ ] CORE-03: Audio-Player-Modul integrieren. | fertig wenn: Audio abspielbar.
 - [ ] CORE-04: FFmpeg-basierte Slideshow-Funktion erstellen (FFmpeg = Medien-Tool). | fertig wenn: Slideshow läuft.

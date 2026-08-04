@@ -5,7 +5,7 @@ import pytest
 
 sys.path.append(str(Path(__file__).resolve().parents[1] / "system"))
 
-from workspace_geometry import Rect, WorkspaceGeometryError, build_grid, clamp_rect, has_collision, move_rect, rect_overlap, resize_rect
+from workspace_geometry import ModuleSize, Rect, WorkspaceGeometryError, build_grid, clamp_rect, has_collision, move_rect, rect_overlap, resize_rect
 
 
 def test_overlap_cases():
@@ -50,3 +50,11 @@ def test_invalid_inputs():
         Rect(0, 0, -1, 10)
     with pytest.raises(WorkspaceGeometryError):
         build_grid(1, -1, 100)
+
+
+def test_module_size_defines_safe_defaults():
+    size = ModuleSize()
+    assert (size.width, size.height) == (320, 220)
+    assert size.width >= size.min_width and size.height >= size.min_height
+    with pytest.raises(WorkspaceGeometryError):
+        ModuleSize(width=100)

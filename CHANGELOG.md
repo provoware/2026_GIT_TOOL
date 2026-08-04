@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased] – 2026-08-04
+- Module: Einheitliche Standard- und Mindestgrößen für das responsive Auto-Layout definiert.
+- Barrierefreiheit: Modulstatus als beschriftete Ampel ergänzt, damit die Bedeutung nicht nur über Farbe erkennbar ist.
+- Daten: Manifest-Version und sitzungsbezogener Änderungsverlauf je Modul im Hauptfenster sichtbar gemacht.
+- Datei-Manager: Leere Ordnerpfade werden klar abgefangen und Verzeichnislisten stabil vorsortiert.
+
 ## [Unreleased] – 2026-02-13
 - GUI: Hauptfenster mit 3x3-Modulraster, Drag/Resize und Kollisionsschutz ergänzt.
 - Module: Modulmanager für Laden, Aktivieren und Deaktivieren ergänzt.

@@ -31,6 +31,23 @@ class Rect:
             raise WorkspaceGeometryError("Breite und Höhe dürfen nicht negativ sein.")
 
 
+@dataclass(frozen=True)
+class ModuleSize:
+    """Dokumentierte Standard- und Mindestgröße einer Modulkarte."""
+
+    width: int = 320
+    height: int = 220
+    min_width: int = 200
+    min_height: int = 160
+
+    def __post_init__(self) -> None:
+        for name, value in vars(self).items():
+            if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
+                raise WorkspaceGeometryError(f"{name} muss eine positive Ganzzahl sein.")
+        if self.width < self.min_width or self.height < self.min_height:
+            raise WorkspaceGeometryError("Standardgröße darf nicht kleiner als die Mindestgröße sein.")
+
+
 def _require_non_negative(value: int, label: str) -> int:
     if not isinstance(value, int) or value < 0:
         raise WorkspaceGeometryError(f"{label} muss eine nichtnegative Ganzzahl sein.")

@@ -17,10 +17,10 @@ Nächste 4 kleinste Aufgaben (Runde 2026-02-13 – Hauptfenster) – erledigt
 [x] MOD-04: Kollisionserkennung für Module (keine Überlappung). | fertig wenn: Kollision verhindert.
 
 Nächste 4 kleinste Aufgaben (Runde 2026-02-14 – Module/Daten)
-[ ] MOD-05: Standardgrößen + Auto-Layout definieren. | fertig wenn: Module ordnen sich.
-[ ] MOD-06: Modul-Status visuell anzeigen (Ampel = grün/gelb/rot). | fertig wenn: Status sichtbar.
-[ ] DATA-03: Versionierung pro Modul + Änderungsverläufe. | fertig wenn: Historie sichtbar.
-[ ] CORE-01: Dateimanager-Modul finalisieren. | fertig wenn: Kernfunktionen stabil.
+[x] MOD-05: Standardgrößen + Auto-Layout definieren. | fertig wenn: Module ordnen sich.
+[x] MOD-06: Modul-Status visuell anzeigen (Ampel = grün/gelb/rot). | fertig wenn: Status sichtbar.
+[x] DATA-03: Versionierung pro Modul + Änderungsverläufe. | fertig wenn: Historie sichtbar.
+[x] CORE-01: Dateimanager-Modul finalisieren. | fertig wenn: Kernfunktionen stabil.
 
 Nächste 4 kleinste Aufgaben (Runde 2026-02-12 – UI) – erledigt
 [x] START-16: PIN-Login-Config-Check stabilisieren (kein Abbruch bei leerer Konfiguration). | fertig wenn: Start läuft ohne TypeError.

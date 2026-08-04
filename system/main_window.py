@@ -10,6 +10,7 @@ from typing import Dict, Optional
 from config_models import ConfigModelError, GuiConfigModel, load_gui_config
 from logging_center import get_logger, setup_logging
 from module_manager import ModuleActionResult, ModuleManager, ModuleManagerError, ModuleState
+from module_history import format_history
 from module_lifecycle import (
     ModuleActionOutcome,
     ModuleCardPresentation,
@@ -25,7 +26,7 @@ from ui_responsive import (
     UiResponsiveError,
     resolve_workspace_grid,
 )
-from workspace_geometry import Rect, build_grid, clamp_rect, has_collision, move_rect, rect_overlap, resize_rect
+from workspace_geometry import ModuleSize, Rect, build_grid, clamp_rect, has_collision, move_rect, rect_overlap, resize_rect
 from ui_theme_adapter import (
     UiThemeError,
     apply_module_card_theme,
@@ -63,12 +64,13 @@ class ModuleWidget:
         self._on_drag = on_drag
         self._on_resize = on_resize
         self._on_status = on_status
+        self.size = ModuleSize()
         self._drag_start: Optional[tuple[int, int]] = None
         self._resize_start: Optional[tuple[int, int, int, int]] = None
         self.rect = Rect(0, 0, 100, 100)
         self.last_valid_rect = Rect(0, 0, 100, 100)
-        self.min_width = 180
-        self.min_height = 120
+        self.min_width = self.size.min_width
+        self.min_height = self.size.min_height
 
         self.frame = tk.Frame(parent, highlightthickness=2)
         self.header = tk.Frame(self.frame)
@@ -94,6 +96,10 @@ class ModuleWidget:
         self.status_label = tk.Label(self.frame, text="Status: inaktiv", anchor="w")
         self.status_label.pack(fill="x", padx=8, pady=(4, 0))
 
+        version = state.manifest.version if state.manifest is not None else "unbekannt"
+        self.version_label = tk.Label(self.frame, text=f"Version: {version}", anchor="w")
+        self.version_label.pack(fill="x", padx=8)
+
         button_row = tk.Frame(self.frame)
         button_row.pack(fill="x", padx=8, pady=6)
         self.activate_button = tk.Button(
@@ -104,10 +110,12 @@ class ModuleWidget:
         self.deactivate_button = tk.Button(
             button_row, text="Deaktivieren", command=self._handle_deactivate
         )
-        for button in (self.activate_button, self.deactivate_button):
+        self.history_button = tk.Button(button_row, text="Verlauf", command=self._show_history)
+        for button in (self.activate_button, self.deactivate_button, self.history_button):
             button.configure(takefocus=1)
         self.activate_button.pack(side="left", expand=True, fill="x", padx=(0, 4))
         self.deactivate_button.pack(side="left", expand=True, fill="x", padx=(4, 0))
+        self.history_button.pack(side="left", expand=True, fill="x", padx=(4, 0))
 
         self.resize_handle = tk.Label(self.frame, text="↘", anchor="e")
         self.resize_handle.pack(fill="x", padx=6, pady=(0, 4))
@@ -189,6 +197,18 @@ class ModuleWidget:
 
     def _handle_deactivate(self) -> None:
         self._on_deactivate(self)
+
+    def _show_history(self) -> None:
+        import tkinter as tk
+
+        dialog = tk.Toplevel(self.frame)
+        dialog.title(f"Änderungsverlauf – {self.state.entry.name}")
+        dialog.transient(self.frame.winfo_toplevel())
+        text = tk.Text(dialog, width=72, height=12, wrap="word", takefocus=1)
+        text.pack(fill="both", expand=True, padx=12, pady=12)
+        text.insert("1.0", format_history(self.state.history or []))
+        text.configure(state="disabled")
+        tk.Button(dialog, text="Schließen", command=dialog.destroy, takefocus=1).pack(pady=(0, 12))
 
 
 class MainWindow:
@@ -307,8 +327,8 @@ class MainWindow:
                 height,
                 maximum_columns=3,
                 gap=12,
-                minimum_width=200,
-                minimum_height=160,
+                minimum_width=ModuleSize().min_width,
+                minimum_height=ModuleSize().min_height,
             )
         except UiResponsiveError as exc:
             self._set_status(str(exc), self._theme_colors()["status_error"])
@@ -320,8 +340,8 @@ class MainWindow:
             rows=grid.rows,
             cols=grid.columns,
             gap=12,
-            min_width=200,
-            min_height=160,
+            min_width=ModuleSize().min_width,
+            min_height=ModuleSize().min_height,
         )
         for widget, rect in zip(self.module_widgets, rects):
             widget.rect = rect

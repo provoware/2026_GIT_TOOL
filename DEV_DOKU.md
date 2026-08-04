@@ -26,6 +26,9 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - GUI-Launcher validiert Eingaben und Ausgaben mit klaren Fehlermeldungen.
 - GUI-Launcher zeigt farbige Statusmeldungen für Erfolg/Fehler/Busy.
 - Hauptfenster zeigt ein 3x3-Modulraster mit Drag/Resize und Kollisionsschutz.
+- Hauptfenster nutzt definierte Standard-/Mindestgrößen und ordnet Module bei Größenänderungen automatisch neu.
+- Modulkarten zeigen eine beschriftete Ampel, die Manifest-Version und einen sitzungsbezogenen Änderungsverlauf.
+- Datei-Manager validiert Ordnerpfade vor dem Zugriff und liefert eine stabile, vorsortierte Dateiliste.
 - Modulmanager aktiviert/deaktiviert Module und prüft Pflichtfunktionen (run/validateInput/validateOutput).
 - GUI-Launcher nutzt größere Bedienelemente (Großbutton-UI) für bessere Bedienbarkeit.
 - GUI-Launcher bietet ein Basis-Branding und ein Papierkorb-Theme.
@@ -104,12 +107,12 @@ Diese Dokumentation richtet sich an Entwicklerinnen und Entwickler. Sie beschrei
 - Autosave schreibt Sicherungen in data/autosave/ und protokolliert nach logs/autosave.log.
 
 <!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-02-13)**
+**Auto-Status (aktualisiert: 2026-08-04)**
 
 - Gesamt: 260 Tasks
-- Erledigt: 243 Tasks
-- Offen: 17 Tasks
-- Fortschritt: 93 %
+- Erledigt: 247 Tasks
+- Offen: 13 Tasks
+- Fortschritt: 95 %
 <!-- AUTO-STATUS:END -->
 
 ## Struktur (aktuell)
