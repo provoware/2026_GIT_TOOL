@@ -51,8 +51,15 @@ def read_requirements(path: Path) -> list[str]:
     return items
 
 
+def _read_requirements(path: Path) -> list[str]:
+    """Kompatibilitätsadapter für bestehende Diagnose- und Testverträge."""
+    return read_requirements(path)
+
+
 def distribution_name(requirement: str) -> str:
-    match = NAME_RE.match(requirement)
+    if not isinstance(requirement, str) or not requirement.strip():
+        raise DependencyError("Abhängigkeit ist leer oder ungültig.")
+    match = NAME_RE.match(requirement.strip())
     if not match:
         raise DependencyError(f"Ungültige Requirement-Angabe: {requirement}")
     return match.group(0)
@@ -61,6 +68,11 @@ def distribution_name(requirement: str) -> str:
 def import_name(distribution: str) -> str:
     normalized = distribution.casefold().replace("_", "-")
     return IMPORT_NAMES.get(normalized, distribution.replace("-", "_"))
+
+
+def _normalize_module_name(requirement: str) -> str:
+    """Historischer Adapter; neue Logik trennt Distribution und Import explizit."""
+    return import_name(distribution_name(requirement))
 
 
 def installed(distribution: str) -> tuple[bool, str]:

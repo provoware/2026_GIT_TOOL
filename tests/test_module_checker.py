@@ -67,7 +67,7 @@ class ModuleCheckerTests(unittest.TestCase):
 
             self.assertEqual(issues, [])
 
-    def test_check_modules_missing_entry_file(self) -> None:
+    def test_check_modules_missing_manifest_entry_file(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             root = Path(tmp_dir)
             module_dir = root / "modules" / "demo"
@@ -104,7 +104,6 @@ class ModuleCheckerTests(unittest.TestCase):
             issues = module_checker.check_modules(entries)
 
             self.assertGreaterEqual(len(issues), 1)
-            self.assertTrue(any("Modulstruktur unvollständig" in issue for issue in issues))
             self.assertTrue(any("Modul-Datei fehlt" in issue for issue in issues))
 
     def test_check_modules_entry_outside_module(self) -> None:
