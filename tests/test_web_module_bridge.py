@@ -21,8 +21,7 @@ def test_catalog_exposes_every_registered_main_module_once() -> None:
     assert set(module_ids) == set(MODULE_ACTIONS)
     assert all(item["actions"] for item in catalog)
     assert all(
-        item["default_action"] in {action["id"] for action in item["actions"]}
-        for item in catalog
+        item["default_action"] in {action["id"] for action in item["actions"]} for item in catalog
     )
 
 

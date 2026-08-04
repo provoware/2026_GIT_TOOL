@@ -26,9 +26,7 @@ class UiParser(HTMLParser):
         if values.get("data-panel"):
             self.panels.add(values["data-panel"])
         if values.get("data-module-id") and values.get("data-module-action"):
-            self.module_actions.add(
-                (values["data-module-id"], values["data-module-action"])
-            )
+            self.module_actions.add((values["data-module-id"], values["data-module-action"]))
 
 
 def parsed_ui() -> UiParser:

@@ -34,9 +34,7 @@ class FakeBridge:
         ]
 
     def snapshots(self):
-        return {
-            "notiz_editor": {"status": "ok", "message": "bereit", "data": {"notes": []}}
-        }
+        return {"notiz_editor": {"status": "ok", "message": "bereit", "data": {"notes": []}}}
 
     def invoke(self, module_id, action_id, payload):
         return {
@@ -134,18 +132,14 @@ def test_load_config_requires_loopback_and_static_files(tmp_path: Path) -> None:
     (static_dir / "index.html").write_text("ok", encoding="utf-8")
     config_path = tmp_path / "web_server.json"
     config_path.write_text(
-        json.dumps(
-            {"host": "0.0.0.0", "port": 8765, "max_port": 8770, "static_dir": "web"}
-        ),
+        json.dumps({"host": "0.0.0.0", "port": 8765, "max_port": 8770, "static_dir": "web"}),
         encoding="utf-8",
     )
     with pytest.raises(web_server.WebServerError, match="Loopback"):
         web_server.load_config(config_path, root=tmp_path)
 
     config_path.write_text(
-        json.dumps(
-            {"host": "127.0.0.1", "port": 8765, "max_port": 8770, "static_dir": "web"}
-        ),
+        json.dumps({"host": "127.0.0.1", "port": 8765, "max_port": 8770, "static_dir": "web"}),
         encoding="utf-8",
     )
     config = web_server.load_config(config_path, root=tmp_path)
@@ -163,9 +157,7 @@ def test_api_bootstrap_combines_existing_modules(tmp_path: Path) -> None:
 
 
 def test_api_archive_entries_are_embedded_not_windowed(tmp_path: Path) -> None:
-    result = _api(tmp_path).dispatch(
-        "GET", "/api/archives/genres/entries", {"query": ["fant"]}
-    )
+    result = _api(tmp_path).dispatch("GET", "/api/archives/genres/entries", {"query": ["fant"]})
     assert result.status == HTTPStatus.OK
     assert result.payload["data"]["entries"] == [{"id": 1, "value": "Fantasy"}]
 
@@ -178,9 +170,7 @@ def test_bind_server_uses_free_fallback_port(tmp_path: Path) -> None:
     config = _config(tmp_path, port=occupied, max_port=min(occupied + 8, 65535))
     server = None
     try:
-        server, selected, preferred_free = web_server.bind_server(
-            config, _api(tmp_path)
-        )
+        server, selected, preferred_free = web_server.bind_server(config, _api(tmp_path))
         assert selected != occupied
         assert preferred_free is False
     finally:
@@ -195,9 +185,7 @@ def test_health_endpoint_served_over_real_loopback_socket(tmp_path: Path) -> Non
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
     try:
-        with urllib.request.urlopen(
-            f"http://127.0.0.1:{port}/api/health", timeout=5
-        ) as response:
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/health", timeout=5) as response:
             payload = json.loads(response.read().decode("utf-8"))
         assert response.status == HTTPStatus.OK
         assert payload["data"]["product"] == "Provoware Memo"
@@ -262,9 +250,7 @@ def test_static_assets_disable_cache_to_prevent_stale_ui(tmp_path: Path) -> None
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
     try:
-        with urllib.request.urlopen(
-            f"http://127.0.0.1:{port}/app.js", timeout=5
-        ) as response:
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/app.js", timeout=5) as response:
             response.read()
         assert response.headers["Cache-Control"] == "no-store"
     finally:

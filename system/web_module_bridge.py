@@ -197,12 +197,8 @@ MODULE_ACTIONS: dict[str, list[dict[str, Any]]] = {
             "scan",
             "Downloads scannen",
             fields=[
-                _field(
-                    "download_path", "Download-Ordner", "path", default="~/Downloads"
-                ),
-                _field(
-                    "include_hidden", "Versteckte Dateien", "checkbox", default=False
-                ),
+                _field("download_path", "Download-Ordner", "path", default="~/Downloads"),
+                _field("include_hidden", "Versteckte Dateien", "checkbox", default=False),
                 _field("max_files", "Maximale Dateien", "number", default=5000),
             ],
         ),
@@ -237,9 +233,7 @@ MODULE_ACTIONS: dict[str, list[dict[str, Any]]] = {
             "search",
             "Dateien suchen",
             fields=[
-                _field(
-                    "query", "Suchfilter (JSON)", "json", default={"name_contains": ""}
-                ),
+                _field("query", "Suchfilter (JSON)", "json", default={"name_contains": ""}),
             ],
         ),
         _action(
@@ -249,9 +243,7 @@ MODULE_ACTIONS: dict[str, list[dict[str, Any]]] = {
             fields=[
                 _field("items", "Dateien (JSON-Liste)", "json", required=True),
                 _field("target_dir", "Zielordner", "path", required=True),
-                _field(
-                    "mode", "Modus", "select", options=["move", "copy"], default="move"
-                ),
+                _field("mode", "Modus", "select", options=["move", "copy"], default="move"),
             ],
             confirm="Ausgewählte Dateien wirklich organisieren?",
         ),
@@ -427,9 +419,7 @@ MODULE_ACTIONS: dict[str, list[dict[str, Any]]] = {
             mode="write",
             fields=[_field("job_id", "Job-ID", required=True)],
         ),
-        _action(
-            "get_job", "Job laden", fields=[_field("job_id", "Job-ID", required=True)]
-        ),
+        _action("get_job", "Job laden", fields=[_field("job_id", "Job-ID", required=True)]),
     ],
     "profil_manager": [
         _action("list_profiles", "Profile laden"),
@@ -510,9 +500,7 @@ class WebModuleBridge:
         try:
             payload = json.loads(path.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError) as exc:
-            raise WebModuleBridgeError(
-                f"Modulregister kann nicht gelesen werden: {exc}"
-            ) from exc
+            raise WebModuleBridgeError(f"Modulregister kann nicht gelesen werden: {exc}") from exc
         modules = payload.get("modules")
         if not isinstance(modules, list):
             raise WebModuleBridgeError("Modulregister enthält keine Modulliste.")
@@ -573,9 +561,7 @@ class WebModuleBridge:
             try:
                 response = module.run(request)
             except Exception as exc:  # noqa: BLE001
-                raise WebModuleBridgeError(
-                    f"{descriptor.get('name', module_id)}: {exc}"
-                ) from exc
+                raise WebModuleBridgeError(f"{descriptor.get('name', module_id)}: {exc}") from exc
             return self._normalize_response(response)
 
     def snapshots(self) -> dict[str, Any]:
@@ -601,9 +587,7 @@ class WebModuleBridge:
         try:
             manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError) as exc:
-            raise WebModuleBridgeError(
-                f"Manifest ist nicht lesbar: {manifest_path}"
-            ) from exc
+            raise WebModuleBridgeError(f"Manifest ist nicht lesbar: {manifest_path}") from exc
         entry_name = str(manifest.get("entry", "module.py"))
         module_name = f"modules.{module_id}.{Path(entry_name).stem}"
         try:
@@ -613,9 +597,7 @@ class WebModuleBridge:
                 f"Modul kann nicht geladen werden: {module_id}: {exc}"
             ) from exc
         if not callable(getattr(loaded, "run", None)):
-            raise WebModuleBridgeError(
-                f"Modul besitzt keine ausführbare run-Funktion: {module_id}"
-            )
+            raise WebModuleBridgeError(f"Modul besitzt keine ausführbare run-Funktion: {module_id}")
         self._loaded[module_id] = loaded
         return loaded
 
