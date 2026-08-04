@@ -1,5 +1,11 @@
 # DONE
 
+## 2026-08-04
+- MOD-05: Standardgrößen und responsives Auto-Layout vereinheitlicht.
+- MOD-06: Textlich beschriftete Modul-Ampel für aktiv, inaktiv, Hinweis und Fehler ergänzt.
+- DATA-03: Modulversionen und sitzungsbezogene Änderungsverläufe sichtbar gemacht.
+- CORE-01: Datei-Manager-Kern bei ungültigen Pfaden und stabiler Auflistung finalisiert.
+
 ## 2026-02-12
 - Start: PIN-Login-Konfigurationscheck stabilisiert (kein Abbruch durch TypeError).
 - Dashboard: Design und Layout an Design_und_Layoutvorgabe angepasst (Topbar, Panels, Farben).

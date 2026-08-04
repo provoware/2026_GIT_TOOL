@@ -59,6 +59,8 @@ class PreviewPlan:
 
 
 def _require_directory(path: Path | str) -> Path:
+    if not isinstance(path, (Path, str)) or isinstance(path, str) and not path.strip():
+        raise BrowserError("Ordnerpfad fehlt oder ist ungültig.")
     candidate = Path(path).expanduser()
     try:
         candidate = candidate.resolve(strict=True)
@@ -75,7 +77,7 @@ def list_directory(path: Path | str, *, show_hidden: bool = False) -> list[FileE
     directory = _require_directory(path)
     entries: list[FileEntry] = []
     try:
-        children = list(directory.iterdir())
+        children = sorted(directory.iterdir(), key=lambda child: child.name.casefold())
     except OSError as exc:
         raise BrowserError(f"Ordner kann nicht gelesen werden: {directory}") from exc
     for child in children:

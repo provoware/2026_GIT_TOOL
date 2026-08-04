@@ -125,7 +125,7 @@ def test_inactive_card_uses_neutral_state_and_correct_buttons():
     presentation = resolve_card_presentation(make_state("alpha"))
 
     assert presentation.active is False
-    assert presentation.status_text == "Status: inaktiv"
+    assert presentation.status_text == "Ampel: Grau – inaktiv"
     assert presentation.color_key == "foreground"
     assert presentation.activate_enabled is True
     assert presentation.deactivate_enabled is False
@@ -135,7 +135,7 @@ def test_active_card_uses_success_state_and_correct_buttons():
     presentation = resolve_card_presentation(make_state("alpha", active=True))
 
     assert presentation.active is True
-    assert presentation.status_text == "Status: aktiv"
+    assert presentation.status_text == "Ampel: Grün – aktiv"
     assert presentation.color_key == "status_success"
     assert presentation.activate_enabled is False
     assert presentation.deactivate_enabled is True
@@ -161,7 +161,7 @@ def test_failed_activation_keeps_card_authoritatively_inactive():
 
     assert outcome.result.status == "error"
     assert outcome.state.active is False
-    assert outcome.presentation.status_text == "Status: inaktiv"
+    assert outcome.presentation.status_text == "Ampel: Rot – Fehler"
     assert outcome.presentation.color_key == "status_error"
     assert outcome.presentation.activate_enabled is True
     assert outcome.presentation.deactivate_enabled is False
@@ -191,7 +191,7 @@ def test_failed_deactivation_keeps_card_active_and_retryable():
 
     assert outcome.result.status == "error"
     assert outcome.presentation.active is True
-    assert outcome.presentation.status_text == "Status: aktiv"
+    assert outcome.presentation.status_text == "Ampel: Rot – Fehler"
     assert outcome.presentation.activate_enabled is False
     assert outcome.presentation.deactivate_enabled is True
 

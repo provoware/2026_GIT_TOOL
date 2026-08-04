@@ -61,16 +61,20 @@ def resolve_card_presentation(
 
     if state.error_message or result_status == "error":
         color_key = "status_error"
+        signal = "Rot – Fehler"
     elif result_status == "warn":
         color_key = "status_busy"
+        signal = "Gelb – Hinweis"
     elif active:
         color_key = "status_success"
+        signal = "Grün – aktiv"
     else:
         color_key = "foreground"
+        signal = "Grau – inaktiv"
 
     return ModuleCardPresentation(
         active=active,
-        status_text="Status: aktiv" if active else "Status: inaktiv",
+        status_text=f"Ampel: {signal}",
         color_key=color_key,
         activate_enabled=bool(state.entry.enabled) and not active and not bool(state.error_message),
         deactivate_enabled=active,
