@@ -3,6 +3,7 @@
   "port": 8765,
   "max_port": 8795,
   "static_dir": "web",
+  "integration_mode": "single_surface",
   "browser_candidates": [
     "google-chrome",
     "google-chrome-stable"
