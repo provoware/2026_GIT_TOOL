@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Fail-fast preflight validation for the Provoware Memo startup chain."""
+
 from __future__ import annotations
 
 import argparse
@@ -90,8 +91,7 @@ def validate(root: Path) -> list[Check]:
             product = json.loads(product_path.read_text(encoding="utf-8"))
             product_status = (
                 "ok"
-                if product.get("name") == "Provoware Memo"
-                and product.get("id") == "provoware_memo"
+                if product.get("name") == "Provoware Memo" and product.get("id") == "provoware_memo"
                 else "error"
             )
             product_detail = f"{product.get('name')} ({product.get('id')})"
