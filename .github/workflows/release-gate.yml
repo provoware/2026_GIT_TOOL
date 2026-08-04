@@ -1,0 +1,66 @@
+name: Release Gate
+
+on:
+  push:
+    branches:
+      - main
+      - "agent/**"
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-gate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  design-token-drift:
+    name: Design-Token-Drift prüfen
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Generierte Design-Tokens prüfen
+        run: python system/generate_design_tokens.py --check
+
+  python-syntax:
+    name: Python-Syntax prüfen
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Produktive Python-Dateien kompilieren
+        run: python -m compileall -q system
+
+  release-gate:
+    name: Release-Gate abgeschlossen
+    if: always()
+    needs:
+      - design-token-drift
+      - python-syntax
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ergebnisse auswerten
+        env:
+          TOKEN_RESULT: ${{ needs.design-token-drift.result }}
+          PYTHON_RESULT: ${{ needs.python-syntax.result }}
+        run: |
+          test "$TOKEN_RESULT" = "success"
+          test "$PYTHON_RESULT" = "success"
