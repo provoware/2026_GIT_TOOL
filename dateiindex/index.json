@@ -78,7 +78,7 @@
     },
     {
       "path": "dateiindex/struktur/UI_MODERNISIERUNG_BLOCK_3.md",
-      "status": "in_abschlusspruefung",
+      "status": "abgeschlossen",
       "scope": [
         "Tk-Komponentenrollen",
         "Buttonzustände",
@@ -204,12 +204,12 @@
     "docs/DESIGN_TOKENS.generated.md"
   ],
   "ui_modernization": {
-    "status": "block_3_in_abschlusspruefung",
+    "status": "block_3_abgeschlossen",
     "completed_blocks": [
       "Block 1: Entwicklungs- und Designregeln",
-      "Block 2: zentrale Token-Laufzeitabbildung"
+      "Block 2: zentrale Token-Laufzeitabbildung",
+      "Block 3: gemeinsame Tk-Komponenten und visuelle Zustände"
     ],
-    "current_block": "Block 3: gemeinsame Tk-Komponenten und visuelle Zustände",
     "next_block": "Block 4: bedingte Tabellenstandard-Entscheidung",
     "governance": "config/ui-governance.json",
     "test_matrix": "dateiindex/struktur/TESTMATRIX_UI_MODERNISIERUNG.md"
