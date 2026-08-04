@@ -97,9 +97,11 @@ else
   CRITICAL_PATHS=(
     system/startup_preflight.py
     system/dependency_checker.py
+    system/web_server.py
     system/module_api_validator.py
     tests/test_startup_preflight.py
     tests/test_dependency_checker_v2.py
+    tests/test_web_server.py
     tests/test_module_api_validator.py
     tests/test_module_checker.py
     tests/test_datei_manager_window.py
@@ -108,8 +110,10 @@ else
   FORMAT_PATHS=(
     system/startup_preflight.py
     system/dependency_checker.py
+    system/web_server.py
     tests/test_startup_preflight.py
     tests/test_dependency_checker_v2.py
+    tests/test_web_server.py
   )
   echo "Qualität: branchbezogene Syntax- und kritische Ruff-Prüfung."
   "${PYTHON_BIN}" -m py_compile "${CRITICAL_PATHS[@]}"

@@ -10,6 +10,11 @@ SAFE_MODE=0
 SANDBOX_MODE=0
 PREFLIGHT_ONLY=0
 NO_START=0
+NO_BROWSER=0
+STRICT_PORT=0
+WEB_HOST=""
+WEB_PORT=""
+WEB_MAX_PORT=""
 LOG_FILE=""
 
 usage() {
@@ -23,7 +28,12 @@ Nutzung: ./scripts/start.sh [Optionen]
   --safe-mode       nur prüfen, nicht reparieren oder starten
   --sandbox         vollständige isolierte Projektkopie verwenden
   --preflight-only  Vorvalidierung einschließlich Systemabhängigkeiten
-  --no-start        vollständig prüfen und reparieren, GUI nicht starten
+  --no-start        vollständig prüfen und reparieren, Server nicht starten
+  --no-browser      Server starten, Browser nicht automatisch öffnen
+  --host ADRESSE    Loopback-Adresse überschreiben
+  --port NUMMER     bevorzugten lokalen Port überschreiben
+  --max-port NUMMER letzten erlaubten Ersatzport festlegen
+  --strict-port     bei belegtem Wunschport abbrechen statt Ersatzport zu nutzen
 EOF
 }
 
@@ -40,6 +50,23 @@ while [[ $# -gt 0 ]]; do
     --sandbox) SANDBOX_MODE=1; shift ;;
     --preflight-only) PREFLIGHT_ONLY=1; shift ;;
     --no-start) NO_START=1; shift ;;
+    --no-browser) NO_BROWSER=1; shift ;;
+    --strict-port) STRICT_PORT=1; shift ;;
+    --host)
+      [[ -n "${2:-}" ]] || { echo "--host braucht eine Loopback-Adresse" >&2; exit 2; }
+      WEB_HOST="$2"
+      shift 2
+      ;;
+    --port)
+      [[ -n "${2:-}" ]] || { echo "--port braucht eine Nummer" >&2; exit 2; }
+      WEB_PORT="$2"
+      shift 2
+      ;;
+    --max-port)
+      [[ -n "${2:-}" ]] || { echo "--max-port braucht eine Nummer" >&2; exit 2; }
+      WEB_MAX_PORT="$2"
+      shift 2
+      ;;
     -h|--help) usage; exit 0 ;;
     *) echo "Unbekannte Option: $1" >&2; usage; exit 2 ;;
   esac
@@ -47,9 +74,10 @@ done
 
 required_files=(
   config/product.json config/modules.json config/launcher_gui.json
-  config/requirements.txt config/test_gate.json
+  config/requirements.txt config/test_gate.json config/web_server.json
   scripts/start.sh scripts/ensure_venv.sh scripts/check_env.sh scripts/bootstrap.sh
   scripts/run_tests.sh system/startup_preflight.py system/dependency_checker.py
+  system/web_server.py web/index.html web/app.js web/styles.css
   system/launcher_gui.py system/pin_auth.py system/structure_checker.py
   system/self_repair.py system/health_check.py system/json_validator.py
   system/filename_fixer.py system/todo_manager.py
@@ -177,7 +205,7 @@ DEBUG_ARGS=()
 [[ "$DEBUG_MODE" -eq 0 ]] || DEBUG_ARGS=(--debug)
 FAILURES=()
 STEP=0
-TOTAL=16
+TOTAL=17
 progress() {
   STEP=$((STEP + 1))
   echo "$PRODUCT_NAME [$STEP/$TOTAL]: $1"
@@ -321,18 +349,30 @@ if (( ${#FAILURES[@]} )); then
 fi
 
 if [[ "$NO_START" -eq 1 || "$SAFE_MODE" -eq 1 ]]; then
-  echo "$PRODUCT_NAME: vollständige Nachvalidierung erfolgreich; GUI-Start unterdrückt."
+  echo "$PRODUCT_NAME: vollständige Nachvalidierung erfolgreich; Serverstart unterdrückt."
   exit 0
 fi
 
-progress "Provoware Memo starten"
-"$PYTHON_BIN" system/launcher_gui.py \
-  --config config/modules.json \
-  --gui-config config/launcher_gui.json "${DEBUG_ARGS[@]}"
-code=$?
-[[ "$code" -eq 0 ]] || {
-  echo "$PRODUCT_NAME: Launcherstart fehlgeschlagen ($code)." >&2
-  exit "$code"
-}
+WEB_ARGS=(--config config/web_server.json --check-only --check-browser)
+[[ -z "$WEB_HOST" ]] || WEB_ARGS+=(--host "$WEB_HOST")
+[[ -z "$WEB_PORT" ]] || WEB_ARGS+=(--port "$WEB_PORT")
+[[ -z "$WEB_MAX_PORT" ]] || WEB_ARGS+=(--max-port "$WEB_MAX_PORT")
+[[ "$STRICT_PORT" -eq 0 ]] || WEB_ARGS+=(--strict-port)
+progress "Webserver-Port und Google-Chrome-Startfähigkeit prüfen"
+run_required "Webserver-Vorprüfung" "$PYTHON_BIN" system/web_server.py "${WEB_ARGS[@]}"
 
+if (( ${#FAILURES[@]} )); then
+  echo "$PRODUCT_NAME: Serverstart blockiert — Vorprüfung fehlgeschlagen."
+  printf ' - %s\n' "${FAILURES[@]}"
+  exit 2
+fi
+
+SERVER_ARGS=(--config config/web_server.json)
+[[ -z "$WEB_HOST" ]] || SERVER_ARGS+=(--host "$WEB_HOST")
+[[ -z "$WEB_PORT" ]] || SERVER_ARGS+=(--port "$WEB_PORT")
+[[ -z "$WEB_MAX_PORT" ]] || SERVER_ARGS+=(--max-port "$WEB_MAX_PORT")
+[[ "$STRICT_PORT" -eq 0 ]] || SERVER_ARGS+=(--strict-port)
+[[ "$NO_BROWSER" -eq 0 ]] || SERVER_ARGS+=(--no-browser)
+progress "Provoware Memo als integrierte Browseroberfläche starten"
 echo "$PRODUCT_NAME: Startkette vollständig erfolgreich. Ampelstatus: grün."
+exec "$PYTHON_BIN" system/web_server.py "${SERVER_ARGS[@]}"

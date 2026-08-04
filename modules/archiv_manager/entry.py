@@ -180,14 +180,22 @@ def open_ui(parent=None, *, database_path: Path | str | None = None):
 
 def init(context: dict[str, Any] | None = None) -> dict[str, Any]:
     service = _service(context)
-    headless = bool((context or {}).get("headless", False))
-    if not headless:
-        parent = (context or {}).get("ui_parent") or _default_parent()
+    options = context or {}
+    headless = bool(options.get("headless", False))
+    allow_separate_window = bool(options.get("allow_separate_window", False))
+    if allow_separate_window and not headless:
+        parent = options.get("ui_parent") or _default_parent()
         if parent is not None:
             parent.after_idle(lambda: open_ui(parent, database_path=service.database_path))
     return {
-        "status": "ok", "message": "Archiv-Modul initialisiert.",
-        "payload": {"database_path": str(service.database_path), "headless": headless},
+        "status": "ok",
+        "message": "Archiv-Modul eingebettet initialisiert.",
+        "payload": {
+            "database_path": str(service.database_path),
+            "headless": headless,
+            "embedded": not allow_separate_window,
+            "separate_window": allow_separate_window,
+        },
     }
 
 

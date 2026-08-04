@@ -22,6 +22,8 @@ def test_module_contract_and_shared_service_actions(tmp_path: Path):
     database = tmp_path / "archive.sqlite3"
     init_result = module.init({"database_path": str(database), "headless": True})
     assert module.validateOutput(init_result)
+    assert init_result["payload"]["embedded"] is True
+    assert init_result["payload"]["separate_window"] is False
     list_result = module.run({"action": "list_archives", "database_path": str(database)})
     assert list_result["status"] == "ok"
     assert len(list_result["payload"]["archives"]) == 7

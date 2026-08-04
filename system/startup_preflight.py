@@ -19,18 +19,24 @@ REQUIRED_FILES = (
     "config/modules.json",
     "config/launcher_gui.json",
     "config/requirements.txt",
+    "config/web_server.json",
     "scripts/start.sh",
     "scripts/ensure_venv.sh",
     "system/startup_preflight.py",
     "system/dependency_checker.py",
+    "system/web_server.py",
+    "web/index.html",
+    "web/app.js",
+    "web/styles.css",
     "system/launcher_gui.py",
     "modules/archiv_manager/manifest.json",
 )
-REQUIRED_DIRS = ("config", "system", "scripts", "modules", "data", "logs")
+REQUIRED_DIRS = ("config", "system", "scripts", "modules", "web", "data", "logs")
 JSON_FILES = (
     "config/product.json",
     "config/modules.json",
     "config/launcher_gui.json",
+    "config/web_server.json",
     "modules/archiv_manager/manifest.json",
 )
 
