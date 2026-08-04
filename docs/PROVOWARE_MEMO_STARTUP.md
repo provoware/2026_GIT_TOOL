@@ -24,7 +24,8 @@ Die Startroutine arbeitet in einer transparenten, fail-fast ausgeführten Kette:
 10. Bestehende Struktur-, Sicherheits-, JSON-, Modul- und Test-Gates ausführen.
 11. Archivdatenbank initialisieren und alle `garch`-Aliase idempotent synchronisieren.
 12. Abhängigkeiten abschließend erneut prüfen.
-13. GUI erst starten, wenn keine kritische Prüfung fehlgeschlagen ist.
+13. Lokalen Webserver und Google Chrome erst starten, wenn keine kritische Prüfung fehlgeschlagen ist.
+14. Memo, Aufgaben, Kalender, Charaktere, Archive, Dateien, Medien, Profile und Systemwerkzeuge in einer gemeinsamen Browseroberfläche bereitstellen.
 
 ## Schutzregeln
 
@@ -36,6 +37,9 @@ Die Startroutine arbeitet in einer transparenten, fail-fast ausgeführten Kette:
 - Safe-Mode und `--preflight-only` führen keine schreibende Systemreparatur aus.
 - Ein notwendiger Systemeingriff wird nur als Root oder über passwortfreies `sudo -n` ausgeführt; Sicherheitsmechanismen werden nicht umgangen.
 - Berichte liegen unter `data/runtime/`, Startprotokolle unter `logs/`.
+- Statische Browserdateien werden mit `Cache-Control: no-store` ausgeliefert, damit keine veraltete, funktionslose JavaScript-Version weiterverwendet wird.
+- Der Browsercode besitzt eine sichtbare Fehlergrenze; ein Initialisierungsfehler kann nicht mehr unbemerkt alle Klicks deaktivieren.
+- Der integrierte Datei-Manager stellt Ordnernavigation, sortierbare Listen, Metadaten und große Bildvorschau bereit.
 
 ## Prüfmodi
 

@@ -25,6 +25,7 @@ REQUIRED_FILES = (
     "system/startup_preflight.py",
     "system/dependency_checker.py",
     "system/web_server.py",
+    "system/web_module_bridge.py",
     "web/index.html",
     "web/app.js",
     "web/styles.css",

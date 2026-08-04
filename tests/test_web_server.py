@@ -12,6 +12,27 @@ import pytest
 from system import web_server
 
 
+class FakeBridge:
+    def catalog(self):
+        return [
+            {
+                "id": "notiz_editor",
+                "name": "Notiz-Editor",
+                "description": "Notizen",
+                "enabled": True,
+                "group": "Kreativ & Organisation",
+                "actions": [{"id": "list_notes", "label": "Notizen laden", "mode": "read", "fields": []}],
+                "default_action": "list_notes",
+            }
+        ]
+
+    def snapshots(self):
+        return {"notiz_editor": {"status": "ok", "message": "bereit", "data": {"notes": []}}}
+
+    def invoke(self, module_id, action_id, payload):
+        return {"status": "ok", "message": "ausgeführt", "data": {"module": module_id, "action": action_id, "payload": dict(payload)}}
+
+
 def _config(
     tmp_path: Path, *, port: int = 8765, max_port: int | None = None
 ) -> web_server.WebServerConfig:
@@ -86,6 +107,7 @@ def _api(tmp_path: Path) -> web_server.ProvowareApi:
         note_runner=note_runner,
         todo_runner=todo_runner,
         archive_runner=archive_runner,
+        module_bridge=FakeBridge(),
     )
 
 
@@ -169,3 +191,64 @@ def test_browser_resolution_prefers_google_chrome(monkeypatch, tmp_path: Path) -
     executable, is_google = web_server.resolve_browser(config)
     assert executable == "/usr/bin/google-chrome"
     assert is_google is True
+
+
+def test_api_catalog_and_generic_module_action(tmp_path: Path) -> None:
+    api = _api(tmp_path)
+    catalog = api.dispatch("GET", "/api/catalog")
+    assert catalog.status == HTTPStatus.OK
+    assert catalog.payload["data"]["modules"][0]["id"] == "notiz_editor"
+
+    action = api.dispatch(
+        "POST",
+        "/api/modules/notiz_editor/list_notes",
+        body={"query": "memo"},
+    )
+    assert action.status == HTTPStatus.OK
+    assert action.payload["data"]["action"] == "list_notes"
+
+
+def test_api_file_listing_is_sorted_and_restricted(tmp_path: Path) -> None:
+    folder = tmp_path / "files"
+    folder.mkdir()
+    (folder / "zeta.txt").write_text("z", encoding="utf-8")
+    (folder / "alpha.txt").write_text("a", encoding="utf-8")
+    api = _api(tmp_path)
+    result = api.dispatch(
+        "GET",
+        "/api/files",
+        {"path": [str(folder)], "sort": ["name"]},
+    )
+    assert result.status == HTTPStatus.OK
+    assert [item["name"] for item in result.payload["data"]["entries"]] == [
+        "alpha.txt",
+        "zeta.txt",
+    ]
+
+    outside = api.dispatch("GET", "/api/files", {"path": ["/etc"]})
+    assert outside.status == HTTPStatus.BAD_REQUEST
+
+
+def test_static_assets_disable_cache_to_prevent_stale_ui(tmp_path: Path) -> None:
+    config = _config(tmp_path, port=8765)
+    server, port, _preferred = web_server.bind_server(config, _api(tmp_path), port=0)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/app.js", timeout=5) as response:
+            response.read()
+        assert response.headers["Cache-Control"] == "no-store"
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=5)
+
+
+def test_image_preview_uses_controlled_png_response(tmp_path: Path) -> None:
+    from PIL import Image
+
+    image_path = tmp_path / "preview.jpg"
+    Image.new("RGB", (2400, 1400), (30, 80, 140)).save(image_path)
+    content, content_type = _api(tmp_path).file_preview(str(image_path))
+    assert content_type == "image/png"
+    assert content.startswith(b"\x89PNG")
