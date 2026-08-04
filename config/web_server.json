@@ -8,7 +8,7 @@
     "google-chrome",
     "google-chrome-stable"
   ],
-  "allow_chromium_fallback": true,
+  "allow_chromium_fallback": false,
   "chromium_fallbacks": [
     "chromium",
     "chromium-browser"
