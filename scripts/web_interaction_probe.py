@@ -28,39 +28,71 @@ PROBE_JS = r'''
     marker.textContent = detail;
     document.body.appendChild(marker);
   };
-  const wait = (attempt = 0) => {
-    if (document.documentElement.dataset.appReady !== "true") {
-      if (attempt > 120) return finish("failed", `App nicht bereit: ${document.documentElement.dataset.appReady || "leer"}`);
-      return setTimeout(() => wait(attempt + 1), 100);
+  const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+  const waitFor = async (predicate, label, attempts = 40) => {
+    for (let index = 0; index < attempts; index += 1) {
+      if (predicate()) return;
+      await sleep(100);
     }
-    try {
-      const buttons = [...document.querySelectorAll("[data-view]")];
-      const views = [...new Set(buttons.map((button) => button.dataset.view))];
-      for (const view of views) {
-        const button = buttons.find((item) => item.dataset.view === view);
-        button.click();
-        const panel = document.querySelector(`[data-panel="${view}"]`);
-        if (!panel || !panel.classList.contains("active")) throw new Error(`Navigation ohne Wirkung: ${view}`);
-      }
-      const moduleButton = document.querySelector("[data-module-id][data-module-action]");
-      if (!moduleButton) throw new Error("Keine Modulaktion vorhanden");
-      moduleButton.click();
-      const dialog = document.getElementById("actionDialog");
-      if (!dialog || !dialog.hasAttribute("open")) throw new Error("Modulaktionsdialog öffnet nicht");
-      document.querySelector('[data-action="close-action-dialog"]').click();
-      if (dialog.hasAttribute("open")) throw new Error("Modulaktionsdialog schließt nicht");
-      const fileView = document.querySelector('[data-view="files"]');
-      fileView.click();
-      if (!document.getElementById("fileTableBody")) throw new Error("Datei-Manager fehlt");
-      if (document.getElementById("fatalError") && !document.getElementById("fatalError").hidden) {
-        throw new Error(document.getElementById("fatalErrorText").textContent || "Fataler Oberflächenfehler");
-      }
-      finish("passed", `${views.length} Navigationen und Moduldialog geprüft`);
-    } catch (error) {
-      finish("failed", error.message || String(error));
-    }
+    throw new Error(`Zeitüberschreitung: ${label}`);
   };
-  wait();
+  const run = async () => {
+    await waitFor(() => document.documentElement.dataset.appReady === "true", "App-Bereitschaft", 120);
+    const buttons = [...document.querySelectorAll("[data-view]")];
+    const views = [...new Set(buttons.map((button) => button.dataset.view))];
+    for (const view of views) {
+      const button = buttons.find((item) => item.dataset.view === view);
+      button.click();
+      const panel = document.querySelector(`[data-panel="${view}"]`);
+      if (!panel || !panel.classList.contains("active")) throw new Error(`Navigation ohne Wirkung: ${view}`);
+    }
+    const moduleButton = document.querySelector("[data-module-id][data-module-action]");
+    if (!moduleButton) throw new Error("Keine Modulaktion vorhanden");
+    moduleButton.click();
+    const dialog = document.getElementById("actionDialog");
+    if (!dialog || !dialog.hasAttribute("open")) throw new Error("Modulaktionsdialog öffnet nicht");
+    document.querySelector('[data-action="close-action-dialog"]').click();
+    if (dialog.hasAttribute("open")) throw new Error("Modulaktionsdialog schließt nicht");
+
+    document.querySelector('[data-view="calendar"]').click();
+    if (document.querySelectorAll("#calendarLegendEditor .legend-editor-row").length !== 5) {
+      throw new Error("Kalender besitzt nicht genau fünf Legendenfarben");
+    }
+    if (document.querySelectorAll("#dayColorOptions input[name='dayColor']").length !== 5) {
+      throw new Error("Tagesfarbauswahl ist unvollständig");
+    }
+    const firstCalendarDay = document.querySelector("#calendarGrid [data-calendar-date]");
+    if (!firstCalendarDay) throw new Error("Monatskalender enthält keine anklickbaren Tage");
+    const selectedDate = firstCalendarDay.dataset.calendarDate;
+    firstCalendarDay.click();
+    if (document.getElementById("dayColorDate").value !== selectedDate) {
+      throw new Error("Kalendertag übernimmt Datum nicht in Tagesfarben");
+    }
+    if (document.getElementById("appointmentDate").value !== selectedDate) {
+      throw new Error("Kalendertag übernimmt Datum nicht in Terminformular");
+    }
+    const initialMiniTitle = document.getElementById("miniCalendarTitle").textContent;
+    document.querySelector('[data-action="mini-calendar-next"]').click();
+    await waitFor(
+      () => document.getElementById("miniCalendarTitle").textContent !== initialMiniTitle,
+      "Header-Monatswechsel"
+    );
+    if (!document.querySelector("#headerMiniCalendar [data-mini-date]")) {
+      throw new Error("Header-Monatskalender enthält keine anklickbaren Tage");
+    }
+    if (!document.getElementById("appointmentForm") || !document.getElementById("calendarReminders")) {
+      throw new Error("Termin- oder Erinnerungsbereich fehlt");
+    }
+
+    const fileView = document.querySelector('[data-view="files"]');
+    fileView.click();
+    if (!document.getElementById("fileTableBody")) throw new Error("Datei-Manager fehlt");
+    if (document.getElementById("fatalError") && !document.getElementById("fatalError").hidden) {
+      throw new Error(document.getElementById("fatalErrorText").textContent || "Fataler Oberflächenfehler");
+    }
+    finish("passed", `${views.length} Navigationen, Kalender, Moduldialog und Datei-Manager geprüft`);
+  };
+  run().catch((error) => finish("failed", error.message || String(error)));
 })();
 '''
 
@@ -120,7 +152,7 @@ def run_probe(root: Path, timeout: int) -> None:
         if 'id="provoware-e2e-result"' not in output or 'data-status="passed"' not in output:
             marker = output.rsplit("provoware-e2e-result", 1)[-1][:1000]
             raise RuntimeError(f"Oberflächeninteraktion nicht bestanden: {marker or completed.stderr[-2000:]}")
-        print("Webinteraktions-Probe: OK — Navigation, Moduldialog und Datei-Manager reagieren.")
+        print("Webinteraktions-Probe: OK — Navigation, Kalender, Erinnerungen, Moduldialog und Datei-Manager reagieren.")
 
 
 def main() -> int:

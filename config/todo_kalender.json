@@ -26,5 +26,6 @@
         "label": "Erledigt (Kontrast)"
       }
     }
-  }
+  },
+  "reminder_poll_seconds": 60
 }

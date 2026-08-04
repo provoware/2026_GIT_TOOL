@@ -5,7 +5,9 @@ const state = {
   todos: [],
   characters: [],
   archives: [],
-  calendar: { entries: [] },
+  calendar: { entries: [], appointments: [], legend: [], day_markers: [], reminders: { due: [], upcoming: [] } },
+  miniCalendarDate: new Date().toISOString().slice(0, 10),
+  notifiedReminderIds: new Set(),
   selectedArchive: null,
   archiveEntries: [],
   database: "",
@@ -244,28 +246,211 @@ function daysInMonth(month) {
   return new Date(year, monthNumber, 0).getDate();
 }
 
+function safeHex(value, fallback = "#64748b") {
+  return /^#[0-9a-f]{6}$/i.test(String(value || "")) ? String(value).toLowerCase() : fallback;
+}
+
+function monthKey(value) {
+  return String(value || new Date().toISOString().slice(0, 10)).slice(0, 7);
+}
+
+function addMonths(dateValue, amount) {
+  const [year, month] = monthKey(dateValue).split("-").map(Number);
+  const shifted = new Date(year, month - 1 + amount, 1, 12, 0, 0);
+  return `${shifted.getFullYear()}-${String(shifted.getMonth() + 1).padStart(2, "0")}-01`;
+}
+
+function addDays(dateValue, amount) {
+  const current = new Date(`${String(dateValue).slice(0, 10)}T12:00:00`);
+  current.setDate(current.getDate() + amount);
+  return current.toISOString().slice(0, 10);
+}
+
+function calendarLegendMap() {
+  return new Map(asArray(state.calendar.legend).map((item) => [item.id, item]));
+}
+
+function calendarMarkerMap() {
+  return new Map(asArray(state.calendar.day_markers).map((item) => [item.date, item]));
+}
+
+function calendarAppointmentMap() {
+  const grouped = new Map();
+  asArray(state.calendar.appointments).forEach((item) => {
+    if (!grouped.has(item.date)) grouped.set(item.date, []);
+    grouped.get(item.date).push(item);
+  });
+  return grouped;
+}
+
+function calendarTaskMap() {
+  const grouped = new Map();
+  asArray(state.calendar.entries).forEach((item) => {
+    if (!grouped.has(item.date)) grouped.set(item.date, []);
+    grouped.get(item.date).push(item);
+  });
+  return grouped;
+}
+
+function markerGradient(colors) {
+  const values = asArray(colors).map((item) => safeHex(item.color));
+  if (!values.length) return "none";
+  const size = 100 / values.length;
+  const stops = values.flatMap((color, index) => [
+    `${color} ${Math.round(index * size * 100) / 100}%`,
+    `${color} ${Math.round((index + 1) * size * 100) / 100}%`,
+  ]);
+  return `linear-gradient(135deg, ${stops.join(", ")})`;
+}
+
+function formatAppointmentTime(item) {
+  if (item.all_day) return "Ganztägig";
+  if (item.start_time && item.end_time) return `${item.start_time}–${item.end_time}`;
+  return item.start_time || "Ohne Uhrzeit";
+}
+
+function renderCalendarLegendControls() {
+  const legend = asArray(state.calendar.legend);
+  byId("calendarLegend").innerHTML = legend.map((item) => `<span class="legend-chip"><i style="--legend-color:${safeHex(item.color)}"></i>${escapeHtml(item.title)}</span>`).join("");
+  byId("calendarLegendEditor").innerHTML = legend.map((item, index) => `
+    <div class="legend-editor-row">
+      <input type="hidden" data-legend-id value="${escapeHtml(item.id)}">
+      <input type="color" data-legend-color value="${safeHex(item.color)}" aria-label="Farbe ${index + 1}">
+      <input type="text" data-legend-title value="${escapeHtml(item.title)}" maxlength="40" aria-label="Titel Farbe ${index + 1}" required>
+    </div>`).join("");
+  byId("dayColorOptions").innerHTML = legend.map((item) => `
+    <label class="day-color-choice" style="--choice-color:${safeHex(item.color)}">
+      <input type="checkbox" name="dayColor" value="${escapeHtml(item.id)}">
+      <span>${escapeHtml(item.title)}</span>
+    </label>`).join("");
+  const colorSelect = byId("appointmentColor");
+  const current = colorSelect.value;
+  colorSelect.innerHTML = '<option value="">Ohne Farbe</option>' + legend.map((item) => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.title)}</option>`).join("");
+  colorSelect.value = legend.some((item) => item.id === current) ? current : "";
+}
+
+function renderCalendarReminders() {
+  const reminders = asObject(state.calendar.reminders);
+  const due = asArray(reminders.due);
+  const upcoming = asArray(reminders.upcoming);
+  const all = [...due, ...upcoming].slice(0, 12);
+  byId("calendarReminderCount").textContent = `${due.length} offen`;
+  byId("calendarReminders").innerHTML = all.length ? all.map((item) => `
+    <article class="item-card reminder-card ${item.reminder_status === "due" ? "due" : ""}">
+      <strong>${item.reminder_status === "due" ? "🔔 " : "◷ "}${escapeHtml(item.title)}</strong>
+      <span>${formatDateTime(item.reminder_at)} · ${formatAppointmentTime(item)}</span>
+      ${item.location ? `<small>${escapeHtml(item.location)}</small>` : ""}
+      ${item.reminder_status === "due" ? `<button class="button small secondary" type="button" data-reminder-ack="${escapeHtml(item.id)}">Bestätigen</button>` : ""}
+    </article>`).join("") : '<span class="empty-state">Keine offenen Erinnerungen.</span>';
+
+  if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+    due.forEach((item) => {
+      if (state.notifiedReminderIds.has(item.id)) return;
+      state.notifiedReminderIds.add(item.id);
+      new Notification(`Provoware Memo: ${item.title}`, {
+        body: `${formatAppointmentTime(item)}${item.location ? ` · ${item.location}` : ""}`,
+        tag: `provoware-${item.id}`,
+      });
+    });
+  }
+}
+
+function renderCalendarAgenda() {
+  const legend = calendarLegendMap();
+  const appointments = [...asArray(state.calendar.appointments)].sort((a, b) => `${a.date} ${a.start_time || ""}`.localeCompare(`${b.date} ${b.start_time || ""}`));
+  byId("calendarAppointmentCount").textContent = `${appointments.length} Termin${appointments.length === 1 ? "" : "e"}`;
+  byId("calendarAgenda").innerHTML = appointments.length ? appointments.map((item) => {
+    const color = legend.get(item.color_id);
+    return `<article class="item-card appointment-card" style="--appointment-color:${safeHex(color?.color)}">
+      <header><div><strong>${escapeHtml(item.title)}</strong><div class="item-meta"><span>${formatDate(item.date)}</span><span>${escapeHtml(formatAppointmentTime(item))}</span>${item.location ? `<span>${escapeHtml(item.location)}</span>` : ""}${color ? `<span>${escapeHtml(color.title)}</span>` : ""}</div></div>
+      <div class="actions"><button class="button small secondary" type="button" data-appointment-edit="${escapeHtml(item.id)}">Bearbeiten</button><button class="button small danger" type="button" data-appointment-delete="${escapeHtml(item.id)}">Löschen</button></div></header>
+      ${item.notes ? `<p>${escapeHtml(item.notes)}</p>` : ""}
+      ${item.reminder_at ? `<small>Erinnerung: ${formatDateTime(item.reminder_at)}</small>` : ""}
+    </article>`;
+  }).join("") : '<span class="empty-state">Keine Termine im gewählten Zeitraum.</span>';
+}
+
+function calendarDayMarkup(dateValue, day, marker, appointments, tasks, { compact = false } = {}) {
+  const today = new Date().toISOString().slice(0, 10);
+  const colors = asArray(marker?.colors);
+  const gradient = markerGradient(colors);
+  const visibleTasks = tasks.filter((item) => byId("calendarShowCompleted", false)?.checked !== false || item.status !== "erledigt");
+  const colorInfo = colors.map((item) => `<span class="calendar-color-info" style="--item-color:${safeHex(item.color)}" title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</span>`).join("");
+  const showReminders = byId("calendarShowReminders", false)?.checked !== false;
+  const appointmentInfo = appointments.slice(0, compact ? 1 : 3).map((item) => `<button class="calendar-appointment" type="button" data-appointment-edit="${escapeHtml(item.id)}" title="${escapeHtml(`${item.title} · ${formatAppointmentTime(item)}`)}"><span>${showReminders && item.reminder_at ? "🔔" : escapeHtml(item.start_time || (item.all_day ? "Tag" : "•"))}</span>${escapeHtml(item.title)}</button>`).join("");
+  const taskInfo = compact ? "" : visibleTasks.slice(0, 3).map((item) => `<span class="calendar-event ${item.status === "erledigt" ? "done" : ""}">${escapeHtml(item.icon || "•")} ${escapeHtml(item.title)}</span>`).join("");
+  const more = Math.max(0, appointments.length - (compact ? 1 : 3)) + Math.max(0, visibleTasks.length - (compact ? 0 : 3));
+  return `<div class="calendar-day ${dateValue === today ? "today" : ""} ${colors.length ? "marked" : ""}" style="--day-gradient:${gradient}">
+    <button class="calendar-date-button" type="button" data-calendar-date="${dateValue}" aria-label="${formatDate(dateValue, { weekday: "long", day: "numeric", month: "long" })}">${day}</button>
+    ${compact ? "" : `<div class="calendar-color-summary">${colorInfo}</div>`}
+    <div class="calendar-day-content">${appointmentInfo}${taskInfo}${more ? `<span class="calendar-more">+${more} weitere</span>` : ""}</div>
+  </div>`;
+}
+
+function renderHeaderMiniCalendar() {
+  const reference = state.miniCalendarDate || state.calendar.reference_date || new Date().toISOString().slice(0, 10);
+  const month = monthKey(reference);
+  const [year, monthNumber] = month.split("-").map(Number);
+  byId("miniCalendarTitle").textContent = new Intl.DateTimeFormat("de-DE", { month: "long", year: "numeric" }).format(new Date(year, monthNumber - 1, 1));
+  const markers = calendarMarkerMap();
+  const appointments = calendarAppointmentMap();
+  const tasks = calendarTaskMap();
+  const firstDay = new Date(year, monthNumber - 1, 1).getDay();
+  const offset = firstDay === 0 ? 6 : firstDay - 1;
+  const cells = Array.from({ length: offset }, () => '<span class="mini-calendar-empty"></span>');
+  for (let day = 1; day <= daysInMonth(month); day += 1) {
+    const dateValue = `${month}-${String(day).padStart(2, "0")}`;
+    const marker = markers.get(dateValue);
+    const colors = asArray(marker?.colors).slice(0, 4);
+    const hasItems = asArray(appointments.get(dateValue)).length || asArray(tasks.get(dateValue)).length;
+    const dots = colors.map((item) => `<i style="--mini-color:${safeHex(item.color)}"></i>`).join("");
+    cells.push(`<button class="mini-calendar-day ${dateValue === new Date().toISOString().slice(0, 10) ? "today" : ""}" type="button" data-mini-date="${dateValue}" title="${escapeHtml(marker?.summary || "")}"><span>${day}</span><small>${dots}${hasItems ? "<b></b>" : ""}</small></button>`);
+  }
+  byId("headerMiniCalendar").innerHTML = cells.join("");
+}
+
 function renderCalendar() {
   const view = byId("calendarView").value;
-  const reference = byId("calendarDate").value || new Date().toISOString().slice(0, 10);
+  const reference = byId("calendarDate").value || state.calendar.reference_date || new Date().toISOString().slice(0, 10);
   const entries = asArray(state.calendar.entries);
+  const appointments = calendarAppointmentMap();
+  const tasks = calendarTaskMap();
+  const markers = calendarMarkerMap();
+  const range = asObject(state.calendar.range);
+  byId("calendarRangeLabel").textContent = range.start && range.end ? `${formatDate(range.start)} bis ${formatDate(range.end)}` : "Zeitraum wird geladen.";
+  renderCalendarLegendControls();
+  renderCalendarAgenda();
+  renderCalendarReminders();
+  renderHeaderMiniCalendar();
+
   if (view !== "monat") {
-    byId("calendarGrid").innerHTML = entries.length ? entries.map((entry) => `
-      <article class="item-card"><strong>${formatDate(entry.date)}</strong><span>${escapeHtml(entry.icon || "•")} ${escapeHtml(entry.title)}</span><small>${escapeHtml(entry.status || "")}</small></article>`).join("") : '<span class="empty-state">Keine Kalendereinträge vorhanden.</span>';
+    const combined = [
+      ...entries.map((item) => ({ date: item.date, title: item.title, meta: item.status, icon: item.icon || "•" })),
+      ...asArray(state.calendar.appointments).map((item) => ({ date: item.date, title: item.title, meta: formatAppointmentTime(item), icon: "◆" })),
+    ].sort((a, b) => `${a.date} ${a.title}`.localeCompare(`${b.date} ${b.title}`));
+    byId("calendarGrid").className = "calendar-grid calendar-list-view";
+    byId("calendarGrid").innerHTML = combined.length ? combined.map((item) => `<article class="item-card"><strong>${formatDate(item.date)}</strong><span>${escapeHtml(item.icon)} ${escapeHtml(item.title)}</span><small>${escapeHtml(item.meta || "")}</small></article>`).join("") : '<span class="empty-state">Keine Kalendereinträge vorhanden.</span>';
     return;
   }
-  const month = reference.slice(0, 7);
-  const grouped = new Map();
-  entries.forEach((entry) => {
-    if (!grouped.has(entry.date)) grouped.set(entry.date, []);
-    grouped.get(entry.date).push(entry);
-  });
-  const cells = [];
+
+  const month = monthKey(reference);
+  const [year, monthNumber] = month.split("-").map(Number);
+  const showWeekends = byId("calendarShowWeekends").checked;
+  const firstDay = new Date(year, monthNumber - 1, 1).getDay();
+  let offset = firstDay === 0 ? 6 : firstDay - 1;
+  if (!showWeekends) offset = Math.min(offset, 5);
+  const cells = Array.from({ length: offset }, () => '<span class="calendar-empty-cell" aria-hidden="true"></span>');
   for (let day = 1; day <= daysInMonth(month); day += 1) {
-    const date = `${month}-${String(day).padStart(2, "0")}`;
-    const dayEntries = grouped.get(date) || [];
-    cells.push(`<div class="calendar-day"><div class="date">${formatDate(date)}</div>${dayEntries.map((entry) => `<span class="calendar-event ${entry.status === "erledigt" ? "done" : ""}">${escapeHtml(entry.icon || "•")} ${escapeHtml(entry.title)}</span>`).join("")}</div>`);
+    const dateValue = `${month}-${String(day).padStart(2, "0")}`;
+    const weekday = new Date(`${dateValue}T12:00:00`).getDay();
+    if (!showWeekends && (weekday === 0 || weekday === 6)) continue;
+    cells.push(calendarDayMarkup(dateValue, day, markers.get(dateValue), asArray(appointments.get(dateValue)), asArray(tasks.get(dateValue))));
   }
-  byId("calendarGrid").innerHTML = cells.join("");
+  const grid = byId("calendarGrid");
+  grid.className = `calendar-grid ${showWeekends ? "seven-days" : "five-days"}`;
+  grid.innerHTML = cells.join("");
+  const weekdays = $(".calendar-weekdays");
+  if (weekdays) weekdays.classList.toggle("five-days", !showWeekends);
 }
 
 function renderArchives() {
@@ -397,8 +582,10 @@ function renderFooter() {
   if (recent) recent.innerHTML = state.events.length ? state.events.slice(0, 5).map((item) => `<div class="footer-event ${item.type}"><time>${item.at.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}</time><span>${escapeHtml(item.message)}</span></div>`).join("") : "Noch keine Ereignisse.";
   const upcoming = byId("upcomingEvents", false);
   if (upcoming) {
-    const tasks = state.todos.filter((item) => item.status !== "erledigt").sort((a, b) => String(a.planned_date).localeCompare(String(b.planned_date))).slice(0, 4);
-    upcoming.innerHTML = tasks.length ? tasks.map((item) => `<div class="footer-event"><time>${formatDate(item.planned_date)}</time><span>${escapeHtml(item.title)}</span></div>`).join("") : "Keine anstehenden Aufgaben.";
+    const tasks = state.todos.filter((item) => item.status !== "erledigt").map((item) => ({ date: item.planned_date, title: item.title, type: "Aufgabe" }));
+    const appointments = asArray(state.calendar.appointments).map((item) => ({ date: item.date, title: item.title, type: item.start_time || "Termin" }));
+    const items = [...tasks, ...appointments].filter((item) => item.date >= new Date().toISOString().slice(0, 10)).sort((a, b) => String(a.date).localeCompare(String(b.date))).slice(0, 5);
+    upcoming.innerHTML = items.length ? items.map((item) => `<div class="footer-event"><time>${formatDate(item.date)}</time><span>${escapeHtml(item.title)} · ${escapeHtml(item.type)}</span></div>`).join("") : "Keine anstehenden Aufgaben oder Termine.";
   }
   const important = byId("importantInfo", false);
   if (important) important.innerHTML = `<div class="footer-event"><span>Lokaler Betrieb – Daten bleiben auf diesem Rechner.</span></div><div class="footer-event"><span>${state.catalog.length} Module registriert · ${state.errors} Oberflächenfehler</span></div>`;
@@ -475,16 +662,86 @@ async function loadArchive(slug) {
   }
 }
 
-async function loadCalendar() {
+async function loadCalendar({ announce = true } = {}) {
   const view = byId("calendarView").value;
   const reference = byId("calendarDate").value || new Date().toISOString().slice(0, 10);
   try {
     state.calendar = await api(`/api/calendar?view=${encodeURIComponent(view)}&reference_date=${encodeURIComponent(reference)}`);
+    state.miniCalendarDate = reference;
     renderCalendar();
-    addEvent(`Kalenderansicht geladen: ${view}`);
+    if (announce) addEvent(`Kalenderansicht geladen: ${view}`);
   } catch (error) {
     reportError(error, { context: "Kalender laden" });
   }
+}
+
+async function loadReminders() {
+  try {
+    state.calendar.reminders = await api("/api/calendar/reminders?horizon_hours=168");
+    renderCalendarReminders();
+    renderFooter();
+  } catch (error) {
+    reportError(error, { context: "Erinnerungen laden" });
+  }
+}
+
+async function shiftCalendar(direction) {
+  const view = byId("calendarView").value;
+  const current = byId("calendarDate").value || new Date().toISOString().slice(0, 10);
+  const shifted = view === "monat" ? addMonths(current, direction) : addDays(current, direction * (view === "woche" ? 7 : 365));
+  byId("calendarDate").value = shifted;
+  state.miniCalendarDate = shifted;
+  await loadCalendar();
+}
+
+function selectCalendarDate(dateValue) {
+  byId("calendarDate").value = dateValue;
+  byId("dayColorDate").value = dateValue;
+  byId("appointmentDate").value = dateValue;
+  const marker = calendarMarkerMap().get(dateValue);
+  const selected = new Set(asArray(marker?.color_ids));
+  $$("#dayColorOptions input[name='dayColor']").forEach((input) => { input.checked = selected.has(input.value); });
+}
+
+function resetAppointmentForm(dateValue = "") {
+  const form = byId("appointmentForm");
+  form.reset();
+  byId("appointmentId").value = "";
+  byId("appointmentFormTitle").textContent = "Neuer Termin";
+  byId("appointmentReset").hidden = true;
+  byId("appointmentDate").value = dateValue || byId("calendarDate").value || new Date().toISOString().slice(0, 10);
+  byId("appointmentReminder").value = "-1";
+  byId("appointmentTimeRow").hidden = false;
+}
+
+function editAppointment(appointmentId) {
+  const item = asArray(state.calendar.appointments).find((entry) => entry.id === appointmentId);
+  if (!item) throw new Error("Termin wurde nicht gefunden.");
+  byId("appointmentId").value = item.id;
+  byId("appointmentFormTitle").textContent = "Termin bearbeiten";
+  byId("appointmentReset").hidden = false;
+  byId("appointmentTitle").value = item.title || "";
+  byId("appointmentDate").value = item.date || "";
+  byId("appointmentAllDay").checked = Boolean(item.all_day);
+  byId("appointmentStart").value = item.start_time || "";
+  byId("appointmentEnd").value = item.end_time || "";
+  byId("appointmentLocation").value = item.location || "";
+  byId("appointmentColor").value = item.color_id || "";
+  byId("appointmentReminder").value = item.reminder_minutes == null ? "-1" : String(item.reminder_minutes);
+  byId("appointmentNotes").value = item.notes || "";
+  byId("appointmentTimeRow").hidden = Boolean(item.all_day);
+  navigate("calendar");
+  byId("appointmentTitle").focus();
+}
+
+async function enableNotifications() {
+  if (typeof Notification === "undefined") {
+    showToast("Browser-Benachrichtigungen werden nicht unterstützt.", true);
+    return;
+  }
+  const permission = await Notification.requestPermission();
+  showToast(permission === "granted" ? "Browser-Erinnerungen sind aktiviert." : "Browser-Erinnerungen wurden nicht aktiviert.", permission !== "granted");
+  if (permission === "granted") renderCalendarReminders();
 }
 
 function findAction(moduleId, actionId) {
@@ -630,6 +887,46 @@ async function handleSubmit(event) {
       pulse("saveLight");
       showToast("Aufgabe gespeichert.");
       await loadAll();
+    } else if (form.id === "appointmentForm") {
+      const appointmentId = byId("appointmentId").value;
+      const payload = {
+        title: byId("appointmentTitle").value.trim(),
+        date: byId("appointmentDate").value,
+        all_day: byId("appointmentAllDay").checked,
+        start_time: byId("appointmentStart").value || null,
+        end_time: byId("appointmentEnd").value || null,
+        location: byId("appointmentLocation").value.trim(),
+        notes: byId("appointmentNotes").value.trim(),
+        color_id: byId("appointmentColor").value || null,
+        reminder_minutes: Number(byId("appointmentReminder").value),
+      };
+      const path = appointmentId ? `/api/calendar/appointments/${encodeURIComponent(appointmentId)}` : "/api/calendar/appointments";
+      await api(path, { method: appointmentId ? "PUT" : "POST", body: JSON.stringify(payload) });
+      pulse("saveLight");
+      showToast(appointmentId ? "Termin aktualisiert." : "Termin gespeichert.");
+      resetAppointmentForm(payload.date);
+      byId("calendarDate").value = payload.date;
+      await loadCalendar({ announce: false });
+    } else if (form.id === "dayColorForm") {
+      const selected = $$("#dayColorOptions input[name='dayColor']:checked").map((input) => input.value);
+      if (selected.length > 4) throw new Error("Pro Tag sind höchstens vier Farben möglich.");
+      const dateValue = byId("dayColorDate").value;
+      await api("/api/calendar/day-colors", { method: "PUT", body: JSON.stringify({ date: dateValue, color_ids: selected }) });
+      pulse("saveLight");
+      showToast("Tagesfarben gespeichert.");
+      byId("calendarDate").value = dateValue;
+      await loadCalendar({ announce: false });
+    } else if (form.id === "calendarLegendForm") {
+      const rows = $$("#calendarLegendEditor .legend-editor-row");
+      const legend = rows.map((row) => ({
+        id: $("[data-legend-id]", row).value,
+        title: $("[data-legend-title]", row).value.trim(),
+        color: $("[data-legend-color]", row).value,
+      }));
+      await api("/api/calendar/legend", { method: "PUT", body: JSON.stringify({ legend }) });
+      pulse("saveLight");
+      showToast("Farblegende gespeichert.");
+      await loadCalendar({ announce: false });
     } else if (form.id === "characterForm") {
       await api("/api/modules/charakter_modul/create_character", { method: "POST", body: JSON.stringify({
         name: byId("characterName").value.trim(), role: byId("characterRole").value.trim(), archetype: byId("characterArchetype").value.trim(),
@@ -677,11 +974,48 @@ async function handleClick(event) {
     if (action === "toggle-sidebar") byId("sidebar").classList.toggle("collapsed");
     else if (action === "refresh-all") await loadAll({ announce: true });
     else if (action === "load-calendar") await loadCalendar();
+    else if (action === "calendar-prev") await shiftCalendar(-1);
+    else if (action === "calendar-next") await shiftCalendar(1);
+    else if (action === "calendar-today") {
+      const today = new Date().toISOString().slice(0, 10);
+      byId("calendarDate").value = today;
+      state.miniCalendarDate = today;
+      await loadCalendar();
+    }
+    else if (action === "mini-calendar-prev") {
+      const shifted = addMonths(state.miniCalendarDate, -1);
+      state.miniCalendarDate = shifted;
+      byId("calendarDate").value = shifted;
+      await loadCalendar({ announce: false });
+    }
+    else if (action === "mini-calendar-next") {
+      const shifted = addMonths(state.miniCalendarDate, 1);
+      state.miniCalendarDate = shifted;
+      byId("calendarDate").value = shifted;
+      await loadCalendar({ announce: false });
+    }
+    else if (action === "enable-notifications") await enableNotifications();
+    else if (action === "reset-appointment") resetAppointmentForm();
     else if (action === "load-files" || action === "refresh-files") await loadFiles();
     else if (action === "file-parent" && state.files.parent) await loadFiles(state.files.parent);
     else if (action === "clear-output") byId("systemOutput").textContent = "Noch keine Systemaktion ausgeführt.";
     else if (action === "close-action-dialog") closeModuleAction();
     else if (action === "reload-page") window.location.reload();
+    return;
+  }
+  const miniDateButton = event.target.closest("[data-mini-date]");
+  if (miniDateButton) {
+    const dateValue = miniDateButton.dataset.miniDate;
+    state.miniCalendarDate = dateValue;
+    byId("calendarDate").value = dateValue;
+    selectCalendarDate(dateValue);
+    navigate("calendar");
+    await loadCalendar({ announce: false });
+    return;
+  }
+  const calendarDateButton = event.target.closest("[data-calendar-date]");
+  if (calendarDateButton) {
+    selectCalendarDate(calendarDateButton.dataset.calendarDate);
     return;
   }
   const fileSortButton = event.target.closest("[data-file-sort]");
@@ -728,6 +1062,25 @@ async function handleClick(event) {
     await api(`/api/todos/${encodeURIComponent(completeButton.dataset.todoComplete)}/complete`, { method: "POST", body: "{}" });
     pulse("saveLight"); await loadAll(); return;
   }
+  const appointmentEdit = event.target.closest("[data-appointment-edit]");
+  if (appointmentEdit) { editAppointment(appointmentEdit.dataset.appointmentEdit); return; }
+  const appointmentDelete = event.target.closest("[data-appointment-delete]");
+  if (appointmentDelete && window.confirm("Termin wirklich löschen?")) {
+    await api(`/api/calendar/appointments/${encodeURIComponent(appointmentDelete.dataset.appointmentDelete)}`, { method: "DELETE" });
+    pulse("saveLight");
+    showToast("Termin gelöscht.");
+    resetAppointmentForm();
+    await loadCalendar({ announce: false });
+    return;
+  }
+  const reminderAck = event.target.closest("[data-reminder-ack]");
+  if (reminderAck) {
+    await api(`/api/calendar/reminders/${encodeURIComponent(reminderAck.dataset.reminderAck)}/acknowledge`, { method: "POST", body: "{}" });
+    pulse("saveLight");
+    state.notifiedReminderIds.delete(reminderAck.dataset.reminderAck);
+    await loadReminders();
+    return;
+  }
   const deleteButton = event.target.closest("[data-archive-delete]");
   if (deleteButton && state.selectedArchive && window.confirm("Archiveintrag wirklich löschen?")) {
     await api(`/api/archive-entries/${encodeURIComponent(deleteButton.dataset.archiveDelete)}`, { method: "DELETE" });
@@ -740,6 +1093,27 @@ function handleInput(event) {
   else if (event.target.id === "todoFilter") renderTodos();
   else if (event.target.id === "characterSearch") renderCharacters();
   else if (event.target.id === "moduleSearch") renderModuleCatalog();
+  else if (["calendarShowWeekends", "calendarShowCompleted", "calendarShowReminders"].includes(event.target.id)) {
+    try {
+      localStorage.setItem("provoware_calendar_options", JSON.stringify({
+        weekends: byId("calendarShowWeekends").checked,
+        completed: byId("calendarShowCompleted").checked,
+        reminders: byId("calendarShowReminders").checked,
+      }));
+    } catch (_error) { /* optional */ }
+    renderCalendar();
+  }
+  else if (event.target.id === "appointmentAllDay") {
+    byId("appointmentTimeRow").hidden = event.target.checked;
+    if (event.target.checked) { byId("appointmentStart").value = ""; byId("appointmentEnd").value = ""; }
+  }
+  else if (event.target.matches("#dayColorOptions input[name='dayColor']")) {
+    const selected = $$("#dayColorOptions input[name='dayColor']:checked");
+    if (selected.length > 4) {
+      event.target.checked = false;
+      showToast("Pro Tag können höchstens vier Farben gewählt werden.", true);
+    }
+  }
   else if (["fileSort", "fileDescending", "fileHidden"].includes(event.target.id) && state.files.path) loadFiles();
   else if (event.target.id === "archiveSearch" && state.selectedArchive) {
     window.clearTimeout(handleInput.archiveTimer);
@@ -780,6 +1154,15 @@ async function init() {
     const today = new Date().toISOString().slice(0, 10);
     byId("todoDate").value = today;
     byId("calendarDate").value = today;
+    byId("appointmentDate").value = today;
+    byId("dayColorDate").value = today;
+    state.miniCalendarDate = today;
+    try {
+      const options = JSON.parse(localStorage.getItem("provoware_calendar_options") || "{}");
+      if (typeof options.weekends === "boolean") byId("calendarShowWeekends").checked = options.weekends;
+      if (typeof options.completed === "boolean") byId("calendarShowCompleted").checked = options.completed;
+      if (typeof options.reminders === "boolean") byId("calendarShowReminders").checked = options.reminders;
+    } catch (_error) { /* optional */ }
     updateClock();
     window.setInterval(updateClock, 1000);
     const initialView = (() => {
@@ -789,7 +1172,11 @@ async function init() {
     navigate($(`[data-panel="${CSS.escape(initialView)}"]`) ? initialView : "dashboard", { focus: false });
     document.documentElement.dataset.appReady = "binding";
     await loadAll();
+    resetAppointmentForm(today);
+    selectCalendarDate(today);
     await loadFiles("");
+    const reminderSeconds = Math.max(15, Number(state.calendar.options?.reminder_poll_seconds || 60));
+    window.setInterval(() => loadReminders(), reminderSeconds * 1000);
     document.documentElement.dataset.appReady = "true";
     addEvent("Provoware Memo ist vollständig bedienbar.", "success");
   } catch (error) {
