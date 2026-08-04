@@ -1,0 +1,46 @@
+name: UI Modernization Block 3 Components
+
+on:
+  pull_request:
+    paths:
+      - "system/ui_components.py"
+      - "system/ui_theme_adapter.py"
+      - "system/launcher_gui.py"
+      - "system/main_window.py"
+      - "scripts/apply_ui_modernization_block3.py"
+      - "tests/test_ui_components.py"
+      - "tests/test_ui_theme_adapter.py"
+      - "tests/test_ui_modernization_block3_codemod.py"
+      - "config/ui-governance.json"
+      - "system/validate_ui_governance.py"
+      - "tests/test_ui_governance.py"
+      - ".github/workflows/ui-modernization-block-3.yml"
+      - "dateiindex/**"
+
+permissions:
+  contents: read
+
+jobs:
+  components:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Testabhängigkeiten installieren
+        run: python -m pip install --disable-pip-version-check pytest
+      - name: Komponenten- und Themeverträge testen
+        run: >-
+          python -m pytest -q
+          tests/test_ui_components.py
+          tests/test_ui_theme_adapter.py
+      - name: Syntax prüfen
+        run: >-
+          python -m py_compile
+          system/ui_components.py
+          system/ui_theme_adapter.py
+      - name: Design-Token-Drift ausschließen
+        run: python system/generate_design_tokens.py --check
+      - name: Repository unverändert halten
+        run: git diff --exit-code
