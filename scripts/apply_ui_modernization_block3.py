@@ -182,7 +182,9 @@ def transform_main_window(text: str) -> str:
         text,
         "        for button in (self.activate_button, self.deactivate_button):\n"
         "            button.configure(pady=7, takefocus=1)\n",
-        "        for button in (self.activate_button, self.deactivate_button):\n"
+        "        for button in (\n"
+        "            self.activate_button, self.deactivate_button, self.history_button\n"
+        "        ):\n"
         "            button.configure(takefocus=1)\n",
         "Hauptfenster-Buttonduplikat",
     )
