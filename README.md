@@ -46,13 +46,13 @@ Die zentrale Datei ist `logs/tool.log`. Im Projekt-Hauptordner werden keine Logd
 Ein vollständiger privater Kerncheck:
 
 ```bash
-./scripts/private_tool_check.sh
+bash scripts/private_tool_check.sh
 ```
 
 Direkt ein geprüftes ZIP erstellen:
 
 ```bash
-./scripts/build_private_release.sh
+bash scripts/build_private_release.sh
 ```
 
 Ausgabe:
