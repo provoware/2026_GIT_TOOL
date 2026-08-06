@@ -1,0 +1,32 @@
+name: Private tool snapshot
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '**'
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+      - name: Vollständigen Quellstand packen
+        shell: bash
+        run: |
+          set -euo pipefail
+          zip -qr repository-snapshot.zip . \
+            -x '.git/*' \
+            -x 'repository-snapshot.zip'
+      - name: Snapshot hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: repository-snapshot
+          path: repository-snapshot.zip
+          if-no-files-found: error
+          retention-days: 1
