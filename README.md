@@ -1,16 +1,117 @@
 # 2026_GIT_TOOL
 
-## Kurzbeschreibung
-Dieses Projekt ist ein sauberer Neuaufbau mit Fokus auf Robustheit, Nachvollziehbarkeit und Linux. Ziel ist ein barrierefreies Tool, das verständlich bleibt und klare Standards nutzt.
+Privates Linux-Desktoptool für eine übersichtliche Modulverwaltung, lokale Datenpflege, Diagnose, Backups und Exporte. Der Schwerpunkt liegt auf verständlicher Bedienung, robuster lokaler Ausführung und einer kleinen, nachvollziehbaren Prüfstrecke.
 
-## Ist-Analyse (aktueller Stand)
-- Die Start-Routine ist als Skript verfügbar und führt automatische Prüfungen mit Nutzer-Feedback aus.
-- Die Start-Routine richtet automatisch eine virtuelle Umgebung (Venv = isolierte Python-Umgebung) ein und startet die GUI.
-- Die Ordnertrennung (System/Config/Daten) ist umgesetzt und wird per Struktur-Check geprüft.
-- Wichtige Qualitätsziele (Barrierefreiheit, Logging, automatische Prüfungen) sind implementiert und testbar.
-- Zentrale Architektur-Bausteine sind vorhanden: Plugin-Registry (Registry = zentrale Modul-Liste), Modul-API und gemeinsamer Store (Store = Zustands-Speicher).
-- Performance- und Stabilitätsmaßnahmen (Lazy Loading, asynchrones Logging, JSON-Validierung) sind umgesetzt.
-- Komfortfunktionen wie globale Suche, Favoritenleiste, Mini-Panels und Auto-Theming sind umgesetzt.
+## Schnellstart
+
+```bash
+./scripts/start.sh
+```
+
+Die Startroutine prüft die Projektstruktur, richtet bei Bedarf eine lokale Python-Umgebung ein und öffnet anschließend die Benutzeroberfläche.
+
+Weitere Startarten:
+
+```bash
+./scripts/start.sh --safe-mode   # sichere Prüfung und eingeschränkter Start
+./scripts/start.sh --test-mode   # nur Vorprüfung
+./scripts/start.sh --sandbox     # isolierte Testkopie
+```
+
+Die vollständige Bedienhilfe steht in **[HILFE.md](HILFE.md)**.
+
+## Bedienung
+
+1. Farbschema und gewünschte Filter wählen.
+2. **Übersicht aktualisieren** ausführen.
+3. **Hauptfenster öffnen** und das gewünschte Modul starten.
+4. Bei Problemen zuerst **Diagnose starten** verwenden.
+5. Vor größeren Änderungen ein **Backup** erstellen.
+6. Mit **Abmelden** speichern und sauber beenden.
+
+Alle wichtigen Funktionen sind per Tastatur erreichbar. `F1` zeigt die Hilfe zum fokussierten Bedienelement.
+
+## Protokolle
+
+Laufzeit- und Diagnoseprotokolle liegen ausschließlich unter:
+
+```text
+logs/
+```
+
+Die zentrale Datei ist `logs/tool.log`. Im Projekt-Hauptordner werden keine Logdateien erzeugt. Logs werden weder versioniert noch in das private Release-ZIP übernommen.
+
+## Lokale Prüfung und Privat-ZIP
+
+Ein vollständiger privater Kerncheck:
+
+```bash
+./scripts/private_tool_check.sh
+```
+
+Direkt ein geprüftes ZIP erstellen:
+
+```bash
+./scripts/build_private_release.sh
+```
+
+Ausgabe:
+
+```text
+dist/2026_GIT_TOOL_PRIVAT.zip
+```
+
+Der Kerncheck umfasst nur Punkte, die für ein privates Einzelplatztool unmittelbar relevant sind:
+
+- Projekt- und Logablagestruktur
+- JSON-Validierung
+- Python- und Shell-Syntax
+- Design-Token-Konsistenz
+- Modulverträge
+- vollständige Funktionstests
+- kritische Ruff-Fehlerklassen
+- Start-Smoke-Test
+- ZIP-Struktur- und Laufprüfung
+
+## GitHub-Prüfung
+
+Es gibt nur noch einen gemeinsamen Workflow:
+
+```text
+Private Tool Check
+```
+
+Er führt dieselbe Kernprüfung aus und veröffentlicht das geprüfte Privat-ZIP. Frühere Einzel-Gates, Codemod-, Modernisierungs-, Export- und Modulworkflows wurden entfernt. Ihre fachlichen Tests bleiben Bestandteil der gemeinsamen Pytest-Suite.
+
+## Ordnerübersicht
+
+| Pfad | Zweck |
+|---|---|
+| `system/` | Kernlogik und Benutzeroberfläche |
+| `modules/` | Toolmodule |
+| `config/` | Einstellungen und Prüfkonfiguration |
+| `data/` | lokale Nutzdaten und Backups |
+| `logs/` | ausschließlich lokale Laufzeitprotokolle |
+| `scripts/` | Start, Prüfung, Reparatur und Paketbau |
+| `mcp_dispatch/` | optionale, eng begrenzte GitHub-Workflow-Anbindung |
+| `tests/` | gemeinsame Funktionstests für die Entwicklung |
+
+## Diagnose und Reparatur
+
+```bash
+python system/diagnostics_runner.py
+python system/health_check.py --root . --self-repair
+```
+
+Die Diagnose zeigt verständliche Ergebnisse. Technische Einzelheiten werden unter `logs/` oder in temporären Prüfberichten unter `build/` abgelegt.
+
+## Datenschutz und privater Betrieb
+
+- Nutzdaten bleiben standardmäßig lokal.
+- Laufzeitlogs bleiben lokal und werden nicht paketiert.
+- Der Start benötigt keine Administratorrechte.
+- Netzwerkfunktionen sind optional. Die MCP-Anbindung wird nur verwendet, wenn sie ausdrücklich eingerichtet und gestartet wurde.
+- Backups liegen unter `data/backups/`.
 
 <!-- AUTO-STATUS:START -->
 **Auto-Status (aktualisiert: 2026-08-04)**
@@ -21,131 +122,15 @@ Dieses Projekt ist ein sauberer Neuaufbau mit Fokus auf Robustheit, Nachvollzieh
 - Fortschritt: 95 %
 <!-- AUTO-STATUS:END -->
 
-## Ziele (in Arbeit)
-- **Barrierefreiheit**: Tastaturbedienung, hoher Kontrast und verständliche Meldungen.
-- **Automatische Startprüfung**: Start-Routine prüft Struktur, löst Abhängigkeiten und gibt Nutzer-Feedback.
-- **Qualitätssicherung**: Automatische Tests und Codeformatierung (Codeformat = automatische Einheitlichkeit des Codes).
-- **Trennung von Bereichen**: Systemlogik getrennt von variablen Dateien und Konfiguration.
-- **Einheitliche Standards**: Klare Modul-Schnittstellen und gemeinsames Datenmodell.
+## Weiterführende Dokumentation
 
-## Schnellstart (Doku + vorhandene Skripte)
-Die Start-Routine existiert als Skript. Beispiel (Befehl = Kommandozeilen-Anweisung):
-- `./scripts/start.sh` (Start-Routine = automatischer Projektstart mit Prüfungen und Feedback)
-- `./scripts/start.sh --safe-mode` (Safe-Mode = nur prüfen, nichts schreiben)
-- `./scripts/start.sh --test-mode` (Testmodus = nur prüfen, nichts schreiben)
-- `./scripts/start.sh --sandbox` (Sandbox = isolierte Kopie für Testläufe)
-- `./scripts/ensure_venv.sh` (Venv = isolierte Python-Umgebung vorbereiten/prüfen)
-- `./scripts/system_scan.sh` (System-Scan = Vorabprüfung ohne Schreiben)
-- `./scripts/run_tests.sh` (Tests + Codequalität = automatische Prüfung von Funktionen und Stil)
-- `python system/diagnostics_runner.py` (Diagnose = Tests und Codequalität mit Zusammenfassung)
-- `python system/end_audit.py` (End-Audit = Release-Status prüfen)
-- `python system/selective_exporter.py --preset support_pack` (Selektiver Export = Teil-Export als ZIP)
-- `./scripts/update_docs.sh` (Doku-Update = Auto-Status in README/DEV_DOKU aktualisieren)
-- `./scripts/update_records.sh` (Changelog-Automatik = DONE/CHANGELOG aus todo.txt aktualisieren)
-- `./scripts/update_structure.sh` (Strukturpflege = Baumstruktur/Manifest/Register aktualisieren)
-- `./scripts/build_all.sh` (Ein-Befehl-Build = Checks, Strukturpflege, Doku, Tests)
-- `./scripts/install_desktop_entry.sh` (Desktop-Entry = Startdatei für Linux-Menü)
-- `./scripts/build_deb.sh` (Deb-Paket = Installationspaket für Linux)
-- `./scripts/build_appimage.sh` (AppImage = Ein-Datei-Startpaket mit Self-Check)
-- `./scripts/build_onefile.sh` (One-File = PyInstaller-Einzeldatei)
-- `./scripts/repo_basis_check.sh` (Repo-Check = Basisprüfung für Git-Remote)
-
-## Release-Checks & Test-Automatik
-- **Start-Routine** prüft automatisch Struktur, Abhängigkeiten und Module mit klaren Hinweisen (Feedback).
-- **Test-Automatik** startet Tests automatisch nach einer abgeschlossenen Runde (4 erledigte Tasks).
-- **Modulverbund-Checks** prüfen konsistente Moduleinträge, Selftests und Manifest-IDs.
-- **Codequalität & Formatierung** laufen automatisch über Ruff (Linting = Regelprüfung) und Black (Formatierung).
-- **End-Audit** zeigt den Release-Status inkl. offener Hinweise.
-
-## Architektur & Struktur (umgesetzt)
-- **Plugin-System** mit Registry (Registry = zentrale Modul-Liste) ist aktiv.
-- **Modul-API** mit klaren Schnittstellen, Events und States (State = Zustand) ist dokumentiert.
-- **Zentraler Store** (Store = gemeinsamer Zustands-Speicher) als Single Source of Truth (einzige Quelle) für Theme, Settings und Logging.
-- **Trennung von System/Config/Daten**: Code in `src/` und `system/`, Konfiguration in `config/`, variable Daten in `data/`.
-
-## Performance & Stabilität (umgesetzt)
-- **Lazy Loading** (spätes Laden) für Module, um die Startzeit zu verkürzen.
-- **Debounce/Throttle** (gebremstes Auslösen) für teure Aktionen, damit die GUI flüssig bleibt.
-- **Asynchrones Logging** (nicht blockierend), damit Logs die Oberfläche nicht bremsen.
-- **JSON-Validierung** über geprüftes Modell für sichere Daten.
-
-## Diagnose (One-Click)
-- Im GUI-Launcher gibt es einen Button „Diagnose starten“.
-- Die Diagnose führt Tests, Modulverbund-Checks und Codequalität aus.
-- Ergebnisse werden direkt in der Übersicht angezeigt und zusätzlich im Log gespeichert.
-- Der Entwicklerbereich bietet System-Scan, Standards-Liste und Log-Ordner mit einem Klick.
-
-## Design & Branding
-- Der GUI-Launcher zeigt ein klares Basis-Branding mit kleinen Symbolen (Icons).
-- Zusätzlich gibt es ein „Papierkorb“-Theme für einen warmen, kontrastreichen Look.
-- Ein offizielles Icon-Set ist in `assets/icons` hinterlegt und wird für Desktop-Startdateien genutzt.
-
-## Robustheit & Self-Repair
-- Der Health-Check kann fehlende Dateien/Ordner automatisch anlegen.
-- Rechteprobleme (Lesen/Ausführen) werden bei Self-Repair automatisch korrigiert.
-- Safe-Mode setzt Schreibschutz für Module (read-only = schreibgeschützt).
-- Tipp: `python system/health_check.py --root . --self-repair` (Self-Repair = Selbstreparatur).
-
-## Modul-API (Typen/Verträge)
-- Standard-Typen stehen in `system/module_api_types.py` (TypedDicts = typisierte Wörterbücher).
-- Der Entry-Contract (Entry = Startdatei des Moduls) ist in `docs/MODUL_API.md` beschrieben.
-
-## Bedienbarkeit (umgesetzt)
-- Globales Suchfeld im Dashboard (Dateien, Module, Texte).
-- Favoritenleiste für oft genutzte Module.
-- Mini-Panels für Schnellaktionen (Export, Backup, Notes).
-- Auto-Theming (Tag/Nacht-Erkennung).
-- Hauptfenster mit 3x3-Modulraster, Drag/Resize und Kollisionsschutz (keine Überlappung).
-
-## Barrierefreiheit
-- Tastaturbedienung (Tab/Enter/Esc) für alle Funktionen.
-- Kontrastmodus per Hotkey (Schnelltaste).
-- Zoom per STRG + Mausrad (global).
-- Screenreader-freundliche Struktur (Screenreader = Vorlese-Programm).
-
-## Bedienung in einfacher Sprache
-- **Starten**: Nutze `./scripts/start.sh` (Start-Routine = automatischer Start mit Prüfungen).
-- **Fehler**: Fehlertexte sollen klar erklären, was passiert ist und was du tun kannst.
-- **Tastatur**: Jede Funktion soll ohne Maus erreichbar sein.
-
-## Barrierefreiheit und Kontrast
-- Hoher Kontrast zwischen Text und Hintergrund.
-- Deutliche Schaltflächen (Buttons) mit klarer Beschriftung.
-- Mehrere Farbthemen (Themes) zur Auswahl (z. B. Hell, Dunkel, Kontrast).
-
-## Logging und Debugging
-- **Logging (Protokollierung)**: Jede Aktion soll protokolliert werden.
-- **Debugging (Fehlersuche)**: Optionaler Modus mit mehr Details.
-- **Autosave-Log (Sicherungs-Log)**: `logs/autosave.log` zeigt automatische Sicherungen.
-
-## Sandbox-Analyse (Kurzfassung)
-- **Risiko**: Ohne Sandbox-Regeln können Module zu viele Rechte erhalten.
-- **Schutz**: Start ohne Adminrechte, Pfadgrenzen, Safe-Mode (schreibgeschützt) und klare Netzwerkhinweise.
-
-## Weiterführende Vorschläge für Laien
-- Lies die Datei `todo.txt`, um die nächsten kleinen Schritte zu sehen.
-- Nutze kurze, klare Commit-Nachrichten, z. B. „Doku: README erweitert“.
-- Arbeite Schritt für Schritt: erst verstehen, dann ändern, dann testen.
-- Starte die Tests mit `./scripts/run_tests.sh` (Tests = automatische Prüfroutinen).
-- Bei Fehlern: `logs/test_run.log` öffnen (Log = Protokoll) und den letzten Eintrag lesen.
-- Wenn die GUI nicht startet: `python3-tk` installieren (Tkinter = GUI-Bibliothek).
-- Nutze `python system/health_check.py --root . --self-repair` (Self-Repair = Selbstreparatur), wenn Ordner fehlen.
-- Diagnose für Einsteiger: `python system/diagnostics_runner.py` (Diagnose = Tests + Codequalität).
-- Doku-Aktualisierung: `./scripts/update_docs.sh` (Auto-Status = automatisch erzeugter Statusblock).
-- Profile nutzen: Lege ein neues Profil an (Profil = eigener Projektordner), damit Daten getrennt bleiben.
-- Datei-Manager nutzen: Quick-Rename (schnelles Umbenennen) und Tagging (Schlagworte) helfen beim Aufräumen.
-
-## Dateiübersicht
-- `README.md`: Einfache Projekt-Anleitung.
-- `STYLEGUIDE.md`: Styleguide (PEP8 + Projektregeln).
-- `DEV_DOKU.md`: Entwickler-Dokumentation und Standards.
-- `todo.txt`: Offene Aufgaben im Überblick.
-- `STRUKTUR.md`: Verzeichnisbaum + Pflichtdateien (inkl. Dummy-Platzhalter).
-- `CHANGELOG.md`: Änderungen je Version.
-- `config/global_settings.json`: Zentrale Settings (Einstellungen) für UI/Logging/Autosave.
-- `config/pin.json`: PIN-Login-Einstellungen (PIN = kurze Zahlen-Passwort).
-- `data/manifest.json`: Automatisch gepflegter Manifest-Überblick.
-- `data/autosave_state.json`: Status der letzten Autosave-Sicherung.
+- `HILFE.md` – Bedienung und Fehlerbehebung
+- `DEV_DOKU.md` – technische Entwicklungshinweise
+- `STYLEGUIDE.md` – Projekt- und Codestandards
+- `STRUKTUR.md` – Projektstruktur
+- `CHANGELOG.md` – Änderungshistorie
+- `todo.txt` – offene Aufgaben
 
 ## Lizenz
+
 Noch nicht festgelegt.
