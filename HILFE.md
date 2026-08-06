@@ -97,6 +97,8 @@ Die Prüfung kontrolliert ausschließlich die für das private Tool erforderlich
 | `Strg+Z` / `Strg+Y` | Rückgängig / Wiederholen |
 | `Strg+Mausrad` | Ansicht vergrößern oder verkleinern |
 
+Bei schmalen Fenstern zeigt die Fußzeile platzsparend nur die Kernkürzel `F1`, `Alt+R`, `Alt+M`, `Alt+G`, `Alt+Q` und `Strg+Z/Y`.
+
 ## 6. Private Datensicherung
 
 Vor größeren Änderungen ein Backup erstellen. Backups werden unter `data/backups/` abgelegt. Persönliche Daten, lokale Logs, Caches und temporäre Prüfberichte gehören nicht in das Quellcode-ZIP.
