@@ -4,17 +4,29 @@
 
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
 
-# Logs
+# Laufzeitprotokolle und Diagnoseausgaben
+logs/*
+!logs/README.md
+!logs/.gitkeep
 *.log
-!logs/test_run.log
-!logs/start_run.log
+*.log.*
+*.trace
+*.out
+
+# Lokale Build- und Exportausgaben
+build/
+dist/
+*.egg-info/
 
 # Node
 node_modules/
 
-# Runtime state (Dummy wird versioniert)
-
-# OS
+# Betriebssystem
 .DS_Store
