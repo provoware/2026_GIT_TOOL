@@ -74,7 +74,7 @@ python system/health_check.py --root . --self-repair
 ### Vollständige lokale Prüfung
 
 ```bash
-./scripts/private_tool_check.sh
+bash scripts/private_tool_check.sh
 ```
 
 Die Prüfung kontrolliert ausschließlich die für das private Tool erforderlichen Punkte: Datenformate, Python- und Shell-Syntax, Design-Tokens, Modulverträge, Funktionstests und einen Start-Smoke-Test.
