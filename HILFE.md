@@ -71,13 +71,31 @@ In der Startübersicht **Alle Module anzeigen** aktivieren und anschließend **�
 python system/health_check.py --root . --self-repair
 ```
 
-### Vollständige lokale Prüfung
+### Vollständige lokale Prüfung und ZIP-Erstellung
 
 ```bash
 bash scripts/private_tool_check.sh
 ```
 
-Die Prüfung kontrolliert ausschließlich die für das private Tool erforderlichen Punkte: Datenformate, Python- und Shell-Syntax, Design-Tokens, Modulverträge, Funktionstests und einen Start-Smoke-Test.
+Dieser eine Befehl prüft den privaten Desktop-Kern und erstellt nur bei Erfolg:
+
+```text
+dist/2026_GIT_TOOL_PRIVAT.zip
+```
+
+Geprüft werden ausschließlich:
+
+- Ablagestruktur und Logtrennung
+- JSON-Daten des Desktop-Tools
+- Python- und Shell-Syntax
+- Design-Tokens
+- Modulverträge
+- Desktop-Funktionstests
+- kritische Ruff-Fehler
+- Start-Smoke-Test
+- ZIP-Inhalt und ZIP-Integrität
+
+Der optionale MCP-Server, GitHub-Automation und öffentliche Release-Infrastruktur gehören nicht zum privaten Standardcheck und nicht zum Privat-ZIP.
 
 ## 5. Tastaturbedienung
 
@@ -103,15 +121,8 @@ Bei schmalen Fenstern zeigt die Fußzeile platzsparend nur die Kernkürzel `F1`,
 
 Vor größeren Änderungen ein Backup erstellen. Backups werden unter `data/backups/` abgelegt. Persönliche Daten, lokale Logs, Caches und temporäre Prüfberichte gehören nicht in das Quellcode-ZIP.
 
-## 7. Welche Prüfungen sind nötig?
+## 7. Warum keine GitHub-Workflows mehr?
 
-Für den privaten Einzelplatzbetrieb genügt ein gemeinsamer Prüfjob mit:
+Für ein privates Einzelplatztool verursachen automatische Cloud-Workflows mehr Wartezeit und Fehlerquellen als Nutzen. Die lokale Prüfung verwendet exakt den Quellstand auf dem eigenen Rechner, benötigt keinen freien Runner und liefert das ZIP direkt im Projektordner.
 
-- Struktur- und Datenprüfung
-- Python- und Shell-Syntax
-- Design-Token-Konsistenz
-- vollständiger Pytest-Suite
-- Start-Smoke-Test
-- ZIP-Strukturprüfung
-
-Separate Gate-, Modernisierungs-, Export-, MCP- und Modul-Workflows sind für die tägliche private Entwicklung nicht erforderlich. Die zugehörigen Tests bleiben erhalten und werden vom gemeinsamen Prüfjob ausgeführt.
+Spezielle Gate-, Modernisierungs-, Export-, MCP- und Modul-Workflows sind daher entfernt. Die relevanten Desktop-Tests bleiben erhalten und werden durch `scripts/private_tool_check.sh` gemeinsam ausgeführt.
