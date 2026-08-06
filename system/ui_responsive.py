@@ -53,10 +53,7 @@ LAUNCHER_FOOTER_FULL = (
     "Logs: Alt+L · Backup: Alt+B · Kontrast: Alt+K · Beenden: Alt+Q · "
     "Rückgängig/Wiederholen: Strg+Z/Y · Zoom: Strg + Mausrad."
 )
-LAUNCHER_FOOTER_COMPACT = (
-    "F1 Hilfe · Alt+R Aktualisieren · Alt+M Hauptfenster · Alt+G Diagnose · "
-    "Alt+Q Beenden · Strg+Z/Y Undo/Redo."
-)
+LAUNCHER_FOOTER_COMPACT = "F1 · Alt+R · Alt+M · Alt+G · Alt+Q · Strg+Z/Y"
 
 
 def _positive_int(value: int, name: str) -> int:
