@@ -40,12 +40,13 @@ LAUNCHER_HELP_FULL = (
     "logs/. F1 erklärt das aktuell fokussierte Element. Tastatur: Tab wechselt den Fokus, "
     "Alt+K schaltet den Kontrast um, Strg + Mausrad ändert den Zoom. Wichtige Kurzbefehle: "
     "Alt+R Aktualisieren, Alt+M Hauptfenster, Alt+G Diagnose, Alt+L Logs, Alt+B Backup "
-    "und Alt+Q Speichern und Beenden. Die vollständige Anleitung steht in HILFE.md."
+    "und Alt+Q Speichern und Beenden. Strg+Z/Y führt Änderungen zurück oder erneut aus. "
+    "Die vollständige Anleitung steht in HILFE.md; Tooltips erklären einzelne Schaltflächen."
 )
 LAUNCHER_HELP_COMPACT = (
-    "Schnellstart: Übersicht aktualisieren, Hauptfenster öffnen, gewünschtes Modul wählen. "
-    "Bei Problemen Diagnose starten und danach logs/tool.log prüfen. Tab wechselt den Fokus, "
-    "F1 zeigt die Hilfe, Alt+K schaltet den Kontrast um. Details: HILFE.md."
+    "Schnellstart: Aktualisieren, Hauptfenster öffnen, Modul wählen. Bei Problemen Alt+G "
+    "für Diagnose und danach logs/tool.log prüfen. Tab wechselt den Fokus, F1 und Tooltips "
+    "zeigen Hilfe, Strg+Z/Y steuert Undo/Redo. Details: HILFE.md."
 )
 LAUNCHER_FOOTER_FULL = (
     "Hilfe: F1 · Aktualisieren: Alt+R · Hauptfenster: Alt+M · Diagnose: Alt+G · "
@@ -54,7 +55,7 @@ LAUNCHER_FOOTER_FULL = (
 )
 LAUNCHER_FOOTER_COMPACT = (
     "F1 Hilfe · Alt+R Aktualisieren · Alt+M Hauptfenster · Alt+G Diagnose · "
-    "Alt+L Logs · Alt+B Backup · Alt+Q Beenden."
+    "Alt+Q Beenden · Strg+Z/Y Undo/Redo."
 )
 
 
