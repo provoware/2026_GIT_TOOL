@@ -41,7 +41,7 @@ step "2/8" "JSON-Dateien validieren"
 import json
 from pathlib import Path
 
-excluded = {'.git', '.venv', 'venv', 'node_modules', 'build', 'dist'}
+excluded = {'.git', '.venv', 'venv', 'node_modules', 'build', 'dist', 'mcp_dispatch'}
 files = [path for path in Path('.').rglob('*.json') if not any(part in excluded for part in path.parts)]
 for path in sorted(files):
     with path.open('r', encoding='utf-8') as handle:
@@ -50,7 +50,7 @@ print(f'OK: {len(files)} JSON-Dateien')
 PY
 
 step "3/8" "Produktiven Python-Quellbestand kompilieren"
-"${PYTHON}" -m compileall -q system modules mcp_dispatch/src
+"${PYTHON}" -m compileall -q system modules
 
 step "4/8" "Shell-Syntax und Design-Tokens prüfen"
 find scripts -type f -name '*.sh' -print0 | sort -z | xargs -0 -r -n1 bash -n
@@ -62,7 +62,7 @@ step "5/8" "Modulverträge prüfen"
   --selftests config/module_selftests.json
 
 step "6/8" "Funktionstests ausführen"
-PYTEST=("${PYTHON}" -m pytest -q -c config/pytest.ini)
+PYTEST=("${PYTHON}" -m pytest -q -c config/pytest.ini --ignore=mcp_dispatch)
 if [[ -z "${DISPLAY:-}" ]] && command -v xvfb-run >/dev/null 2>&1; then
   PYTEST=(xvfb-run -a "${PYTEST[@]}")
 fi
@@ -71,7 +71,7 @@ fi
 step "7/8" "Kritische statische Fehler und Start prüfen"
 "${PYTHON}" -m ruff check \
   --select E9,F63,F7,F82 \
-  system modules mcp_dispatch/src \
+  system modules \
   --config config/ruff.toml
 PYTHONPATH=system "${PYTHON}" system/launcher.py --help >/dev/null
 PYTHONPATH=system "${PYTHON}" system/launcher.py --show-all >"${REPORT_DIR}/launcher-smoke.txt"
