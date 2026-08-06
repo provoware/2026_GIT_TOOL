@@ -34,34 +34,27 @@ MAIN_WINDOW_MIN_WIDTH = 720
 MAIN_WINDOW_MIN_HEIGHT = 680
 
 LAUNCHER_HELP_FULL = (
-    "So geht's: Farbschema wählen, Module einblenden und mit „Übersicht aktualisieren“ "
-    "prüfen. Diagnose: „Diagnose starten“ führt Tests und Codeprüfungen aus. "
-    "Entwicklerbereich: System-Scan (Prüfung), Standards (Regeln), Log-Ordner "
-    "(Protokolle), Backup (Sicherung), Export-Center und selektiver Export. "
-    "Kontrastmodus: Alt+K. Zoom: Strg + Mausrad. Tastatur: Tab für Fokus, F1 für "
-    "Kontext-Hilfe. Kurzbefehle: Alt+A (alle Module), Alt+D (Debug), Alt+R "
-    "(aktualisieren), Alt+G (Diagnose), Alt+M (Hauptfenster), Alt+S (System-Scan), "
-    "Alt+P (Standards), Alt+L (Logs), Alt+E (Export), Alt+X (Export-Center), "
-    "Alt+B (Backup), Alt+T (Theme), Alt+Q (abmelden & sichern), Strg+Z (Undo), "
-    "Strg+Y (Redo)."
+    "Schnellstart: 1. Farbschema wählen. 2. Mit „Übersicht aktualisieren“ die Module "
+    "neu laden. 3. „Hauptfenster öffnen“ wählen. Bei einem Problem zuerst "
+    "„Diagnose starten“ verwenden; technische Details stehen ausschließlich im Ordner "
+    "logs/. F1 erklärt das aktuell fokussierte Element. Tastatur: Tab wechselt den Fokus, "
+    "Alt+K schaltet den Kontrast um, Strg + Mausrad ändert den Zoom. Wichtige Kurzbefehle: "
+    "Alt+R Aktualisieren, Alt+M Hauptfenster, Alt+G Diagnose, Alt+L Logs, Alt+B Backup "
+    "und Alt+Q Speichern und Beenden. Die vollständige Anleitung steht in HILFE.md."
 )
 LAUNCHER_HELP_COMPACT = (
-    "Bedienung: Farbschema und Filter wählen, dann „Übersicht aktualisieren“. "
-    "Tab wechselt den Fokus; F1 zeigt die Hilfe zum aktuellen Element. "
-    "Alt+K aktiviert Kontrast, Strg + Mausrad ändert den Zoom. "
-    "Weitere Details stehen in den Tooltips."
+    "Schnellstart: Übersicht aktualisieren, Hauptfenster öffnen, gewünschtes Modul wählen. "
+    "Bei Problemen Diagnose starten und danach logs/tool.log prüfen. Tab wechselt den Fokus, "
+    "F1 zeigt die Hilfe, Alt+K schaltet den Kontrast um. Details: HILFE.md."
 )
 LAUNCHER_FOOTER_FULL = (
-    "Tipp: Mit Tabulator erreichst du alle Bedienelemente. Kurzbefehle: F1 "
-    "(Kontext-Hilfe), Alt+A (alle Module), Alt+D (Debug), Alt+R (aktualisieren), "
-    "Alt+G (Diagnose), Alt+S (System-Scan), Alt+P (Standards), Alt+L (Logs), "
-    "Alt+E (Export), Alt+X (Export-Center), Alt+B (Backup), Alt+T (Theme), "
-    "Alt+K (Kontrast), Strg+Z (Undo), Strg+Y (Redo), Strg + Mausrad (Zoom), "
-    "Alt+Q (abmelden & sichern)."
+    "Hilfe: F1 · Aktualisieren: Alt+R · Hauptfenster: Alt+M · Diagnose: Alt+G · "
+    "Logs: Alt+L · Backup: Alt+B · Kontrast: Alt+K · Beenden: Alt+Q · "
+    "Rückgängig/Wiederholen: Strg+Z/Y · Zoom: Strg + Mausrad."
 )
 LAUNCHER_FOOTER_COMPACT = (
-    "Tastatur: Tab · F1 Hilfe · Alt+R Aktualisieren · Alt+G Diagnose · "
-    "Alt+M Hauptfenster · Alt+Q Abmelden · Strg+Z/Y Undo/Redo."
+    "F1 Hilfe · Alt+R Aktualisieren · Alt+M Hauptfenster · Alt+G Diagnose · "
+    "Alt+L Logs · Alt+B Backup · Alt+Q Beenden."
 )
 
 
