@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "provoware-github-dispatch-mcp"
+version = "0.1.0"
+description = "Fail-closed MCP tool for allowlisted GitHub workflow_dispatch calls on main."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "httpx>=0.28,<1",
+  "mcp>=2,<3",
+  "pydantic>=2.11,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.4,<9",
+  "ruff==0.16.1",
+]
+
+[project.scripts]
+provoware-github-dispatch-mcp = "provoware_github_dispatch_mcp.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/provoware_github_dispatch_mcp"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "RUF"]
