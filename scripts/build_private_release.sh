@@ -31,7 +31,7 @@ rsync -a "${ROOT_DIR}/" "${STAGE_DIR}/" \
   --exclude 'build/' \
   --exclude 'dist/' \
   --exclude 'tests/' \
-  --exclude 'mcp_dispatch/tests/' \
+  --exclude 'mcp_dispatch/' \
   --exclude '*.pyc' \
   --exclude '*.pyo' \
   --exclude '*.log' \
@@ -51,12 +51,14 @@ if command -v git >/dev/null 2>&1 && git -C "${ROOT_DIR}" rev-parse HEAD >/dev/n
   COMMIT="$(git -C "${ROOT_DIR}" rev-parse HEAD)"
 fi
 cat > "${STAGE_DIR}/RELEASE_INFO.txt" <<EOF
-2026_GIT_TOOL – private Ausgabe
+2026_GIT_TOOL – private Desktop-Ausgabe
 Geprüfter Commit: ${COMMIT}
 Erstellt (UTC): $(date -u +%Y-%m-%dT%H:%M:%SZ)
 Start: ./scripts/start.sh
+Prüfung: bash scripts/private_tool_check.sh
 Hilfe: HILFE.md
 Logs: logs/
+Nicht enthalten: GitHub-Automation, MCP-Server, Tests, Caches und Laufzeitprotokolle
 EOF
 
 "${PYTHON_BIN}" -m compileall -q "${STAGE_DIR}/system" "${STAGE_DIR}/modules"
@@ -71,6 +73,11 @@ unzip -t "${ZIP_PATH}" >/dev/null
 if unzip -Z1 "${ZIP_PATH}" | grep -E "^${PACKAGE_NAME}/[^/]+\.(log|trace|out)(\.[0-9]+)?$"; then
   echo "Fehler: Das Release-ZIP enthält eine Protokolldatei im Hauptordner." >&2
   exit 3
+fi
+
+if unzip -Z1 "${ZIP_PATH}" | grep -E "(^|/)(\.github|mcp_dispatch|__pycache__|\.pytest_cache)(/|$)"; then
+  echo "Fehler: Das private Release-ZIP enthält ausgeschlossene Entwicklungsbestandteile." >&2
+  exit 4
 fi
 
 printf '%s\n' "${ZIP_PATH}"
