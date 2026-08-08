@@ -75,6 +75,7 @@ step "7/8" "Kritische statische Fehler und Start prüfen"
   --config config/ruff.toml
 PYTHONPATH=system "${PYTHON}" system/launcher.py --help >/dev/null
 PYTHONPATH=system "${PYTHON}" system/launcher.py --show-all >"${REPORT_DIR}/launcher-smoke.txt"
+PYTHONPATH=system "${PYTHON}" system/private_launcher.py --help >/dev/null
 
 step "8/8" "Privates Release-ZIP bauen und prüfen"
 PYTHON_BIN="${PYTHON}" "${ROOT_DIR}/scripts/build_private_release.sh" | tee "${REPORT_DIR}/release-path.txt"
