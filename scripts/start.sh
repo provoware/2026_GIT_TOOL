@@ -26,7 +26,7 @@ Nutzung: ./scripts/start.sh [Optionen]
   -h, --help        diese Hilfe anzeigen
 
 Die vollständige Toolprüfung und das Privat-ZIP werden bewusst nicht beim Start
- ausgeführt. Dafür in der GUI „Diagnose starten“ bzw. Alt+G verwenden.
+ausgeführt. Dafür in der GUI „Diagnose + Privat-ZIP“ bzw. Alt+G verwenden.
 EOF
 }
 
@@ -68,6 +68,7 @@ required_files=(
   scripts/ensure_venv.sh
   scripts/private_tool_check.sh
   system/launcher_gui.py
+  system/private_launcher.py
 )
 
 for item in "${required_files[@]}"; do
@@ -121,7 +122,7 @@ PYTHON_BIN="$("$ROOT_DIR/scripts/ensure_venv.sh" --root "$ROOT_DIR")"
 export PYTHONPATH="$ROOT_DIR/system${PYTHONPATH:+:$PYTHONPATH}"
 
 echo "$PRODUCT_NAME: Minimal-Preflight erfolgreich."
-echo "$PRODUCT_NAME: Vollprüfung und Privat-ZIP: Diagnose starten / Alt+G."
+echo "$PRODUCT_NAME: Vollprüfung und Privat-ZIP: Diagnose + Privat-ZIP / Alt+G."
 
 if [[ "$PREFLIGHT_ONLY" -eq 1 ]]; then
   exit 0
@@ -130,4 +131,4 @@ fi
 GUI_ARGS=()
 [[ "$DEBUG_MODE" -eq 0 ]] || GUI_ARGS+=(--debug)
 
-exec "$PYTHON_BIN" "$ROOT_DIR/system/launcher_gui.py" "${GUI_ARGS[@]}"
+exec "$PYTHON_BIN" "$ROOT_DIR/system/private_launcher.py" "${GUI_ARGS[@]}"
