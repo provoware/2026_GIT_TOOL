@@ -8,19 +8,17 @@ Empfohlener Start:
 ./scripts/start.sh
 ```
 
-Die Startroutine prüft die benötigten Ordner, richtet bei Bedarf die lokale Python-Umgebung ein und öffnet anschließend die Benutzeroberfläche.
+Der normale Start ist bewusst kurz. Er prüft nur die für den Start zwingend nötigen Kerndateien, Python ab Version 3.10, die lokale Python-Umgebung sowie Tkinter und SQLite. Danach wird direkt die grafische Oberfläche geöffnet.
 
-Nur prüfen, ohne regulär zu starten:
+Der normale Start führt **keine** vollständige Test-, Reparatur-, Release- oder Qualitätskette mehr aus.
 
-```bash
-./scripts/start.sh --test-mode
-```
-
-Bei Startproblemen:
+Nur den Minimal-Preflight prüfen, ohne die Oberfläche zu starten:
 
 ```bash
-./scripts/start.sh --safe-mode
+./scripts/start.sh --preflight-only
 ```
+
+Die bisherigen Optionen `--test-mode`, `--safe-mode` und `--no-start` bleiben als kompatible Aliase für denselben Minimal-Preflight erhalten.
 
 ## 2. Bedienoberfläche
 
@@ -41,10 +39,11 @@ Alle Laufzeitprotokolle befinden sich im Ordner:
 logs/
 ```
 
-Wichtige Datei:
+Wichtige Dateien sind insbesondere:
 
 ```text
 logs/tool.log
+logs/start_run.log
 ```
 
 Die neuesten Meldungen stehen am Dateiende. Rotierte ältere Protokolle heißen beispielsweise `tool.log.1`.
@@ -53,7 +52,7 @@ Logdateien sind lokale Arbeitsdaten. Sie werden nicht im Hauptordner abgelegt, n
 
 ## 4. Prüfung und schnelle Fehlerbehebung
 
-### Einziger empfohlener Prüfweg in der Oberfläche
+### Einziger empfohlener vollständiger Prüfweg
 
 **Diagnose starten** oder `Alt+G` verwenden.
 
@@ -86,20 +85,26 @@ Der optionale MCP-Server, GitHub-Automation und öffentliche Release-Infrastrukt
 ### Oberfläche startet nicht
 
 ```bash
-./scripts/start.sh --safe-mode
+./scripts/start.sh --preflight-only
 ```
 
-Danach `logs/tool.log` prüfen.
+Der Minimal-Preflight meldet fehlende Kerndateien, eine ungeeignete Python-Version oder fehlendes Tkinter/SQLite direkt. Danach `logs/start_run.log` prüfen.
+
+Wichtig: Der normale Start installiert keine Systempakete und führt keine automatische Systemreparatur mehr aus. Dadurch bleibt der Start schnell und verändert den Rechner nicht unerwartet.
 
 ### Module fehlen
 
 In der Startübersicht **Alle Module anzeigen** aktivieren und anschließend **Übersicht aktualisieren** wählen.
 
-### Ordner oder Rechte fehlen
+### Bewusste Reparatur bei Bedarf
+
+Nur wenn tatsächlich ein Struktur- oder Ordnerproblem vorliegt:
 
 ```bash
 python system/health_check.py --root . --self-repair
 ```
+
+Diese Reparatur gehört nicht mehr zum normalen Programmstart.
 
 ## 5. Tastaturbedienung
 
@@ -125,8 +130,23 @@ Bei schmalen Fenstern zeigt die Fußzeile platzsparend nur die Kernkürzel `F1`,
 
 Vor größeren Änderungen ein Backup erstellen. Backups werden unter `data/backups/` abgelegt. Persönliche Daten, lokale Logs, Caches und temporäre Prüfberichte gehören nicht in das Quellcode-ZIP.
 
-## 7. Warum keine GitHub-Workflows mehr?
+## 7. Warum keine GitHub-Workflows oder Start-Gates mehr?
 
-Für ein privates Einzelplatztool verursachen automatische Cloud-Workflows mehr Wartezeit und Fehlerquellen als Nutzen. Die lokale Prüfung verwendet exakt den Quellstand auf dem eigenen Rechner, benötigt keinen freien Runner und liefert das ZIP direkt im Projektordner.
+Für ein privates Einzelplatztool verursachen automatische Cloud-Workflows und umfangreiche Prüfketten bei jedem Start mehr Wartezeit und Fehlerquellen als Nutzen.
 
-Spezielle Gate-, Modernisierungs-, Export-, MCP- und Modul-Workflows sind daher entfernt. Die relevanten Desktop-Tests bleiben erhalten und werden durch `scripts/private_tool_check.sh` gemeinsam ausgeführt. `scripts/run_tests.sh` ist nur noch ein kompatibler Einstieg auf denselben Prüfvertrag und enthält keine zweite Testkette mehr.
+Deshalb sind die Aufgaben jetzt klar getrennt:
+
+```text
+Normaler Start
+→ Minimal-Preflight
+→ Python/Venv
+→ Tkinter/SQLite
+→ GUI
+
+Vollständige Prüfung
+→ Diagnose starten / Alt+G
+→ private_tool_check.sh
+→ Privat-ZIP
+```
+
+Spezielle Gate-, Modernisierungs-, Export-, MCP- und Modul-Workflows sind entfernt. `scripts/run_tests.sh` ist nur noch ein kompatibler Einstieg auf denselben zentralen Privattool-Check und enthält keine zweite Testkette mehr.
