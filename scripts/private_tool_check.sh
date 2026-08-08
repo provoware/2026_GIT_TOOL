@@ -41,7 +41,7 @@ step "2/8" "JSON-Dateien validieren"
 import json
 from pathlib import Path
 
-excluded = {'.git', '.venv', 'venv', 'node_modules', 'build', 'dist', 'mcp_dispatch'}
+excluded = {'.git', '.venv', 'venv', 'node_modules', 'build', 'dist'}
 files = [path for path in Path('.').rglob('*.json') if not any(part in excluded for part in path.parts)]
 for path in sorted(files):
     with path.open('r', encoding='utf-8') as handle:
@@ -62,7 +62,7 @@ step "5/8" "Modulverträge prüfen"
   --selftests config/module_selftests.json
 
 step "6/8" "Funktionstests ausführen"
-PYTEST=("${PYTHON}" -m pytest -q -c config/pytest.ini --ignore=mcp_dispatch)
+PYTEST=("${PYTHON}" -m pytest -q -c config/pytest.ini)
 if [[ -z "${DISPLAY:-}" ]] && command -v xvfb-run >/dev/null 2>&1; then
   PYTEST=(xvfb-run -a "${PYTEST[@]}")
 fi
