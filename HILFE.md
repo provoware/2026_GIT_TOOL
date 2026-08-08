@@ -27,7 +27,7 @@ Bei Startproblemen:
 1. **Farbschema wählen** – passt Farben und Kontrast an.
 2. **Übersicht aktualisieren** – lädt die Modulübersicht neu.
 3. **Hauptfenster öffnen** – zeigt die verfügbaren Module.
-4. **Diagnose starten** – prüft die wichtigsten Funktionen und zeigt verständliche Ergebnisse.
+4. **Diagnose starten** – führt den zentralen Privattool-Check aus und erstellt bei Erfolg das geprüfte Privat-ZIP. In einer grafischen Linux-Sitzung wird anschließend `dist/` geöffnet.
 5. **Backup erstellen** – sichert die privaten Daten als ZIP.
 6. **Abmelden** – speichert den aktuellen Zustand und beendet das Tool sauber.
 
@@ -51,33 +51,19 @@ Die neuesten Meldungen stehen am Dateiende. Rotierte ältere Protokolle heißen 
 
 Logdateien sind lokale Arbeitsdaten. Sie werden nicht im Hauptordner abgelegt, nicht versioniert und nicht in das private Release-ZIP aufgenommen.
 
-## 4. Schnelle Fehlerbehebung
+## 4. Prüfung und schnelle Fehlerbehebung
 
-### Oberfläche startet nicht
+### Einziger empfohlener Prüfweg in der Oberfläche
 
-```bash
-./scripts/start.sh --safe-mode
-```
+**Diagnose starten** oder `Alt+G` verwenden.
 
-Danach `logs/tool.log` prüfen.
-
-### Module fehlen
-
-In der Startübersicht **Alle Module anzeigen** aktivieren und anschließend **Übersicht aktualisieren** wählen.
-
-### Ordner oder Rechte fehlen
-
-```bash
-python system/health_check.py --root . --self-repair
-```
-
-### Vollständige lokale Prüfung und ZIP-Erstellung
+Die Oberfläche ruft intern denselben zentralen Prüfvertrag auf wie:
 
 ```bash
 bash scripts/private_tool_check.sh
 ```
 
-Dieser eine Befehl prüft den privaten Desktop-Kern und erstellt nur bei Erfolg:
+Bei Erfolg entsteht:
 
 ```text
 dist/2026_GIT_TOOL_PRIVAT.zip
@@ -97,6 +83,24 @@ Geprüft werden ausschließlich:
 
 Der optionale MCP-Server, GitHub-Automation und öffentliche Release-Infrastruktur gehören nicht zum privaten Standardcheck und nicht zum Privat-ZIP.
 
+### Oberfläche startet nicht
+
+```bash
+./scripts/start.sh --safe-mode
+```
+
+Danach `logs/tool.log` prüfen.
+
+### Module fehlen
+
+In der Startübersicht **Alle Module anzeigen** aktivieren und anschließend **Übersicht aktualisieren** wählen.
+
+### Ordner oder Rechte fehlen
+
+```bash
+python system/health_check.py --root . --self-repair
+```
+
 ## 5. Tastaturbedienung
 
 | Taste | Funktion |
@@ -107,7 +111,7 @@ Der optionale MCP-Server, GitHub-Automation und öffentliche Release-Infrastrukt
 | `F1` | Hilfe zum aktuellen Bedienelement anzeigen |
 | `Alt+R` | Übersicht aktualisieren |
 | `Alt+M` | Hauptfenster öffnen |
-| `Alt+G` | Diagnose starten |
+| `Alt+G` | Privattool prüfen und ZIP erstellen |
 | `Alt+L` | Logordner öffnen |
 | `Alt+B` | Backup erstellen |
 | `Alt+K` | Kontrastmodus umschalten |
@@ -125,4 +129,4 @@ Vor größeren Änderungen ein Backup erstellen. Backups werden unter `data/back
 
 Für ein privates Einzelplatztool verursachen automatische Cloud-Workflows mehr Wartezeit und Fehlerquellen als Nutzen. Die lokale Prüfung verwendet exakt den Quellstand auf dem eigenen Rechner, benötigt keinen freien Runner und liefert das ZIP direkt im Projektordner.
 
-Spezielle Gate-, Modernisierungs-, Export-, MCP- und Modul-Workflows sind daher entfernt. Die relevanten Desktop-Tests bleiben erhalten und werden durch `scripts/private_tool_check.sh` gemeinsam ausgeführt.
+Spezielle Gate-, Modernisierungs-, Export-, MCP- und Modul-Workflows sind daher entfernt. Die relevanten Desktop-Tests bleiben erhalten und werden durch `scripts/private_tool_check.sh` gemeinsam ausgeführt. `scripts/run_tests.sh` ist nur noch ein kompatibler Einstieg auf denselben Prüfvertrag und enthält keine zweite Testkette mehr.
