@@ -31,16 +31,12 @@ rsync -a "${ROOT_DIR}/" "${STAGE_DIR}/" \
   --exclude 'build/' \
   --exclude 'dist/' \
   --exclude 'tests/' \
-  --exclude 'mcp_dispatch/' \
   --exclude '*.pyc' \
   --exclude '*.pyo' \
   --exclude '*.log' \
   --exclude '*.log.*' \
   --exclude '*.trace' \
-  --exclude '*.out' \
-  --exclude 'PRIVATE_TOOL_OPTIMIZATION_PLAN.md' \
-  --exclude 'PRIVATE_TOOL_OPTIMIZATION_STATUS.md' \
-  --exclude 'SNAPSHOT_TRIGGER.txt'
+  --exclude '*.out'
 
 mkdir -p "${STAGE_DIR}/logs"
 cp "${ROOT_DIR}/logs/README.md" "${STAGE_DIR}/logs/README.md"
@@ -58,11 +54,12 @@ Start: ./scripts/start.sh
 Prüfung: bash scripts/private_tool_check.sh
 Hilfe: HILFE.md
 Logs: logs/
-Nicht enthalten: GitHub-Automation, MCP-Server, Tests, Caches und Laufzeitprotokolle
+Nicht enthalten: Git-Metadaten, Tests, Caches und Laufzeitprotokolle
 EOF
 
 "${PYTHON_BIN}" -m compileall -q "${STAGE_DIR}/system" "${STAGE_DIR}/modules"
 PYTHONPATH="${STAGE_DIR}/system" "${PYTHON_BIN}" "${STAGE_DIR}/system/launcher.py" --help >/dev/null
+PYTHONPATH="${STAGE_DIR}/system" "${PYTHON_BIN}" "${STAGE_DIR}/system/private_launcher.py" --help >/dev/null
 
 (
   cd "${DIST_DIR}"
@@ -75,7 +72,7 @@ if unzip -Z1 "${ZIP_PATH}" | grep -E "^${PACKAGE_NAME}/[^/]+\.(log|trace|out)(\.
   exit 3
 fi
 
-if unzip -Z1 "${ZIP_PATH}" | grep -E "(^|/)(\.github|mcp_dispatch|__pycache__|\.pytest_cache)(/|$)"; then
+if unzip -Z1 "${ZIP_PATH}" | grep -E "(^|/)(\.github|__pycache__|\.pytest_cache)(/|$)"; then
   echo "Fehler: Das private Release-ZIP enthält ausgeschlossene Entwicklungsbestandteile." >&2
   exit 4
 fi

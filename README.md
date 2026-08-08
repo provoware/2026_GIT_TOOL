@@ -1,6 +1,6 @@
 # 2026_GIT_TOOL
 
-Privates Linux-Desktoptool für eine übersichtliche Modulverwaltung, lokale Datenpflege, Diagnose, Backups und Exporte. Der Schwerpunkt liegt auf verständlicher Bedienung, robuster lokaler Ausführung und einer kleinen, nachvollziehbaren Prüfstrecke.
+Privates Linux-Desktoptool für Modulverwaltung, lokale Datenpflege, Diagnose, Backups und Exporte. Der aktuelle Zielzustand ist bewusst klein: schneller lokaler Start, verständliche Privat-GUI und genau ein vollständiger Prüf- und Paketweg.
 
 ## Schnellstart
 
@@ -8,28 +8,44 @@ Privates Linux-Desktoptool für eine übersichtliche Modulverwaltung, lokale Dat
 ./scripts/start.sh
 ```
 
-Die Startroutine prüft die Projektstruktur, richtet bei Bedarf eine lokale Python-Umgebung ein und öffnet anschließend die Benutzeroberfläche.
+Der normale Start führt nur einen Minimal-Preflight aus:
 
-Weitere Startarten:
+```text
+Kerndateien
+→ Python >= 3.10
+→ lokale Venv
+→ Tkinter + SQLite
+→ Privat-GUI
+```
+
+Nur prüfen, ohne die GUI zu öffnen:
 
 ```bash
-./scripts/start.sh --safe-mode   # sichere Prüfung und eingeschränkter Start
-./scripts/start.sh --test-mode   # nur Vorprüfung
-./scripts/start.sh --sandbox     # isolierte Testkopie
+./scripts/start.sh --preflight-only
 ```
+
+`--test-mode`, `--safe-mode` und `--no-start` bleiben kompatible Aliase für denselben Minimal-Preflight.
 
 Die vollständige Bedienhilfe steht in **[HILFE.md](HILFE.md)**.
 
-## Bedienung
+## Privat-GUI
 
-1. Farbschema und gewünschte Filter wählen.
-2. **Übersicht aktualisieren** ausführen.
-3. **Hauptfenster öffnen** und das gewünschte Modul starten.
-4. Bei Problemen zuerst **Diagnose starten** verwenden.
-5. Vor größeren Änderungen ein **Backup** erstellen.
-6. Mit **Abmelden** speichern und sauber beenden.
+Die Standardansicht zeigt nur die regelmäßig benötigten Wartungsfunktionen:
 
-Alle wichtigen Funktionen sind per Tastatur erreichbar. `F1` zeigt die Hilfe zum fokussierten Bedienelement.
+- **Diagnose + Privat-ZIP** (`Alt+G`)
+- **Log-Ordner öffnen**
+- **Backup erstellen**
+- **Erweitert anzeigen**
+
+Unter **Erweitert** bleiben System-Scan, Standards-Liste, selektiver Export und Export-Center verfügbar. Sie werden nicht entfernt, sondern nur aus der täglichen Standardansicht herausgehalten.
+
+Statusanzeige:
+
+```text
+Bereit
+→ Diagnose läuft …
+→ Geprüft – ZIP erstellt
+```
 
 ## Protokolle
 
@@ -39,49 +55,44 @@ Laufzeit- und Diagnoseprotokolle liegen ausschließlich unter:
 logs/
 ```
 
-Die zentrale Datei ist `logs/tool.log`. Im Projekt-Hauptordner werden keine Logdateien erzeugt. Logs werden weder versioniert noch in das private Release-ZIP übernommen.
+Wichtige Dateien sind `logs/tool.log` und `logs/start_run.log`. Im Projekt-Hauptordner werden keine Laufzeitlogs abgelegt. Logs werden nicht in das private Release-ZIP übernommen.
 
-## Lokale Prüfung und Privat-ZIP
+## Einziger vollständiger Prüfweg
 
-Ein vollständiger privater Kerncheck:
+In der GUI:
+
+```text
+Alt+G
+```
+
+oder im Terminal:
 
 ```bash
 bash scripts/private_tool_check.sh
 ```
 
-Direkt ein geprüftes ZIP erstellen:
+Der Privattool-Check umfasst:
 
-```bash
-bash scripts/build_private_release.sh
-```
+- Ablagestruktur und Logtrennung
+- JSON-Validierung
+- produktive Python-Kompilierung
+- Shell-Syntax
+- Design-Tokens
+- Modulverträge
+- Funktionstests
+- kritische Ruff-Fehlerklassen
+- Basis- und Privat-Launcher-Smoke-Test
+- ZIP-Bau und ZIP-Integrität
 
-Ausgabe:
+Bei Erfolg entsteht:
 
 ```text
 dist/2026_GIT_TOOL_PRIVAT.zip
 ```
 
-Der Kerncheck umfasst nur Punkte, die für ein privates Einzelplatztool unmittelbar relevant sind:
+## Keine GitHub-Workflow-Abhängigkeit
 
-- Projekt- und Logablagestruktur
-- JSON-Validierung
-- Python- und Shell-Syntax
-- Design-Token-Konsistenz
-- Modulverträge
-- vollständige Funktionstests
-- kritische Ruff-Fehlerklassen
-- Start-Smoke-Test
-- ZIP-Struktur- und Laufprüfung
-
-## GitHub-Prüfung
-
-Es gibt nur noch einen gemeinsamen Workflow:
-
-```text
-Private Tool Check
-```
-
-Er führt dieselbe Kernprüfung aus und veröffentlicht das geprüfte Privat-ZIP. Frühere Einzel-Gates, Codemod-, Modernisierungs-, Export- und Modulworkflows wurden entfernt. Ihre fachlichen Tests bleiben Bestandteil der gemeinsamen Pytest-Suite.
+Für den privaten Einzelplatzbetrieb gibt es keinen verpflichtenden GitHub-Actions-Prüfpfad. Prüfung und Paketbau laufen lokal auf dem Rechner, auf dem das Tool tatsächlich verwendet wird. Dadurch entstehen keine Runner-Wartezeiten und keine doppelte Cloud-/Lokalprüfung.
 
 ## Ordnerübersicht
 
@@ -89,38 +100,29 @@ Er führt dieselbe Kernprüfung aus und veröffentlicht das geprüfte Privat-ZIP
 |---|---|
 | `system/` | Kernlogik und Benutzeroberfläche |
 | `modules/` | Toolmodule |
-| `config/` | Einstellungen und Prüfkonfiguration |
+| `config/` | Laufzeit- und Toolkonfiguration |
 | `data/` | lokale Nutzdaten und Backups |
-| `logs/` | ausschließlich lokale Laufzeitprotokolle |
-| `scripts/` | Start, Prüfung, Reparatur und Paketbau |
-| `mcp_dispatch/` | optionale, eng begrenzte GitHub-Workflow-Anbindung |
-| `tests/` | gemeinsame Funktionstests für die Entwicklung |
+| `logs/` | lokale Laufzeitprotokolle |
+| `scripts/` | Schnellstart, lokaler Check, Reparaturhilfen und Paketbau |
+| `tests/` | funktionale Entwicklungs- und Regressionstests |
 
-## Diagnose und Reparatur
+## Diagnose und bewusste Reparatur
+
+Normale Probleme zuerst über **Diagnose + Privat-ZIP** prüfen. Reparaturskripte werden nicht automatisch beim Start ausgeführt.
+
+Nur bei einem tatsächlich festgestellten Struktur-/Ordnerproblem:
 
 ```bash
-python system/diagnostics_runner.py
 python system/health_check.py --root . --self-repair
 ```
 
-Die Diagnose zeigt verständliche Ergebnisse. Technische Einzelheiten werden unter `logs/` oder in temporären Prüfberichten unter `build/` abgelegt.
-
 ## Datenschutz und privater Betrieb
 
-- Nutzdaten bleiben standardmäßig lokal.
-- Laufzeitlogs bleiben lokal und werden nicht paketiert.
-- Der Start benötigt keine Administratorrechte.
-- Netzwerkfunktionen sind optional. Die MCP-Anbindung wird nur verwendet, wenn sie ausdrücklich eingerichtet und gestartet wurde.
+- Nutzdaten bleiben lokal.
+- Laufzeitlogs bleiben lokal.
+- Der normale Start installiert keine Systempakete automatisch.
+- Vollprüfungen laufen nur bewusst über `Alt+G` beziehungsweise `private_tool_check.sh`.
 - Backups liegen unter `data/backups/`.
-
-<!-- AUTO-STATUS:START -->
-**Auto-Status (aktualisiert: 2026-08-04)**
-
-- Gesamt: 260 Tasks
-- Erledigt: 247 Tasks
-- Offen: 13 Tasks
-- Fortschritt: 95 %
-<!-- AUTO-STATUS:END -->
 
 ## Weiterführende Dokumentation
 

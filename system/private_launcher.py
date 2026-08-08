@@ -16,6 +16,7 @@ class PrivateUiAdapter:
         self.advanced_visible = False
         self.advanced_button = None
         self._original_layout_update = app._update_layout_by_width
+        self._original_finish_diagnostics = app._finish_diagnostics
 
     @property
     def advanced_buttons(self) -> tuple[object, ...]:
@@ -76,9 +77,27 @@ class PrivateUiAdapter:
             "Erweitert enthält System-Scan, Standards und Exportwerkzeuge. Für den normalen Privatbetrieb sind diese Funktionen nicht erforderlich.",
         )
 
+        self.app._finish_diagnostics = self._finish_diagnostics
         self.app._update_layout_by_width = self._update_layout_by_width
         self._apply_private_layout()
         self.app.apply_theme(self.app.current_theme)
+        self.app._set_status("Bereit.", state="success")
+
+    def _finish_diagnostics(self, outcome) -> None:
+        self._original_finish_diagnostics(outcome)
+        if outcome.error is not None:
+            return
+        result = outcome.value
+        if not isinstance(result, launcher_gui.diagnostics_runner.DiagnosticsResult):
+            return
+        if result.status != "ok":
+            return
+        project_root = self.app.module_config.resolve().parents[1]
+        zip_path = project_root / "dist" / "2026_GIT_TOOL_PRIVAT.zip"
+        if zip_path.is_file():
+            self.app._set_status("Geprüft – ZIP erstellt.", state="success")
+        else:
+            self.app._set_status("Prüfung abgeschlossen – ZIP fehlt.", state="error")
 
     def toggle_advanced(self) -> None:
         self.advanced_visible = not self.advanced_visible

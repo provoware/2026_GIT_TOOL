@@ -8,9 +8,7 @@ Empfohlener Start:
 ./scripts/start.sh
 ```
 
-Der normale Start ist bewusst kurz. Er prüft nur die für den Start zwingend nötigen Kerndateien, Python ab Version 3.10, die lokale Python-Umgebung sowie Tkinter und SQLite. Danach wird direkt die grafische Privattool-Oberfläche geöffnet.
-
-Der normale Start führt **keine** vollständige Test-, Reparatur-, Release- oder Qualitätskette mehr aus.
+Der normale Start ist bewusst kurz. Er prüft nur Kerndateien, Python ab Version 3.10, die lokale Python-Umgebung sowie Tkinter und SQLite. Danach wird direkt die Privattool-Oberfläche geöffnet.
 
 Nur den Minimal-Preflight prüfen, ohne die Oberfläche zu starten:
 
@@ -18,59 +16,69 @@ Nur den Minimal-Preflight prüfen, ohne die Oberfläche zu starten:
 ./scripts/start.sh --preflight-only
 ```
 
-Die bisherigen Optionen `--test-mode`, `--safe-mode` und `--no-start` bleiben als kompatible Aliase für denselben Minimal-Preflight erhalten.
+`--test-mode`, `--safe-mode` und `--no-start` bleiben kompatible Aliase für denselben Minimal-Preflight.
 
 ## 2. Bedienoberfläche
 
-Die Standardansicht ist für den privaten Alltag bewusst reduziert:
+Die Standardansicht ist für den privaten Alltag reduziert:
 
-1. **Farbschema wählen** – passt Farben und Kontrast an.
-2. **Übersicht aktualisieren** – lädt die Modulübersicht neu.
-3. **Hauptfenster öffnen** – zeigt die verfügbaren Module.
-4. **Diagnose + Privat-ZIP** – führt den zentralen Privattool-Check aus und erstellt bei Erfolg das geprüfte Privat-ZIP. In einer grafischen Linux-Sitzung wird anschließend `dist/` geöffnet.
-5. **Log-Ordner öffnen** – zeigt die lokalen Protokolle.
-6. **Backup erstellen** – sichert die privaten Daten als ZIP.
-7. **Abmelden** – speichert den aktuellen Zustand und beendet das Tool sauber.
+1. **Farbschema wählen** – Farben und Kontrast anpassen.
+2. **Übersicht aktualisieren** – Modulübersicht neu laden.
+3. **Hauptfenster öffnen** – verfügbare Module anzeigen.
+4. **Diagnose + Privat-ZIP** – vollständigen lokalen Privattool-Check starten.
+5. **Log-Ordner öffnen** – lokale Protokolle anzeigen.
+6. **Backup erstellen** – private Daten sichern.
+7. **Abmelden** – speichern und sauber beenden.
 
 ### Erweitert
 
-Selten benötigte technische Funktionen sind nicht entfernt, sondern standardmäßig ausgeblendet. Über **Erweitert anzeigen** werden eingeblendet:
+Über **Erweitert anzeigen** bleiben selten benötigte Werkzeuge verfügbar:
 
 - System-Scan
 - Standards-Liste
 - selektiver Export
 - Export-Center
 
-Für den normalen Privatbetrieb werden diese vier Funktionen nicht benötigt.
+Für den normalen Privatbetrieb werden diese Funktionen nicht benötigt.
 
-Deaktivierte Module werden nur angezeigt, wenn **Alle Module anzeigen** aktiviert ist. **Debug-Details** sollten nur zur Fehlersuche eingeschaltet werden.
+## 3. Statusanzeige
 
-## 3. Protokolle
+Der Prüfablauf soll ohne technische Interpretation verständlich sein:
 
-Alle Laufzeitprotokolle befinden sich im Ordner:
+```text
+Bereit
+→ Diagnose läuft …
+→ Geprüft – ZIP erstellt
+```
+
+Falls der Check zwar beendet wird, aber das erwartete ZIP fehlt, wird ausdrücklich **„Prüfung abgeschlossen – ZIP fehlt“** als Fehlerzustand angezeigt.
+
+## 4. Protokolle
+
+Alle Laufzeitprotokolle befinden sich unter:
 
 ```text
 logs/
 ```
 
-Wichtige Dateien sind insbesondere:
+Wichtige Dateien:
 
 ```text
 logs/tool.log
 logs/start_run.log
 ```
 
-Die neuesten Meldungen stehen am Dateiende. Rotierte ältere Protokolle heißen beispielsweise `tool.log.1`.
+Die neuesten Meldungen stehen am Dateiende. Laufzeitlogs liegen nicht im Hauptordner, werden nicht versioniert und nicht in das private Release-ZIP aufgenommen.
 
-Logdateien sind lokale Arbeitsdaten. Sie werden nicht im Hauptordner abgelegt, nicht versioniert und nicht in das private Release-ZIP aufgenommen.
+## 5. Einziger vollständiger Prüfweg
 
-## 4. Prüfung und schnelle Fehlerbehebung
+In der GUI:
 
-### Einziger empfohlener vollständiger Prüfweg
+```text
+Alt+G
+```
 
-**Diagnose + Privat-ZIP** oder `Alt+G` verwenden.
-
-Die Oberfläche ruft intern denselben zentralen Prüfvertrag auf wie:
+oder im Terminal:
 
 ```bash
 bash scripts/private_tool_check.sh
@@ -82,19 +90,20 @@ Bei Erfolg entsteht:
 dist/2026_GIT_TOOL_PRIVAT.zip
 ```
 
-Geprüft werden ausschließlich:
+Geprüft werden:
 
 - Ablagestruktur und Logtrennung
 - JSON-Daten des Desktop-Tools
-- Python- und Shell-Syntax
+- produktive Python-Kompilierung
+- Shell-Syntax
 - Design-Tokens
 - Modulverträge
-- Desktop-Funktionstests
+- Funktionstests
 - kritische Ruff-Fehler
 - Start-Smoke-Test des Basis- und Privat-Launchers
 - ZIP-Inhalt und ZIP-Integrität
 
-Der optionale MCP-Server, GitHub-Automation und öffentliche Release-Infrastruktur gehören nicht zum privaten Standardcheck und nicht zum Privat-ZIP.
+## 6. Schnelle Fehlerbehebung
 
 ### Oberfläche startet nicht
 
@@ -104,23 +113,21 @@ Der optionale MCP-Server, GitHub-Automation und öffentliche Release-Infrastrukt
 
 Der Minimal-Preflight meldet fehlende Kerndateien, eine ungeeignete Python-Version oder fehlendes Tkinter/SQLite direkt. Danach `logs/start_run.log` prüfen.
 
-Wichtig: Der normale Start installiert keine Systempakete und führt keine automatische Systemreparatur mehr aus. Dadurch bleibt der Start schnell und verändert den Rechner nicht unerwartet.
+Der normale Start installiert keine Systempakete und führt keine automatische Systemreparatur aus.
 
 ### Module fehlen
 
-In der Startübersicht **Alle Module anzeigen** aktivieren und anschließend **Übersicht aktualisieren** wählen.
+**Alle Module anzeigen** aktivieren und anschließend **Übersicht aktualisieren** wählen.
 
-### Bewusste Reparatur bei Bedarf
-
-Nur wenn tatsächlich ein Struktur- oder Ordnerproblem vorliegt:
+### Bewusste Reparatur bei einem bestätigten Strukturproblem
 
 ```bash
 python system/health_check.py --root . --self-repair
 ```
 
-Diese Reparatur gehört nicht mehr zum normalen Programmstart.
+Diese Reparatur gehört nicht zum normalen Start.
 
-## 5. Tastaturbedienung
+## 7. Tastaturbedienung
 
 | Taste | Funktion |
 |---|---|
@@ -138,26 +145,24 @@ Diese Reparatur gehört nicht mehr zum normalen Programmstart.
 | `Strg+Z` / `Strg+Y` | Rückgängig / Wiederholen |
 | `Strg+Mausrad` | Ansicht vergrößern oder verkleinern |
 
-Die bisherigen Profi-Kurzbefehle für System-Scan, Standards und Export bleiben erhalten, auch wenn die zugehörigen Schaltflächen unter **Erweitert** ausgeblendet sind.
+Die Profi-Kurzbefehle für System-Scan, Standards und Export bleiben erhalten, auch wenn die Schaltflächen unter **Erweitert** liegen.
 
-Bei schmalen Fenstern zeigt die Fußzeile platzsparend nur die Kernkürzel `F1`, `Alt+R`, `Alt+M`, `Alt+G`, `Alt+Q` und `Strg+Z/Y`.
-
-## 6. Private Datensicherung
+## 8. Private Datensicherung
 
 Vor größeren Änderungen ein Backup erstellen. Backups werden unter `data/backups/` abgelegt. Persönliche Daten, lokale Logs, Caches und temporäre Prüfberichte gehören nicht in das Quellcode-ZIP.
 
-## 7. Warum keine GitHub-Workflows oder Start-Gates mehr?
+## 9. Warum keine GitHub-Workflows oder Start-Gates mehr?
 
-Für ein privates Einzelplatztool verursachen automatische Cloud-Workflows und umfangreiche Prüfketten bei jedem Start mehr Wartezeit und Fehlerquellen als Nutzen.
+Für ein privates Einzelplatztool verursachen Cloud-Workflows und umfangreiche Prüfketten bei jedem Start mehr Wartezeit und Fehlerquellen als Nutzen.
 
-Deshalb sind die Aufgaben jetzt klar getrennt:
+Die Aufgaben sind deshalb getrennt:
 
 ```text
 Normaler Start
 → Minimal-Preflight
 → Python/Venv
 → Tkinter/SQLite
-→ schlanke Privat-GUI
+→ Privat-GUI
 
 Vollständige Prüfung
 → Diagnose + Privat-ZIP / Alt+G
@@ -165,4 +170,4 @@ Vollständige Prüfung
 → Privat-ZIP
 ```
 
-Spezielle Gate-, Modernisierungs-, Export-, MCP- und Modul-Workflows sind entfernt. `scripts/run_tests.sh` ist nur noch ein kompatibler Einstieg auf denselben zentralen Privattool-Check und enthält keine zweite Testkette mehr.
+`scripts/run_tests.sh` bleibt nur als kompatibler Einstieg auf denselben zentralen Privattool-Check erhalten und enthält keine zweite Testkette.
