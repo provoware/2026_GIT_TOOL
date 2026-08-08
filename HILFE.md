@@ -8,7 +8,7 @@ Empfohlener Start:
 ./scripts/start.sh
 ```
 
-Der normale Start ist bewusst kurz. Er prüft nur die für den Start zwingend nötigen Kerndateien, Python ab Version 3.10, die lokale Python-Umgebung sowie Tkinter und SQLite. Danach wird direkt die grafische Oberfläche geöffnet.
+Der normale Start ist bewusst kurz. Er prüft nur die für den Start zwingend nötigen Kerndateien, Python ab Version 3.10, die lokale Python-Umgebung sowie Tkinter und SQLite. Danach wird direkt die grafische Privattool-Oberfläche geöffnet.
 
 Der normale Start führt **keine** vollständige Test-, Reparatur-, Release- oder Qualitätskette mehr aus.
 
@@ -22,12 +22,26 @@ Die bisherigen Optionen `--test-mode`, `--safe-mode` und `--no-start` bleiben al
 
 ## 2. Bedienoberfläche
 
+Die Standardansicht ist für den privaten Alltag bewusst reduziert:
+
 1. **Farbschema wählen** – passt Farben und Kontrast an.
 2. **Übersicht aktualisieren** – lädt die Modulübersicht neu.
 3. **Hauptfenster öffnen** – zeigt die verfügbaren Module.
-4. **Diagnose starten** – führt den zentralen Privattool-Check aus und erstellt bei Erfolg das geprüfte Privat-ZIP. In einer grafischen Linux-Sitzung wird anschließend `dist/` geöffnet.
-5. **Backup erstellen** – sichert die privaten Daten als ZIP.
-6. **Abmelden** – speichert den aktuellen Zustand und beendet das Tool sauber.
+4. **Diagnose + Privat-ZIP** – führt den zentralen Privattool-Check aus und erstellt bei Erfolg das geprüfte Privat-ZIP. In einer grafischen Linux-Sitzung wird anschließend `dist/` geöffnet.
+5. **Log-Ordner öffnen** – zeigt die lokalen Protokolle.
+6. **Backup erstellen** – sichert die privaten Daten als ZIP.
+7. **Abmelden** – speichert den aktuellen Zustand und beendet das Tool sauber.
+
+### Erweitert
+
+Selten benötigte technische Funktionen sind nicht entfernt, sondern standardmäßig ausgeblendet. Über **Erweitert anzeigen** werden eingeblendet:
+
+- System-Scan
+- Standards-Liste
+- selektiver Export
+- Export-Center
+
+Für den normalen Privatbetrieb werden diese vier Funktionen nicht benötigt.
 
 Deaktivierte Module werden nur angezeigt, wenn **Alle Module anzeigen** aktiviert ist. **Debug-Details** sollten nur zur Fehlersuche eingeschaltet werden.
 
@@ -54,7 +68,7 @@ Logdateien sind lokale Arbeitsdaten. Sie werden nicht im Hauptordner abgelegt, n
 
 ### Einziger empfohlener vollständiger Prüfweg
 
-**Diagnose starten** oder `Alt+G` verwenden.
+**Diagnose + Privat-ZIP** oder `Alt+G` verwenden.
 
 Die Oberfläche ruft intern denselben zentralen Prüfvertrag auf wie:
 
@@ -77,7 +91,7 @@ Geprüft werden ausschließlich:
 - Modulverträge
 - Desktop-Funktionstests
 - kritische Ruff-Fehler
-- Start-Smoke-Test
+- Start-Smoke-Test des Basis- und Privat-Launchers
 - ZIP-Inhalt und ZIP-Integrität
 
 Der optionale MCP-Server, GitHub-Automation und öffentliche Release-Infrastruktur gehören nicht zum privaten Standardcheck und nicht zum Privat-ZIP.
@@ -124,6 +138,8 @@ Diese Reparatur gehört nicht mehr zum normalen Programmstart.
 | `Strg+Z` / `Strg+Y` | Rückgängig / Wiederholen |
 | `Strg+Mausrad` | Ansicht vergrößern oder verkleinern |
 
+Die bisherigen Profi-Kurzbefehle für System-Scan, Standards und Export bleiben erhalten, auch wenn die zugehörigen Schaltflächen unter **Erweitert** ausgeblendet sind.
+
 Bei schmalen Fenstern zeigt die Fußzeile platzsparend nur die Kernkürzel `F1`, `Alt+R`, `Alt+M`, `Alt+G`, `Alt+Q` und `Strg+Z/Y`.
 
 ## 6. Private Datensicherung
@@ -141,10 +157,10 @@ Normaler Start
 → Minimal-Preflight
 → Python/Venv
 → Tkinter/SQLite
-→ GUI
+→ schlanke Privat-GUI
 
 Vollständige Prüfung
-→ Diagnose starten / Alt+G
+→ Diagnose + Privat-ZIP / Alt+G
 → private_tool_check.sh
 → Privat-ZIP
 ```
