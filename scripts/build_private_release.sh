@@ -31,6 +31,10 @@ rsync -a "${ROOT_DIR}/" "${STAGE_DIR}/" \
   --exclude 'build/' \
   --exclude 'dist/' \
   --exclude 'tests/' \
+  --exclude 'data/backups/' \
+  --exclude 'data/exports/' \
+  --exclude 'data/log_exports/' \
+  --exclude 'data/profiles/' \
   --exclude '*.pyc' \
   --exclude '*.pyo' \
   --exclude '*.log' \
@@ -38,7 +42,12 @@ rsync -a "${ROOT_DIR}/" "${STAGE_DIR}/" \
   --exclude '*.trace' \
   --exclude '*.out'
 
-mkdir -p "${STAGE_DIR}/logs"
+mkdir -p \
+  "${STAGE_DIR}/logs" \
+  "${STAGE_DIR}/data/backups" \
+  "${STAGE_DIR}/data/exports" \
+  "${STAGE_DIR}/data/log_exports" \
+  "${STAGE_DIR}/data/profiles"
 cp "${ROOT_DIR}/logs/README.md" "${STAGE_DIR}/logs/README.md"
 : > "${STAGE_DIR}/logs/.gitkeep"
 
@@ -54,7 +63,7 @@ Start: ./scripts/start.sh
 Prüfung: bash scripts/private_tool_check.sh
 Hilfe: HILFE.md
 Logs: logs/
-Nicht enthalten: Git-Metadaten, Tests, Caches und Laufzeitprotokolle
+Nicht enthalten: Git-Metadaten, Tests, Caches, Laufzeitprotokolle sowie lokale Backups/Exporte/Profile
 EOF
 
 "${PYTHON_BIN}" -m compileall -q "${STAGE_DIR}/system" "${STAGE_DIR}/modules"
@@ -75,6 +84,11 @@ fi
 if unzip -Z1 "${ZIP_PATH}" | grep -E "(^|/)(\.github|__pycache__|\.pytest_cache)(/|$)"; then
   echo "Fehler: Das private Release-ZIP enthält ausgeschlossene Entwicklungsbestandteile." >&2
   exit 4
+fi
+
+if unzip -Z1 "${ZIP_PATH}" | grep -E "^${PACKAGE_NAME}/data/(backups|exports|log_exports|profiles)/.+$"; then
+  echo "Fehler: Das private Release-ZIP enthält lokale Nutzdaten aus Backup-, Export- oder Profilordnern." >&2
+  exit 5
 fi
 
 printf '%s\n' "${ZIP_PATH}"

@@ -83,12 +83,15 @@ Der Privattool-Check umfasst:
 - kritische Ruff-Fehlerklassen
 - Basis- und Privat-Launcher-Smoke-Test
 - ZIP-Bau und ZIP-Integrität
+- Datenschutzprüfung: lokale Backups, Exporte, Log-Exporte und Profile dürfen nicht im Release-ZIP enthalten sein
 
 Bei Erfolg entsteht:
 
 ```text
 dist/2026_GIT_TOOL_PRIVAT.zip
 ```
+
+Die benötigten Ordner `data/backups/`, `data/exports/`, `data/log_exports/` und `data/profiles/` werden im Paket leer angelegt. Lokale Inhalte aus diesen Ordnern werden bewusst nicht übernommen.
 
 ## Keine GitHub-Workflow-Abhängigkeit
 
@@ -120,6 +123,7 @@ python system/health_check.py --root . --self-repair
 
 - Nutzdaten bleiben lokal.
 - Laufzeitlogs bleiben lokal.
+- Lokale Backups, Exporte, Log-Exporte und Profile werden nicht in das private Release-ZIP übernommen.
 - Der normale Start installiert keine Systempakete automatisch.
 - Vollprüfungen laufen nur bewusst über `Alt+G` beziehungsweise `private_tool_check.sh`.
 - Backups liegen unter `data/backups/`.
